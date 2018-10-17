@@ -94,22 +94,22 @@ theme_biodose <- shinyDashboardThemeDIY(
 
   ### boxes
   ,boxBackColor = "rgb(248,248,248)"
-  ,boxBorderRadius = 5
-  ,boxShadowSize = "none"
+  ,boxBorderRadius = 0
+  ,boxShadowSize = "0px 0px 0px"
   ,boxShadowColor = ""
   ,boxTitleSize = 18
-  ,boxDefaultColor = "rgb(225,225,225)"
-  ,boxPrimaryColor = "rgb(95,155,213)"
-  ,boxSuccessColor = "rgb(112,173,71)"
-  ,boxWarningColor = "rgb(237,125,49)"
-  ,boxDangerColor = "rgb(232,76,34)"
+  ,boxDefaultColor = "rgb(248,248,248)"
+  ,boxPrimaryColor = "rgb(15,124,191)"
+  ,boxSuccessColor = "rgb(59,133,95)"
+  ,boxWarningColor = "rgb(178,83,149)"
+  ,boxDangerColor = "rgb(207,57,92)"
 
-  ,tabBoxTabColor = "rgb(255,255,255)"
+  ,tabBoxTabColor = "rgb(248,248,248)"
   ,tabBoxTabTextSize = 14
-  ,tabBoxTabTextColor = "rgb(0,0,0)"
-  ,tabBoxTabTextColorSelected = "rgb(91,94,168)"
-  ,tabBoxBackColor = "rgb(255,255,255)"
-  ,tabBoxHighlightColor = "rgb(210,210,210)"
+  ,tabBoxTabTextColor = "rgb(42,102,98)"
+  ,tabBoxTabTextColorSelected = "rgb(207,57,92)"
+  ,tabBoxBackColor = "rgb(248,248,248)"
+  ,tabBoxHighlightColor = "rgb(207,57,92)"
   ,tabBoxBorderRadius = 0
 
   ### inputs
