@@ -1,10 +1,7 @@
 # Libraries ------------------------------------------------
 
 # Server Libs
-# library(dplyr)
-# library(xts)
 library(shinyjs)
-source("libs/dashboardthemes.R")
 
 # Server ---------------------------------------------------
 

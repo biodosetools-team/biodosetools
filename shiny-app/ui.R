@@ -5,10 +5,9 @@ library(shinydashboard)
 library(dygraphs)
 library(shinyjs)
 
-
-# Theming --------------------------------------------------
-
-source("libs/theming.R")
+# Theming
+source("libs/dashboardthemes.R", local=T)
+source("libs/theming.R", local=T)
 
 
 # Header ---------------------------------------------------
@@ -18,20 +17,9 @@ header <- dashboardHeader(
   title = logo_biodose
 )
 
-# General Widgets ####
-# plot.checkbox <- checkboxGroupInput(
-#   "plots_checkbox", "Plots",
-#   choices = c(
-#     "Time Series" = "time_series",
-#     "Phase Portrait" = "phase_port"
-#   )
-# )
 
+# Widgets --------------------------------------------------
 
-# Model A Widgets ####
-
-
-# Model B Widgets ####
 
 
 # Sidebar --------------------------------------------------
@@ -42,8 +30,6 @@ sidebar <- dashboardSidebar(
     menuItem("About this App", tabName = "home",  icon = icon("home")),
     menuItem("Poisson Fit", tabName = "model-a",  icon = icon("circle"), selected = T),
     menuItem("Quasi-poisson Fit", tabName = "model-b", icon = icon("square"))
-
-    # plot.checkbox
   )
 )
 
@@ -75,7 +61,7 @@ body <- dashboardBody(
     tabItem(tabName = "model-a",
             h2("Model A"),
             fluidRow(
-              # Sidebar with a slider input for number of bins
+              # Sidebar with input and data
               column(width = 4,
                      box(width = 12,
                          title = "Inputs",
@@ -86,32 +72,12 @@ body <- dashboardBody(
                      ),
                      box(width = 12,
                          title = "Data",
-                         status = "primary", solidHeader = F, collapsible = T,
+                         status = "primary", solidHeader = F, collapsible = T, collapsed = T,
                          tableOutput('table')
                      )
               ),
-              # Show a plot of the generated distribution
+              # Main tabBox
               column(width = 8,
-                     # box(width = 12,
-                     #     title = "Result of curve fit",
-                     #     solidHeader = F, collapsible = F,
-                     #     fluidRow(column(11, verbatimTextOutput("result")))
-                     # ),
-                     # box(width = 12,
-                     #     title = "Coefficients",
-                     #     solidHeader = F, collapsible = F,
-                     #     fluidRow(column(11, verbatimTextOutput("bstat")))
-                     # ),
-                     # box(width = 12,
-                     #     title = "Variance-covariance matrix",
-                     #     solidHeader = F, collapsible = F,
-                     #     fluidRow(column(11, verbatimTextOutput("vakoma")))
-                     # ),
-                     # box(width = 12,
-                     #     title = "Correlation matrix",
-                     #     solidHeader = F, collapsible = F,
-                     #     fluidRow(column(11, verbatimTextOutput("corma")))
-                     # ),
                      tabBox(width = 12,
                        side = "left",
                        # height = "500px",
