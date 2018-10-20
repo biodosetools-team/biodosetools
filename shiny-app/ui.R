@@ -121,21 +121,21 @@ body <- dashboardBody(
                          title = "Inputs",
                          status = "primary", solidHeader = F, collapsible = T,
                          # Inputs
-                         textInput(inputId = "dose",
+                         textInput(inputId = "dose-b",
                                    label = "Dose",
                                    value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"),
-                         textInput(inputId = "aberr",
+                         textInput(inputId = "aberr-b",
                                    label = "Aberrations",
                                    value = "8,14,22,55,100,109,100,103,108,103,107"),
-                         textInput(inputId = "cells",
+                         textInput(inputId = "cells-b",
                                    label = "Cells",
                                    value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"),
                          # Tooltips
-                         bsTooltip("dose", "List of doses",
+                         bsTooltip("dose-b", "List of doses",
                                    "right", options = list(container = "body")),
-                         bsTooltip("aberr", "Aberrations count",
+                         bsTooltip("aberr-b", "Aberrations count",
                                    "right", options = list(container = "body")),
-                         bsTooltip("cells", "Cells count",
+                         bsTooltip("cells-b", "Cells count",
                                    "right", options = list(container = "body")),
                          # Button
                          actionButton("button_fit", "Calculate")
@@ -143,7 +143,7 @@ body <- dashboardBody(
                      box(width = 12,
                          title = "Data",
                          status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-                         tableOutput('table')
+                         tableOutput('table-b')
                      )
               ),
               # Main tabBox
@@ -152,10 +152,10 @@ body <- dashboardBody(
                             side = "left",
                             # height = "500px",
                             # selected = "Tab3",
-                            tabPanel("Result of curve fit", verbatimTextOutput("result")),
-                            tabPanel("Coefficients", verbatimTextOutput("bstat")),
-                            tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma")),
-                            tabPanel("Correlation matrix", verbatimTextOutput("corma"))
+                            tabPanel("Result of curve fit", verbatimTextOutput("result-b")),
+                            tabPanel("Coefficients", verbatimTextOutput("bstat-b")),
+                            tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma-b")),
+                            tabPanel("Correlation matrix", verbatimTextOutput("corma-b"))
                      )
               )
 
@@ -168,27 +168,6 @@ body <- dashboardBody(
             fluidRow(
               # Sidebar with input and data
               column(width = 12,
-                     box(width = 12,
-                         title = "Inputs",
-                         status = "primary", solidHeader = F, collapsible = T,
-                         # Inputs
-                         textInput(inputId = "dose",
-                                   label = "Dose",
-                                   value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"),
-                         textInput(inputId = "aberr",
-                                   label = "Aberrations",
-                                   value = "8,14,22,55,100,109,100,103,108,103,107"),
-                         textInput(inputId = "cells",
-                                   label = "Cells",
-                                   value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"),
-                         # Tooltips
-                         bsTooltip("dose", "List of doses",
-                                   "right", options = list(container = "body")),
-                         bsTooltip("aberr", "Aberrations count",
-                                   "right", options = list(container = "body")),
-                         bsTooltip("cells", "Cells count",
-                                   "right", options = list(container = "body"))
-                     ),
                      box(width = 12,
                          title = "Inputs",
                          status = "primary", solidHeader = F, collapsible = T,
