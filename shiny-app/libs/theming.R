@@ -3,7 +3,7 @@
 logo_biodose <- shinyDashboardLogoDIY(
 
   boldText = "Biodose"
-  ,mainText = "Tool"
+  ,mainText = "Tools"
   ,textSize = 16
   ,badgeText = "ALPHA"
   ,badgeTextColor = "white"

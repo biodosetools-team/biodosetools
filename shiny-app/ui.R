@@ -4,6 +4,7 @@
 library(shinydashboard)
 library(dygraphs)
 library(shinyjs)
+# library(fontawesome)
 
 # Theming
 source("libs/dashboardthemes.R", local=T)
@@ -28,8 +29,10 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
     menuItem("About this App", tabName = "home",  icon = icon("home")),
-    menuItem("Poisson Fit", tabName = "model-a",  icon = icon("circle"), selected = T),
-    menuItem("Quasi-poisson Fit", tabName = "model-b", icon = icon("square"))
+    menuItem("Dose-effect Fitting", tabName = "model-a",  icon = icon("th-list"), selected = T),
+    menuItem("Dose Estimation", tabName = "model-b", icon = icon("calculator")),
+    menuItem("Check Distribution", tabName = "model-c", icon = icon("area-chart")),
+    menuItem("Intercomparison Tests", tabName = "model-d", icon = icon("check-circle"))
   )
 )
 
@@ -59,7 +62,7 @@ body <- dashboardBody(
 
     # Model A ####
     tabItem(tabName = "model-a",
-            h2("Model A"),
+            h2("Dose-effect Fitting"),
             fluidRow(
               # Sidebar with input and data
               column(width = 4,
@@ -94,7 +97,7 @@ body <- dashboardBody(
 
     # Model B ####
     tabItem(tabName = "model-b",
-            h2("Model B")
+            h2("Dose Estimation")
     )
 
   ),
