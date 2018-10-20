@@ -1,11 +1,14 @@
 # Logo -----------------------------------------------------
 
+app_name <- c("Biodose", "Tools")
+app_version <- "ALPHA"
+
 logo_biodose <- shinyDashboardLogoDIY(
 
-  boldText = "Biodose"
-  ,mainText = "Tools"
+  boldText = app_name[[1]]
+  ,mainText = app_name[[2]]
   ,textSize = 16
-  ,badgeText = "ALPHA"
+  ,badgeText = app_version
   ,badgeTextColor = "white"
   ,badgeTextSize = 2
   ,badgeBackColor = "#311B92"

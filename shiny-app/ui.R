@@ -215,7 +215,7 @@ body <- dashboardBody(
 
 ui <- dashboardPage(
   # skin = "purple",
-  title="Biodose Tools Alpha",
+  title = paste(app_name, collapse=' '),
   header,
   sidebar,
   body
