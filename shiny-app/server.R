@@ -7,7 +7,7 @@ library(shinyjs)
 
 server <- function(input, output) {
 
-  # Model A ####
+  # Fitting A ####
   input.vals <- reactiveValues()
 
   observe({
@@ -85,6 +85,8 @@ server <- function(input, output) {
     print(output.vals$corma)
   })
 
+  # Test Code ####
+  output$dose_num_value <- renderPrint({ input$dose_num })
 
 
   # Legacy Code ####
