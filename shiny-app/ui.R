@@ -27,7 +27,7 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
-    menuItem("About this App", tabName = "home",  icon = icon("home")),
+    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = F),
     menuItem("Dose-effect Fitting (A)", tabName = "tab-fitting-a",  icon = icon("th-list"), selected = F),
     menuItem("Dose-effect Fitting (B)", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = T),
     menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = F),

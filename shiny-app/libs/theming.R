@@ -432,7 +432,7 @@ shinyDashboardLogoDIY <- function(fontFamily = 'sans-serif', boldText, mainText,
 #' )
 #' @seealso \code{\link{shinyDashboardThemes}, \link{shinyDashboardLogoDIY}, \link{cssGradientThreeColors}}
 #' @export
-shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, bodyBackColor, headerButtonBackColor, headerButtonIconColor,
+shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, bodyFontSize, bodyBackColor, headerButtonBackColor, headerButtonIconColor,
                                    headerButtonBackColorHover, headerButtonIconColorHover, headerBackColor, headerBoxShadowColor,
                                    headerBoxShadowSize, sidebarBackColor, sidebarPadding, sidebarShadowRadius, sidebarShadowColor,
                                    sidebarMenuBackColor, sidebarMenuPadding, sidebarMenuBorderRadius, sidebarUserTextColor, sidebarSearchBackColor,
@@ -466,6 +466,10 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           .h1, .h2, .h3, .h4, .h5, h1, h2, h3, h4, h5 {
           font-family: "',appFontFamily,'";
           color: ', appFontColor, ';
+          }
+
+          p {
+          font-size: ', bodyFontSize, 'px;
           }
 
           /* font: fix for h6 */
@@ -1005,6 +1009,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   ### general
   appFontFamily = "Roboto"
   ,appFontColor = "rgb(0,0,0)"
+  ,bodyFontSize = 16
   ,bodyBackColor = "rgb(255,255,255)"
 
   ### header
@@ -1045,7 +1050,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   ,sidebarSearchBorderColor = "rgb(210,210,210)"
 
   ,sidebarTabTextColor = "rgb(0,0,0)"
-  ,sidebarTabTextSize = 13
+  ,sidebarTabTextSize = 14
   ,sidebarTabBorderStyle = "none"
   ,sidebarTabBorderColor = ""
   ,sidebarTabBorderWidth = 0
