@@ -1,17 +1,19 @@
-<!-- ![alt text](www/home.svg "Logo Title Text 1")  -->
-
-
+<br>
 
 <p align="center">
   <img src="www/home.svg" alt="drawing" style="max-width: 500px; width: 70%;"/>
 </p>
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. 
+<br>
 
-In this app you can:
+<p style="text-align: left"> 
+  This project in an app to be used by biological dosimetry laboratories. Biodose Tools is an open-source project that aims to be a tool to perform all different tests and calculations needed. The app is developed with <a href="https://www.r-project.org/about.html">R</a> together with <a href="https://shiny.rstudio.com"/>Shiny</a> to offer an on-line, easy-to-use solution. Although the intention is to provide the application as a website, all R routines can be downloaded for improvement or personal use.
+</p>
 
-- Integer tincidunt.
-- Cras dapibus.
-- Vivamus elementum semper nisi.
+<p style="text-align: left"> 
+  We also aim to clarify and explain the tests used and to propose those considered most appropriate. Each laboratory in its routine work should choose the optimum method, but the project aims to reach a consensus that will help us in case of mutual assistance or intercomparisons.
+</p>
 
-Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+<p style="text-align: left"> 
+  The project is initially seed by <a href="http://www.reneb.net">RENEB</a> association, but contributions are always welcome.
+</p>

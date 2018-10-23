@@ -51,17 +51,22 @@ body <- dashboardBody(
   ),
 
 
-
   tabItems(
     tabItem(tabName = "home",
             h2("About this project"),
             includeMarkdown("body.md"),
-            actionButton(
-              inputId='ab1', label="Fork this project",
-              icon = icon("github"),
-              onclick ="window.open(
-              'https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
-            )
+              actionButton(
+                inputId='ab1', label="Source code",
+                icon = icon("github"),
+                style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
+                onclick ="window.open('https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
+              ),
+              actionButton(
+                inputId='ab1', label="Documentation",
+                icon = icon("book"),
+                style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
+                onclick ="window.open('https://biodosimetry-uab.gitbook.io/wiki/', '_blank')"
+              )
     ),
 
     # Fitting A ####
