@@ -203,14 +203,14 @@ cssGradientThreeColors <- function(direction = "down", colorStart, colorMiddle, 
 #' @seealso \code{\link{shinyDashboardLogo}, \link{cssGradientThreeColors}}
 #' @note This logo design was inspired from \url{http://www.dataseries.org/}.
 #' @export
-shinyDashboardLogoDIY <- function(boldText, mainText, textSize = 15, badgeText, badgeTextColor,
+shinyDashboardLogoDIY <- function(fontFamily = 'sans-serif', boldText, mainText, textSize = 15, badgeText, badgeTextColor,
                                   badgeTextSize = 2, badgeBackColor, badgeBorderRadius = 3) {
 
   htmltools::HTML(
 
     paste0(
 
-      "<p style=\"font-size:", textSize, "px\">
+      "<p style=\"font-family:", fontFamily, "; font-size:", textSize, "px\" >
 
       <b> ", boldText, " </b>",
 
@@ -985,9 +985,10 @@ app_version <- "ALPHA"
 
 logo_biodose <- shinyDashboardLogoDIY(
 
-  boldText = app_name[[1]]
+  fontFamily = 'Roboto'
+  ,boldText = app_name[[1]]
   ,mainText = app_name[[2]]
-  ,textSize = 16
+  ,textSize = 18
   ,badgeText = app_version
   ,badgeTextColor = "white"
   ,badgeTextSize = 2

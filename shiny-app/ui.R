@@ -47,7 +47,7 @@ body <- dashboardBody(
 
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto')"))
+    tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700)"))
   ),
 
 
