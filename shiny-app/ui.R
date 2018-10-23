@@ -7,7 +7,6 @@ library(shinyjs)
 library(shinyBS)
 
 # Theming
-source("libs/dashboardthemes.R", local=T)
 source("libs/theming.R", local=T)
 
 
@@ -47,8 +46,11 @@ body <- dashboardBody(
   useShinyjs(),
 
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto')"))
   ),
+
+
 
   tabItems(
     tabItem(tabName = "home",
