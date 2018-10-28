@@ -9,6 +9,9 @@ library(shinyBS)
 # Theming
 source("libs/theming.R", local=T)
 
+# Modules
+source("fittingModule.R")
+
 
 # Header ---------------------------------------------------
 
@@ -118,39 +121,24 @@ body <- dashboardBody(
             )
     ),
 
-    # Fitting B ####
+
+    # Modular B ####
+    # fittingUI(id = "model-b", label = "tab-fitting-b"),
+
     tabItem(tabName = "tab-fitting-b",
             h2("Dose-effect Fitting"),
             fluidRow(
               # Sidebar with input and data
               column(width = 4,
-                     box(width = 12,
-                         title = "Inputs",
-                         status = "primary", solidHeader = F, collapsible = T,
-                         # Inputs
-                         textInput(inputId = "dose-b",
-                                   label = "Dose",
-                                   value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"),
-                         textInput(inputId = "aberr-b",
-                                   label = "Aberrations",
-                                   value = "8,14,22,55,100,109,100,103,108,103,107"),
-                         textInput(inputId = "cells-b",
-                                   label = "Cells",
-                                   value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"),
-                         # Tooltips
-                         bsTooltip("dose-b", "List of doses",
-                                   "right", options = list(container = "body")),
-                         bsTooltip("aberr-b", "Aberrations count",
-                                   "right", options = list(container = "body")),
-                         bsTooltip("cells-b", "Cells count",
-                                   "right", options = list(container = "body")),
-                         # Button
-                         actionButton("button_fit", "Calculate")
-                     ),
+                     # Call module
+                     fittingTabUI("model-b", "tab-fitting-b"),
+                     # Render table
                      box(width = 12,
                          title = "Data",
-                         status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-                         tableOutput('table-b')
+                         status = "primary", solidHeader = F, collapsible = T, collapsed = F
+                         ,
+                         tableOutput("table_b")#,
+                         # verbatimTextOutput("testtt")
                      )
               ),
               # Main tabBox
@@ -159,13 +147,13 @@ body <- dashboardBody(
                             side = "left",
                             # height = "500px",
                             # selected = "Tab3",
-                            tabPanel("Result of curve fit", verbatimTextOutput("result-b")),
-                            tabPanel("Coefficients", verbatimTextOutput("bstat-b")),
-                            tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma-b")),
-                            tabPanel("Correlation matrix", verbatimTextOutput("corma-b"))
+                            tabPanel("Result of curve fit", verbatimTextOutput("testtt"))
+                            #,
+                            # tabPanel("Coefficients", verbatimTextOutput("bstat_b")),
+                            # tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma_b")),
+                            # tabPanel("Correlation matrix", verbatimTextOutput("corma_b"))
                      )
               )
-
             )
     ),
 

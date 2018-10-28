@@ -27,7 +27,7 @@ server <- function(input, output) {
   # Calculations ####
   output.vals <- reactiveValues()
 
-  observe({
+  calculations <- observe({
     dose <- input.vals$dose
     aberr <- input.vals$aberr
     cells <- input.vals$cells
@@ -85,9 +85,28 @@ server <- function(input, output) {
     print(output.vals$corma)
   })
 
+
+  # Modular B ####
+  # callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
+
+  fittingServer <- callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
+
+  output$table_b <- renderTable({
+    fittingServer()
+  })
+
+  fittingServerB <- callModule(fittingResults, "model-b", reactive(input$button_fit))
+
+  output$testtt <- renderPrint({
+    fittingServerB()
+  })
+
+
+
+
+
   # Test Code ####
   output$dose_num_value <- renderPrint({ input$dose_num })
-
 
   # Legacy Code ####
 
@@ -95,5 +114,6 @@ server <- function(input, output) {
   output$debugger <- renderText({
     paste(input$plots_checkbox)
   })
-
 }
+
+
