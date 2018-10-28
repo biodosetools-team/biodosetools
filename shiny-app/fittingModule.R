@@ -134,23 +134,70 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
   # Output prints ####
   output$result <- renderPrint({
     # "Result of curve fit 'result'"
-    print(data()[[1]])
+    data()[[1]]
   })
 
   output$bstat <- renderPrint({
     # "Coefficients 'bstat'"
-    print(data()[[2]])
+    data()[[2]]
   })
 
   output$vakoma <- renderPrint({
-
     # "variance-covariance matrix 'vakoma'"
-    print(data()[[3]])
+    data()[[3]]
   })
 
   output$corma <- renderPrint({
     # "Correlation matrix 'corma'"
-    print(data()[[4]])
+    data()[[4]]
   })
 
+}
+
+
+# Advanced Fitting -----------------------------------------
+
+fittingAdvUI <- function(id, label) {
+  # Create a namespace function using the provided id
+  ns <- NS(id)
+  tabItem(tabName = label,
+          h2("Dose-effect Fitting"),
+          fluidRow(
+            # Sidebar with input and data
+            column(width = 12,
+                   box(width = 12,
+                       title = "Inputs",
+                       status = "primary", solidHeader = F, collapsible = T,
+                       numericInput(ns("dose_num"), "Dose", value = 1),
+                       fluidRow(column(3, verbatimTextOutput(ns("dose_num_value"))))
+                   )
+                   # box(width = 12,
+                   #     title = "Data",
+                   #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
+                   #     tableOutput('table')
+                   # )
+            )#,
+            # Main tabBox
+            # column(width = 8,
+            #        tabBox(width = 12,
+            #               side = "left",
+            #               # height = "500px",
+            #               # selected = "Tab3",
+            #               tabPanel("Result of curve fit", verbatimTextOutput("result")),
+            #               tabPanel("Coefficients", verbatimTextOutput("bstat")),
+            #               tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma")),
+            #               tabPanel("Correlation matrix", verbatimTextOutput("corma"))
+            #        )
+            # )
+
+          )
+  )
+}
+
+
+fittingAdvTest <- function(input, output, session, stringsAsFactors) {
+
+  output$dose_num_value <- renderPrint({
+    input$dose_num
+    })
 }
