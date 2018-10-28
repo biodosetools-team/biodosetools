@@ -87,19 +87,20 @@ server <- function(input, output) {
 
 
   # Modular B ####
-  # callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
+  callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
+  callModule(module = fittingResults, id = "model-b", reactive(input$button_fit))
 
-  fittingServer <- callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
-
-  output$table_b <- renderTable({
-    fittingServer()
-  })
-
-  fittingServerB <- callModule(fittingResults, "model-b", reactive(input$button_fit))
-
-  output$testtt <- renderPrint({
-    fittingServerB()
-  })
+  # fittingServer <- callModule(module = fittingTable, id = "model-b", reactive(input$button_fit))
+  #
+  # output$table_b <- renderTable({
+  #   fittingServer()
+  # })
+  #
+  # fittingServerB <- callModule(fittingResults, "model-b", reactive(input$button_fit))
+  #
+  # output$testtt <- renderPrint({
+  #   fittingServerB()
+  # })
 
 
 

@@ -31,8 +31,8 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
     menuItem("About this App", tabName = "home",  icon = icon("home"), selected = F),
-    menuItem("Dose-effect Fitting (A)", tabName = "tab-fitting-a",  icon = icon("th-list"), selected = F),
-    menuItem("Dose-effect Fitting (B)", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = T),
+    # menuItem("Dose-effect Fitting (A)", tabName = "tab-fitting-a",  icon = icon("th-list"), selected = F),
+    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = T),
     menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = F),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
     menuItem("Check Distribution", tabName = "model-c", icon = icon("area-chart")),
@@ -123,39 +123,7 @@ body <- dashboardBody(
 
 
     # Modular B ####
-    # fittingUI(id = "model-b", label = "tab-fitting-b"),
-
-    tabItem(tabName = "tab-fitting-b",
-            h2("Dose-effect Fitting"),
-            fluidRow(
-              # Sidebar with input and data
-              column(width = 4,
-                     # Call module
-                     fittingTabUI("model-b", "tab-fitting-b"),
-                     # Render table
-                     box(width = 12,
-                         title = "Data",
-                         status = "primary", solidHeader = F, collapsible = T, collapsed = F
-                         ,
-                         tableOutput("table_b")#,
-                         # verbatimTextOutput("testtt")
-                     )
-              ),
-              # Main tabBox
-              column(width = 8,
-                     tabBox(width = 12,
-                            side = "left",
-                            # height = "500px",
-                            # selected = "Tab3",
-                            tabPanel("Result of curve fit", verbatimTextOutput("testtt"))
-                            #,
-                            # tabPanel("Coefficients", verbatimTextOutput("bstat_b")),
-                            # tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma_b")),
-                            # tabPanel("Correlation matrix", verbatimTextOutput("corma_b"))
-                     )
-              )
-            )
-    ),
+    fittingUI(id = "model-b", label = "tab-fitting-b"),
 
     # Fitting C ####
     tabItem(tabName = "tab-fitting-c",
