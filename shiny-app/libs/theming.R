@@ -621,6 +621,12 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           box-shadow: ', boxShadowSize, ' ', boxShadowColor, ';
           }
 
+          [class*="col-lg-"],[class*="col-md-"],
+          [class*="col-sm-"],[class*="col-xs-"] {
+            padding-right: 10px !important;
+            padding-left: 10px !important;
+          }
+
           /* box: title */
           .box-header .box-title {
           font-size: ', boxTitleSize, 'px;
