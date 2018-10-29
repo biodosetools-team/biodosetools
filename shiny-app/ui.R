@@ -30,8 +30,8 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
-    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = F),
-    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = T),
+    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = T),
+    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = F),
     menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = F),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
     menuItem("Check Distribution", tabName = "model-c", icon = icon("area-chart")),
@@ -55,12 +55,12 @@ body <- dashboardBody(
   # Home ####
   tabItems(
     tabItem(tabName = "home",
-            h2("About this project"),
+            h2("About this project", style = "margin-left: 10%;"),
             includeMarkdown("body.md"),
               actionButton(
                 inputId='ab1', label="Source code",
                 icon = icon("github"),
-                style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
+                style = "margin-left: 10%; color: #fff; background-color: #6C63FF; border-color: #514bc0",
                 onclick ="window.open('https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
               ),
               actionButton(
