@@ -2,7 +2,7 @@
 
 # UI Libs
 library(shinydashboard)
-library(dygraphs)
+library(rhandsontable)
 library(shinyjs)
 library(shinyBS)
 
@@ -30,9 +30,9 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
-    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = T),
+    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = F),
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = F),
-    menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = F),
+    menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = T),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
     menuItem("Check Distribution", tabName = "model-c", icon = icon("area-chart")),
     menuItem("Intercomparison Tests", tabName = "model-d", icon = icon("check-circle"))

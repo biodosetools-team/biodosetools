@@ -1,6 +1,7 @@
 # Libraries ------------------------------------------------
 
 # Server Libs
+library(rhandsontable)
 library(shinyjs)
 
 # Server ---------------------------------------------------

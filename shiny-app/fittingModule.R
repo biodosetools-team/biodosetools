@@ -1,4 +1,4 @@
-# Fitting B ####
+# Fitting Modules ------------------------------------------
 
 fittingUI <- function(id, label) {
   # Create a namespace function using the provided id
@@ -7,7 +7,7 @@ fittingUI <- function(id, label) {
   tabItem(tabName = label,
           h2("Dose-effect Fitting"),
           fluidRow(
-            # Sidebar with input and data
+            # Input and data boxes ----
             column(width = 4,
                    box(width = 12,
                        title = "Inputs",
@@ -41,7 +41,7 @@ fittingUI <- function(id, label) {
                    )
             )
             ,
-            # Main tabBox
+            # Results tabBox ----
             column(width = 8,
                    tabBox(width = 12,
                           side = "left",
@@ -79,6 +79,7 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
     # })
   })
 
+  # Output ----
   output$table <- renderTable({
     # data.frame(1,2,3)
     table()
@@ -88,7 +89,7 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
 
 fittingResults <- function(input, output, session, stringsAsFactors) {
 
-  # Calculations ####
+  # Calculations ----
   data <- reactive({
 
     input$button_fit
@@ -131,7 +132,7 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     return(res_list)
   })
 
-  # Output prints ####
+  # Outputs ----
   output$result <- renderPrint({
     # "Result of curve fit 'result'"
     data()[[1]]
@@ -155,7 +156,7 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
 }
 
 
-# Advanced Fitting -----------------------------------------
+# Advanced Fitting Modules ---------------------------------
 
 fittingAdvUI <- function(id, label) {
   # Create a namespace function using the provided id
@@ -163,13 +164,13 @@ fittingAdvUI <- function(id, label) {
   tabItem(tabName = label,
           h2("Dose-effect Fitting"),
           fluidRow(
-            # Sidebar with input and data
+            # Input box ----
             column(width = 12,
                    box(width = 12,
-                       title = "Inputs",
+                       title = "Raw Inputs",
                        status = "primary", solidHeader = F, collapsible = T,
-                       numericInput(ns("dose_num"), "Dose", value = 1),
-                       fluidRow(column(3, verbatimTextOutput(ns("dose_num_value"))))
+                       numericInput(ns("num.data"), "Dose", value = 1),
+                       fluidRow(column(12, rHandsontableOutput(ns("hotable"))))
                    )
                    # box(width = 12,
                    #     title = "Data",
@@ -177,7 +178,7 @@ fittingAdvUI <- function(id, label) {
                    #     tableOutput('table')
                    # )
             )#,
-            # Main tabBox
+            # Main tabBox ----
             # column(width = 8,
             #        tabBox(width = 12,
             #               side = "left",
@@ -197,7 +198,37 @@ fittingAdvUI <- function(id, label) {
 
 fittingAdvTest <- function(input, output, session, stringsAsFactors) {
 
-  output$dose_num_value <- renderPrint({
-    input$dose_num
-    })
+  # DF <- data.frame("0" = 1:10, "1" = 1:10, "2" = 1:10, "3" = 1:10, "4" = 1:10, "5" = 1:10, "6" = 1:10,
+  #                  N = 1:10, X = 1:10,
+  #                  stringsAsFactors = FALSE)
+  # num.data <- 10
+
+  previous <- reactive({
+    num.data <- as.numeric(input$num.data)
+
+    DF.base <- data.frame(matrix(0, nrow = num.data, ncol = 7))
+    DF.calc <- data.frame(N = rep(0, num.data), X = rep(0, input$num.data))
+
+    DF <- cbind(DF.base, DF.calc)
+  })
+
+  # numberofrows <- nrow(DF)
+
+  # previous <- reactive({DF})
+
+  MyChanges <- reactive({
+    if(is.null(input$hotable1)){return(previous())}
+    else if(!identical(previous(),input$hotable)){
+      mytable <- as.data.frame(hot_to_r(input$hotable))
+
+      mytable[,8] <- mytable[,1] * mytable[,2]
+      mytable
+    }
+  })
+  output$hotable <- renderRHandsontable({rhandsontable(MyChanges())})
+
+  # Output ----
+  # output$dose_num_value <- renderPrint({
+  #   input$dose_num
+  #   })
 }
