@@ -21,10 +21,6 @@ header <- dashboardHeader(
 )
 
 
-# Widgets --------------------------------------------------
-
-
-
 # Sidebar --------------------------------------------------
 
 sidebar <- dashboardSidebar(

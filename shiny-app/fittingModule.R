@@ -169,7 +169,7 @@ fittingAdvUI <- function(id, label) {
                    box(width = 12,
                        title = "Raw Inputs",
                        status = "primary", solidHeader = F, collapsible = T,
-                       numericInput(ns("num.data"), "Dose", value = 1),
+                       numericInput(ns("num.data"), "Number of data", value = 5),
                        fluidRow(column(12, rHandsontableOutput(ns("hotable"))))
                    )
                    # box(width = 12,
@@ -198,37 +198,35 @@ fittingAdvUI <- function(id, label) {
 
 fittingAdvTest <- function(input, output, session, stringsAsFactors) {
 
-  # DF <- data.frame("0" = 1:10, "1" = 1:10, "2" = 1:10, "3" = 1:10, "4" = 1:10, "5" = 1:10, "6" = 1:10,
-  #                  N = 1:10, X = 1:10,
-  #                  stringsAsFactors = FALSE)
-  # num.data <- 10
-
+  # Start data frame ####
   previous <- reactive({
     num.data <- as.numeric(input$num.data)
 
     DF.base <- data.frame(matrix(0, nrow = num.data, ncol = 7))
-    DF.calc <- data.frame(N = rep(0, num.data), X = rep(0, input$num.data))
+    DF.calc <- data.frame(N = rep(0, num.data), X = rep(0, num.data))
 
     DF <- cbind(DF.base, DF.calc)
+    return(DF)
   })
 
-  # numberofrows <- nrow(DF)
+  # previous <- reactive({
+  #   as.data.frame(DF)
+  #   })
 
-  # previous <- reactive({DF})
-
-  MyChanges <- reactive({
-    if(is.null(input$hotable1)){return(previous())}
+  # Reactive data frame ####
+  changed.data <- reactive({
+    if(is.null(input$hotable)){return(previous())}
     else if(!identical(previous(),input$hotable)){
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
-      mytable[,8] <- mytable[,1] * mytable[,2]
+      mytable[,9] <- mytable[,2] + mytable[,3] + mytable[,4] + mytable[,5] + mytable[,6] + mytable[,7]
+      mytable[,8] <- mytable[,1] + mytable[,9]
       mytable
     }
   })
-  output$hotable <- renderRHandsontable({rhandsontable(MyChanges())})
 
-  # Output ----
-  # output$dose_num_value <- renderPrint({
-  #   input$dose_num
-  #   })
+  # Output ####
+  output$hotable <- renderRHandsontable({
+    rhandsontable(changed.data())
+  })
 }
