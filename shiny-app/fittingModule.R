@@ -166,39 +166,52 @@ fittingAdvUI <- function(id, label) {
           fluidRow(
             # Input box ----
             column(width = 12,
-                   box(width = 12,
-                       title = "Raw Inputs",
+                   box(width = 3,
+                       title = "Input Options",
                        status = "primary", solidHeader = F, collapsible = T,
-                       numericInput(ns("num.data"), "Number of data", value = 5),
-                       fluidRow(column(12, rHandsontableOutput(ns("hotable"))))
+                       fluidRow(
+                         column(width = 12,
+                                # Inputs
+                                numericInput(ns("num.data"), "Number of doses", value = 10),
+                                numericInput(ns("num.data.b"), "Maximum number of dicentrics per cell", value = 5),
+                                # Button
+                                actionButton(ns("button_upd_table"), "Generate table")
+                         ),
+                         # Tooltip
+                         bsTooltip(ns("button_upd_table"),
+                                   "Note that previously introduced data will be deleted.",
+                                   "bottom", options = list(container = "body"))
+                       )
+                   ),
+                   # Hot Table ----
+                   box(width = 9,
+                       title = "Data Input",
+                       status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+                       rHandsontableOutput(ns("hotable"))
                    )
-                   # box(width = 12,
-                   #     title = "Data",
-                   #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-                   #     tableOutput('table')
-                   # )
-            )#,
+            )
+            ,
             # Main tabBox ----
-            # column(width = 8,
-            #        tabBox(width = 12,
-            #               side = "left",
-            #               # height = "500px",
-            #               # selected = "Tab3",
-            #               tabPanel("Result of curve fit", verbatimTextOutput("result")),
-            #               tabPanel("Coefficients", verbatimTextOutput("bstat")),
-            #               tabPanel("Variance-covariance matrix", verbatimTextOutput("vakoma")),
-            #               tabPanel("Correlation matrix", verbatimTextOutput("corma"))
-            #        )
-            # )
+            column(width = 8,
+                   tabBox(width = 12,
+                          side = "left",
+                          # height = "500px",
+                          # selected = "Tab3",
+                          tabPanel("Result of curve fit"),# , verbatimTextOutput("result")),
+                          tabPanel("Coefficients"),# , verbatimTextOutput("bstat")),
+                          tabPanel("Variance-covariance matrix"),# , verbatimTextOutput("vakoma")),
+                          tabPanel("Correlation matrix")# , verbatimTextOutput("corma"))
+                   )
+            )
 
           )
   )
 }
 
 
-fittingAdvTest <- function(input, output, session, stringsAsFactors) {
+fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
-  # Start data frame ####
+  # Start data frame ----
   previous <- reactive({
     num.data <- as.numeric(input$num.data)
 
@@ -213,7 +226,7 @@ fittingAdvTest <- function(input, output, session, stringsAsFactors) {
   #   as.data.frame(DF)
   #   })
 
-  # Reactive data frame ####
+  # Reactive data frame ----
   changed.data <- reactive({
     if(is.null(input$hotable)){return(previous())}
     else if(!identical(previous(),input$hotable)){
@@ -225,7 +238,7 @@ fittingAdvTest <- function(input, output, session, stringsAsFactors) {
     }
   })
 
-  # Output ####
+  # Output ----
   output$hotable <- renderRHandsontable({
     rhandsontable(changed.data())
   })

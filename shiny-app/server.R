@@ -13,7 +13,7 @@ server <- function(input, output) {
   callModule(module = fittingResults, id = "model-b", reactive(input$button_fit))
 
   # Advanced Fitting ####
-  callModule(module = fittingAdvTest, id = "model-c")
+  callModule(module = fittingAdvTable, id = "model-c")
 
   # Legacy Code ####
 
