@@ -189,10 +189,17 @@ fittingAdvUI <- function(id, label) {
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
                        rHandsontableOutput(ns("hotable"))
                    )
-            )
-            ,
+            ),
             # Main tabBox ----
-            column(width = 8,
+            column(width = 12,
+                   materialSwitch(
+                     inputId = "button_u_select",
+                     label = "Use u = 1",
+                     status = "primary",
+                     value = FALSE,
+                     right = FALSE
+                   )
+                   ,
                    tabBox(width = 12,
                           side = "left",
                           # height = "500px",
@@ -200,8 +207,13 @@ fittingAdvUI <- function(id, label) {
                           tabPanel("Result of curve fit"),# , verbatimTextOutput("result")),
                           tabPanel("Coefficients"),# , verbatimTextOutput("bstat")),
                           tabPanel("Variance-covariance matrix"),# , verbatimTextOutput("vakoma")),
-                          tabPanel("Correlation matrix")# , verbatimTextOutput("corma"))
-                   )
+                          tabPanel("Correlation matrix"),# , verbatimTextOutput("corma"))
+                          tabPanel("Used method"),
+                          tabPanel("Summary")
+                   ),
+                   # Placeholder actionButtons
+                   actionButton(ns("button_save_data"), "Save Data"),
+                   actionButton(ns("button_download report"), "Download Report")
             )
 
           )

@@ -3,6 +3,7 @@
 # UI Libs
 library(shinydashboard)
 library(rhandsontable)
+library(shinyWidgets)
 library(shinyjs)
 library(shinyBS)
 
