@@ -3,6 +3,7 @@
 # Server Libs
 library(rhandsontable)
 library(shinyjs)
+library(dplyr)
 
 # Server ---------------------------------------------------
 
