@@ -173,7 +173,7 @@ fittingAdvUI <- function(id, label) {
                          column(width = 12,
                                 # Inputs
                                 numericInput(ns("num.doses"), "Number of doses", value = 10),
-                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 7),
+                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
                                 # Button
                                 actionButton(ns("button_upd_table"), "Generate table")
                                 # verbatimTextOutput(ns("table_debug"))
@@ -188,7 +188,8 @@ fittingAdvUI <- function(id, label) {
                    box(width = 9,
                        title = "Data Input",
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-                       rHandsontableOutput(ns("hotable"))
+                       rHandsontableOutput(ns("hotable")),
+                       rHandsontableOutput(ns("hotable_dev"))
                    )
             ),
             # Main tabBox ----
@@ -231,14 +232,14 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       num.doses <- as.numeric(input$num.doses)
-      num.dicentrics <- as.numeric(input$num.dicentrics)
+      num.dicentrics <- as.numeric(input$num.dicentrics) + 1
     })
 
     DF.base <- data.frame(matrix(0, nrow = num.doses, ncol = num.dicentrics))
-    DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
+    # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
-    DF <- cbind(DF.base, DF.calc)
-    return(DF)
+    # DF <- cbind(DF.base, DF.calc)
+    return(DF.base)
   })
 
   # Reactive data frame ----
@@ -246,21 +247,30 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
     if (is.null(input$hotable)) {
       return(
         previous()
-        # DF
       )
     } else if (!identical(previous(), input$hotable)) {
 
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
-      mytable[,9] <- mytable[,2] + mytable[,3] + mytable[,4] + mytable[,5] + mytable[,6] + mytable[,7]
-      mytable[,8] <- mytable[,1] + mytable[,9]
+      # Calculated columns
+      num.dicentrics <- ncol(mytable) - 2
+
+      mytable <- mytable %>%
+        mutate(
+          N = rowSums(.[1:num.dicentrics]),
+          X = rowSums(.[2:num.dicentrics])
+        )
+
       mytable
     }
   })
 
+
   # Output ----
   output$hotable <- renderRHandsontable({
     rhandsontable(changed.data())
-    # rhandsontable(previous())
+  })
+  output$hotable_dev <- renderRHandsontable({
+    rhandsontable(previous())
   })
 }
