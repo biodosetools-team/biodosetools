@@ -172,10 +172,11 @@ fittingAdvUI <- function(id, label) {
                        fluidRow(
                          column(width = 12,
                                 # Inputs
-                                numericInput(ns("num.data"), "Number of doses", value = 10),
-                                numericInput(ns("num.data.b"), "Maximum number of dicentrics per cell", value = 5),
+                                numericInput(ns("num.doses"), "Number of doses", value = 10),
+                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 7),
                                 # Button
                                 actionButton(ns("button_upd_table"), "Generate table")
+                                # verbatimTextOutput(ns("table_debug"))
                          ),
                          # Tooltip
                          bsTooltip(ns("button_upd_table"),
@@ -223,25 +224,32 @@ fittingAdvUI <- function(id, label) {
 
 fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
-  # Start data frame ----
+  # Initialize data frame ----
   previous <- reactive({
-    num.data <- as.numeric(input$num.data)
 
-    DF.base <- data.frame(matrix(0, nrow = num.data, ncol = 7))
-    DF.calc <- data.frame(N = rep(0, num.data), X = rep(0, num.data))
+    input$button_upd_table
+
+    isolate({
+      num.doses <- as.numeric(input$num.doses)
+      num.dicentrics <- as.numeric(input$num.dicentrics)
+    })
+
+    DF.base <- data.frame(matrix(0, nrow = num.doses, ncol = num.dicentrics))
+    DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
     DF <- cbind(DF.base, DF.calc)
     return(DF)
   })
 
-  # previous <- reactive({
-  #   as.data.frame(DF)
-  #   })
-
   # Reactive data frame ----
   changed.data <- reactive({
-    if(is.null(input$hotable)){return(previous())}
-    else if(!identical(previous(),input$hotable)){
+    if (is.null(input$hotable)) {
+      return(
+        previous()
+        # DF
+      )
+    } else if (!identical(previous(), input$hotable)) {
+
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
       mytable[,9] <- mytable[,2] + mytable[,3] + mytable[,4] + mytable[,5] + mytable[,6] + mytable[,7]
@@ -253,5 +261,6 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
   # Output ----
   output$hotable <- renderRHandsontable({
     rhandsontable(changed.data())
+    # rhandsontable(previous())
   })
 }
