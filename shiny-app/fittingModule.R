@@ -171,19 +171,11 @@ fittingAdvUI <- function(id, label) {
                        fluidRow(
                          column(width = 12,
                                 # Inputs
-<<<<<<< HEAD
                                 numericInput(ns("num.doses"), "Number of doses", value = 2),
                                 numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
                                 # Buttons
                                 actionButton(ns("button_upd_table"), "Generate table"),
                                 actionButton(ns("button_fit"), "Calculate")
-=======
-                                numericInput(ns("num.doses"), "Number of doses", value = 10),
-                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
-                                # Button
-                                actionButton(ns("button_upd_table"), "Generate table")
-                                # verbatimTextOutput(ns("table_debug"))
->>>>>>> 7881d2c84eaf9851b7b5e2b3f4931e5101861d7c
                          ),
                          # Tooltip
                          bsTooltip(ns("button_upd_table"),
@@ -203,13 +195,8 @@ fittingAdvUI <- function(id, label) {
                    box(width = 9,
                        title = "Data Input",
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-<<<<<<< HEAD
                        rHandsontableOutput(ns("hotable"))
                        # rHandsontableOutput(ns("hotable_dev"))
-=======
-                       rHandsontableOutput(ns("hotable")),
-                       rHandsontableOutput(ns("hotable_dev"))
->>>>>>> 7881d2c84eaf9851b7b5e2b3f4931e5101861d7c
                    )
             ),
             # Main tabBox ----
@@ -257,19 +244,12 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
     DF.dose <- data.frame(D = rep(0.0, num.doses))
     DF.base <- data.frame(matrix(0, nrow = num.doses, ncol = num.dicentrics))
-<<<<<<< HEAD
 
     colnames(DF.base) <- paste0("C", seq(0, num.dicentrics -1, 1))
     # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
     DF <- cbind(DF.dose, DF.base)
     return(DF %>% dplyr::mutate(D = as.numeric(D)))
-=======
-    # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
-
-    # DF <- cbind(DF.base, DF.calc)
-    return(DF.base)
->>>>>>> 7881d2c84eaf9851b7b5e2b3f4931e5101861d7c
   })
 
   # Reactive data frame ----
@@ -287,14 +267,9 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
       mytable <- mytable %>%
         mutate(
-<<<<<<< HEAD
           D = as.numeric(D),
           N = rowSums(.[2:num.dicentrics]),
           X = rowSums(.[3:num.dicentrics])
-=======
-          N = rowSums(.[1:num.dicentrics]),
-          X = rowSums(.[2:num.dicentrics])
->>>>>>> 7881d2c84eaf9851b7b5e2b3f4931e5101861d7c
         )
 
       mytable
@@ -304,7 +279,6 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Output ----
   output$hotable <- renderRHandsontable({
-<<<<<<< HEAD
     rhandsontable(
       changed.data() #%>%
         # hot_col("D", format = "0.0")
@@ -336,12 +310,6 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
       Cells = cell
     )
     # })
-=======
-    rhandsontable(changed.data())
-  })
-  output$hotable_dev <- renderRHandsontable({
-    rhandsontable(previous())
->>>>>>> 7881d2c84eaf9851b7b5e2b3f4931e5101861d7c
   })
 
   # Output ----
