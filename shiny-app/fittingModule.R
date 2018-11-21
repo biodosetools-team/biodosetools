@@ -268,8 +268,8 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
       mytable <- mytable %>%
         mutate(
           D = as.numeric(D),
-          N = rowSums(.[2:num.dicentrics]),
-          X = rowSums(.[3:num.dicentrics])
+          N = as.integer(rowSums(.[2:num.dicentrics])),
+          X = as.integer(rowSums(.[3:num.dicentrics]))
         )
 
       mytable
