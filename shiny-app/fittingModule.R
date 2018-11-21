@@ -81,7 +81,6 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
 
   # Output ----
   output$table <- renderTable({
-    # data.frame(1,2,3)
     table()
   })
 }
@@ -172,11 +171,11 @@ fittingAdvUI <- function(id, label) {
                        fluidRow(
                          column(width = 12,
                                 # Inputs
-                                numericInput(ns("num.doses"), "Number of doses", value = 10),
+                                numericInput(ns("num.doses"), "Number of doses", value = 2),
                                 numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
-                                # Button
-                                actionButton(ns("button_upd_table"), "Generate table")
-                                # verbatimTextOutput(ns("table_debug"))
+                                # Buttons
+                                actionButton(ns("button_upd_table"), "Generate table"),
+                                actionButton(ns("button_fit"), "Calculate")
                          ),
                          # Tooltip
                          bsTooltip(ns("button_upd_table"),
@@ -184,12 +183,20 @@ fittingAdvUI <- function(id, label) {
                                    "bottom", options = list(container = "body"))
                        )
                    ),
+
+                   # Table ----
+                   # box(width = 12,
+                   #     title = "Data",
+                   #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
+                   #     tableOutput(outputId = ns("table"))
+                   # ),
+
                    # Hot Table ----
                    box(width = 9,
                        title = "Data Input",
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-                       rHandsontableOutput(ns("hotable")),
-                       rHandsontableOutput(ns("hotable_dev"))
+                       rHandsontableOutput(ns("hotable"))
+                       # rHandsontableOutput(ns("hotable_dev"))
                    )
             ),
             # Main tabBox ----
@@ -206,10 +213,10 @@ fittingAdvUI <- function(id, label) {
                           side = "left",
                           # height = "500px",
                           # selected = "Tab3",
-                          tabPanel("Result of curve fit"),# , verbatimTextOutput("result")),
-                          tabPanel("Coefficients"),# , verbatimTextOutput("bstat")),
-                          tabPanel("Variance-covariance matrix"),# , verbatimTextOutput("vakoma")),
-                          tabPanel("Correlation matrix"),# , verbatimTextOutput("corma"))
+                          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+                          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+                          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
+                          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
                           tabPanel("Used method"),
                           tabPanel("Summary")
                    ),
@@ -223,7 +230,7 @@ fittingAdvUI <- function(id, label) {
 }
 
 
-fittingAdvTable <- function(input, output, session, stringsAsFactors) {
+fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Initialize data frame ----
   previous <- reactive({
@@ -235,11 +242,14 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
       num.dicentrics <- as.numeric(input$num.dicentrics) + 1
     })
 
+    DF.dose <- data.frame(D = rep(0.0, num.doses))
     DF.base <- data.frame(matrix(0, nrow = num.doses, ncol = num.dicentrics))
+
+    colnames(DF.base) <- paste0("C", seq(0, num.dicentrics -1, 1))
     # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
-    # DF <- cbind(DF.base, DF.calc)
-    return(DF.base)
+    DF <- cbind(DF.dose, DF.base)
+    return(DF %>% dplyr::mutate(D = as.numeric(D)))
   })
 
   # Reactive data frame ----
@@ -257,8 +267,9 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
       mytable <- mytable %>%
         mutate(
-          N = rowSums(.[1:num.dicentrics]),
-          X = rowSums(.[2:num.dicentrics])
+          D = as.numeric(D),
+          N = rowSums(.[2:num.dicentrics]),
+          X = rowSums(.[3:num.dicentrics])
         )
 
       mytable
@@ -268,9 +279,112 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
   # Output ----
   output$hotable <- renderRHandsontable({
-    rhandsontable(changed.data())
+    rhandsontable(
+      changed.data() #%>%
+        # hot_col("D", format = "0.0")
+    )
   })
   output$hotable_dev <- renderRHandsontable({
     rhandsontable(previous())
   })
+}
+
+fittingAdvTable <- function(input, output, session, stringsAsFactors) {
+
+  table <- reactive({
+
+    input$button_fit
+
+    isolate({
+      table.df <- hot_to_r(input$hotable)
+
+      dose <- table.df[["D"]]
+      aberr <- table.df[["X"]]
+      cell <- table.df[["N"]]
+    })
+
+    # output$ttt <- renderTable({
+    data.frame(
+      Dose = dose,
+      Aberrations = aberr,
+      Cells = cell
+    )
+    # })
+  })
+
+  # Output ----
+  output$table <- renderTable({
+    table()
+  })
+}
+
+
+fittingAdvResults <- function(input, output, session, stringsAsFactors) {
+
+  # Calculations ----
+  data <- reactive({
+
+    input$button_fit
+
+    isolate({
+      table.df <- hot_to_r(input$hotable)
+
+      dose <- table.df[["D"]]
+      aberr <- table.df[["X"]]
+      cell <- table.df[["N"]]
+    })
+
+    x0 <- cell
+    x1 <- cell * dose
+    x2 <- cell * dose * dose
+    model.data <- list(x0, x1, x2, aberr)
+
+    # result <- glm(
+    #   aberr ~  -1 + x1 + x2,
+    #   family = poisson(link = "identity"),
+    #   data = model.data
+    # )
+
+    result <- glm(
+      aberr ~ -1 + x0 + x1 + x2,
+      family = poisson(link = "identity"),
+      data = model.data
+    )
+
+    smry <- summary(result, correlation = TRUE)
+    smry$coefficients
+    smry$correlation
+
+    corma <- smry$correlation
+    bstat <- smry$coefficients
+    seb <- bstat[, 3]
+    vakoma <- corma * outer(seb, seb)
+    vakoma <- vcov(result)
+
+    res_list <- list(result, bstat, vakoma, corma)
+
+    return(res_list)
+  })
+
+  # Outputs ----
+  output$result <- renderPrint({
+    # "Result of curve fit 'result'"
+    data()[[1]]
+  })
+
+  output$bstat <- renderPrint({
+    # "Coefficients 'bstat'"
+    data()[[2]]
+  })
+
+  output$vakoma <- renderPrint({
+    # "variance-covariance matrix 'vakoma'"
+    data()[[3]]
+  })
+
+  output$corma <- renderPrint({
+    # "Correlation matrix 'corma'"
+    data()[[4]]
+  })
+
 }
