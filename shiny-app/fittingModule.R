@@ -173,9 +173,8 @@ fittingAdvUI <- function(id, label) {
                                 # Inputs
                                 numericInput(ns("num.doses"), "Number of doses", value = 2),
                                 numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
-                                # Buttons
-                                actionButton(ns("button_upd_table"), "Generate table"),
-                                actionButton(ns("button_fit"), "Calculate")
+                                # Button
+                                actionButton(ns("button_upd_table"), "Generate table")
                          ),
                          # Tooltip
                          bsTooltip(ns("button_upd_table"),
@@ -196,22 +195,39 @@ fittingAdvUI <- function(id, label) {
                        title = "Data Input",
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
                        rHandsontableOutput(ns("hotable"))
+                       # ,
                        # rHandsontableOutput(ns("hotable_dev"))
                    )
             ),
-            # Main tabBox ----
+
             column(width = 12,
-                   materialSwitch(
-                     inputId = "button_u_select",
-                     label = "Use u = 1",
-                     status = "primary",
-                     value = FALSE,
-                     right = FALSE
-                   )
-                   ,
-                   tabBox(width = 12,
+                   # Fitting options ----
+                   box(width = 3,
+                       title = "Fitting Options",
+                       status = "primary", solidHeader = F, collapsible = T,
+                       fluidRow(
+                         column(width = 12,
+                                # Fitting model
+                                selectInput(ns("model_select"),
+                                            label = "Fitting model",
+                                            choices = list("Poisson" = 1, "Quasipoisson" = 2),
+                                            selected = 1),
+                                # Use dispersion factor
+                                materialSwitch(
+                                  inputId = ns("button_u_select"),
+                                  label = "Use u = 1",
+                                  status = "primary",
+                                  value = FALSE,
+                                  right = FALSE
+                                ),
+                                # Button
+                                actionButton(ns("button_fit"), "Calculate")
+                         )
+                       )
+                   ),
+                   # Main tabBox ----
+                   tabBox(width = 8,
                           side = "left",
-                          # height = "500px",
                           # selected = "Tab3",
                           tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
                           tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
@@ -219,12 +235,16 @@ fittingAdvUI <- function(id, label) {
                           tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
                           tabPanel("Used method"),
                           tabPanel("Summary")
-                   ),
-                   # Placeholder actionButtons
-                   actionButton(ns("button_save_data"), "Save Data"),
-                   actionButton(ns("button_download report"), "Download Report")
+                   )
+            ),
+            # Export data and results ----
+            box(width = 5,
+                title = "Export options",
+                status = "success", solidHeader = F, collapsible = T,
+                # Placeholder actionButtons
+                actionButton(ns("button_save_data"), "Save Data"),
+                actionButton(ns("button_download report"), "Download Report")
             )
-
           )
   )
 }
