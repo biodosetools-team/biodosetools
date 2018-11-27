@@ -162,8 +162,8 @@ fittingAdvUI <- function(id, label) {
                        fluidRow(
                          column(width = 12,
                                 # Inputs
-                                numericInput(ns("num.doses"), "Number of doses", value = 2),
-                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 6),
+                                numericInput(ns("num.doses"), "Number of doses", value = 10),
+                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
                                 # Button
                                 actionButton(ns("button_upd_table"), "Generate table")
                          ),
@@ -186,8 +186,6 @@ fittingAdvUI <- function(id, label) {
                        title = "Data Input",
                        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
                        rHandsontableOutput(ns("hotable"))
-                       # ,
-                       # rHandsontableOutput(ns("hotable_dev"))
                    )
             ),
 
@@ -243,9 +241,17 @@ fittingAdvUI <- function(id, label) {
 
 fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
+  # Reset table ----
+  table.reset <- reactiveValues(value = 0)
+
+  observeEvent(input$button_upd_table, {
+    table.reset$value <- 1
+  })
+
   # Initialize data frame ----
   previous <- reactive({
 
+    # Create button dependency for updating dimensions
     input$button_upd_table
 
     isolate({
@@ -259,16 +265,20 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     colnames(DF.base) <- paste0("C", seq(0, num.dicentrics -1, 1))
     # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
-    DF <- cbind(DF.dose, DF.base)
-    return(DF %>% dplyr::mutate(D = as.numeric(D)))
+    DF <- cbind(DF.dose, DF.base) %>%
+      dplyr::mutate(D = as.numeric(D))
+
+    return(DF)
   })
 
   # Reactive data frame ----
   changed.data <- reactive({
-    if (is.null(input$hotable)) {
-      return(
-        previous()
-      )
+    # Create button dependency for updating dimensions
+    input$button_upd_table
+
+    if (is.null(input$hotable) || isolate(table.reset$value == 1) ) {
+      table.reset$value <- 0
+      return(previous())
     } else if (!identical(previous(), input$hotable)) {
 
       mytable <- as.data.frame(hot_to_r(input$hotable))
@@ -283,19 +293,15 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
           X = as.integer(rowSums(.[3:num.dicentrics]))
         )
 
-      mytable
+      return(mytable)
     }
   })
-
 
   # Output ----
   output$hotable <- renderRHandsontable({
     rhandsontable(
       changed.data()
     )
-  })
-  output$hotable_dev <- renderRHandsontable({
-    rhandsontable(previous())
   })
 }
 
