@@ -45,7 +45,6 @@ fittingUI <- function(id, label) {
             column(width = 8,
                    tabBox(width = 12,
                           side = "left",
-                          # height = "500px",
                           # selected = "Tab3",
                           tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
                           tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
@@ -70,13 +69,11 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
       cell = as.numeric(unlist(strsplit(input$cells, ",")))
     })
 
-    # output$ttt <- renderTable({
     data.frame(
       Dose = dose,
       Aberrations = aberr,
       Cells = cell
     )
-    # })
   })
 
   # Output ----
@@ -103,12 +100,6 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     x1 <- cell * dose
     x2 <- cell * dose * dose
     model.data <- list(x0, x1, x2, aberr)
-
-    # result <- glm(
-    #   aberr ~  -1 + x1 + x2,
-    #   family = poisson(link = "identity"),
-    #   data = model.data
-    # )
 
     result <- glm(
       aberr ~ -1 + x0 + x1 + x2,
@@ -300,8 +291,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
   # Output ----
   output$hotable <- renderRHandsontable({
     rhandsontable(
-      changed.data() #%>%
-        # hot_col("D", format = "0.0")
+      changed.data()
     )
   })
   output$hotable_dev <- renderRHandsontable({
@@ -323,13 +313,11 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
       cell <- table.df[["N"]]
     })
 
-    # output$ttt <- renderTable({
     data.frame(
       Dose = dose,
       Aberrations = aberr,
       Cells = cell
     )
-    # })
   })
 
   # Output ----
@@ -375,6 +363,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
         data = model.data
       )
     }
+
     # TODO: Manual model input
     # result <- glm(
     #   aberr ~  -1 + x1 + x2,
