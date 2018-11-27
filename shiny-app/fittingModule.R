@@ -208,7 +208,7 @@ fittingAdvUI <- function(id, label) {
                        fluidRow(
                          column(width = 12,
                                 # Fitting model
-                                selectInput(ns("model_select"),
+                                selectInput(ns("family_select"),
                                             label = "Fitting model",
                                             choices = list("Poisson" = 1, "Quasipoisson" = 2),
                                             selected = 1),
@@ -352,24 +352,35 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       dose <- table.df[["D"]]
       aberr <- table.df[["X"]]
       cell <- table.df[["N"]]
+      model.family <- input$family_select
     })
 
+    # Construct predictors and model data
     x0 <- cell
     x1 <- cell * dose
     x2 <- cell * dose * dose
     model.data <- list(x0, x1, x2, aberr)
 
+    # Select model family
+    if (model.family == 1) {
+      result <- glm(
+        aberr ~ -1 + x0 + x1 + x2,
+        family = poisson(link = "identity"),
+        data = model.data
+      )
+    } else if (model.family == 2) {
+      result <- glm(
+        aberr ~ -1 + x0 + x1 + x2,
+        family = quasipoisson(link = "identity"),
+        data = model.data
+      )
+    }
+    # TODO: Manual model input
     # result <- glm(
     #   aberr ~  -1 + x1 + x2,
     #   family = poisson(link = "identity"),
     #   data = model.data
     # )
-
-    result <- glm(
-      aberr ~ -1 + x0 + x1 + x2,
-      family = poisson(link = "identity"),
-      data = model.data
-    )
 
     smry <- summary(result, correlation = TRUE)
     smry$coefficients
