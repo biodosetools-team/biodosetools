@@ -284,14 +284,39 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
       # Calculated columns
-      num.dicentrics <- ncol(mytable) - 2
+      mytable <- mytable %>%
+        mutate(
+          N = 0,
+          X = 0,
+          DI = 0
+        ) %>%
+        select(D, N, X, everything())
+
+      last.dicent.index <- ncol(mytable) - 1
+      num.rows <- nrow(mytable)
 
       mytable <- mytable %>%
         mutate(
           D = as.numeric(D),
-          N = as.integer(rowSums(.[2:num.dicentrics])),
-          X = as.integer(rowSums(.[3:num.dicentrics]))
+          N = as.integer(rowSums(.[4:last.dicent.index]))
         )
+
+      # Ugly method to calculate index of dispersion
+      for (row in 1:num.rows) {
+        xf <- 0
+        x2f <- 0
+        # Calculate summatories
+        for (k in seq(0, last.dicent.index - 4, 1)) {
+          xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
+          x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
+        }
+        # Calculate variance and mean
+        var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
+        mean <- xf / mytable[row, "N"]
+        # Save values into data frame
+        mytable[row,"X"] <- as.integer(xf)
+        mytable[row,"DI"] <- var / mean
+      }
 
       return(mytable)
     }
