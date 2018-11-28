@@ -288,16 +288,18 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         mutate(
           N = 0,
           X = 0,
-          DI = 0
+          DI = 0,
+          u = 0
         ) %>%
         select(D, N, X, everything())
 
-      last.dicent.index <- ncol(mytable) - 1
+      last.dicent.index <- ncol(mytable) - 2
       num.rows <- nrow(mytable)
 
       mytable <- mytable %>%
         mutate(
           D = as.numeric(D),
+          X = as.integer(X),
           N = as.integer(rowSums(.[4:last.dicent.index]))
         )
 
@@ -314,8 +316,9 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
         mean <- xf / mytable[row, "N"]
         # Save values into data frame
-        mytable[row,"X"] <- as.integer(xf)
-        mytable[row,"DI"] <- var / mean
+        mytable[row, "X"] <- as.integer(xf)
+        mytable[row, "DI"] <- var / mean
+        mytable[row, "u"] <- (var / mean - 1) * sqrt( (mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])) )
       }
 
       return(mytable)
