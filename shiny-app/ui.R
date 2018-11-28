@@ -31,8 +31,8 @@ sidebar <- dashboardSidebar(
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = F),
     menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = T),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
-    menuItem("Check Distribution", tabName = "model-c", icon = icon("area-chart")),
-    menuItem("Intercomparison Tests", tabName = "model-d", icon = icon("check-circle"))
+    menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
+    menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
   )
 )
 
@@ -49,7 +49,7 @@ body <- dashboardBody(
     tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700)"))
   ),
 
-  # Home ####
+  # Home ----
   tabItems(
     tabItem(tabName = "home",
             h2("About this project", style = "margin-left: 10%;"),
@@ -69,14 +69,14 @@ body <- dashboardBody(
     ),
 
 
-    # Fitting  ####
-    fittingUI(id = "model-b", label = "tab-fitting-b"),
+    # Fitting  ----
+    fittingUI(id = "fitting", label = "tab-fitting-b"),
 
-    # Advanced Fitting ####
-    fittingAdvUI(id = "model-c", label = "tab-fitting-c"),
+    # Advanced Fitting ----
+    fittingAdvUI(id = "adv_fitting", label = "tab-fitting-c"),
 
 
-    # Dose Estimation ####
+    # Dose Estimation ----
     tabItem(tabName = "tab-estimate",
             h2("Dose Estimation")
     )
