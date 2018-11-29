@@ -203,10 +203,10 @@ fittingAdvUI <- function(id, label) {
                                             selected = 1),
                                 # Use dispersion factor
                                 materialSwitch(
-                                  inputId = ns("button_u_select"),
-                                  label = "Use u = 1",
+                                  inputId = ns("slider_disp_select"),
+                                  label = "Use σ²/y = 1",
                                   status = "primary",
-                                  value = FALSE,
+                                  value = TRUE,
                                   right = FALSE
                                 ),
                                 # Button
@@ -374,7 +374,10 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       dose <- table.df[["D"]]
       aberr <- table.df[["X"]]
       cell <- table.df[["N"]]
+      disp <- table.df[["DI"]]
+
       model.family <- input$family_select
+      disp.select <- input$slider_disp_select
     })
 
     # Construct predictors and model data
@@ -383,17 +386,26 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     x2 <- cell * dose * dose
     model.data <- list(x0, x1, x2, aberr)
 
+    # Weight selection
+    if (disp.select) {
+      weights <- rep(1, length(dose))
+    } else {
+      weights <- 1 / disp
+    }
+
     # Select model family
     if (model.family == 1) {
       result <- glm(
         aberr ~ -1 + x0 + x1 + x2,
         family = poisson(link = "identity"),
+        weights = weights,
         data = model.data
       )
     } else if (model.family == 2) {
       result <- glm(
         aberr ~ -1 + x0 + x1 + x2,
         family = quasipoisson(link = "identity"),
+        weights = weights,
         data = model.data
       )
     }
