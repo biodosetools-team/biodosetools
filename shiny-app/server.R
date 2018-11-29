@@ -18,5 +18,3 @@ server <- function(input, output) {
   # callModule(module = fittingAdvTable, id = "adv_fitting")
   callModule(module = fittingAdvResults, id = "adv_fitting")
 }
-
-

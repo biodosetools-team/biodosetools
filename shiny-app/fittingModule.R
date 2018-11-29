@@ -4,69 +4,83 @@ fittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  tabItem(tabName = label,
-          h2("Dose-effect Fitting"),
-          fluidRow(
-            # Input and data boxes ----
-            column(width = 4,
-                   box(width = 12,
-                       title = "Inputs",
-                       status = "primary", solidHeader = F, collapsible = T,
-                       # Inputs
-                       textInput(inputId = ns("dose"),
-                                 label = "Dose",
-                                 value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"),
-                       textInput(inputId = ns("aberr"),
-                                 label = "Aberrations",
-                                 value = "8,14,22,55,100,109,100,103,108,103,107"),
-                       textInput(inputId = ns("cells"),
-                                 label = "Cells",
-                                 value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"),
+  tabItem(
+    tabName = label,
+    h2("Dose-effect Fitting"),
+    fluidRow(
+      # Input and data boxes ----
+      column(
+        width = 4,
+        box(
+          width = 12,
+          title = "Inputs",
+          status = "primary", solidHeader = F, collapsible = T,
+          # Inputs
+          textInput(
+            inputId = ns("dose"),
+            label = "Dose",
+            value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"
+          ),
+          textInput(
+            inputId = ns("aberr"),
+            label = "Aberrations",
+            value = "8,14,22,55,100,109,100,103,108,103,107"
+          ),
+          textInput(
+            inputId = ns("cells"),
+            label = "Cells",
+            value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"
+          ),
 
-                       # Tooltips
-                       bsTooltip(ns("dose"), "List of doses",
-                                 "right", options = list(container = "body")),
-                       bsTooltip(ns("aberr"), "Aberrations count",
-                                 "right", options = list(container = "body")),
-                       bsTooltip(ns("cells"), "Cells count",
-                                 "right", options = list(container = "body")),
+          # Tooltips
+          bsTooltip(ns("dose"), "List of doses",
+            "right",
+            options = list(container = "body")
+          ),
+          bsTooltip(ns("aberr"), "Aberrations count",
+            "right",
+            options = list(container = "body")
+          ),
+          bsTooltip(ns("cells"), "Cells count",
+            "right",
+            options = list(container = "body")
+          ),
 
-                       # Button
-                       actionButton(ns("button_fit"), "Calculate")
-                   ),
-                   box(width = 12,
-                       title = "Data",
-                       status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-                       tableOutput(outputId = ns("table"))
-                   )
-            )
-            ,
-            # Results tabBox ----
-            column(width = 8,
-                   tabBox(width = 12,
-                          side = "left",
-                          # selected = "Tab3",
-                          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-                          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-                          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
-                          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
-                   )
-            )
-
-          )
+          # Button
+          actionButton(ns("button_fit"), "Calculate")
+        ),
+        box(
+          width = 12,
+          title = "Data",
+          status = "primary", solidHeader = F, collapsible = T, collapsed = T,
+          tableOutput(outputId = ns("table"))
+        )
+      ),
+      # Results tabBox ----
+      column(
+        width = 8,
+        tabBox(
+          width = 12,
+          side = "left",
+          # selected = "Tab3",
+          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
+          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
+        )
+      )
+    )
   )
 }
 
 fittingTable <- function(input, output, session, stringsAsFactors) {
-
   table <- reactive({
-
     input$button_fit
 
     isolate({
-      dose = as.numeric(unlist(strsplit(input$dose, ",")))
-      aberr = as.numeric(unlist(strsplit(input$aberr, ",")))
-      cell = as.numeric(unlist(strsplit(input$cells, ",")))
+      dose <- as.numeric(unlist(strsplit(input$dose, ",")))
+      aberr <- as.numeric(unlist(strsplit(input$aberr, ",")))
+      cell <- as.numeric(unlist(strsplit(input$cells, ",")))
     })
 
     data.frame(
@@ -87,13 +101,12 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({
-
     input$button_fit
 
     isolate({
-      dose = as.numeric(unlist(strsplit(input$dose, ",")))
-      aberr = as.numeric(unlist(strsplit(input$aberr, ",")))
-      cell = as.numeric(unlist(strsplit(input$cells, ",")))
+      dose <- as.numeric(unlist(strsplit(input$dose, ",")))
+      aberr <- as.numeric(unlist(strsplit(input$aberr, ",")))
+      cell <- as.numeric(unlist(strsplit(input$cells, ",")))
     })
 
     x0 <- cell
@@ -142,7 +155,6 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     # "Correlation matrix 'corma'"
     data()[[4]]
   })
-
 }
 
 
@@ -151,90 +163,103 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
 fittingAdvUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
-  tabItem(tabName = label,
-          h2("Dose-effect Fitting"),
+  tabItem(
+    tabName = label,
+    h2("Dose-effect Fitting"),
+    fluidRow(
+      # Input box ----
+      column(
+        width = 12,
+        box(
+          width = 3,
+          title = "Input Options",
+          status = "primary", solidHeader = F, collapsible = T,
           fluidRow(
-            # Input box ----
-            column(width = 12,
-                   box(width = 3,
-                       title = "Input Options",
-                       status = "primary", solidHeader = F, collapsible = T,
-                       fluidRow(
-                         column(width = 12,
-                                # Inputs
-                                numericInput(ns("num.doses"), "Number of doses", value = 10),
-                                numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
-                                # Button
-                                actionButton(ns("button_upd_table"), "Generate table")
-                         ),
-                         # Tooltip
-                         bsTooltip(ns("button_upd_table"),
-                                   "Note that previously introduced data will be deleted.",
-                                   "bottom", options = list(container = "body"))
-                       )
-                   ),
-
-                   # Table ----
-                   # box(width = 12,
-                   #     title = "Data",
-                   #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-                   #     tableOutput(outputId = ns("table"))
-                   # ),
-
-                   # Hot Table ----
-                   box(width = 9,
-                       title = "Data Input",
-                       status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-                       rHandsontableOutput(ns("hotable"))
-                   )
+            column(
+              width = 12,
+              # Inputs
+              numericInput(ns("num.doses"), "Number of doses", value = 10),
+              numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+              # Button
+              actionButton(ns("button_upd_table"), "Generate table")
             ),
-
-            column(width = 12,
-                   # Fitting options ----
-                   box(width = 3,
-                       title = "Fitting Options",
-                       status = "primary", solidHeader = F, collapsible = T,
-                       fluidRow(
-                         column(width = 12,
-                                # Fitting model
-                                selectInput(ns("family_select"),
-                                            label = "Fitting model",
-                                            choices = list("Poisson" = 1, "Quasipoisson" = 2),
-                                            selected = 1),
-                                # Use dispersion factor
-                                materialSwitch(
-                                  inputId = ns("slider_disp_select"),
-                                  label = "Use σ²/y = 1",
-                                  status = "primary",
-                                  value = TRUE,
-                                  right = FALSE
-                                ),
-                                # Button
-                                actionButton(ns("button_fit"), "Calculate")
-                         )
-                       )
-                   ),
-                   # Main tabBox ----
-                   tabBox(width = 8,
-                          side = "left",
-                          # selected = "Tab3",
-                          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-                          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-                          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
-                          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
-                          tabPanel("Used method"),
-                          tabPanel("Summary")
-                   )
-            ),
-            # Export data and results ----
-            box(width = 5,
-                title = "Export options",
-                status = "success", solidHeader = F, collapsible = T,
-                # Placeholder actionButtons
-                actionButton(ns("button_save_data"), "Save Data"),
-                actionButton(ns("button_download report"), "Download Report")
+            # Tooltip
+            bsTooltip(ns("button_upd_table"),
+              "Note that previously introduced data will be deleted.",
+              "bottom",
+              options = list(container = "body")
             )
           )
+        ),
+
+        # Table ----
+        # box(width = 12,
+        #     title = "Data",
+        #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
+        #     tableOutput(outputId = ns("table"))
+        # ),
+
+        # Hot Table ----
+        box(
+          width = 9,
+          title = "Data Input",
+          status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+          rHandsontableOutput(ns("hotable"))
+        )
+      ),
+
+      column(
+        width = 12,
+        # Fitting options ----
+        box(
+          width = 3,
+          title = "Fitting Options",
+          status = "primary", solidHeader = F, collapsible = T,
+          fluidRow(
+            column(
+              width = 12,
+              # Fitting model
+              selectInput(ns("family_select"),
+                label = "Fitting model",
+                choices = list("Poisson" = 1, "Quasipoisson" = 2),
+                selected = 1
+              ),
+              # Use dispersion factor
+              materialSwitch(
+                inputId = ns("slider_disp_select"),
+                label = "Use σ²/y = 1",
+                status = "primary",
+                value = TRUE,
+                right = FALSE
+              ),
+              # Button
+              actionButton(ns("button_fit"), "Calculate")
+            )
+          )
+        ),
+        # Main tabBox ----
+        tabBox(
+          width = 8,
+          side = "left",
+          # selected = "Tab3",
+          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
+          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
+          tabPanel("Used method"),
+          tabPanel("Summary")
+        )
+      ),
+      # Export data and results ----
+      box(
+        width = 5,
+        title = "Export options",
+        status = "success", solidHeader = F, collapsible = T,
+        # Placeholder actionButtons
+        actionButton(ns("button_save_data"), "Save Data"),
+        actionButton(ns("button_download report"), "Download Report")
+      )
+    )
   )
 }
 
@@ -262,7 +287,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     DF.dose <- data.frame(D = rep(0.0, num.doses))
     DF.base <- data.frame(matrix(0, nrow = num.doses, ncol = num.dicentrics))
 
-    colnames(DF.base) <- paste0("C", seq(0, num.dicentrics -1, 1))
+    colnames(DF.base) <- paste0("C", seq(0, num.dicentrics - 1, 1))
     # DF.calc <- data.frame(N = rep(0, num.doses), X = rep(0, num.doses))
 
     DF <- cbind(DF.dose, DF.base) %>%
@@ -276,11 +301,10 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     # Create button dependency for updating dimensions
     input$button_upd_table
 
-    if (is.null(input$hotable) || isolate(table.reset$value == 1) ) {
+    if (is.null(input$hotable) || isolate(table.reset$value == 1)) {
       table.reset$value <- 0
       return(previous())
     } else if (!identical(previous(), input$hotable)) {
-
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
       # Calculated columns
@@ -318,7 +342,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         # Save values into data frame
         mytable[row, "X"] <- as.integer(xf)
         mytable[row, "DI"] <- var / mean
-        mytable[row, "u"] <- (var / mean - 1) * sqrt( (mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])) )
+        mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
       }
 
       return(mytable)
@@ -334,9 +358,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 }
 
 fittingAdvTable <- function(input, output, session, stringsAsFactors) {
-
   table <- reactive({
-
     input$button_fit
 
     isolate({
@@ -365,7 +387,6 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({
-
     input$button_fit
 
     isolate({
@@ -452,5 +473,4 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # "Correlation matrix 'corma'"
     data()[[4]]
   })
-
 }

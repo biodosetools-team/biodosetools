@@ -8,7 +8,7 @@ library(shinyjs)
 library(shinyBS)
 
 # Theming
-source("libs/theming.R", local=T)
+source("libs/theming.R", local = T)
 
 # Modules
 source("fittingModule.R")
@@ -27,9 +27,9 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
-    menuItem("About this App", tabName = "home",  icon = icon("home"), selected = F),
-    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b",  icon = icon("th-list"), selected = F),
-    menuItem("Advanced Fitting", tabName = "tab-fitting-c",  icon = icon("th-list"), selected = T),
+    menuItem("About this App", tabName = "home", icon = icon("home"), selected = F),
+    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b", icon = icon("th-list"), selected = F),
+    menuItem("Advanced Fitting", tabName = "tab-fitting-c", icon = icon("th-list"), selected = T),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
     menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
     menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
@@ -51,21 +51,22 @@ body <- dashboardBody(
 
   # Home ----
   tabItems(
-    tabItem(tabName = "home",
-            h2("About this project", style = "margin-left: 10%;"),
-            includeMarkdown("body.md"),
-              actionButton(
-                inputId='github_link', label="Source code",
-                icon = icon("github"),
-                style = "margin-left: 10%; color: #fff; background-color: #6C63FF; border-color: #514bc0",
-                onclick ="window.open('https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
-              ),
-              actionButton(
-                inputId='wiki_link', label="Documentation",
-                icon = icon("book"),
-                style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
-                onclick ="window.open('https://biodosimetry-uab.gitbook.io/wiki/', '_blank')"
-              )
+    tabItem(
+      tabName = "home",
+      h2("About this project", style = "margin-left: 10%;"),
+      includeMarkdown("body.md"),
+      actionButton(
+        inputId = "github_link", label = "Source code",
+        icon = icon("github"),
+        style = "margin-left: 10%; color: #fff; background-color: #6C63FF; border-color: #514bc0",
+        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
+      ),
+      actionButton(
+        inputId = "wiki_link", label = "Documentation",
+        icon = icon("book"),
+        style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
+        onclick = "window.open('https://biodosimetry-uab.gitbook.io/wiki/', '_blank')"
+      )
     ),
 
 
@@ -77,10 +78,10 @@ body <- dashboardBody(
 
 
     # Dose Estimation ----
-    tabItem(tabName = "tab-estimate",
-            h2("Dose Estimation")
+    tabItem(
+      tabName = "tab-estimate",
+      h2("Dose Estimation")
     )
-
   )
 )
 
@@ -89,7 +90,7 @@ body <- dashboardBody(
 
 ui <- dashboardPage(
   # skin = "purple",
-  title = paste(app_name, collapse=' '),
+  title = paste(app_name, collapse = " "),
   header,
   sidebar,
   body
