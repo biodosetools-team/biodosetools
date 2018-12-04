@@ -231,6 +231,61 @@ shinyDashboardLogoDIY <- function(fontFamily = 'sans-serif', boldText, mainText,
 }
 
 
+# Function: shinyDashboardAltLogoDIY -----------------------------------------
+#' Creates a custom logo object for a shinydashboard application
+#'
+#' @param boldText String. Bold text for the logo.
+#' @param mainText String. Main text for the logo.
+#' @param textSize Numeric. Text size for the logo. Defaults to 15.
+#' @param badgeText String. Text for the logo badge.
+#' @param badgeTextColor String. Text color of the logo badge.
+#' @param badgeTextSize Numeric. Text color of the logo badge. Defaults to 2.
+#' @param badgeBackColor String. Background color of the logo badge.
+#' @param badgeBorderRadius Numeric. Border radius of the logo badge. Defaults to 3.
+#'
+#' @return HTML code. Logo for shinydashboard's sidebar.
+#' @examples
+#' logo_blue_gradient <- shinyDashboardLogoDIY(
+#'   boldText = "SD"
+#'   ,mainText = "Themes"
+#'   ,textSize = 16
+#'   ,badgeText = "BETA"
+#'   ,badgeTextColor = "white"
+#'   ,badgeTextSize = 2
+#'   ,badgeBackColor = "#40E0D0"
+#'   ,badgeBorderRadius = 3
+#' )
+#' @seealso \code{\link{shinyDashboardLogo}, \link{cssGradientThreeColors}}
+#' @note This logo design was inspired from \url{http://www.dataseries.org/}.
+#' @export
+shinyDashboardAltLogoDIY <- function(fontFamily = 'sans-serif', boldText, mainText, textSize = 15, badgeText, badgeTextColor,
+                                  badgeTextSize = 2, badgeBackColor, badgeBorderRadius = 3) {
+
+  htmltools::HTML(
+
+    paste0(
+
+      "<p style=\"font-family:", fontFamily, "; font-size:", textSize, "px\" >
+
+      <b> ", boldText, " ",
+
+      mainText ," </b>", "<span> &nbsp; </span>
+
+      <span style=\"background-color: ", badgeBackColor, ";
+
+      border-radius: ", badgeBorderRadius ,"px; \"> &nbsp;
+
+      <font color=\"", badgeTextColor, "\" size=\"", badgeTextSize, "\">",
+
+      badgeText ,"  </font> &nbsp; </span> <body> </p>"
+
+    )
+
+  )
+
+}
+
+
 # Function: shinyDashboardThemeDIY ----------------------------------------
 #' Creates a custom theme object for a shinydashboard application
 #'
@@ -993,7 +1048,7 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
 app_name <- c("Biodose", "Tools")
 app_version <- "ALPHA"
 
-logo_biodose <- shinyDashboardLogoDIY(
+logo_biodose <- shinyDashboardAltLogoDIY(
 
   fontFamily = 'Roboto'
   ,boldText = app_name[[1]]
