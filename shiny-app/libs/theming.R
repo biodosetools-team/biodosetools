@@ -11,11 +11,17 @@ app_name <- c(
 app_version <- "ALPHA"
 
 logo_biodose <- shinyDashboardAltLogoDIY(
+
+  # Icon ----
   icon = "icon_small.png",
+
+  # Text ----
   fontFamily = "Roboto",
   boldText = app_name[[1]],
   mainText = app_name[[2]],
   textSize = 18,
+
+  # Badge ----
   badgeText = app_version,
   badgeTextColor = "white",
   badgeTextSize = 2,
@@ -32,13 +38,13 @@ accent_color <- "rgb(91,94,168)"
 
 theme_biodose <- shinyDashboardThemeDIY(
 
-  ### general
+  # General ----
   appFontFamily = "Roboto",
   appFontColor = "rgb(0,0,0)",
   bodyFontSize = 16,
   bodyBackColor = "rgb(255,255,255)",
 
-  ### header
+  # Header ----
   logoBackColor = head_color,
   headerButtonBackColor = head_color_alt,
   headerButtonIconColor = "rgb(255,255,255)",
@@ -48,7 +54,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   headerBoxShadowColor = "rgb(220,220,220)",
   headerBoxShadowSize = "2px 3px 2px",
 
-  ### sidebar
+  # Sidebar ----
   sidebarBackColor = cssGradientThreeColors(
     direction = "right",
     colorStart = "rgb(241,241,241)",
@@ -99,7 +105,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   sidebarTabBorderWidthHover = 0,
   sidebarTabRadiusHover = "0px",
 
-  ### boxes
+  # Boxes ----
   boxBackColor = "rgb(248,248,248)",
   boxBorderRadius = 0,
   boxShadowSize = "0px 0px 0px",
@@ -118,7 +124,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   tabBoxHighlightColor = "rgb(207,57,92)",
   tabBoxBorderRadius = 0,
 
-  ### inputs
+  # Inputs ----
   buttonBackColor = "rgb(240,240,240)",
   buttonTextColor = "rgb(80,80,80)",
   buttonBorderColor = "rgb(185,185,185)",
@@ -132,7 +138,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   textboxBackColorSelect = "rgb(255,255,255)",
   textboxBorderColorSelect = "rgb(210,210,210)",
 
-  ### tables
+  # Tables ----
   tableBackColor = "rgb(255,255,255)",
   tableBorderColor = "rgb(235,235,235)",
   tableBorderTopSize = 1,
