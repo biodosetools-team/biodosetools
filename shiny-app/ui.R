@@ -18,19 +18,32 @@ source("fittingModule.R")
 
 header <- dashboardHeader(
   # title = span(tagList(icon("calculator"), "Biodose Tool"))
-  title = logo_biodose
+  title = logo_biodose,
+  titleWidth = 280
 )
 
 
 # Sidebar --------------------------------------------------
 
 sidebar <- dashboardSidebar(
+  width = 280,
   sidebarMenu(
     id = "sidebarmenu",
     menuItem("About this App", tabName = "home", icon = icon("home"), selected = F),
+    selectInput(
+      "experiment_select", "Experiment",
+      choices = c("Option 1", "Option 2"),
+      selected = "Option 1",
+      multiple = FALSE,
+      selectize = TRUE
+    ),
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-b", icon = icon("th-list"), selected = F),
     menuItem("Advanced Fitting", tabName = "tab-fitting-c", icon = icon("th-list"), selected = T),
-    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
+    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator"),
+             menuItem('Partial body',
+                      tabName = 'a',
+                      icon = icon('line-chart'))
+             ),
     menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
     menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
   )
@@ -59,7 +72,7 @@ body <- dashboardBody(
         inputId = "github_link", label = "Source code",
         icon = icon("github"),
         style = "margin-left: 10%; color: #fff; background-color: #6C63FF; border-color: #514bc0",
-        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tool', '_blank')"
+        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
       ),
       actionButton(
         inputId = "wiki_link", label = "Documentation",
