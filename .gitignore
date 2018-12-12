@@ -3,7 +3,5 @@
 .RData
 .Ruserdata
 *.Rproj
-dose-analysis/
 gof/
 src/
-test/
