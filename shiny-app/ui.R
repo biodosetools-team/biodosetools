@@ -32,20 +32,25 @@ sidebar <- dashboardSidebar(
     menuItem("About this App", tabName = "home", icon = icon("home"), selected = F),
     selectInput(
       "experiment_select", "Experiment",
-      choices = c("Option 1", "Option 2"),
-      selected = "Option 1",
+      choices = c(
+        "Dicentrics",
+        "Micronuclei",
+        "Translocations",
+        "H2AX",
+        "Intercomparison Tests"
+        ),
+      selected = "Dicentrics",
       multiple = FALSE,
       selectize = TRUE
     ),
-    menuItem("Dose-effect Fitting", tabName = "tab-fitting-b", icon = icon("th-list"), selected = F),
-    menuItem("Advanced Fitting", tabName = "tab-fitting-c", icon = icon("th-list"), selected = T),
-    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator"),
-             menuItem('Partial body',
-                      tabName = 'a',
-                      icon = icon('line-chart'))
-             ),
-    menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
-    menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
+    menuItem("Dose-effect Fitting", tabName = "tab-fitting-main", icon = icon("th-list"), startExpanded = T,
+             menuSubItem("Simple Fitting", tabName = "tab-fitting-b",icon = icon("cog")),
+             menuSubItem("Advanced Fitting", tabName = "tab-fitting-c", icon = icon("cogs"), selected = T)
+    ),
+    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
+    menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
+    # menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
+    # menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
   )
 )
 
