@@ -13,7 +13,7 @@ app_version <- "ALPHA"
 logo_biodose <- shinyDashboardAltLogoDIY(
 
   # Icon ----
-  icon = "icon_small.png",
+  icon = "icon_small.svg",
 
   # Text ----
   fontFamily = "Roboto",
