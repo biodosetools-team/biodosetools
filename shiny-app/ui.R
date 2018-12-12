@@ -12,6 +12,7 @@ source("libs/theming.R", local = T)
 
 # Modules
 source("fittingModule.R")
+source("estimateModule.R")
 
 
 # Header ---------------------------------------------------
@@ -94,12 +95,9 @@ body <- dashboardBody(
     # Advanced Fitting ----
     fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
 
-
     # Dose Estimation ----
-    tabItem(
-      tabName = "tab-estimate",
-      h2("Dose Estimation")
-    )
+    estimateUI(id = "estimate", label = "tab-estimate")
+
   )
 )
 
