@@ -33,10 +33,30 @@ logo_biodose <- shinyDashboardAltLogoDIY(
 # Custom theme ---------------------------------------------
 
 # Custom colors
-head_color <- "#2EC27E"
+head_color <-     "#2EC27E"
 head_color_alt <- "#5B5EA8"
-accent_color <- "#311B92"
-main_color <- "#2EC27E"
+accent_color <-   "#311B92"
+main_color <-     "#2EC27E"
+
+# Box colors
+# primary_color <- "rgb(15,124,191)"
+# success_color <- "rgb(59,133,95)"
+# warning_color <- "rgb(178,83,149)"
+# danger_color <-  "rgb(207,57,92)"
+primary_color <- main_color
+success_color <- "rgb(59,133,95)"
+warning_color <- "rgb(178,83,149)"
+danger_color <-  "rgb(207,57,92)"
+
+# TabBox colors
+# tabbox_tabtext_color <-          "rgb(42,102,98)"
+# tabbox_tabtext_selected_color <- "rgb(207,57,92)"
+# tabbox_back_color <-             "rgb(248,248,248)"
+# tabbox_highlight_color <-        "rgb(207,57,92)"
+tabbox_tabtext_color <-          "black"
+tabbox_tabtext_selected_color <- "black"
+tabbox_back_color <-             "rgb(248,248,248)"
+tabbox_highlight_color <-        main_color
 
 theme_biodose <- shinyDashboardThemeDIY(
 
@@ -114,20 +134,16 @@ theme_biodose <- shinyDashboardThemeDIY(
   boxShadowColor = "",
   boxTitleSize = 18,
   boxDefaultColor = "rgb(248,248,248)",
-  # boxPrimaryColor = "rgb(15,124,191)",
-  boxPrimaryColor = accent_color,
-  boxSuccessColor = "rgb(59,133,95)",
-  boxWarningColor = "rgb(178,83,149)",
-  boxDangerColor = "rgb(207,57,92)",
+  boxPrimaryColor = primary_color,
+  boxSuccessColor = success_color,
+  boxWarningColor = warning_color,
+  boxDangerColor = danger_color,
   tabBoxTabColor = "rgb(248,248,248)",
   tabBoxTabTextSize = 14,
-  # tabBoxTabTextColor = "rgb(42,102,98)",
-  tabBoxTabTextColor = "black",
-  # tabBoxTabTextColorSelected = "rgb(207,57,92)",
-  tabBoxTabTextColorSelected = "black",
-  tabBoxBackColor = "rgb(248,248,248)",
-  # tabBoxHighlightColor = "rgb(207,57,92)",
-  tabBoxHighlightColor = main_color,
+  tabBoxTabTextColor = tabbox_tabtext_color,
+  tabBoxTabTextColorSelected = tabbox_tabtext_selected_color,
+  tabBoxBackColor = tabbox_back_color,
+  tabBoxHighlightColor =  tabbox_highlight_color,
   tabBoxBorderRadius = 0,
 
   # Inputs ----
