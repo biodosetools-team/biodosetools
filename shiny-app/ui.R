@@ -44,8 +44,8 @@ sidebar <- dashboardSidebar(
       selectize = TRUE
     ),
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-main", icon = icon("th-list"), startExpanded = T,
-             menuSubItem("Simple Fitting", tabName = "tab-fitting-b",icon = icon("cog")),
-             menuSubItem("Advanced Fitting", tabName = "tab-fitting-c", icon = icon("cogs"), selected = T)
+             menuSubItem("Simple Fitting", tabName = "tab-fitting-simple",icon = icon("cog")),
+             menuSubItem("Advanced Fitting", tabName = "tab-fitting-adv", icon = icon("cogs"), selected = T)
     ),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
     menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
@@ -89,10 +89,10 @@ body <- dashboardBody(
 
 
     # Fitting  ----
-    fittingUI(id = "fitting", label = "tab-fitting-b"),
+    fittingUI(id = "fitting", label = "tab-fitting-simple"),
 
     # Advanced Fitting ----
-    fittingAdvUI(id = "adv_fitting", label = "tab-fitting-c"),
+    fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
 
 
     # Dose Estimation ----

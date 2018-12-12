@@ -167,98 +167,88 @@ fittingAdvUI <- function(id, label) {
     tabName = label,
     h2("Dose-effect Fitting"),
     fluidRow(
+
       # Input box ----
-      column(
-        width = 12,
-        box(
-          width = 3,
-          title = "Input Options",
-          status = "primary", solidHeader = F, collapsible = T,
-          fluidRow(
-            column(
-              width = 12,
-              # Inputs
-              numericInput(ns("num.doses"), "Number of doses", value = 10),
-              numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
-              # Button
-              actionButton(ns("button_upd_table"), "Generate table")
-            ),
-            # Tooltip
-            bsTooltip(ns("button_upd_table"),
-              "Note that previously introduced data will be deleted.",
-              "bottom",
-              options = list(container = "body")
-            )
-          )
-        ),
-
-        # Table ----
-        # box(width = 12,
-        #     title = "Data",
-        #     status = "primary", solidHeader = F, collapsible = T, collapsed = T,
-        #     tableOutput(outputId = ns("table"))
-        # ),
-
-        # Hot Table ----
-        box(
-          width = 9,
-          title = "Data Input",
-          status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-          rHandsontableOutput(ns("hotable"))
-        )
-      ),
-
-      column(
-        width = 12,
-        # Fitting options ----
-        box(
-          width = 3,
-          title = "Fitting Options",
-          status = "primary", solidHeader = F, collapsible = T,
-          fluidRow(
-            column(
-              width = 12,
-              # Fitting model
-              selectInput(ns("family_select"),
-                label = "Fitting model",
-                choices = list("Poisson" = 1, "Quasipoisson" = 2),
-                selected = 1
-              ),
-              # Use dispersion factor
-              materialSwitch(
-                inputId = ns("slider_disp_select"),
-                label = "Use σ²/y = 1",
-                status = "primary",
-                value = TRUE,
-                right = FALSE
-              ),
-              # Button
-              actionButton(ns("button_fit"), "Calculate")
-            )
-          )
-        ),
-        # Main tabBox ----
-        tabBox(
-          width = 8,
-          side = "left",
-          # selected = "Tab3",
-          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
-          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
-          tabPanel("Used method"),
-          tabPanel("Summary")
-        )
-      ),
-      # Export data and results ----
       box(
-        width = 5,
-        title = "Export options",
-        status = "success", solidHeader = F, collapsible = T,
-        # Placeholder actionButtons
-        actionButton(ns("button_save_data"), "Save Data"),
-        actionButton(ns("button_download report"), "Download Report")
+        width = 3,
+        title = "Data Input Options",
+        status = "primary", solidHeader = F, collapsible = T,
+        fluidRow(
+          column(
+            width = 12,
+            # Inputs
+            numericInput(ns("num.doses"), "Number of doses", value = 10),
+            numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+            # Button
+            actionButton(ns("button_upd_table"), "Generate table")
+          ),
+          # Tooltip
+          bsTooltip(ns("button_upd_table"),
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
+          )
+        )
+      ),
+
+      # Fitting options ----
+      box(
+        width = 3,
+        title = "Fitting Options",
+        status = "primary", solidHeader = F, collapsible = T,
+        fluidRow(
+          column(
+            width = 12,
+            # Fitting model
+            selectInput(ns("family_select"),
+              label = "Fitting model",
+              choices = list("Poisson" = 1, "Quasipoisson" = 2),
+              selected = 1
+            ),
+            # Use dispersion factor
+            materialSwitch(
+              inputId = ns("slider_disp_select"),
+              label = "Use σ²/y = 1",
+              status = "primary",
+              value = TRUE,
+              right = FALSE
+            ),
+            # Button
+            actionButton(ns("button_fit"), "Calculate")
+          )
+        )
       )
+    ),
+
+    # Hot Table ----
+    box(
+      width = 9,
+      title = "Data Input",
+      status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+      rHandsontableOutput(ns("hotable"))
+    ),
+
+    # Main tabBox ----
+    tabBox(
+      width = 9,
+      side = "left",
+      # selected = "Tab3",
+      tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+      tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+      tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
+      tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
+      tabPanel("Used method"),
+      tabPanel("Summary")
+    ),
+
+    # Export data and results ----
+    box(
+      width = 5,
+      title = "Export options",
+      status = "success", solidHeader = F, collapsible = T,
+      # Placeholder actionButtons
+      actionButton(ns("button_save_data"), "Save Data"),
+      actionButton(ns("button_download report"), "Download Report")
     )
   )
 }
