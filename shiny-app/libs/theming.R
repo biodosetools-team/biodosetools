@@ -32,29 +32,26 @@ logo_biodose <- shinyDashboardAltLogoDIY(
 
 # Custom theme ---------------------------------------------
 
-head_color <- "rgb(46,194,126)"
-head_color_alt <- "rgb(91,94,168)"
-accent_color <- "rgb(49,27,146)"
-main_color <- "rgb(46,194,126)"
-
-# Standard colors
-black_color <- "rgb(0,0,0)"
-white_color <- "rgb(255,255,255)"
+# Custom colors
+head_color <- "#2EC27E"
+head_color_alt <- "#5B5EA8"
+accent_color <- "#311B92"
+main_color <- "#2EC27E"
 
 theme_biodose <- shinyDashboardThemeDIY(
 
   # General ----
   appFontFamily = "Roboto",
-  appFontColor = black_color,
+  appFontColor = "black",
   bodyFontSize = 16,
-  bodyBackColor = white_color,
+  bodyBackColor = "white",
 
   # Header ----
   logoBackColor = head_color,
   headerButtonBackColor = head_color_alt,
-  headerButtonIconColor = white_color,
+  headerButtonIconColor = "white",
   headerButtonBackColorHover = "rgb(58,61,141)",
-  headerButtonIconColorHover = black_color,
+  headerButtonIconColorHover = "black",
   headerBackColor = head_color_alt,
   headerBoxShadowColor = "rgb(220,220,220)",
   headerBoxShadowSize = "2px 3px 2px",
@@ -75,11 +72,11 @@ theme_biodose <- shinyDashboardThemeDIY(
   sidebarMenuBorderRadius = 0,
   sidebarShadowRadius = "0px 0px 0px",
   sidebarShadowColor = "",
-  sidebarUserTextColor = black_color,
-  sidebarSearchBackColor = white_color,
+  sidebarUserTextColor = "black",
+  sidebarSearchBackColor = "white",
   sidebarSearchIconColor = head_color_alt,
   sidebarSearchBorderColor = "rgb(210,210,210)",
-  sidebarTabTextColor = black_color,
+  sidebarTabTextColor = "black",
   sidebarTabTextSize = 14,
   sidebarTabBorderStyle = "none",
   sidebarTabBorderColor = "",
@@ -104,7 +101,7 @@ theme_biodose <- shinyDashboardThemeDIY(
     colorMiddlePos = 97,
     colorEndPos = 100
   ),
-  sidebarTabTextColorHover = black_color,
+  sidebarTabTextColorHover = "black",
   sidebarTabBorderStyleHover = "none",
   sidebarTabBorderColorHover = "",
   sidebarTabBorderWidthHover = 0,
@@ -125,9 +122,9 @@ theme_biodose <- shinyDashboardThemeDIY(
   tabBoxTabColor = "rgb(248,248,248)",
   tabBoxTabTextSize = 14,
   # tabBoxTabTextColor = "rgb(42,102,98)",
-  tabBoxTabTextColor = black_color,
+  tabBoxTabTextColor = "black",
   # tabBoxTabTextColorSelected = "rgb(207,57,92)",
-  tabBoxTabTextColorSelected = black_color,
+  tabBoxTabTextColorSelected = "black",
   tabBoxBackColor = "rgb(248,248,248)",
   # tabBoxHighlightColor = "rgb(207,57,92)",
   tabBoxHighlightColor = main_color,
@@ -141,14 +138,14 @@ theme_biodose <- shinyDashboardThemeDIY(
   buttonBackColorHover = "rgb(227,227,227)",
   buttonTextColorHover = "rgb(80,80,80)",
   buttonBorderColorHover = "rgb(210,210,210)",
-  textboxBackColor = white_color,
+  textboxBackColor = "white",
   textboxBorderColor = "rgb(210,210,210)",
   textboxBorderRadius = 0,
-  textboxBackColorSelect = white_color,
+  textboxBackColorSelect = "white",
   textboxBorderColorSelect = "rgb(210,210,210)",
 
   # Tables ----
-  tableBackColor = white_color,
+  tableBackColor = "white",
   tableBorderColor = "rgb(235,235,235)",
   tableBorderTopSize = 1,
   tableBorderRowSize = 1
