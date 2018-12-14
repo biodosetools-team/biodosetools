@@ -38,15 +38,21 @@ head_color_alt <- "#5B5EA8"
 accent_color <-   "#311B92"
 main_color <-     "#2EC27E"
 
+# Status colors
+options_color <- "#2B7C9A"
+inputs_color <-  "#5B5EA8"
+results_color <- main_color
+export_color <-  "#F6A945"
+
 # Box colors
 # primary_color <- "rgb(15,124,191)"
 # success_color <- "rgb(59,133,95)"
 # warning_color <- "rgb(178,83,149)"
 # danger_color <-  "rgb(207,57,92)"
-primary_color <- main_color
-success_color <- "rgb(59,133,95)"
-warning_color <- "rgb(178,83,149)"
-danger_color <-  "rgb(207,57,92)"
+primary_color <- inputs_color
+success_color <- results_color
+warning_color <- options_color
+danger_color <-  export_color
 
 # TabBox colors
 # tabbox_tabtext_color <-          "rgb(42,102,98)"
@@ -56,7 +62,7 @@ danger_color <-  "rgb(207,57,92)"
 tabbox_tabtext_color <-          "black"
 tabbox_tabtext_selected_color <- "black"
 tabbox_back_color <-             "rgb(248,248,248)"
-tabbox_highlight_color <-        main_color
+tabbox_highlight_color <-        results_color
 
 theme_biodose <- shinyDashboardThemeDIY(
 

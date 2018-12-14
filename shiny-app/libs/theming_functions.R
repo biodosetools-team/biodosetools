@@ -1,3 +1,5 @@
+### SRC: https://github.com/nik01010/dashboardthemes
+###
 ### ReadMe ------------------------------------------------------------------
 ### Purpose:        This script provides functions required for customising themes
 ###                 in shinydashboard applications.
