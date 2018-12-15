@@ -170,7 +170,7 @@ fittingAdvUI <- function(id, label) {
     h2("Dose-effect Fitting"),
     fluidRow(
 
-      # Input box ----
+      # Data input options ----
       box(
         width = 4,
         title = "Data Input Options",
@@ -417,6 +417,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     x0 <- cell
     x1 <- cell * dose
     x2 <- cell * dose * dose
+    model.data <- list(x0, x1, x2, aberr)
 
     # Weight selection
     if (disp.select) {
@@ -428,35 +429,28 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Select model formula
     if (model.formula == 2) {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
-      model.data <- list(x0, x1, x2, aberr)
+      fit.link <- "identity"
     } else if (model.formula == 1) {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1")
-      model.data <- list(x0, x1, aberr)
+      fit.link <- "log"
     }
+    # TODO: add automatic selection
 
     # Select model family
     if (model.family == 1) {
-      result <- glm(
-        formula = fit.formula,
-        family = poisson(link = "identity"),
-        weights = weights,
-        data = model.data
-      )
+      family.select <- "poisson"
     } else if (model.family == 2) {
-      result <- glm(
-        formula = fit.formula,
-        family = quasipoisson(link = "identity"),
-        weights = weights,
-        data = model.data
-      )
+      family.select <- "quasipoisson"
     }
+    # TODO: add automatic selection
 
-    # TODO: Manual model input
-    # result <- glm(
-    #   aberr ~  -1 + x1 + x2,
-    #   family = poisson(link = "identity"),
-    #   data = model.data
-    # )
+    # Calculate fit
+    result <- glm(
+      formula = fit.formula,
+      family = eval(parse(text = paste(family.select, "(link =", fit.link, ")"))),
+      weights = weights,
+      data = model.data
+    )
 
     smry <- summary(result, correlation = TRUE)
     smry$coefficients
