@@ -8,9 +8,9 @@ fittingUI <- function(id, label) {
     tabName = label,
     h2("Dose-effect Fitting"),
     fluidRow(
-      # Input and data boxes ----
       column(
         width = 4,
+        # Input box ----
         box(
           width = 12,
           title = "Inputs",
@@ -49,13 +49,15 @@ fittingUI <- function(id, label) {
           # Button
           actionButton(ns("button_fit"), "Calculate")
         ),
+        # Data box ----
         box(
           width = 12,
           title = "Data",
-          status = "primary", solidHeader = F, collapsible = T, collapsed = T,
+          status = "success", solidHeader = F, collapsible = T, collapsed = T,
           tableOutput(outputId = ns("table"))
         )
       ),
+
       # Results tabBox ----
       column(
         width = 8,
@@ -170,9 +172,9 @@ fittingAdvUI <- function(id, label) {
 
       # Input box ----
       box(
-        width = 3,
+        width = 4,
         title = "Data Input Options",
-        status = "primary", solidHeader = F, collapsible = T,
+        status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
             width = 12,
@@ -193,62 +195,81 @@ fittingAdvUI <- function(id, label) {
 
       # Fitting options ----
       box(
-        width = 3,
+        width = 4,
         title = "Fitting Options",
-        status = "primary", solidHeader = F, collapsible = T,
+        status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
             width = 12,
+            # Fitting formula
+            selectInput(
+              ns("formula_select"),
+              label = "Fitting formula",
+              choices = list("Linear" = 1, "Linear-quadratic" = 2),
+              selected = 2
+            ),
             # Fitting model
-            selectInput(ns("family_select"),
+            selectInput(
+              ns("family_select"),
               label = "Fitting model",
-              choices = list("Poisson" = 1, "Quasipoisson" = 2),
+              choices = list("Automatic" = 0, "Poisson" = 1, "Quasipoisson" = 2),
               selected = 1
             ),
             # Use dispersion factor
-            materialSwitch(
+            checkboxInput(
               inputId = ns("slider_disp_select"),
               label = "Use σ²/y = 1",
-              status = "primary",
-              value = TRUE,
-              right = FALSE
-            ),
-            # Button
-            actionButton(ns("button_fit"), "Calculate")
+              value = TRUE
+            )
+            # materialSwitch(
+            #   inputId = ns("slider_disp_select"),
+            #   label = "Use σ²/y = 1",
+            #   status = "primary",
+            #   value = TRUE,
+            #   right = FALSE
+            # )
           )
         )
       )
     ),
 
     # Hot Table ----
-    box(
-      width = 9,
-      title = "Data Input",
-      status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-      rHandsontableOutput(ns("hotable"))
+    fluidRow(
+      box(
+        width = 12,
+        title = "Data Input",
+        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+        rHandsontableOutput(ns("hotable")),
+        # Button
+        actionButton(ns("button_fit"), "Calculate fitting")
+      )
     ),
 
     # Main tabBox ----
-    tabBox(
-      width = 9,
-      side = "left",
-      # selected = "Tab3",
-      tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-      tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-      tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
-      tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
-      tabPanel("Used method"),
-      tabPanel("Summary")
+    fluidRow(
+      tabBox(
+        width = 12,
+        side = "left",
+        # selected = "Tab3",
+        tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+        tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+        tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
+        tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
+        tabPanel("Used method"),
+        tabPanel("Summary")
+      )
     ),
 
     # Export data and results ----
-    box(
-      width = 5,
-      title = "Export options",
-      status = "success", solidHeader = F, collapsible = T,
-      # Placeholder actionButtons
-      actionButton(ns("button_save_data"), "Save Data"),
-      actionButton(ns("button_download report"), "Download Report")
+    fluidRow(
+      box(
+        width = 5,
+        title = "Export options",
+        status = "danger", solidHeader = F, collapsible = T, collapsed = T,
+        # Placeholder actionButtons
+        actionButton(ns("button_save_data"), "Save Data"),
+        actionButton(ns("button_download report"), "Download Report")
+      )
     )
   )
 }
@@ -387,6 +408,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       cell <- table.df[["N"]]
       disp <- table.df[["DI"]]
 
+      model.formula <- input$formula_select
       model.family <- input$family_select
       disp.select <- input$slider_disp_select
     })
@@ -395,7 +417,6 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     x0 <- cell
     x1 <- cell * dose
     x2 <- cell * dose * dose
-    model.data <- list(x0, x1, x2, aberr)
 
     # Weight selection
     if (disp.select) {
@@ -404,17 +425,26 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       weights <- 1 / disp
     }
 
+    # Select model formula
+    if (model.formula == 2) {
+      fit.formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
+      model.data <- list(x0, x1, x2, aberr)
+    } else if (model.formula == 1) {
+      fit.formula <- as.formula("aberr ~ -1 + x0 + x1")
+      model.data <- list(x0, x1, aberr)
+    }
+
     # Select model family
     if (model.family == 1) {
       result <- glm(
-        aberr ~ -1 + x0 + x1 + x2,
+        formula = fit.formula,
         family = poisson(link = "identity"),
         weights = weights,
         data = model.data
       )
     } else if (model.family == 2) {
       result <- glm(
-        aberr ~ -1 + x0 + x1 + x2,
+        formula = fit.formula,
         family = quasipoisson(link = "identity"),
         weights = weights,
         data = model.data
