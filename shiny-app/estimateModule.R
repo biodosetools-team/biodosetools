@@ -12,7 +12,7 @@ estimateUI <- function(id, label) {
       box(
         width = 6,
         title = "Load Data",
-        status = "primary", solidHeader = F, collapsible = T,
+        status = "warning", solidHeader = F, collapsible = T,
 
         # Local data slider
         materialSwitch(
@@ -39,9 +39,41 @@ estimateUI <- function(id, label) {
           "right",
           options = list(container = "body")
         ),
-
         # Button
         actionButton(ns("button_load"), "Use data")
+      ),
+
+      # Data input options ----
+      box(
+        width = 4,
+        title = "Data Input Options",
+        status = "warning", solidHeader = F, collapsible = T,
+        fluidRow(
+          column(
+            width = 12,
+            # Inputs
+            numericInput(ns("num.doses"), "Number of doses", value = 1),
+            numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+            # Button
+            actionButton(ns("button_upd_table"), "Generate table")
+          ),
+          # Tooltip
+          bsTooltip(ns("button_upd_table"),
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
+          )
+        )
+      )
+    ),
+
+    # Hot Table ----
+    fluidRow(
+      box(
+        width = 12,
+        title = "Data Input",
+        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+        rHandsontableOutput(ns("hotable"))
       )
     )
   )
