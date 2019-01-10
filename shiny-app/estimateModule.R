@@ -52,7 +52,7 @@ estimateUI <- function(id, label) {
           column(
             width = 12,
             # Inputs
-            numericInput(ns("num.doses"), "Number of doses", value = 1),
+            numericInput(ns("num.doses"), "Number of cases", value = 1),
             numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
             # Button
             actionButton(ns("button_upd_table"), "Generate table")
