@@ -205,7 +205,12 @@ fittingAdvUI <- function(id, label) {
             selectInput(
               ns("formula_select"),
               label = "Fitting formula",
-              choices = list("Linear" = 1, "Linear-quadratic" = 2),
+              choices = list(
+                "Y = C + αD + βD²" = "lin-quad",
+                "Y = C + αD" = "lin",
+                "Y = αD + βD²" = "lin-quad-no-int",
+                "Y = αD" = "lin-no-int"
+              ),
               selected = 2
             ),
             # Fitting model
@@ -220,7 +225,22 @@ fittingAdvUI <- function(id, label) {
               inputId = ns("slider_disp_select"),
               label = "Use σ²/y = 1",
               value = TRUE
+            ),
+            # Help button
+            bsButton(ns("help_fit"),
+              class = "rightAlign",
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+            bsModal(
+              id = ns("help_fit_dialog"),
+              title = "Fitting Options Help",
+              trigger = ns("help_fit"),
+              size = "large",
+              withMathJax(includeMarkdown("help/fitting_options.md"))
             )
+            # div(style="display:inline-block",submitButton("Analysis"), style="float:right"),
             # materialSwitch(
             #   inputId = ns("slider_disp_select"),
             #   label = "Use σ²/y = 1",
@@ -228,6 +248,7 @@ fittingAdvUI <- function(id, label) {
             #   value = TRUE,
             #   right = FALSE
             # )
+
           )
         )
       )
@@ -241,6 +262,7 @@ fittingAdvUI <- function(id, label) {
         status = "primary", solidHeader = F, collapsible = T, collapsed = F,
         rHandsontableOutput(ns("hotable")),
         # Button
+        br(),
         actionButton(ns("button_fit"), "Calculate fitting")
       )
     ),
@@ -267,8 +289,8 @@ fittingAdvUI <- function(id, label) {
         title = "Export options",
         status = "danger", solidHeader = F, collapsible = T, collapsed = T,
         # Placeholder actionButtons
-        actionButton(ns("button_save_data"), "Save Data"),
-        actionButton(ns("button_download report"), "Download Report")
+        downloadButton(ns("button_save_data"), "Save Data"),
+        downloadButton(ns("button_download report"), "Download Report")
       )
     )
   )
@@ -427,12 +449,20 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Select model formula
-    if (model.formula == 2) {
+    if (model.formula == "lin-quad") {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
       fit.link <- "identity"
-    } else if (model.formula == 1) {
+    } else if (model.formula == "lin") {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1")
-      fit.link <- "log"
+      fit.link <- "identity"
+    }
+    else if (model.formula == "lin-quad-no-int") {
+      fit.formula <- as.formula("aberr ~ -1 + x1 + x2")
+      fit.link <- "identity"
+    }
+    else if (model.formula == "lin-no-int") {
+      fit.formula <- as.formula("aberr ~ -1 + x1")
+      fit.link <- "identity"
     }
     # TODO: add automatic selection
 
