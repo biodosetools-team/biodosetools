@@ -172,15 +172,30 @@ fittingAdvUI <- function(id, label) {
 
       # Data input options ----
       box(
-        width = 4,
+        width = 5,
         title = "Data Input Options",
         status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
             width = 12,
+            # Load data from file
+            checkboxInput(
+              inputId = ns("load_data"),
+              label = "Load data from file",
+              value = FALSE
+            ),
             # Inputs
-            numericInput(ns("num.doses"), "Number of doses", value = 10),
-            numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+            conditionalPanel(
+              condition = "!input.load_data",
+              ns = ns,
+              numericInput(ns("num.doses"), "Number of doses", value = 11),
+              numericInput(ns("num.dicentrics"), "Maximum number of dicentrics per cell", value = 5)
+            ),
+            conditionalPanel(
+              condition = "input.load_data",
+              ns = ns,
+              fileInput(ns("file"), label = "File input")
+            ),
             # Button
             actionButton(ns("button_upd_table"), "Generate table")
           ),
@@ -195,7 +210,7 @@ fittingAdvUI <- function(id, label) {
 
       # Fitting options ----
       box(
-        width = 4,
+        width = 5,
         title = "Fitting Options",
         status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
@@ -211,7 +226,7 @@ fittingAdvUI <- function(id, label) {
                 "Y = αD + βD²" = "lin-quad-no-int",
                 "Y = αD" = "lin-no-int"
               ),
-              selected = 2
+              selected = "lin-quad"
             ),
             # Fitting model
             selectInput(
@@ -240,15 +255,6 @@ fittingAdvUI <- function(id, label) {
               size = "large",
               withMathJax(includeMarkdown("help/fitting_options.md"))
             )
-            # div(style="display:inline-block",submitButton("Analysis"), style="float:right"),
-            # materialSwitch(
-            #   inputId = ns("slider_disp_select"),
-            #   label = "Use σ²/y = 1",
-            #   status = "primary",
-            #   value = TRUE,
-            #   right = FALSE
-            # )
-
           )
         )
       )
@@ -263,6 +269,7 @@ fittingAdvUI <- function(id, label) {
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
+        downloadButton(ns("save_count_data"), "Save Data"),
         actionButton(ns("button_fit"), "Calculate fitting")
       )
     ),
@@ -277,8 +284,8 @@ fittingAdvUI <- function(id, label) {
         tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
         tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
         tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
-        tabPanel("Used method"),
-        tabPanel("Summary")
+        # tabPanel("Plot"),
+        tabPanel("Report")
       )
     ),
 
@@ -289,8 +296,8 @@ fittingAdvUI <- function(id, label) {
         title = "Export options",
         status = "danger", solidHeader = F, collapsible = T, collapsed = T,
         # Placeholder actionButtons
-        downloadButton(ns("button_save_data"), "Save Data"),
-        downloadButton(ns("button_download report"), "Download Report")
+        downloadButton(ns("save_fit_data"), "Save fitting data"),
+        downloadButton(ns("save_report"), "Download report")
       )
     )
   )
@@ -517,4 +524,23 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # "Correlation matrix 'corma'"
     data()[[4]]
   })
+
+  # Export options ----
+  output$save_count_data <- downloadHandler(
+    filename = function() {
+      paste("count-data-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(hot_to_r(input$hotable), file)
+    }
+  )
+
+  output$save_fit_data <- downloadHandler(
+    filename = function() {
+      paste("fitting-data-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(hot_to_r(input$hotable), file)
+    }
+  )
 }
