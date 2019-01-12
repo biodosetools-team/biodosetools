@@ -391,9 +391,11 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Output ----
   output$hotable <- renderRHandsontable({
-    rhandsontable(
+    hot <- rhandsontable(
       changed.data()
     )
+    hot$x$contextMenu = list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
   })
 }
 
