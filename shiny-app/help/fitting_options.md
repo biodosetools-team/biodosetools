@@ -1,4 +1,5 @@
 #### Fitting Formula
+
 The objective of curve fitting is to determine those values of the coefficients $C$, $\alpha$ and $\beta$ which best fit the data points.
 
 - For low-LET radiation types there is very strong evidence that the yields of chromosome aberrations or micronuclei ($Y$) are related to dose ($D$) by the linear quadratic equation $Y = C + \alpha D + \beta D^{2}$. 
@@ -9,4 +10,4 @@ The user should check which model fits better with its data. However, because at
 
 #### Fitting Model
 
-Quasi-poisson should be used whenever there is a constant overdispersion.
+Normally the Poisson function should be used. However, if there is constant oversisperssion, the quasi-Poission is recommended.
