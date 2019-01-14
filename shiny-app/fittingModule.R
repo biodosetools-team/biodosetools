@@ -284,7 +284,7 @@ fittingAdvUI <- function(id, label) {
         tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
         tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("vakoma"))),
         tabPanel("Correlation matrix", verbatimTextOutput(ns("corma"))),
-        # tabPanel("Plot"),
+        tabPanel("Plot", plotOutput(ns("plot"))),
         tabPanel("Report")
       )
     ),
@@ -444,6 +444,11 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       disp.select <- input$slider_disp_select
     })
 
+    # Data frame for plot
+    plot.data <- data.frame(
+      dose, aberr, cell
+    )
+
     # Construct predictors and model data
     x0 <- cell
     x1 <- cell * dose
@@ -501,7 +506,19 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     vakoma <- corma * outer(seb, seb)
     vakoma <- vcov(result)
 
-    res_list <- list(result, bstat, vakoma, corma)
+    # Make plot
+    gg.curve <- ggplot(plot.data) +
+      geom_point(aes(x = dose, y = aberr/cell)) +
+      theme_bw()
+
+    # Make list of results to return
+    res_list <- list(
+      result = result,
+      bstat = bstat,
+      vakoma = vakoma,
+      corma = corma,
+      gg.curve = gg.curve
+    )
 
     return(res_list)
   })
@@ -509,22 +526,26 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
   # Outputs ----
   output$result <- renderPrint({
     # "Result of curve fit 'result'"
-    data()[[1]]
+    data()[["result"]]
   })
 
   output$bstat <- renderPrint({
     # "Coefficients 'bstat'"
-    data()[[2]]
+    data()[["bstat"]]
   })
 
   output$vakoma <- renderPrint({
     # "variance-covariance matrix 'vakoma'"
-    data()[[3]]
+    data()[["vakoma"]]
   })
 
   output$corma <- renderPrint({
     # "Correlation matrix 'corma'"
-    data()[[4]]
+    data()[["corma"]]
+  })
+
+  output$plot <- renderPlot({
+    data()[["gg.curve"]]
   })
 
   # Export options ----

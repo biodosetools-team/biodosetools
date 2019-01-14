@@ -4,6 +4,7 @@
 library(rhandsontable)
 library(shinyjs)
 library(dplyr)
+library(ggplot2)
 
 # Server ---------------------------------------------------
 
