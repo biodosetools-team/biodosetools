@@ -394,7 +394,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     hot <- rhandsontable(
       changed.data()
     )
-    hot$x$contextMenu = list(items = c("remove_row", "---------", "undo", "redo"))
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
   })
 }
@@ -466,19 +466,30 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (model.formula == "lin-quad") {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
       fit.link <- "identity"
+      curve.fun <- function(x) {
+        bstat[1, 1] + bstat[2, 1] * x + bstat[3, 1] * x * x
+      }
     } else if (model.formula == "lin") {
       fit.formula <- as.formula("aberr ~ -1 + x0 + x1")
       fit.link <- "identity"
+      curve.fun <- function(x) {
+        bstat[1, 1] + bstat[2, 1] * x
+      }
     }
     else if (model.formula == "lin-quad-no-int") {
       fit.formula <- as.formula("aberr ~ -1 + x1 + x2")
       fit.link <- "identity"
+      curve.fun <- function(x) {
+        bstat[2, 1] * x + bstat[3, 1] * x * x
+      }
     }
     else if (model.formula == "lin-no-int") {
       fit.formula <- as.formula("aberr ~ -1 + x1")
       fit.link <- "identity"
+      curve.fun <- function(x) {
+        bstat[2, 1] * x
+      }
     }
-    # TODO: add automatic selection
 
     # Select model family
     if (model.family == 1) {
@@ -486,7 +497,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     } else if (model.family == 2) {
       family.select <- "quasipoisson"
     }
-    # TODO: add automatic selection
+    # TODO: add automatic selection?
 
     # Calculate fit
     result <- glm(
@@ -508,7 +519,11 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Make plot
     gg.curve <- ggplot(plot.data) +
-      geom_point(aes(x = dose, y = aberr/cell)) +
+      geom_point(aes(x = dose, y = aberr / cell)) +
+      stat_function(
+        data = data.frame(x = c(0, max(dose))), aes(x),
+        fun = function(x) curve.fun(x)
+      ) +
       theme_bw()
 
     # Make list of results to return
