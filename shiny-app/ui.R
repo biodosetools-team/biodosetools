@@ -49,9 +49,14 @@ sidebar <- dashboardSidebar(
              menuSubItem("Advanced Fitting", tabName = "tab-fitting-adv", icon = icon("cogs"), selected = T)
     ),
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
-    menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
+    # menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
     # menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
     # menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
+    absolutePanel(
+      bottom = 10, width = "100%",
+      includeMarkdown("footer.md"),
+      style = "opacity: 1"
+    )
   )
 )
 
@@ -65,6 +70,7 @@ body <- dashboardBody(
 
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$style(".rightAlign{float:right;}"),
     tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700)"))
   ),
 
