@@ -80,7 +80,7 @@ theme_biodose <- shinyDashboardThemeDIY(
   headerButtonIconColorHover = "black",
   headerBackColor = head_color_alt,
   headerBoxShadowColor = "rgb(220,220,220)",
-  headerBoxShadowSize = "2px 3px 2px",
+  headerBoxShadowSize = "0px 3px 2px",
 
   # Sidebar ----
   sidebarBackColor = cssGradientThreeColors(
@@ -135,7 +135,7 @@ theme_biodose <- shinyDashboardThemeDIY(
 
   # Boxes ----
   boxBackColor = "rgb(248,248,248)",
-  boxBorderRadius = 0,
+  boxBorderRadius = 3,
   boxShadowSize = "0px 0px 0px",
   boxShadowColor = "",
   boxTitleSize = 18,
@@ -144,25 +144,29 @@ theme_biodose <- shinyDashboardThemeDIY(
   boxSuccessColor = success_color,
   boxWarningColor = warning_color,
   boxDangerColor = danger_color,
+  boxTopBorder = 6,
+
+  # tabBoxes ----
   tabBoxTabColor = "rgb(248,248,248)",
   tabBoxTabTextSize = 14,
   tabBoxTabTextColor = tabbox_tabtext_color,
   tabBoxTabTextColorSelected = tabbox_tabtext_selected_color,
   tabBoxBackColor = tabbox_back_color,
   tabBoxHighlightColor =  tabbox_highlight_color,
-  tabBoxBorderRadius = 0,
+  tabBoxBorderRadius = 3,
+  tabBoxTopBorder = 4,
 
   # Inputs ----
   buttonBackColor = "rgb(240,240,240)",
   buttonTextColor = "rgb(80,80,80)",
   buttonBorderColor = "rgb(185,185,185)",
-  buttonBorderRadius = 5,
+  buttonBorderRadius = 3,
   buttonBackColorHover = "rgb(227,227,227)",
   buttonTextColorHover = "rgb(80,80,80)",
   buttonBorderColorHover = "rgb(210,210,210)",
   textboxBackColor = "white",
   textboxBorderColor = "rgb(210,210,210)",
-  textboxBorderRadius = 0,
+  textboxBorderRadius = 3,
   textboxBackColorSelect = "white",
   textboxBorderColorSelect = "rgb(210,210,210)",
 

@@ -535,7 +535,8 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
                                    buttonBackColorHover, buttonTextColorHover, buttonBorderColorHover, buttonHeight = 34, buttonPadding = "6px 12px",
                                    textboxBackColor, textboxBorderColor, textboxBorderRadius, textboxBackColorSelect, textboxBorderColorSelect,
                                    textboxHeight = 34, textboxPadding = "6px 12px", tableBackColor, tableBorderColor,
-                                   tableBorderTopSize, tableBorderRowSize) {
+                                   tableBorderTopSize, tableBorderRowSize,
+                                   boxTopBorder, tabBoxTopBorder) {
 
 
   htmltools::tags$head(
@@ -706,6 +707,8 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           /* box */
           .box {
           background: ', boxBackColor, ';
+          border: 1px solid transparent;
+          border-top: ', boxTopBorder, 'px solid transparent;
           border-radius: ', boxBorderRadius, 'px;
           box-shadow: ', boxShadowSize, ' ', boxShadowColor, ';
           }
@@ -735,7 +738,14 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           }
 
           .nav-tabs-custom {
+          border: 1px solid', tabBoxHighlightColor, ';
           box-shadow: ', boxShadowSize, ' ', boxShadowColor, ';
+          }
+
+          /* tabbox: tabs borders  */
+          .nav-tabs-custom>.nav-tabs>li {
+          border-top: ', tabBoxTopBorder, 'px solid transparent;
+          margin-bottom: -1px;
           }
 
           /* tabbox: active tab bg */
@@ -753,7 +763,8 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           border-left-color: ', tabBoxHighlightColor, ';
           color: ', tabBoxTabTextColorSelected, ';
           font-size: ', tabBoxTabTextSize, 'px;
-          border-radius: ', tabBoxBorderRadius, 'px;
+          # border-radius: ', tabBoxBorderRadius, 'px;
+          border-radius: 0px;
           }
 
           /* tabbox: inactive tabs background */
