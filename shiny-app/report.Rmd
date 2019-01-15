@@ -1,0 +1,41 @@
+---
+title: "Curve fitting report"
+author: "Biodose Tools"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    theme: cosmo
+params:
+  result: NA
+  bstat: NA
+  vakoma: NA
+  corma: NA
+  gg.curve: NA
+---
+
+
+### Result of curve fit
+```{r echo=FALSE}
+params$result
+```
+
+### Coefficients
+```{r echo=FALSE}
+params$bstat
+```
+
+### Variance-covariance matrix
+```{r echo=FALSE}
+params$vakoma
+```
+
+### Correlation matrix
+```{r echo=FALSE}
+params$corma
+```
+
+### Plot
+```{r echo=FALSE}
+params$gg.curve
+```
+

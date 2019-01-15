@@ -184,11 +184,11 @@ fittingAdvUI <- function(id, label) {
               label = "Load data from file",
               value = FALSE
             ),
-            awesomeCheckbox(
-              inputId = ns("Id024"),
-              label = "Load data from file",
-              value = TRUE, status = "warning"
-            ),
+            # awesomeCheckbox(
+            #   inputId = ns("Id024"),
+            #   label = "Load data from file",
+            #   value = TRUE, status = "warning"
+            # ),
             # Inputs
             conditionalPanel(
               condition = "!input.load_data",
@@ -278,25 +278,19 @@ fittingAdvUI <- function(id, label) {
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
+          downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
         div(
-          style = "display: inline-block;vertical-align:top;",
-          downloadButton(ns("save_count_data"), "Save count data")
-        ),
-        div(
-          style = "display: inline-block;vertical-align:top;",
+          class = "side-widget",
           selectInput(
-            ns("save_fit_data_select"),
+            ns("save_fit_data_format"),
             label = NULL,
             width = "85px",
-            choices = list(
-              ".csv" = ".csv",
-              ".tex" = ".tex"
-            ),
-            selected = "lin-quad"
+            choices = list(".csv", ".tex"),
+            selected = ".csv"
           )
         ),
-        div(style = "display: inline-block;vertical-align:top; width: 20px;", HTML("<br>")),
-        actionButton(ns("button_fit"), class= "inputs-button", "Calculate fitting")
+        div(class = "widget-sep", br()),
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
       )
     ),
 
@@ -318,14 +312,29 @@ fittingAdvUI <- function(id, label) {
     # Export data and results ----
     fluidRow(
       box(
-        width = 5,
+        width = 8,
         title = "Export options",
-        status = "danger", solidHeader = F, collapsible = T, collapsed = T,
-        # Placeholder actionButtons
+        status = "danger", solidHeader = F, collapsible = T, collapsed = F,
+        # Download fit data & report
         downloadButton(ns("save_fit_data"), "Save fitting data"),
+        # Download plot
+        div(class = "widget-sep", br()),
+        downloadButton(ns("save_plot"), class = "export-button side-widget", "Save plot"),
+        div(class = "side-widget",
+            selectInput(
+              ns("save_plot_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".png", ".pdf"),
+              selected = ".png"
+            )
+        ),
+        # Download report
+        div(class = "widget-sep", br()),
         downloadButton(ns("save_report"), class = "export-button", "Download report")
       )
     )
+
   )
 }
 
@@ -596,7 +605,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
   # Export options ----
   output$save_count_data <- downloadHandler(
     filename = function() {
-      paste("count-data-", Sys.Date(), input$save_fit_data_select, sep = "")
+      paste("count-data-", Sys.Date(), input$save_fit_data_format, sep = "")
     },
     content = function(file) {
       write.csv(hot_to_r(input$hotable), file)
@@ -609,6 +618,38 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       write.csv(hot_to_r(input$hotable), file)
+    }
+  )
+
+  output$save_report <- downloadHandler(
+    # For PDF output, change this to "report.pdf"
+    filename = function() {
+      paste("report-", Sys.Date(), ".html", sep = "")
+    },
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      normReport <- file.path("report.Rmd")
+      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+      # Set up parameters to pass to Rmd document
+      params <- list(
+        result = data()[["result"]],
+        bstat = data()[["bstat"]],
+        vakoma = data()[["vakoma"]],
+        corma = data()[["corma"]],
+        gg.curve = data()[["gg.curve"]]
+      )
+
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
     }
   )
 }
