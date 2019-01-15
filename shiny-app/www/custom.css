@@ -2,3 +2,35 @@ h1, h2, h3, h4 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
+
+.home-button {
+  margin-left: 10%;
+  color: #fff;
+  background-color: #6C63FF;
+  border-color: #514bc0
+}
+
+.options-button {
+  color: #fff;
+  background-color: #2B7C9A;
+  border-color: #514bc0
+}
+
+
+.inputs-button {
+  color: #fff;
+  background-color: #5B5EA8;
+  border-color: #514bc0
+}
+
+.results-button {
+  color: #fff;
+  background-color: #2EC27E;
+  border-color: #514bc0
+}
+
+.export-button {
+  color: #fff;
+  background-color: #F6A945;
+  border-color: #514bc0
+}

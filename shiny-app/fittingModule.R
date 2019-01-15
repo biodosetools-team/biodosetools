@@ -184,6 +184,11 @@ fittingAdvUI <- function(id, label) {
               label = "Load data from file",
               value = FALSE
             ),
+            awesomeCheckbox(
+              inputId = ns("Id024"),
+              label = "Load data from file",
+              value = TRUE, status = "warning"
+            ),
             # Inputs
             conditionalPanel(
               condition = "!input.load_data",
@@ -197,13 +202,13 @@ fittingAdvUI <- function(id, label) {
               fileInput(ns("file"), label = "File input")
             ),
             # Button
-            actionButton(ns("button_upd_table"), "Generate table")
+            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
           )
         )
       ),
@@ -221,10 +226,14 @@ fittingAdvUI <- function(id, label) {
               ns("formula_select"),
               label = "Fitting formula",
               choices = list(
-                "Y = C + αD + βD²" = "lin-quad",
-                "Y = C + αD" = "lin",
-                "Y = αD + βD²" = "lin-quad-no-int",
-                "Y = αD" = "lin-no-int"
+                "Linear quadratic" = c(
+                  "Y = C + αD + βD²" = "lin-quad",
+                  "Y = αD + βD²" = "lin-quad-no-int"
+                ),
+                "Linear" = c(
+                  "Y = C + αD" = "lin",
+                  "Y = αD" = "lin-no-int"
+                )
               ),
               selected = "lin-quad"
             ),
@@ -243,10 +252,10 @@ fittingAdvUI <- function(id, label) {
             ),
             # Help button
             bsButton(ns("help_fit"),
-              class = "rightAlign",
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
+                     class = "rightAlign",
+                     label = "",
+                     icon = icon("question"),
+                     style = "default", size = "default"
             ),
             bsModal(
               id = ns("help_fit_dialog"),
@@ -269,8 +278,25 @@ fittingAdvUI <- function(id, label) {
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
-        downloadButton(ns("save_count_data"), "Save Data"),
-        actionButton(ns("button_fit"), "Calculate fitting")
+        div(
+          style = "display: inline-block;vertical-align:top;",
+          downloadButton(ns("save_count_data"), "Save count data")
+        ),
+        div(
+          style = "display: inline-block;vertical-align:top;",
+          selectInput(
+            ns("save_fit_data_select"),
+            label = NULL,
+            width = "85px",
+            choices = list(
+              ".csv" = ".csv",
+              ".tex" = ".tex"
+            ),
+            selected = "lin-quad"
+          )
+        ),
+        div(style = "display: inline-block;vertical-align:top; width: 20px;", HTML("<br>")),
+        actionButton(ns("button_fit"), class= "inputs-button", "Calculate fitting")
       )
     ),
 
@@ -297,7 +323,7 @@ fittingAdvUI <- function(id, label) {
         status = "danger", solidHeader = F, collapsible = T, collapsed = T,
         # Placeholder actionButtons
         downloadButton(ns("save_fit_data"), "Save fitting data"),
-        downloadButton(ns("save_report"), "Download report")
+        downloadButton(ns("save_report"), class = "export-button", "Download report")
       )
     )
   )
@@ -524,6 +550,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
         data = data.frame(x = c(0, max(dose))), aes(x),
         fun = function(x) curve.fun(x)
       ) +
+      labs(x = "Dose (Gy)", y = "Aberrations / Cell") +
       theme_bw()
 
     # Make list of results to return
@@ -559,14 +586,17 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     data()[["corma"]]
   })
 
-  output$plot <- renderPlot({
-    data()[["gg.curve"]]
-  })
+  output$plot <- renderPlot(
+    res = 120,
+    {
+      data()[["gg.curve"]]
+    }
+  )
 
   # Export options ----
   output$save_count_data <- downloadHandler(
     filename = function() {
-      paste("count-data-", Sys.Date(), ".csv", sep = "")
+      paste("count-data-", Sys.Date(), input$save_fit_data_select, sep = "")
     },
     content = function(file) {
       write.csv(hot_to_r(input$hotable), file)

@@ -83,13 +83,13 @@ body <- dashboardBody(
       actionButton(
         inputId = "github_link", label = "Source code",
         icon = icon("github"),
-        style = "margin-left: 10%; color: #fff; background-color: #6C63FF; border-color: #514bc0",
+        class = "home-button",
         onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
       ),
       actionButton(
         inputId = "wiki_link", label = "Documentation",
         icon = icon("book"),
-        style = "color: #fff; background-color: #6C63FF; border-color: #514bc0",
+        class = "home-button",
         onclick = "window.open('https://biodosimetry-uab.gitbook.io/wiki/', '_blank')"
       )
     ),
