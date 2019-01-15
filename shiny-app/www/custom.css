@@ -2,3 +2,99 @@ h1, h2, h3, h4 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
+
+/* Home Button */
+
+.home-button {
+  color: #fff;
+  background-color: #6C63FF;
+  border-color: #514bc0;
+}
+
+/* Home Button */
+.options-button {
+  color: #fff;
+  background-color: #2B7C9A;
+  border-color: #26618a;
+}
+
+.options-button:focus {
+  color: #fff;
+  background-color: #2B7C9A;
+  border-color: #26618a;
+}
+
+.options-button:hover {
+  color: #fff;
+  background-color: #29a8d7;
+  border-color: #26618a;
+}
+
+/* Inputs Button */
+.inputs-button {
+  color: #fff;
+  background-color: #5B5EA8;
+  border-color: #4c44ac;
+}
+
+.inputs-button:focus {
+  color: #fff;
+  background-color: #5B5EA8;
+  border-color: #4c44ac;
+}
+
+.inputs-button:hover {
+  color: #fff;
+  background-color: #7275ce;
+  border-color: #4c44ac;
+}
+
+/* Results Button */
+.results-button {
+  color: #fff;
+  background-color: #2EC27E;
+  border-color: #13794a;
+}
+
+.results-button:focus {
+  color: #fff;
+  background-color: #2EC27E;
+  border-color: #13794a;
+}
+
+.results-button:hover {
+  color: #fff;
+  background-color: #59e9a7;
+  border-color: #13794a;
+}
+
+/* Export Button */
+.export-button {
+  color: #fff;
+  background-color: #F6A945;
+  border-color: #eb8a0b;
+}
+
+.export-button:focus {
+  color: #fff;
+  background-color: #F6A945;
+  border-color: #eb8a0b;
+}
+
+.export-button:hover {
+  color: #fff;
+  background-color: #f8bd71;
+  border-color: #eb8a0b;
+}
+
+/* Widgets */
+.side-widget {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.widget-sep {
+  display: inline-block;
+  vertical-align: top;
+  width: 20px;
+}
