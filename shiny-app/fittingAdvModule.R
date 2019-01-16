@@ -116,7 +116,7 @@ fittingAdvUI <- function(id, label) {
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
-          downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
+        downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
         div(
           class = "side-widget",
           selectInput(
@@ -132,52 +132,55 @@ fittingAdvUI <- function(id, label) {
       )
     ),
 
-    # Main tabBox ----
-    fluidRow(
-      tabBox(
-        width = 6,
-        side = "left",
-        # selected = "Tab3",
-        tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-        tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-        tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
-        tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))#,
-        # tabPanel("Plot", plotOutput(ns("plot")))
-        # tabPanel("Report")
-      ),
-      # Plot box ----
-      box(
-        width = 6,
-        title = "Plot",
-        status = "success", solidHeader = F, collapsible = T, collapsed = F,
-        # Plot
-        plotOutput(ns("plot"))
-      )
-    ),
 
-    # Export data and results ----
     fluidRow(
-      box(
-        width = 8,
-        title = "Export options",
-        status = "danger", solidHeader = F, collapsible = T, collapsed = F,
-        # Download fit data & report
-        downloadButton(ns("save_fit_data"), "Save fitting data"),
-        # Download plot
-        div(class = "widget-sep", br()),
-        downloadButton(ns("save_plot"), class = "export-button side-widget", "Save plot"),
-        div(class = "side-widget",
-            selectInput(
-              ns("save_plot_format"),
-              label = NULL,
-              width = "85px",
-              choices = list(".png", ".pdf"),
-              selected = ".png"
-            )
+      column(
+        width = 6,
+        # Main tabBox ----
+        tabBox(
+          width = 12,
+          side = "left",
+          # selected = "Tab3",
+          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
+          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))#,
+          # tabPanel("Plot", plotOutput(ns("plot")))
+          # tabPanel("Report")
         ),
-        # Download report
-        div(class = "widget-sep", br()),
-        downloadButton(ns("save_report"), class = "export-button", "Download report")
+        # Export data and results ----
+        box(
+          width = 12,
+          title = "Export options",
+          status = "danger", solidHeader = F, collapsible = T, collapsed = F,
+          # Download fit data & report
+          downloadButton(ns("save_fit_data"), "Save fitting data"),
+          # Download report
+          div(class = "widget-sep", br()),
+          downloadButton(ns("save_report"), class = "export-button", "Download report")
+        )
+      ),
+      column(
+        width = 6,
+        # Plot box ----
+        box(
+          width = 12,
+          title = "Plot",
+          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+          # Plot
+          plotOutput(ns("plot")),
+          # Download plot
+          downloadButton(ns("save_plot"), class = "export-button side-widget", "Save plot"),
+          div(class = "side-widget",
+              selectInput(
+                ns("save_plot_format"),
+                label = NULL,
+                width = "85px",
+                choices = list(".png", ".pdf"),
+                selected = ".png"
+              )
+          )
+        )
       )
     )
 
