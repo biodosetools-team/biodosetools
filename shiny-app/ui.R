@@ -12,6 +12,7 @@ source("libs/theming.R", local = T)
 
 # Modules
 source("fittingModule.R")
+source("fittingAdvModule.R")
 source("estimateModule.R")
 
 

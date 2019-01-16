@@ -6,17 +6,17 @@ output:
   html_document:
     theme: cosmo
 params:
-  result: NA
+  fit_result: NA
   bstat: NA
-  vakoma: NA
-  corma: NA
-  gg.curve: NA
+  var_cov_mat: NA
+  cor_mat: NA
+  gg_curve: NA
 ---
 
 
 ### Result of curve fit
 ```{r echo=FALSE}
-params$result
+params$fit_result
 ```
 
 ### Coefficients
@@ -26,16 +26,16 @@ params$bstat
 
 ### Variance-covariance matrix
 ```{r echo=FALSE}
-params$vakoma
+params$var_cov_mat
 ```
 
 ### Correlation matrix
 ```{r echo=FALSE}
-params$corma
+params$cor_mat
 ```
 
 ### Plot
 ```{r echo=FALSE}
-params$gg.curve
+params$gg_curve
 ```
 
