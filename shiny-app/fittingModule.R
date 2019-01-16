@@ -248,7 +248,7 @@ fittingAdvUI <- function(id, label) {
             checkboxInput(
               inputId = ns("slider_disp_select"),
               label = "Use σ²/y = 1",
-              value = TRUE
+              value = FALSE
             ),
             # Help button
             bsButton(ns("help_fit"),
@@ -542,22 +542,28 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       data = model.data
     )
 
+    # Summarise fit
     smry <- summary(result, correlation = TRUE)
     smry$coefficients
     smry$correlation
 
     corma <- smry$correlation
     bstat <- smry$coefficients
-    seb <- bstat[, 3]
-    vakoma <- corma * outer(seb, seb)
     vakoma <- vcov(result)
 
+    plot.data.aug <- broom::augment(result)
+
     # Make plot
-    gg.curve <- ggplot(plot.data) +
-      geom_point(aes(x = dose, y = aberr / cell)) +
+    gg.curve <- ggplot(plot.data.aug / x0 ) +
+      geom_point(aes(x = x1  , y = aberr)) +
+      geom_ribbon(aes(x = x1,
+                      ymin = .fitted - .se.fit,
+                      ymax = .fitted + .se.fit),
+                  alpha = 0.25) +
       stat_function(
-        data = data.frame(x = c(0, max(dose))), aes(x),
-        fun = function(x) curve.fun(x)
+        data = data.frame(x = c(0, max(x1 / x0))), aes(x),
+        fun = function(x) curve.fun(x),
+        linetype = "dashed"
       ) +
       labs(x = "Dose (Gy)", y = "Aberrations / Cell") +
       theme_bw()
