@@ -18,7 +18,7 @@ fittingAdvUI <- function(id, label) {
             width = 12,
             # Load data from file
             checkboxInput(
-              inputId = ns("load_data"),
+              inputId = ns("load_count_data_check"),
               label = "Load data from file",
               value = FALSE
             ),
@@ -29,15 +29,15 @@ fittingAdvUI <- function(id, label) {
             # ),
             # Inputs
             conditionalPanel(
-              condition = "!input.load_data",
+              condition = "!input.load_count_data_check",
               ns = ns,
               numericInput(ns("num_doses"), "Number of doses", value = 11),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
-              condition = "input.load_data",
+              condition = "input.load_count_data_check",
               ns = ns,
-              fileInput(ns("file"), label = "File input")
+              fileInput(ns("load_count_data"), label = "File input")
             ),
             # Button
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
@@ -221,30 +221,36 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_table
 
     isolate({
+      load_count_data <- input$load_count_data_check
+      count_data <- input$load_count_data
       num_doses <- as.numeric(input$num_doses)
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
-    # Doses data frame
-    data_dose <- data.frame(
-      D = rep(0.0, num_doses)
-    )
-
-    # Base data frame
-    data_base <- data.frame(
-      matrix(
-        0,
-        nrow = num_doses,
-        ncol = num_dicentrics
+    if (!load_count_data) {
+      # Doses data frame
+      data_dose <- data.frame(
+        D = rep(0.0, num_doses)
       )
-    )
 
-    colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
-    # DF.calc <- data.frame(N = rep(0, num_doses), X = rep(0, num_doses))
+      # Base data frame
+      data_base <- data.frame(
+        matrix(
+          0,
+          nrow = num_doses,
+          ncol = num_dicentrics
+        )
+      )
 
-    # Full data frame
-    full_data <- cbind(data_dose, data_base) %>%
-      dplyr::mutate(D = as.numeric(D))
+      colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
+
+      # Full data frame
+      full_data <- cbind(data_dose, data_base) %>%
+        dplyr::mutate(D = as.numeric(D))
+    } else {
+      full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+        mutate_at(vars(starts_with("C")), funs(as.integer(.)))
+    }
 
     return(full_data)
   })
@@ -490,7 +496,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       if (input$save_count_data_format == ".csv") {
-        write.csv(hot_to_r(input$hotable), file)
+        write.csv(hot_to_r(input$hotable), file, row.names = FALSE)
       } else if (input$save_count_data_format == ".tex") {
         print(xtable::xtable(hot_to_r(input$hotable)), type = "latex", file)
       }
@@ -504,7 +510,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       if (input$save_fit_data_format == ".csv") {
-        write.csv(data()[["bstat"]], file)
+        write.csv(data()[["bstat"]], file, row.names = FALSE)
       } else if (input$save_fit_data_format == ".tex") {
         print(xtable::xtable(data()[["bstat"]]), type = "latex", file)
       }
