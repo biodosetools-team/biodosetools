@@ -47,29 +47,48 @@ fittingUI <- function(id, label) {
           ),
 
           # Button
-          actionButton(ns("button_fit"), "Calculate")
+          actionButton(ns("button_fit"), class = "inputs-button", "Calculate fit")
         ),
         # Data box ----
         box(
           width = 12,
           title = "Data",
           status = "success", solidHeader = F, collapsible = T, collapsed = T,
-          tableOutput(outputId = ns("table"))
+          rHandsontableOutput(outputId = ns("table"))
         )
       ),
 
       # Results tabBox ----
       column(
         width = 8,
-        tabBox(
-          width = 12,
-          side = "left",
-          # selected = "Tab3",
-          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
-          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
-        )
+        # Main tabBox ----
+          tabBox(
+            width = 12,
+            side = "left",
+            tabPanel(
+              title = "Result of curve fit",
+              h4("Fit summary"),
+              verbatimTextOutput(ns("fit_results")),
+              h4("Coefficients"),
+              rHandsontableOutput(ns("bstat"))
+            ),
+            tabPanel(
+              title = "Summary statistics",
+              h4("Correlation matrix"),
+              rHandsontableOutput(ns("cor_mat")),
+              h4("Variance-covariance matrix"),
+              rHandsontableOutput(ns("var_cov_mat"))
+            )
+          )
+        # tabBox(
+        #   width = 12,
+        #   side = "left",
+        #   # selected = "Tab3",
+        #   tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
+        #   tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+        #   tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
+        #   tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
+        # )
       )
     )
   )
@@ -85,15 +104,17 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
       cell <- as.numeric(unlist(strsplit(input$cells, ",")))
     })
 
-    data.frame(
+    data <- data.frame(
       Dose = dose,
-      Aberrations = aberr,
-      Cells = cell
+      Aberrations = as.integer(aberr),
+      Cells = as.integer(cell)
     )
+
+    data <- rhandsontable(data)
   })
 
   # Output ----
-  output$table <- renderTable({
+  output$table <- renderRHandsontable({
     table()
   })
 }
@@ -130,29 +151,38 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     bstat <- fit_summary$coefficients
     var_cov_mat <- vcov(fit_results)
 
-    results_list <- list(result, bstat, var_cov_mat, corma)
+    results_list <- list(
+      fit_results = fit_results,
+      bstat = bstat,
+      var_cov_mat = var_cov_mat,
+      cor_mat = cor_mat
+    )
 
     return(results_list)
   })
 
-  # Outputs ----
-  output$result <- renderPrint({
+  ## Results outputs ----
+  output$fit_results <- renderPrint({
     # "Result of curve fit 'result'"
-    data()[[1]]
+    if(input$button_fit <= 0) return(NULL)
+    data()[["fit_results"]]
   })
 
-  output$bstat <- renderPrint({
+  output$bstat <- renderRHandsontable({
     # "Coefficients 'bstat'"
-    data()[[2]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["bstat"]])
   })
 
-  output$var_cov_mat <- renderPrint({
+  output$var_cov_mat <- renderRHandsontable({
     # "variance-covariance matrix 'var_cov_mat'"
-    data()[[3]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["var_cov_mat"]])
   })
 
-  output$corma <- renderPrint({
+  output$cor_mat <- renderRHandsontable({
     # "Correlation matrix 'corma'"
-    data()[[4]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["cor_mat"]])
   })
 }

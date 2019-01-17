@@ -44,9 +44,9 @@ fittingAdvUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
           )
         )
       ),
@@ -90,10 +90,10 @@ fittingAdvUI <- function(id, label) {
             ),
             # Help button
             bsButton(ns("help_fit"),
-                     class = "rightAlign",
-                     label = "",
-                     icon = icon("question"),
-                     style = "default", size = "default"
+              class = "rightAlign",
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
             ),
             bsModal(
               id = ns("help_fit_dialog"),
@@ -120,7 +120,7 @@ fittingAdvUI <- function(id, label) {
         div(
           class = "side-widget",
           selectInput(
-            ns("save_fit_data_format"),
+            ns("save_count_data_format"),
             label = NULL,
             width = "85px",
             choices = list(".csv", ".tex"),
@@ -140,13 +140,20 @@ fittingAdvUI <- function(id, label) {
         tabBox(
           width = 12,
           side = "left",
-          # selected = "Tab3",
-          tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-          tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
-          tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
-          tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))#,
-          # tabPanel("Plot", plotOutput(ns("plot")))
-          # tabPanel("Report")
+          tabPanel(
+            title = "Result of curve fit",
+            h4("Fit summary"),
+            verbatimTextOutput(ns("fit_results")),
+            h4("Coefficients"),
+            rHandsontableOutput(ns("bstat"))
+          ),
+          tabPanel(
+            title = "Summary statistics",
+            h4("Correlation matrix"),
+            rHandsontableOutput(ns("cor_mat")),
+            h4("Variance-covariance matrix"),
+            rHandsontableOutput(ns("var_cov_mat"))
+          )
         ),
         # Export data and results ----
         box(
@@ -154,7 +161,17 @@ fittingAdvUI <- function(id, label) {
           title = "Export options",
           status = "danger", solidHeader = F, collapsible = T, collapsed = F,
           # Download fit data & report
-          downloadButton(ns("save_fit_data"), "Save fitting data"),
+          downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
+          div(
+            class = "side-widget",
+            selectInput(
+              ns("save_fit_data_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".csv", ".tex"),
+              selected = ".csv"
+            )
+          ),
           # Download report
           div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report")
@@ -170,20 +187,20 @@ fittingAdvUI <- function(id, label) {
           # Plot
           plotOutput(ns("plot")),
           # Download plot
-          downloadButton(ns("save_plot"), class = "export-button side-widget", "Save plot"),
-          div(class = "side-widget",
-              selectInput(
-                ns("save_plot_format"),
-                label = NULL,
-                width = "85px",
-                choices = list(".png", ".pdf"),
-                selected = ".png"
-              )
+          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+          div(
+            class = "side-widget",
+            selectInput(
+              ns("save_plot_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".png", ".pdf"),
+              selected = ".png"
+            )
           )
         )
       )
     )
-
   )
 }
 
@@ -218,7 +235,8 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
       matrix(
         0,
         nrow = num_doses,
-        ncol = num_dicentrics)
+        ncol = num_dicentrics
+      )
     )
 
     colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
@@ -306,7 +324,7 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
       cell <- count_data[["N"]]
     })
 
-    data_frame(
+    data.frame(
       Dose = dose,
       Aberrations = aberr,
       Cells = cell
@@ -404,14 +422,17 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     plot_data <- broom::augment(fit_results)
 
     # Make plot
-    gg_curve <- ggplot(plot_data / x0 ) +
-      geom_point(aes(x = x1  , y = aberr)) +
-      geom_ribbon(aes(x = x1,
-                      ymin = .fitted - .se.fit,
-                      ymax = .fitted + .se.fit),
-                  alpha = 0.25) +
+    gg_curve <- ggplot(plot_data / x0) +
+      geom_point(aes(x = x1, y = aberr)) +
+      geom_ribbon(aes(
+        x = x1,
+        ymin = .fitted - .se.fit,
+        ymax = .fitted + .se.fit
+      ),
+      alpha = 0.25
+      ) +
       stat_function(
-        data = data_frame(x = c(0, max(x1 / x0))), aes(x),
+        data = data.frame(x = c(0, max(x1 / x0))), aes(x),
         fun = function(x) curve_fun(x),
         linetype = "dashed"
       ) +
@@ -430,53 +451,79 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     return(results_list)
   })
 
-  # Outputs ----
-  output$result <- renderPrint({
+  # Results outputs ----
+  output$fit_results <- renderPrint({
     # "Result of curve fit 'result'"
+    if(input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
-  output$bstat <- renderPrint({
+  output$bstat <- renderRHandsontable({
     # "Coefficients 'bstat'"
-    data()[["bstat"]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["bstat"]])
   })
 
-  output$var_cov_mat <- renderPrint({
+  output$var_cov_mat <- renderRHandsontable({
     # "variance-covariance matrix 'var_cov_mat'"
-    data()[["var_cov_mat"]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["var_cov_mat"]])
   })
 
-  output$corma <- renderPrint({
+  output$cor_mat <- renderRHandsontable({
     # "Correlation matrix 'corma'"
-    data()[["cor_mat"]]
+    if(input$button_fit <= 0) return(NULL)
+    rhandsontable(data()[["cor_mat"]])
   })
 
   output$plot <- renderPlot(
-    res = 120,
-    {
+    res = 120, {
+      if(input$button_fit <= 0) return(NULL)
       data()[["gg_curve"]]
     }
   )
 
-  # Export options ----
+  # Export count data ----
   output$save_count_data <- downloadHandler(
     filename = function() {
-      paste("count-data-", Sys.Date(), input$save_fit_data_format, sep = "")
+      paste("count-data-", Sys.Date(), input$save_count_data_format, sep = "")
     },
     content = function(file) {
-      write.csv(hot_to_r(input$hotable), file)
+      if (input$save_count_data_format == ".csv") {
+        write.csv(hot_to_r(input$hotable), file)
+      } else if (input$save_count_data_format == ".tex") {
+        print(xtable::xtable(hot_to_r(input$hotable)), type = "latex", file)
+      }
     }
   )
 
+  # Export fit coefficients ----
   output$save_fit_data <- downloadHandler(
     filename = function() {
-      paste("fitting-data-", Sys.Date(), ".csv", sep = "")
+      paste("fitting-data-", Sys.Date(), input$save_fit_data_format, sep = "")
     },
     content = function(file) {
-      write.csv(hot_to_r(input$hotable), file)
+      if (input$save_fit_data_format == ".csv") {
+        write.csv(data()[["bstat"]], file)
+      } else if (input$save_fit_data_format == ".tex") {
+        print(xtable::xtable(data()[["bstat"]]), type = "latex", file)
+      }
     }
   )
 
+  # Export plot ----
+  output$save_plot <- downloadHandler(
+    filename = function() {
+      paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
+    },
+    content = function(file) {
+      ggsave(plot = data()[["gg_curve"]], filename = file,
+             width = 6, height = 4.5, dpi = 96,
+             device = gsub("\\.", "", input$save_plot_format))
+    }
+  )
+
+  # Export report ----
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
@@ -492,19 +539,20 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
       # Set up parameters to pass to Rmd document
       params <- list(
-        result = data()[["result"]],
+        fit_result = data()[["fit_results"]],
         bstat = data()[["bstat"]],
         var_cov_mat = data()[["var_cov_mat"]],
-        corma = data()[["corma"]],
+        cor_mat = data()[["cor_mat"]],
         gg_curve = data()[["gg_curve"]]
       )
 
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
+      rmarkdown::render(tempReport,
+        output_file = file,
+        params = params,
+        envir = new.env(parent = globalenv())
       )
     }
   )
