@@ -85,7 +85,7 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
       cell <- as.numeric(unlist(strsplit(input$cells, ",")))
     })
 
-    data_frame(
+    data.frame(
       Dose = dose,
       Aberrations = aberr,
       Cells = cell
