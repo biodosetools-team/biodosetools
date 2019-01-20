@@ -6,12 +6,12 @@ estimateUI <- function(id, label) {
 
   tabItem(
     tabName = label,
-    h2("Dose Estimation"),
+    h2("Dose estimation"),
     fluidRow(
       # Input and data boxes ----
       box(
         width = 6,
-        title = "Load Data",
+        title = "Load data",
         status = "warning", solidHeader = F, collapsible = T,
 
         # Local data slider
@@ -46,7 +46,7 @@ estimateUI <- function(id, label) {
       # Data input options ----
       box(
         width = 4,
-        title = "Data Input Options",
+        title = "Data input options",
         status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
@@ -71,7 +71,7 @@ estimateUI <- function(id, label) {
     fluidRow(
       box(
         width = 12,
-        title = "Data Input",
+        title = "Data input",
         status = "primary", solidHeader = F, collapsible = T, collapsed = F,
         rHandsontableOutput(ns("hotable"))
       )
