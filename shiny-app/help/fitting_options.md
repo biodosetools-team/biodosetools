@@ -1,4 +1,4 @@
-#### Fitting Formula
+#### Fitting formula
 
 The objective of curve fitting is to determine those values of the coefficients $C$, $\alpha$ and $\beta$ which best fit the data points.
 
@@ -8,6 +8,6 @@ The objective of curve fitting is to determine those values of the coefficients 
 
 The user should check which model fits better with its data. However, because at 0 Gy a certain amount of dicentrics exists (1--2 per thousand cells) it is suggested to fit the data using the intercept value $C$.
 
-#### Fitting Model
+#### Fitting model
 
 Normally the Poisson function should be used. However, if there is constant oversisperssion, the quasi-Poission is recommended.

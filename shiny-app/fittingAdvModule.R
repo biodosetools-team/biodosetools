@@ -11,7 +11,7 @@ fittingAdvUI <- function(id, label) {
       # Data input options ----
       box(
         width = 5,
-        title = "Data Input Options",
+        title = "Data input options",
         status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
@@ -32,14 +32,42 @@ fittingAdvUI <- function(id, label) {
               condition = "!input.load_count_data_check",
               ns = ns,
               numericInput(ns("num_doses"), "Number of doses", value = 11),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+              # Help button
+              bsButton(ns("help_write_count_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_write_count_data_dialog"),
+                title = "Help: Count data input",
+                trigger = ns("help_write_count_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/write_count_data.md"))
+              )
             ),
             conditionalPanel(
               condition = "input.load_count_data_check",
               ns = ns,
-              fileInput(ns("load_count_data"), label = "File input")
+              fileInput(ns("load_count_data"), label = "File input"),
+              # Help button
+              bsButton(ns("help_load_count_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_load_count_data_dialog"),
+                title = "Help: Loading count data",
+                trigger = ns("help_load_count_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/load_count_data.md"))
+              )
             ),
-            # Button
+            # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           ),
           # Tooltip
@@ -54,7 +82,7 @@ fittingAdvUI <- function(id, label) {
       # Fitting options ----
       box(
         width = 5,
-        title = "Fitting Options",
+        title = "Fitting options",
         status = "warning", solidHeader = F, collapsible = T,
         fluidRow(
           column(
@@ -97,7 +125,7 @@ fittingAdvUI <- function(id, label) {
             ),
             bsModal(
               id = ns("help_fit_dialog"),
-              title = "Fitting Options Help",
+              title = "Help: Fitting options",
               trigger = ns("help_fit"),
               size = "large",
               withMathJax(includeMarkdown("help/fitting_options.md"))
@@ -111,7 +139,7 @@ fittingAdvUI <- function(id, label) {
     fluidRow(
       box(
         width = 12,
-        title = "Data Input",
+        title = "Data input",
         status = "primary", solidHeader = F, collapsible = T, collapsed = F,
         rHandsontableOutput(ns("hotable")),
         # Button
@@ -158,7 +186,7 @@ fittingAdvUI <- function(id, label) {
         # Export data and results ----
         box(
           width = 12,
-          title = "Export options",
+          title = "Export results",
           status = "danger", solidHeader = F, collapsible = T, collapsed = F,
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
@@ -182,7 +210,7 @@ fittingAdvUI <- function(id, label) {
         # Plot box ----
         box(
           width = 12,
-          title = "Plot",
+          title = "Curve plot",
           status = "success", solidHeader = F, collapsible = T, collapsed = F,
           # Plot
           plotOutput(ns("plot")),
