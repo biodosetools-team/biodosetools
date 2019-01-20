@@ -19,5 +19,6 @@ server <- function(input, output) {
   callModule(module = fittingAdvResults, id = "adv_fitting")
 
   # Estimate ----
-  callModule(module = fittingAdvHotTable, id = "estimate")
+  callModule(module = estimateHotTable, id = "estimate")
+
 }
