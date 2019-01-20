@@ -196,13 +196,28 @@ fittingAdvUI <- function(id, label) {
               ns("save_fit_data_format"),
               label = NULL,
               width = "85px",
-              choices = list(".csv", ".tex"),
-              selected = ".csv"
+              choices = list(".rds", ".csv", ".tex"),
+              selected = ".rds"
             )
           ),
           # Download report
           div(class = "widget-sep", br()),
-          downloadButton(ns("save_report"), class = "export-button", "Download report")
+          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+          # Help button
+          bsButton(ns("help_save_fit_data"),
+                   class = "rightAlign",
+                   label = "",
+                   icon = icon("question"),
+                   style = "default", size = "default"
+          ),
+          bsModal(
+            id = ns("help__save_fit_data_dialog"),
+            title = "Help: Save fit data",
+            trigger = ns("help_save_fit_data"),
+            size = "large",
+            withMathJax(includeMarkdown("help/input_count_data.md"))
+            # TODO: Make new help
+          )
         )
       ),
       column(
@@ -538,7 +553,9 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       paste("fitting-data-", Sys.Date(), input$save_fit_data_format, sep = "")
     },
     content = function(file) {
-      if (input$save_fit_data_format == ".csv") {
+      if (input$save_fit_data_format == ".rds") {
+        saveRDS(data()[["fit_results"]], file = file)
+      } else if (input$save_fit_data_format == ".csv") {
         write.csv(data()[["bstat"]], file, row.names = FALSE)
       } else if (input$save_fit_data_format == ".tex") {
         print(xtable::xtable(data()[["bstat"]]), type = "latex", file)
