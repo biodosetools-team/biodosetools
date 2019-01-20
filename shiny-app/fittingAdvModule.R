@@ -34,18 +34,18 @@ fittingAdvUI <- function(id, label) {
               numericInput(ns("num_doses"), "Number of doses", value = 11),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
-              bsButton(ns("help_write_count_data"),
+              bsButton(ns("help_input_count_data"),
                        class = "rightAlign",
                        label = "",
                        icon = icon("question"),
                        style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_write_count_data_dialog"),
+                id = ns("help_input_count_data_dialog"),
                 title = "Help: Count data input",
-                trigger = ns("help_write_count_data"),
+                trigger = ns("help_input_count_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/write_count_data.md"))
+                withMathJax(includeMarkdown("help/input_count_data.md"))
               )
             ),
             conditionalPanel(
@@ -304,6 +304,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         ) %>%
         select(D, N, X, everything())
 
+      first_dicent_index <- 4
       last_dicent_index <- ncol(mytable) - 2
       num_rows <- nrow(mytable)
 
@@ -311,7 +312,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         mutate(
           D = as.numeric(D),
           X = as.integer(X),
-          N = as.integer(rowSums(.[4:last_dicent_index]))
+          N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
         )
 
       # Ugly method to calculate index of dispersion
@@ -319,7 +320,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         xf <- 0
         x2f <- 0
         # Calculate summatories
-        for (k in seq(0, last_dicent_index - 4, 1)) {
+        for (k in seq(0, last_dicent_index - first_dicent_index, 1)) {
           xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
           x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
         }
