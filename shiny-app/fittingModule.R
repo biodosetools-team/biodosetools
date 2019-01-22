@@ -70,7 +70,7 @@ fittingUI <- function(id, label) {
               h4("Fit summary"),
               verbatimTextOutput(ns("fit_results")),
               h4("Coefficients"),
-              rHandsontableOutput(ns("bstat"))
+              rHandsontableOutput(ns("fit_coeffs"))
             ),
             tabPanel(
               title = "Summary statistics",
@@ -85,7 +85,7 @@ fittingUI <- function(id, label) {
         #   side = "left",
         #   # selected = "Tab3",
         #   tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-        #   tabPanel("Coefficients", verbatimTextOutput(ns("bstat"))),
+        #   tabPanel("Coefficients", verbatimTextOutput(ns("fit_coeffs"))),
         #   tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
         #   tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
         # )
@@ -148,12 +148,12 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     # Summarise fit
     fit_summary <- summary(fit_results, correlation = TRUE)
     cor_mat <- fit_summary$correlation
-    bstat <- fit_summary$coefficients
+    fit_coeffs <- fit_summary$coefficients
     var_cov_mat <- vcov(fit_results)
 
     results_list <- list(
       fit_results = fit_results,
-      bstat = bstat,
+      fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
       cor_mat = cor_mat
     )
@@ -163,15 +163,15 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
 
   ## Results outputs ----
   output$fit_results <- renderPrint({
-    # "Result of curve fit 'result'"
+    # "Result of curve fit 'fit_results'"
     if(input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
-  output$bstat <- renderRHandsontable({
-    # "Coefficients 'bstat'"
+  output$fit_coeffs <- renderRHandsontable({
+    # "Coefficients 'fit_coeffs'"
     if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["bstat"]])
+    rhandsontable(data()[["fit_coeffs"]])
   })
 
   output$var_cov_mat <- renderRHandsontable({
@@ -181,7 +181,7 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$cor_mat <- renderRHandsontable({
-    # "Correlation matrix 'corma'"
+    # "Correlation matrix 'cor_mat'"
     if(input$button_fit <= 0) return(NULL)
     rhandsontable(data()[["cor_mat"]])
   })

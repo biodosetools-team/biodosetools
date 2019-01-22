@@ -173,7 +173,7 @@ fittingAdvUI <- function(id, label) {
             h4("Fit summary"),
             verbatimTextOutput(ns("fit_results")),
             h4("Coefficients"),
-            rHandsontableOutput(ns("bstat"))
+            rHandsontableOutput(ns("fit_coeffs"))
           ),
           tabPanel(
             title = "Summary statistics",
@@ -424,24 +424,24 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (model_formula == "lin-quad") {
       fit_formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
       curve_fun <- function(x) {
-        bstat[1, 1] + bstat[2, 1] * x + bstat[3, 1] * x * x
+        fit_coeffs[1, "Estimate"] + fit_coeffs[2, "Estimate"] * x + fit_coeffs[3, "Estimate"] * x * x
       }
     } else if (model_formula == "lin") {
       fit_formula <- as.formula("aberr ~ -1 + x0 + x1")
       curve_fun <- function(x) {
-        bstat[1, 1] + bstat[2, 1] * x
+        fit_coeffs[1, "Estimate"] + fit_coeffs[2, "Estimate"] * x
       }
     }
     else if (model_formula == "lin-quad-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + x1 + x2")
       curve_fun <- function(x) {
-        bstat[2, 1] * x + bstat[3, 1] * x * x
+        fit_coeffs[2, "Estimate"] * x + fit_coeffs[3, "Estimate"] * x * x
       }
     }
     else if (model_formula == "lin-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + x1")
       curve_fun <- function(x) {
-        bstat[2, 1] * x
+        fit_coeffs[2, "Estimate"] * x
       }
     }
 
@@ -466,7 +466,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Summarise fit
     fit_summary <- summary(fit_results, correlation = TRUE)
     cor_mat <- fit_summary$correlation
-    bstat <- fit_summary$coefficients
+    fit_coeffs <- fit_summary$coefficients
     var_cov_mat <- vcov(fit_results)
 
     plot_data <- broom::augment(fit_results)
@@ -492,7 +492,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Make list of results to return
     results_list <- list(
       fit_results = fit_results,
-      bstat = bstat,
+      fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
       cor_mat = cor_mat,
       gg_curve = gg_curve
@@ -503,15 +503,15 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   # Results outputs ----
   output$fit_results <- renderPrint({
-    # "Result of curve fit 'result'"
+    # "Result of curve fit 'fit_results'"
     if(input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
-  output$bstat <- renderRHandsontable({
-    # "Coefficients 'bstat'"
+  output$fit_coeffs <- renderRHandsontable({
+    # "Coefficients 'fit_coeffs'"
     if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["bstat"]])
+    rhandsontable(data()[["fit_coeffs"]])
   })
 
   output$var_cov_mat <- renderRHandsontable({
@@ -521,7 +521,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$cor_mat <- renderRHandsontable({
-    # "Correlation matrix 'corma'"
+    # "Correlation matrix 'cor_mat'"
     if(input$button_fit <= 0) return(NULL)
     rhandsontable(data()[["cor_mat"]])
   })
@@ -556,9 +556,9 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       if (input$save_fit_data_format == ".rds") {
         saveRDS(data()[["fit_results"]], file = file)
       } else if (input$save_fit_data_format == ".csv") {
-        write.csv(data()[["bstat"]], file, row.names = FALSE)
+        write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
       } else if (input$save_fit_data_format == ".tex") {
-        print(xtable::xtable(data()[["bstat"]]), type = "latex", file)
+        print(xtable::xtable(data()[["fit_coeffs"]]), type = "latex", file)
       }
     }
   )
@@ -592,7 +592,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       # Set up parameters to pass to Rmd document
       params <- list(
         fit_result = data()[["fit_results"]],
-        bstat = data()[["bstat"]],
+        fit_coeffs = data()[["fit_coeffs"]],
         var_cov_mat = data()[["var_cov_mat"]],
         cor_mat = data()[["cor_mat"]],
         gg_curve = data()[["gg_curve"]]
