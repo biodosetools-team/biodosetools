@@ -17,16 +17,11 @@ estimateUI <- function(id, label) {
           column(
             width = 12,
             # Load data from file
-            checkboxInput(
+            awesomeCheckbox(
               inputId = ns("load_count_data_check"),
               label = "Load data from file",
-              value = FALSE
+              value = FALSE, status = "warning"
             ),
-            # awesomeCheckbox(
-            #   inputId = ns("Id024"),
-            #   label = "Load data from file",
-            #   value = TRUE, status = "warning"
-            # ),
             # Inputs
             conditionalPanel(
               condition = "!input.load_count_data_check",

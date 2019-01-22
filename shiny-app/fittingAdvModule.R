@@ -16,17 +16,11 @@ fittingAdvUI <- function(id, label) {
         fluidRow(
           column(
             width = 12,
-            # Load data from file
-            checkboxInput(
+            awesomeCheckbox(
               inputId = ns("load_count_data_check"),
               label = "Load data from file",
-              value = FALSE
+              value = FALSE, status = "warning"
             ),
-            # awesomeCheckbox(
-            #   inputId = ns("Id024"),
-            #   label = "Load data from file",
-            #   value = TRUE, status = "warning"
-            # ),
             # Inputs
             conditionalPanel(
               condition = "!input.load_count_data_check",
@@ -111,10 +105,10 @@ fittingAdvUI <- function(id, label) {
               selected = 1
             ),
             # Use dispersion factor
-            checkboxInput(
+            awesomeCheckbox(
               inputId = ns("slider_disp_select"),
               label = "Use σ²/y = 1",
-              value = FALSE
+              value = FALSE, status = "warning"
             ),
             # Help button
             bsButton(ns("help_fit"),
@@ -449,6 +443,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       family = eval(parse(text = paste(family_select, "(link =", fit_link, ")"))),
       weights = weights,
       data = model_data
+      # ,start = abs(coef(glm(fit_formula, weights = weights, data = model_data)))
     )
 
     # Summarise fit

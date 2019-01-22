@@ -1058,7 +1058,7 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
 
           /* notification and progress bar */
           .progress-bar {
-          background-color: ', boxSuccessColor, ';
+          background-color: ', boxWarningColor, ';
           }
           .shiny-notification {
           height: 80px;
