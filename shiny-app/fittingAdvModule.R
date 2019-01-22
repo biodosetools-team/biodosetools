@@ -423,26 +423,14 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Select model formula
     if (model_formula == "lin-quad") {
       fit_formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
-      curve_fun <- function(x) {
-        fit_coeffs[1, "Estimate"] + fit_coeffs[2, "Estimate"] * x + fit_coeffs[3, "Estimate"] * x * x
-      }
     } else if (model_formula == "lin") {
       fit_formula <- as.formula("aberr ~ -1 + x0 + x1")
-      curve_fun <- function(x) {
-        fit_coeffs[1, "Estimate"] + fit_coeffs[2, "Estimate"] * x
-      }
     }
     else if (model_formula == "lin-quad-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + x1 + x2")
-      curve_fun <- function(x) {
-        fit_coeffs[2, "Estimate"] * x + fit_coeffs[3, "Estimate"] * x * x
-      }
     }
     else if (model_formula == "lin-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + x1")
-      curve_fun <- function(x) {
-        fit_coeffs[2, "Estimate"] * x
-      }
     }
 
     fit_link <- "identity"
@@ -469,23 +457,69 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     fit_coeffs <- fit_summary$coefficients
     var_cov_mat <- vcov(fit_results)
 
+    # Generalized variance-covariance matrix
+    general_fit_coeffs <- numeric(length = 3L)
+    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+
+    for (var in rownames(fit_coeffs)) {
+      general_fit_coeffs[var] <- fit_coeffs[var, "Estimate"]
+    }
+
+    # Generalized fit coefficients
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
+    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+
+    for (x_var in rownames(var_cov_mat)) {
+      for (y_var in colnames(var_cov_mat)) {
+        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+      }
+    }
+
+    # Generalized curves
+    yield_fun <- function(x) {
+      general_fit_coeffs[[1]] +
+      general_fit_coeffs[[2]] * x +
+      general_fit_coeffs[[3]] * x * x
+    }
+
+    chisq_df <- nrow(fit_coeffs)
+    R_factor <- sqrt(qchisq(.95, df = chisq_df))
+
+    yield_error_fun <- function(x) {
+      sqrt(
+        general_var_cov_mat[["x0", "x0"]] +
+        general_var_cov_mat[["x1", "x1"]] * x * x +
+        general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
+        2 * general_var_cov_mat[["x0", "x1"]] * x +
+        2 * general_var_cov_mat[["x0", "x2"]] * x * x +
+        2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+      )
+    }
+
+    # Plot data
     plot_data <- broom::augment(fit_results)
+
+    curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
+      mutate(
+        yield = yield_fun(dose),
+        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
+        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+      )
 
     # Make plot
     gg_curve <- ggplot(plot_data / x0) +
+      # Observed data
       geom_point(aes(x = x1, y = aberr)) +
-      geom_ribbon(aes(
-        x = x1,
-        ymin = .fitted - .se.fit,
-        ymax = .fitted + .se.fit
-      ),
-      alpha = 0.25
-      ) +
+      # Fitted curve
       stat_function(
-        data = data.frame(x = c(0, max(x1 / x0))), aes(x),
-        fun = function(x) curve_fun(x),
+        data = data.frame(x = c(0, max(x1 / x0))),
+        mapping = aes(x),
+        fun = function(x) yield_fun(x),
         linetype = "dashed"
       ) +
+      # Confidence bands (Merkle, 1983)
+      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
       labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
       theme_bw()
 
