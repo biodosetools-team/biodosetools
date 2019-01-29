@@ -1,6 +1,15 @@
+/* Fonts */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700');
+
 h1, h2, h3, h4 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
+}
+
+/* Help buttons */
+.rightAlign{
+  float:right;
 }
 
 /* Home Button */
@@ -108,13 +117,10 @@ h1, h2, h3, h4 {
 }
 
 .progress {
+  border-radius: 3px;
   height: 25px;
   margin-top: 5px;
   margin-bottom: 10px;
-}
-
-.progress, .progress .progress-bar, .progress>.progress-bar, .progress>.progress-bar .progress-bar {
-  border-radius: 3px;
 }
 
 .progress-bar {
@@ -152,3 +158,5 @@ h1, h2, h3, h4 {
   background-color: #F6A945;
   border-color: #eb8a0b;
 }
+
+

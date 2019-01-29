@@ -592,15 +592,8 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
 
           /* header */
           .skin-blue .main-header .navbar {
-          position: fixed;
-          width:100%;
           background: ', headerBackColor, ';
           box-shadow: ', headerBoxShadowSize, ' ', headerBoxShadowColor ,';
-          }
-
-          /* sidebar header */
-          .skin-blue .main-header .logo {
-          position: fixed;
           }
 
           /* sidebar*/
@@ -610,7 +603,6 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
           }
 
           .skin-blue .main-sidebar {
-          position: fixed;
           background: ', sidebarBackColor, ';
           box-shadow: ', sidebarShadowRadius, " ", sidebarShadowColor, ';
           padding-left: ', sidebarPadding, 'px;
@@ -714,7 +706,6 @@ shinyDashboardThemeDIY <- function(appFontFamily, appFontColor, logoBackColor, b
 
           /* body */
           .content-wrapper, .right-side {
-          padding-top: 50px;
           background: ', bodyBackColor, ';
           }
 

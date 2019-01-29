@@ -71,8 +71,9 @@ body <- dashboardBody(
 
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$style(".rightAlign{float:right;}"),
-    tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700)"))
+    if (TRUE) {
+      tags$link(rel = "stylesheet", type = "text/css", href = "sidebar.css")
+    }
   ),
 
   # Home ----
