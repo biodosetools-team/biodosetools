@@ -10,4 +10,4 @@ The user should check which model fits better with its data. However, because at
 
 #### Fitting model
 
-Normally the Poisson function should be used. However, if there is constant oversisperssion, the quasi-Poission is recommended.
+Normally the Poisson function should be used. However, if there is constant overdispersion, the quasi-Poission is recommended.
