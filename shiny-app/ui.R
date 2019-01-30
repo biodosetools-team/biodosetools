@@ -20,7 +20,7 @@ source("estimateModule.R")
 
 header <- dashboardHeader(
   # title = span(tagList(icon("calculator"), "Biodose Tool"))
-  title = logo_biodose,
+  title = logo_biodose_tools,
   titleWidth = 280
 )
 
@@ -65,7 +65,8 @@ sidebar <- dashboardSidebar(
 # Body -----------------------------------------------------
 
 body <- dashboardBody(
-  theme_biodose,
+  theme_biodose_tools,
+  theme_buttons_biodose_tools,
 
   useShinyjs(),
 
