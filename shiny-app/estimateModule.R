@@ -37,11 +37,10 @@ estimateUI <- function(id, label) {
               ),
               bsModal(
                 id = ns("help_input_cases_data_dialog"),
-                title = "Help: Count data input",
+                title = "Help: Cases data input",
                 trigger = ns("help_input_cases_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/input_count_data.md"))
-                # TODO: Make new help dialogue
+                withMathJax(includeMarkdown("help/input_cases_data.md"))
               )
             ),
             conditionalPanel(
@@ -57,10 +56,10 @@ estimateUI <- function(id, label) {
               ),
               bsModal(
                 id = ns("help_load_count_data_dialog"),
-                title = "Help: Loading count data",
+                title = "Help: Loading cases data",
                 trigger = ns("help_load_count_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/load_count_data.md"))
+                withMathJax(includeMarkdown("help/load_cases_data.md"))
               )
             ),
             # Buttons
@@ -74,19 +73,9 @@ estimateUI <- function(id, label) {
           )
         )
       ),
-      # Curve fitting options
+      # Hot Table ----
       box(
-        width = 5,
-        title = "Curve fitting data options",
-        status = "warning", solidHeader = F, collapsible = T,
-        p("Work in progress...")
-      )
-    ),
-
-    # Hot Table ----
-    fluidRow(
-      box(
-        width = 12,
+        width = 7,
         title = "Data input",
         status = "primary", solidHeader = F, collapsible = T, collapsed = F,
         rHandsontableOutput(ns("hotable")),
@@ -104,12 +93,89 @@ estimateUI <- function(id, label) {
         actionButton(ns("button_fit"), class = "inputs-button", "Estimate dose"),
         bsModal(
           id = ns("help_check_distribution_dialog"),
-          title = "Help: Count data input",
+          title = "Help: Check distribution",
           trigger = ns("help_check_distribution"),
           size = "large",
-          withMathJax(includeMarkdown("help/load_count_data.md"))
+          withMathJax(includeMarkdown("help/check_distribution.md"))
           # TODO: Make new help dialogue
         )
+      )
+
+    ),
+
+
+    fluidRow(
+      # Curve fitting options ----
+      box(
+        width = 5,
+        title = "Curve fitting data options",
+        status = "warning", solidHeader = F, collapsible = T,
+        fluidRow(
+          column(
+            width = 12,
+            # Load data from file
+            awesomeCheckbox(
+              inputId = ns("load_fit_data_check"),
+              label = "Load fit data from file",
+              value = FALSE, status = "warning"
+            ),
+            # Inputs
+            conditionalPanel(
+              condition = "!input.load_fit_data_check",
+              ns = ns,
+              # numericInput(ns("num_cases"), "Number of cases", value = 1),
+              # numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+              # Help button
+              bsButton(ns("help_input_fit_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_input_fit_data_dialog"),
+                title = "Help: Manual fit data input",
+                trigger = ns("help_input_fit_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/input_cases_data.md"))
+              )
+            ),
+            conditionalPanel(
+              condition = "input.load_fit_data_check",
+              ns = ns,
+              fileInput(ns("load_fit_data"), label = "File input"),
+              # Help button
+              bsButton(ns("help_load_fit_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_load_fit_data_dialog"),
+                title = "Help: Loading fit data",
+                trigger = ns("help_load_fit_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/load_cases_data.md"))
+              )
+            ),
+            # Buttons
+            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
+          ),
+          # Tooltip
+          bsTooltip(ns("button_upd_table"),
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
+          )
+        )
+      ),
+      # Curve fitting overview ----
+      box(
+        width = 5,
+        title = "Curve fitting overview",
+        status = "success", solidHeader = F, collapsible = T,
+        p("Work in progress...")
       )
     )
   )
