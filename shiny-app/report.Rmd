@@ -7,7 +7,7 @@ output:
     theme: cosmo
 params:
   fit_result: NA
-  bstat: NA
+  fit_coeffs: NA
   var_cov_mat: NA
   cor_mat: NA
   gg_curve: NA
@@ -21,17 +21,27 @@ params$fit_result
 
 ### Coefficients
 ```{r echo=FALSE}
-knitr::kable(params$bstat)
+params$fit_coeffs %>% 
+  knitr::kable()
+```
+
+### Model-level statistics
+```{r echo=FALSE}
+broom::glance(params$fit_result) %>%
+  select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>% 
+  knitr::kable()
 ```
 
 ### Variance-covariance matrix
 ```{r echo=FALSE}
-params$var_cov_mat
+params$var_cov_mat %>% 
+  knitr::kable()
 ```
 
 ### Correlation matrix
 ```{r echo=FALSE}
-params$cor_mat
+params$cor_mat %>% 
+  knitr::kable()
 ```
 
 ### Plot

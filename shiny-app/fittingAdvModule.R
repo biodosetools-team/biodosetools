@@ -21,7 +21,7 @@ fittingAdvUI <- function(id, label) {
               label = "Load data from file",
               value = FALSE, status = "warning"
             ),
-            # Inputs
+            # Manual input ----
             conditionalPanel(
               condition = "!input.load_count_data_check",
               ns = ns,
@@ -42,6 +42,7 @@ fittingAdvUI <- function(id, label) {
                 withMathJax(includeMarkdown("help/input_count_data.md"))
               )
             ),
+            # Load from file ----
             conditionalPanel(
               condition = "input.load_count_data_check",
               ns = ns,
@@ -164,12 +165,16 @@ fittingAdvUI <- function(id, label) {
           side = "left",
           tabPanel(
             title = "Result of curve fit",
-            h4("Fit summary"),
-            verbatimTextOutput(ns("fit_results")),
+            # h4("Fit summary"),
+            # verbatimTextOutput(ns("fit_results")),
+            h4("Fit formula"),
+            verbatimTextOutput(ns("fit_formula")),
             h4("Coefficients"),
             rHandsontableOutput(ns("fit_coeffs"))
           ),
           tabPanel(
+            h4("Model-level statistics"),
+            rHandsontableOutput(ns("fit_statistics")),
             title = "Summary statistics",
             h4("Correlation matrix"),
             rHandsontableOutput(ns("cor_mat")),
@@ -532,30 +537,50 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   # Results outputs ----
   output$fit_results <- renderPrint({
-    # "Result of curve fit 'fit_results'"
+    # Result of curve fit 'fit_results'
     if(input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
-  output$fit_coeffs <- renderRHandsontable({
-    # "Coefficients 'fit_coeffs'"
+  output$fit_formula <- renderPrint({
+    # Fitting formula
     if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["fit_coeffs"]])
+    data()[["fit_results"]]$formula
+    # TODO: transform this into LaTeX output?
+  })
+
+  output$fit_statistics <- renderRHandsontable({
+    # Model-level statistics using broom::glance
+    if(input$button_fit <= 0) return(NULL)
+    broom::glance(data()[["fit_results"]]) %>%
+      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      mutate(null.deviance = as.character(null.deviance)) %>%
+      rhandsontable()
+  })
+
+  output$fit_coeffs <- renderRHandsontable({
+    # Coefficients 'fit_coeffs'
+    if(input$button_fit <= 0) return(NULL)
+    data()[["fit_coeffs"]] %>%
+      rhandsontable()
   })
 
   output$var_cov_mat <- renderRHandsontable({
-    # "variance-covariance matrix 'var_cov_mat'"
+    # Variance-covariance matrix 'var_cov_mat'
     if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["var_cov_mat"]])
+    data()[["var_cov_mat"]] %>%
+      rhandsontable()
   })
 
   output$cor_mat <- renderRHandsontable({
-    # "Correlation matrix 'cor_mat'"
+    # Correlation matrix 'cor_mat'
     if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["cor_mat"]])
+    data()[["cor_mat"]] %>%
+      rhandsontable()
   })
 
   output$plot <- renderPlot(
+    # Plot of the data and fitted curve
     res = 120, {
       if(input$button_fit <= 0) return(NULL)
       data()[["gg_curve"]]
