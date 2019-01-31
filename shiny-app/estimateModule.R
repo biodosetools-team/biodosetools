@@ -18,13 +18,13 @@ estimateUI <- function(id, label) {
             width = 12,
             # Load data from file
             awesomeCheckbox(
-              inputId = ns("load_count_data_check"),
+              inputId = ns("load_cases_data_check"),
               label = "Load data from file",
               value = FALSE, status = "warning"
             ),
             # Inputs
             conditionalPanel(
-              condition = "!input.load_count_data_check",
+              condition = "!input.load_cases_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
@@ -44,20 +44,20 @@ estimateUI <- function(id, label) {
               )
             ),
             conditionalPanel(
-              condition = "input.load_count_data_check",
+              condition = "input.load_cases_data_check",
               ns = ns,
-              fileInput(ns("load_count_data"), label = "File input"),
+              fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
-              bsButton(ns("help_load_count_data"),
+              bsButton(ns("help_load_cases_data"),
                        class = "rightAlign",
                        label = "",
                        icon = icon("question"),
                        style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_load_count_data_dialog"),
+                id = ns("help_load_cases_data_dialog"),
                 title = "Help: Loading cases data",
-                trigger = ns("help_load_count_data"),
+                trigger = ns("help_load_cases_data"),
                 size = "large",
                 withMathJax(includeMarkdown("help/load_cases_data.md"))
               )
@@ -117,14 +117,14 @@ estimateUI <- function(id, label) {
             awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
               label = "Load fit data from file",
-              value = FALSE, status = "warning"
+              value = TRUE, status = "warning"
             ),
-            # Inputs
+            # Manual input ----
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-              # numericInput(ns("num_cases"), "Number of cases", value = 1),
-              # numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+              p("Work in progress"),
+              # TODO: fit data input
               # Help button
               bsButton(ns("help_input_fit_data"),
                        class = "rightAlign",
@@ -137,9 +137,10 @@ estimateUI <- function(id, label) {
                 title = "Help: Manual fit data input",
                 trigger = ns("help_input_fit_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/input_cases_data.md"))
+                withMathJax(includeMarkdown("help/input_fit_data.md"))
               )
             ),
+            # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
               ns = ns,
@@ -156,11 +157,11 @@ estimateUI <- function(id, label) {
                 title = "Help: Loading fit data",
                 trigger = ns("help_load_fit_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/load_cases_data.md"))
+                withMathJax(includeMarkdown("help/load_fit_data.md"))
               )
             ),
             # Buttons
-            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
+            actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
@@ -171,11 +172,29 @@ estimateUI <- function(id, label) {
         )
       ),
       # Curve fitting overview ----
-      box(
-        width = 5,
-        title = "Curve fitting overview",
-        status = "success", solidHeader = F, collapsible = T,
-        p("Work in progress...")
+      # box(
+      #   width = 5,
+      #   title = "Curve fitting overview",
+      #   status = "success", solidHeader = F, collapsible = T,
+      #   p("Work in progress...")
+      # )
+      tabBox(
+        width = 7,
+        side = "left",
+        tabPanel(
+          title = "Result of curve fit",
+          h4("Fit summary"),
+          verbatimTextOutput(ns("fit_results")),
+          h4("Coefficients"),
+          rHandsontableOutput(ns("fit_coeffs"))
+        ),
+        tabPanel(
+          title = "Summary statistics",
+          h4("Correlation matrix"),
+          rHandsontableOutput(ns("cor_mat")),
+          h4("Variance-covariance matrix"),
+          rHandsontableOutput(ns("var_cov_mat"))
+        )
       )
     )
   )
@@ -198,13 +217,13 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_table
 
     isolate({
-      load_count_data <- input$load_count_data_check
-      count_data <- input$load_count_data
+      load_cases_data <- input$load_cases_data_check
+      cases_data <- input$load_cases_data
       num_cases <- as.numeric(input$num_cases)
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
-    if (!load_count_data) {
+    if (!load_cases_data) {
       # Doses data frame
       # data_dose <- data.frame(
       #   D = rep(0.0, num_cases)
@@ -226,7 +245,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
         # dplyr::mutate(D = as.numeric(D))
       full_data <- data_base
     } else {
-      full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+      full_data <- read.csv(cases_data$datapath, header = TRUE) %>%
         mutate_at(vars(starts_with("C")), funs(as.integer(.)))
     }
 
@@ -297,4 +316,149 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
   })
+}
+
+
+estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
+
+  # Calculations ----
+  data <- reactive({
+    input$button_view_fit_data
+
+    isolate({
+      load_fit_data <- input$load_fit_data_check
+      fit_data <- input$load_fit_data
+    })
+
+    if (load_fit_data) {
+      fit_results <- readRDS(fit_data$datapath)
+    }
+
+    # Summarise fit
+    fit_summary <- summary(fit_results, correlation = TRUE)
+    cor_mat <- fit_summary$correlation
+    fit_coeffs <- fit_summary$coefficients
+    var_cov_mat <- vcov(fit_results)
+
+    # Generalized variance-covariance matrix
+    general_fit_coeffs <- numeric(length = 3L)
+    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+
+    for (var in rownames(fit_coeffs)) {
+      general_fit_coeffs[var] <- fit_coeffs[var, "Estimate"]
+    }
+
+    # Generalized fit coefficients
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
+    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+
+    for (x_var in rownames(var_cov_mat)) {
+      for (y_var in colnames(var_cov_mat)) {
+        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+      }
+    }
+
+    # # Generalized curves
+    # yield_fun <- function(x) {
+    #   general_fit_coeffs[[1]] +
+    #     general_fit_coeffs[[2]] * x +
+    #     general_fit_coeffs[[3]] * x * x
+    # }
+    #
+    # chisq_df <- nrow(fit_coeffs)
+    # R_factor <- sqrt(qchisq(.95, df = chisq_df))
+    #
+    # yield_error_fun <- function(x) {
+    #   sqrt(
+    #     general_var_cov_mat[["x0", "x0"]] +
+    #       general_var_cov_mat[["x1", "x1"]] * x * x +
+    #       general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
+    #       2 * general_var_cov_mat[["x0", "x1"]] * x +
+    #       2 * general_var_cov_mat[["x0", "x2"]] * x * x +
+    #       2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+    #   )
+    # }
+    #
+    # # Plot data
+    # plot_data <- broom::augment(fit_results)
+    #
+    # curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
+    #   mutate(
+    #     yield = yield_fun(dose),
+    #     yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
+    #     yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+    #   )
+    #
+    # # Make plot
+    # gg_curve <- ggplot(plot_data / x0) +
+    #   # Observed data
+    #   geom_point(aes(x = x1, y = aberr)) +
+    #   # Fitted curve
+    #   stat_function(
+    #     data = data.frame(x = c(0, max(x1 / x0))),
+    #     mapping = aes(x),
+    #     fun = function(x) yield_fun(x),
+    #     linetype = "dashed"
+    #   ) +
+    #   # Confidence bands (Merkle, 1983)
+    #   geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+    #   labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
+    #   theme_bw()
+
+    # Make list of results to return
+    results_list <- list(
+      fit_results = fit_results,
+      fit_coeffs = fit_coeffs,
+      var_cov_mat = var_cov_mat,
+      cor_mat = cor_mat
+      # gg_curve = gg_curve
+    )
+
+    return(results_list)
+  })
+
+  # Results outputs ----
+  output$fit_results <- renderPrint({
+    # "Result of curve fit 'fit_results'"
+    if(input$button_view_fit_data <= 0) return(NULL)
+    data()[["fit_results"]]
+  })
+
+  output$fit_coeffs <- renderRHandsontable({
+    # "Coefficients 'fit_coeffs'"
+    if(input$button_view_fit_data <= 0) return(NULL)
+    rhandsontable(data()[["fit_coeffs"]])
+  })
+
+  output$var_cov_mat <- renderRHandsontable({
+    # "variance-covariance matrix 'var_cov_mat'"
+    if(input$button_view_fit_data <= 0) return(NULL)
+    rhandsontable(data()[["var_cov_mat"]])
+  })
+
+  output$cor_mat <- renderRHandsontable({
+    # "Correlation matrix 'cor_mat'"
+    if(input$button_view_fit_data <= 0) return(NULL)
+    rhandsontable(data()[["cor_mat"]])
+  })
+
+  # output$plot <- renderPlot(
+  #   res = 120, {
+  #     if(input$button_view_fit_data <= 0) return(NULL)
+  #     data()[["gg_curve"]]
+  #   }
+  # )
+
+  # Export plot ----
+  # output$save_plot <- downloadHandler(
+  #   filename = function() {
+  #     paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
+  #   },
+  #   content = function(file) {
+  #     ggsave(plot = data()[["gg_curve"]], filename = file,
+  #            width = 6, height = 4.5, dpi = 96,
+  #            device = gsub("\\.", "", input$save_plot_format))
+  #   }
+  # )
 }

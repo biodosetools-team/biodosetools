@@ -20,5 +20,6 @@ server <- function(input, output) {
 
   # Estimate ----
   callModule(module = estimateHotTable, id = "estimate")
+  callModule(module = estimateFittingCurve, id = "estimate")
 
 }
