@@ -23,4 +23,9 @@ D   ,C0  ,C1,C2,C3,C4,C5
 5   ,11  ,19,11,9 ,6 ,3
 ```
 
-The rest of columns will be calculated automatically.
+The rest of columns will be calculated automatically:
+
+- `N` is the total number of cells.
+- `X` is the number of aberrations.
+- `DI` is the dispersion index $σ2/y$
+- `u` is the $u$-value, which for a Poisson distribution should be unity.
