@@ -30,10 +30,10 @@ estimateUI <- function(id, label) {
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
               bsButton(ns("help_input_cases_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_cases_data_dialog"),
@@ -49,10 +49,10 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
               bsButton(ns("help_load_cases_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_cases_data_dialog"),
@@ -67,9 +67,9 @@ estimateUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
           )
         )
       ),
@@ -84,13 +84,13 @@ estimateUI <- function(id, label) {
         actionButton(ns("button_check_dist"), "Check distribution"),
         # Help button
         bsButton(ns("help_check_distribution"),
-                 # class = "rightAlign",
-                 label = "",
-                 icon = icon("question"),
-                 style = "default", size = "default"
+          # class = "rightAlign",
+          label = "",
+          icon = icon("question"),
+          style = "default", size = "default"
         ),
         div(class = "widget-sep", br()),
-        actionButton(ns("button_fit"), class = "inputs-button", "Estimate dose"),
+        actionButton(ns("button_estimate"), class = "inputs-button", "Estimate dose"),
         bsModal(
           id = ns("help_check_distribution_dialog"),
           title = "Help: Check distribution",
@@ -100,7 +100,6 @@ estimateUI <- function(id, label) {
           # TODO: Make new help dialogue
         )
       )
-
     ),
 
 
@@ -127,10 +126,10 @@ estimateUI <- function(id, label) {
               # TODO: fit data input
               # Help button
               bsButton(ns("help_input_fit_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_fit_data_dialog"),
@@ -147,10 +146,10 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_fit_data"), label = "File input"),
               # Help button
               bsButton(ns("help_load_fit_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_fit_data_dialog"),
@@ -165,19 +164,13 @@ estimateUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
           )
         )
       ),
-      # Curve fitting overview ----
-      # box(
-      #   width = 5,
-      #   title = "Curve fitting overview",
-      #   status = "success", solidHeader = F, collapsible = T,
-      #   p("Work in progress...")
-      # )
+      # tabBox: Curve fitting overview ----
       tabBox(
         width = 7,
         side = "left",
@@ -194,6 +187,23 @@ estimateUI <- function(id, label) {
           rHandsontableOutput(ns("cor_mat")),
           h4("Variance-covariance matrix"),
           rHandsontableOutput(ns("var_cov_mat"))
+        )
+      )
+    ),
+
+    # Estimations ----
+    fluidRow(
+      tabBox(
+        width = 7,
+        side = "left",
+        tabPanel(
+          title = "Results",
+          h4("Yields"),
+          rHandsontableOutput(ns("est_yields")),
+          h4("Doses"),
+          rHandsontableOutput(ns("est_doses")),
+          h4("Fraction"),
+          rHandsontableOutput(ns("est_frac"))
         )
       )
     )
@@ -242,7 +252,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
 
       # Full data frame
       # full_data <- cbind(data_dose, data_base) %>%
-        # dplyr::mutate(D = as.numeric(D))
+      # dplyr::mutate(D = as.numeric(D))
       full_data <- data_base
     } else {
       full_data <- read.csv(cases_data$datapath, header = TRUE) %>%
@@ -421,25 +431,25 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
   # Results outputs ----
   output$fit_results <- renderPrint({
     # "Result of curve fit 'fit_results'"
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
   output$fit_coeffs <- renderRHandsontable({
     # "Coefficients 'fit_coeffs'"
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     rhandsontable(data()[["fit_coeffs"]])
   })
 
   output$var_cov_mat <- renderRHandsontable({
     # "variance-covariance matrix 'var_cov_mat'"
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     rhandsontable(data()[["var_cov_mat"]])
   })
 
   output$cor_mat <- renderRHandsontable({
     # "Correlation matrix 'cor_mat'"
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     rhandsontable(data()[["cor_mat"]])
   })
 
@@ -459,6 +469,280 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
   #     ggsave(plot = data()[["gg_curve"]], filename = file,
   #            width = 6, height = 4.5, dpi = 96,
   #            device = gsub("\\.", "", input$save_plot_format))
+  #   }
+  # )
+}
+
+
+estimateResults <- function(input, output, session, stringsAsFactors) {
+
+  # Calculations ----
+  data <- reactive({
+    input$button_estimate
+
+    isolate({
+      cases_data <- hot_to_r(input$hotable)
+
+      dose <- cases_data[["D"]]
+      aberr <- cases_data[["X"]]
+      cell <- cases_data[["N"]]
+      disp <- cases_data[["DI"]]
+
+      # data <- cases_data
+    })
+
+    # Input of the parameters of the dose-effect linear-quadratic
+    # model
+
+    beta0 <- 0.0008867
+    beta1 <- 0.1285732
+    beta2 <- 0.0552981
+
+
+    # Input of the Variance-covariance matrix of the parameters
+
+    sigma <- numeric(49)
+    dim(sigma) <- c(7, 7)
+    sigma[1, 1] <- 8.864896e-07
+    sigma[2, 2] <- 3.946474e-04
+    sigma[3, 3] <- 1.900512e-05
+    sigma[1, 2] <- -8.526986e-07
+    sigma[1, 3] <- 1.046383e-07
+    sigma[2, 1] <- sigma[1, 2]
+    sigma[2, 3] <- -6.817431e-05
+    sigma[3, 1] <- sigma[1, 3]
+    sigma[3, 2] <- sigma[2, 3]
+
+    # Input of the parameter gamma and its variance
+
+    gam <- 0.3706479
+    sigma[4, 4] <- 0.009164707
+
+    # Data test is stored in vector y
+
+    y <- c(rep(0, 160), rep(1, 55), rep(2, 19), rep(3, 17), rep(4, 9), rep(5, 4))
+    # y <- data
+
+    x <- c(rep(1, length(y)))
+    fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
+
+    # First parameter is the mixing proportion
+    # the second and third parameters are the yields
+
+    loglik <- function(b) {
+      loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
+
+      return(-loglik)
+    }
+
+    MLE <- optim(
+      c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
+      loglik,
+      method = c("L-BFGS-B"),
+      lower = c(0.01, 0.01, 0.01), upper = c(0.99, Inf, Inf), hessian = T
+    )
+
+    st <- solve(MLE$hessian)
+    m1 <- MLE$par[2]
+    m2 <- MLE$par[3]
+    f1 <- MLE$par[1]
+
+    if (m1 < m2) {
+      m1 <- MLE$par[3]
+      m2 <- MLE$par[2]
+      f1 <- 1 - f1
+      stm <- st
+      stm[2, 2] <- st[3, 3]
+      stm[3, 3] <- st[2, 2]
+      stm[1, 2] <- st[1, 3]
+      stm[1, 3] <- st[1, 2]
+      stm[2, 1] <- stm[1, 2]
+      stm[3, 1] <- stm[1, 3]
+      st <- stm
+    }
+
+    sigma[5, 5] <- st[1, 1]
+    sigma[6, 6] <- st[2, 2]
+    sigma[7, 7] <- st[3, 3]
+    sigma[5, 6] <- st[1, 2]
+    sigma[5, 7] <- st[1, 3]
+    sigma[6, 7] <- st[2, 3]
+    sigma[6, 5] <- st[1, 2]
+    sigma[7, 5] <- st[1, 3]
+    sigma[7, 6] <- st[2, 3]
+
+    # Estimated parameters and its standard errors
+    # First parameter is the mixing proportion
+    # the second and third parameters are the yields
+
+    estim <- c(f1, m1, m2)
+    std_estim <- sqrt(diag(st))
+
+    est_yields <- data.frame(
+      estimate = c(estim, 1 - estim[1]),
+      std_err = c(std_estim, std_estim[1])
+    )
+
+    row.names(est_yields) <-  c("f1", "m1", "m2", "f2")
+
+
+    # estimated received doses
+    x1 <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - m1
+    }, c(0.1, 30))$root
+
+    if (m2 <= 0.01) {
+      x2 <- 0
+    } else {
+      x2 <- uniroot(function(d) {
+        beta0 + beta1 * d + beta2 * d^2 - m2
+      }, c(0.1, 30))$root
+    }
+
+    est_doses <- data.frame(
+      x1 = x1,
+      x2 = x2
+    )
+
+    frac <- function(b0, b1, b2, g, f, mu1, mu2) {
+      x1 <- uniroot(function(d) {
+        b0 + b1 * d + b2 * d^2 - mu1
+      }, c(0.1, 30))$root
+
+      if (mu2 <= 0.01) {
+        x2 <- 0
+      } else {
+        x2 <- uniroot(function(d) {
+          b0 + b1 * d + b2 * d^2 - mu2
+        }, c(0.1, 30))$root
+      }
+
+      frac <- f / (f + (1 - f) * exp(g * (x2 - x1)))
+
+      return(frac)
+    }
+
+
+    # Estimated fraction of irradiated blood for dose x1
+    est_F <- frac(beta0, beta1, beta2, gam, f1, m1, m2)
+
+    # Approximated standard error
+    std_err_F <- F * (1 - F) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+
+    est_frac <- data.frame(
+      estimate = est_F,
+      std_err = std_err_F
+    )
+
+    # Gradient
+    h <- 0.000001
+    if (m2 > 0.01) {
+      c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
+      c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
+      c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
+      c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+      c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
+      c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
+      c8 <- (frac(beta0, beta1, beta2, gam, f1, m1, m2 + h) - F) / h
+      grad <- c(c1, c2, c3, c5, c6, c7, c8)
+      sqrt(t(grad) %*% sigma %*% grad)
+    }
+
+    if (m2 <= 0.01) {
+      c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
+      c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
+      c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
+      c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+      c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
+      c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
+      grad <- c(c1, c2, c3, c5, c6, c7)
+      sigma2 <- sigma[1:6, 1:6]
+      sqrt(t(grad) %*% sigma2 %*% grad)
+    }
+
+    # Make list of results to return
+    results_list <- list(
+      est_yields = est_yields,
+      est_doses  = est_doses,
+      est_frac   = est_frac
+    )
+
+    return(results_list)
+  })
+
+  # Results outputs ----
+  output$est_yields <- renderRHandsontable({
+    # Estimated yields
+    if(input$button_estimate <= 0) return(NULL)
+    data()[["est_yields"]] %>%
+      rhandsontable()
+  })
+
+  output$est_doses <- renderRHandsontable({
+    # Estimated recieved doses
+    if(input$button_estimate <= 0) return(NULL)
+    data()[["est_doses"]] %>%
+      rhandsontable()
+  })
+
+  output$est_frac <- renderRHandsontable({
+    # Estimated fraction of irradiated blood for dose x1
+    if(input$button_estimate <= 0) return(NULL)
+    data()[["est_frac"]] %>%
+      rhandsontable()
+  })
+
+  # output$plot <- renderPlot(
+  #   # Plot of the data and fitted curve
+  #   res = 120, {
+  #     if(input$button_fit <= 0) return(NULL)
+  #     data()[["gg_curve"]]
+  #   }
+  # )
+
+  # Export plot ----
+  # output$save_plot <- downloadHandler(
+  #   filename = function() {
+  #     paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
+  #   },
+  #   content = function(file) {
+  #     ggsave(plot = data()[["gg_curve"]], filename = file,
+  #            width = 6, height = 4.5, dpi = 96,
+  #            device = gsub("\\.", "", input$save_plot_format))
+  #   }
+  # )
+
+  # Export report ----
+  # output$save_report <- downloadHandler(
+  #   # For PDF output, change this to "report.pdf"
+  #   filename = function() {
+  #     paste("report-", Sys.Date(), ".html", sep = "")
+  #   },
+  #   content = function(file) {
+  #     # Copy the report file to a temporary directory before processing it, in
+  #     # case we don't have write permissions to the current working dir (which
+  #     # can happen when deployed).
+  #     tempReport <- file.path(tempdir(), "report.Rmd")
+  #     normReport <- file.path("report.Rmd")
+  #     file.copy("report.Rmd", tempReport, overwrite = TRUE)
+  #
+  #     # Set up parameters to pass to Rmd document
+  #     params <- list(
+  #       fit_result = data()[["fit_results"]],
+  #       fit_coeffs = data()[["fit_coeffs"]],
+  #       var_cov_mat = data()[["var_cov_mat"]],
+  #       cor_mat = data()[["cor_mat"]],
+  #       gg_curve = data()[["gg_curve"]]
+  #     )
+  #
+  #     # Knit the document, passing in the `params` list, and eval it in a
+  #     # child of the global environment (this isolates the code in the document
+  #     # from the code in this app).
+  #     rmarkdown::render(tempReport,
+  #                       output_file = file,
+  #                       params = params,
+  #                       envir = new.env(parent = globalenv())
+  #     )
   #   }
   # )
 }
