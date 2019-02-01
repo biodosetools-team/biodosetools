@@ -7,6 +7,99 @@ estimateUI <- function(id, label) {
   tabItem(
     tabName = label,
     h2("Dose estimation"),
+
+    fluidRow(
+      # Curve fitting options ----
+      box(
+        width = 5,
+        title = "Curve fitting data options",
+        status = "warning", solidHeader = F, collapsible = T,
+        fluidRow(
+          column(
+            width = 12,
+            # Load data from file
+            awesomeCheckbox(
+              inputId = ns("load_fit_data_check"),
+              label = "Load fit data from file",
+              value = TRUE, status = "warning"
+            ),
+            # Manual input ----
+            conditionalPanel(
+              condition = "!input.load_fit_data_check",
+              ns = ns,
+              p("Work in progress"),
+              # TODO: fit data input
+              # Help button
+              bsButton(ns("help_input_fit_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_input_fit_data_dialog"),
+                title = "Help: Manual fit data input",
+                trigger = ns("help_input_fit_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/input_fit_data.md"))
+              )
+            ),
+            # Load from file ----
+            conditionalPanel(
+              condition = "input.load_fit_data_check",
+              ns = ns,
+              fileInput(ns("load_fit_data"), label = "File input"),
+              # Help button
+              bsButton(ns("help_load_fit_data"),
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
+              ),
+              bsModal(
+                id = ns("help_load_fit_data_dialog"),
+                title = "Help: Loading fit data",
+                trigger = ns("help_load_fit_data"),
+                size = "large",
+                withMathJax(includeMarkdown("help/load_fit_data.md"))
+              )
+            ),
+            # Buttons
+            actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
+          ),
+          # Tooltip
+          bsTooltip(ns("button_upd_table"),
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
+          )
+        )
+      ),
+      # tabBox: Curve fitting overview ----
+      tabBox(
+        width = 7,
+        side = "left",
+        tabPanel(
+          title = "Result of curve fit",
+          # h4("Fit summary"),
+          # verbatimTextOutput(ns("fit_results")),
+          h4("Fit formula"),
+          verbatimTextOutput(ns("fit_formula")),
+          h4("Coefficients"),
+          rHandsontableOutput(ns("fit_coeffs"))
+        ),
+        tabPanel(
+          h4("Model-level statistics"),
+          rHandsontableOutput(ns("fit_statistics")),
+          title = "Summary statistics",
+          h4("Correlation matrix"),
+          rHandsontableOutput(ns("cor_mat")),
+          h4("Variance-covariance matrix"),
+          rHandsontableOutput(ns("var_cov_mat"))
+        )
+      )
+    ),
+
     fluidRow(
       # Data input options ----
       box(
@@ -98,95 +191,6 @@ estimateUI <- function(id, label) {
           size = "large",
           withMathJax(includeMarkdown("help/check_distribution.md"))
           # TODO: Make new help dialogue
-        )
-      )
-    ),
-
-
-    fluidRow(
-      # Curve fitting options ----
-      box(
-        width = 5,
-        title = "Curve fitting data options",
-        status = "warning", solidHeader = F, collapsible = T,
-        fluidRow(
-          column(
-            width = 12,
-            # Load data from file
-            awesomeCheckbox(
-              inputId = ns("load_fit_data_check"),
-              label = "Load fit data from file",
-              value = TRUE, status = "warning"
-            ),
-            # Manual input ----
-            conditionalPanel(
-              condition = "!input.load_fit_data_check",
-              ns = ns,
-              p("Work in progress"),
-              # TODO: fit data input
-              # Help button
-              bsButton(ns("help_input_fit_data"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_input_fit_data_dialog"),
-                title = "Help: Manual fit data input",
-                trigger = ns("help_input_fit_data"),
-                size = "large",
-                withMathJax(includeMarkdown("help/input_fit_data.md"))
-              )
-            ),
-            # Load from file ----
-            conditionalPanel(
-              condition = "input.load_fit_data_check",
-              ns = ns,
-              fileInput(ns("load_fit_data"), label = "File input"),
-              # Help button
-              bsButton(ns("help_load_fit_data"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_load_fit_data_dialog"),
-                title = "Help: Loading fit data",
-                trigger = ns("help_load_fit_data"),
-                size = "large",
-                withMathJax(includeMarkdown("help/load_fit_data.md"))
-              )
-            ),
-            # Buttons
-            actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
-          ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
-          )
-        )
-      ),
-      # tabBox: Curve fitting overview ----
-      tabBox(
-        width = 7,
-        side = "left",
-        tabPanel(
-          title = "Result of curve fit",
-          h4("Fit summary"),
-          verbatimTextOutput(ns("fit_results")),
-          h4("Coefficients"),
-          rHandsontableOutput(ns("fit_coeffs"))
-        ),
-        tabPanel(
-          title = "Summary statistics",
-          h4("Correlation matrix"),
-          rHandsontableOutput(ns("cor_mat")),
-          h4("Variance-covariance matrix"),
-          rHandsontableOutput(ns("var_cov_mat"))
         )
       )
     ),
@@ -430,30 +434,50 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   # Results outputs ----
   output$fit_results <- renderPrint({
-    # "Result of curve fit 'fit_results'"
-    if (input$button_view_fit_data <= 0) return(NULL)
+    # Result of curve fit 'fit_results'
+    if(input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
+  output$fit_formula <- renderPrint({
+    # Fitting formula
+    if(input$button_view_fit_data <= 0) return(NULL)
+    data()[["fit_results"]]$formula
+    # TODO: transform this into LaTeX output?
+  })
+
+  output$fit_statistics <- renderRHandsontable({
+    # Model-level statistics using broom::glance
+    if(input$button_view_fit_data <= 0) return(NULL)
+    broom::glance(data()[["fit_results"]]) %>%
+      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      mutate(null.deviance = as.character(null.deviance)) %>%
+      rhandsontable()
+  })
+
   output$fit_coeffs <- renderRHandsontable({
-    # "Coefficients 'fit_coeffs'"
-    if (input$button_view_fit_data <= 0) return(NULL)
-    rhandsontable(data()[["fit_coeffs"]])
+    # Coefficients 'fit_coeffs'
+    if(input$button_view_fit_data <= 0) return(NULL)
+    data()[["fit_coeffs"]] %>%
+      rhandsontable()
   })
 
   output$var_cov_mat <- renderRHandsontable({
-    # "variance-covariance matrix 'var_cov_mat'"
-    if (input$button_view_fit_data <= 0) return(NULL)
-    rhandsontable(data()[["var_cov_mat"]])
+    # Variance-covariance matrix 'var_cov_mat'
+    if(input$button_view_fit_data <= 0) return(NULL)
+    data()[["var_cov_mat"]] %>%
+      rhandsontable()
   })
 
   output$cor_mat <- renderRHandsontable({
-    # "Correlation matrix 'cor_mat'"
-    if (input$button_view_fit_data <= 0) return(NULL)
-    rhandsontable(data()[["cor_mat"]])
+    # Correlation matrix 'cor_mat'
+    if(input$button_view_fit_data <= 0) return(NULL)
+    data()[["cor_mat"]] %>%
+      rhandsontable()
   })
 
   # output$plot <- renderPlot(
+  #   # Plot of the data and fitted curve
   #   res = 120, {
   #     if(input$button_view_fit_data <= 0) return(NULL)
   #     data()[["gg_curve"]]
@@ -474,7 +498,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 }
 
 
-estimateResults <- function(input, output, session, stringsAsFactors) {
+estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({
@@ -687,7 +711,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
   # output$plot <- renderPlot(
   #   # Plot of the data and fitted curve
   #   res = 120, {
-  #     if(input$button_fit <= 0) return(NULL)
+  #     if(input$button_view_fit_data <= 0) return(NULL)
   #     data()[["gg_curve"]]
   #   }
   # )
