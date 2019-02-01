@@ -493,16 +493,17 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
         as.numeric()
     })
 
-    # Input of the parameters of the dose-effect linear-quadratic
-    # model
+    # Data test is stored in vector y
+    y <- rep(seq(0, length(counts) - 1, 1), counts)
+    x <- c(rep(1, length(y)))
+    fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
 
+    # Input of the parameters of the dose-effect linear-quadratic model
     beta0 <- 0.0008867
     beta1 <- 0.1285732
     beta2 <- 0.0552981
 
-
     # Input of the Variance-covariance matrix of the parameters
-
     sigma <- numeric(49)
     dim(sigma) <- c(7, 7)
     sigma[1, 1] <- 8.864896e-07
@@ -516,21 +517,11 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
     sigma[3, 2] <- sigma[2, 3]
 
     # Input of the parameter gamma and its variance
-
     gam <- 0.3706479
     sigma[4, 4] <- 0.009164707
 
-    # Data test is stored in vector y
-
-    # y <- c(rep(0, 160), rep(1, 55), rep(2, 19), rep(3, 17), rep(4, 9), rep(5, 4))
-    y <- rep(seq(0, length(counts) - 1, 1), counts)
-
-    x <- c(rep(1, length(y)))
-    fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
-
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
-
     loglik <- function(b) {
       loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
 
@@ -576,19 +567,19 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
     # Estimated parameters and its standard errors
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
-
     estim <- c(f1, m1, m2)
     std_estim <- sqrt(diag(st))
 
     est_yields <- data.frame(
-      estimate = c(estim, 1 - estim[1]),
-      std_err = c(std_estim, std_estim[1])
+      y_estimate = c(estim[2], estim[3]),
+      y_std_err = c(std_estim[2], std_estim[3]),
+      f_estimate = c(estim[1], 1 - estim[1]),
+      f_std_err = c(std_estim[1], std_estim[1])
     )
 
-    row.names(est_yields) <-  c("f1", "m1", "m2", "f2")
+    row.names(est_yields) <-  c("x1", "x2")
 
-
-    # estimated received doses
+    # Estimated received doses
     x1 <- uniroot(function(d) {
       beta0 + beta1 * d + beta2 * d^2 - m1
     }, c(0.1, 30))$root
@@ -623,7 +614,6 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       return(frac)
     }
-
 
     # Estimated fraction of irradiated blood for dose x1
     est_F <- frac(beta0, beta1, beta2, gam, f1, m1, m2)
