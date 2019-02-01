@@ -123,10 +123,10 @@ estimateUI <- function(id, label) {
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
               bsButton(ns("help_input_cases_data"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_cases_data_dialog"),
@@ -142,10 +142,10 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
               bsButton(ns("help_load_cases_data"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
+                       class = "rightAlign",
+                       label = "",
+                       icon = icon("question"),
+                       style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_cases_data_dialog"),
@@ -160,9 +160,9 @@ estimateUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
           )
         )
       ),
@@ -174,22 +174,36 @@ estimateUI <- function(id, label) {
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
-        actionButton(ns("button_check_dist"), "Check distribution"),
+        div(
+          class = "side-widget",
+          selectInput(
+            ns("assessment_select"),
+            label = "Assessment",
+            # label = NULL,
+            width = "150px",
+            choices = list(
+              "Whole body" = "whole-body",
+              "Partial" = "partial",
+              "Heterogeneous" = "hetero"
+            ),
+            selected = "whole-body"
+          )
+        ),
         # Help button
-        bsButton(ns("help_check_distribution"),
-          # class = "rightAlign",
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
+        bsButton(ns("help_assessment"),
+                 # class = "side-widget",
+                 label = "",
+                 icon = icon("question"),
+                 style = "default", size = "default"
         ),
         div(class = "widget-sep", br()),
         actionButton(ns("button_estimate"), class = "inputs-button", "Estimate dose"),
         bsModal(
-          id = ns("help_check_distribution_dialog"),
-          title = "Help: Check distribution",
-          trigger = ns("help_check_distribution"),
+          id = ns("help_assessment_dialog"),
+          title = "Help: Assessment selection",
+          trigger = ns("help_assessment"),
           size = "large",
-          withMathJax(includeMarkdown("help/check_distribution.md"))
+          withMathJax(includeMarkdown("help/assessment.md"))
           # TODO: Make new help dialogue
         )
       )
