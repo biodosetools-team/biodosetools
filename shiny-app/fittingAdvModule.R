@@ -6,8 +6,8 @@ fittingAdvUI <- function(id, label) {
   tabItem(
     tabName = label,
     h2("Dose-effect Fitting"),
-    fluidRow(
 
+    fluidRow(
       # Data input options ----
       box(
         width = 5,
@@ -141,7 +141,7 @@ fittingAdvUI <- function(id, label) {
         br(),
         downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
         div(
-          class = "side-widget",
+          class = "side-widget-tall",
           selectInput(
             ns("save_count_data_format"),
             label = NULL,
@@ -190,7 +190,7 @@ fittingAdvUI <- function(id, label) {
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
           div(
-            class = "side-widget",
+            class = "side-widget-tall",
             selectInput(
               ns("save_fit_data_format"),
               label = NULL,
@@ -231,7 +231,7 @@ fittingAdvUI <- function(id, label) {
           # Download plot
           downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
           div(
-            class = "side-widget",
+            class = "side-widget-tall",
             selectInput(
               ns("save_plot_format"),
               label = NULL,

@@ -1125,6 +1125,12 @@ shinyDashboardButtonsStatus <- function(home_color, home_color_hover, home_color
             vertical-align: top;
           }
 
+          .side-widget-tall {
+            display: inline-block;
+            vertical-align: bottom;
+            margin-bottom: -20px;
+          }
+
           .widget-sep {
             display: inline-block;
             vertical-align: top;

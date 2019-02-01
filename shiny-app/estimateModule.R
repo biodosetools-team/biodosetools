@@ -175,7 +175,7 @@ estimateUI <- function(id, label) {
         # Button
         br(),
         div(
-          class = "side-widget",
+          class = "side-widget-tall",
           selectInput(
             ns("assessment_select"),
             label = "Assessment",
