@@ -296,6 +296,8 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
         mutate(
           N = 0,
           X = 0,
+          y = 0,
+          y_err = 0,
           DI = 0,
           u = 0
         ) %>%
@@ -303,7 +305,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
         select(N, X, everything())
 
       first_dicent_index <- 3
-      last_dicent_index <- ncol(mytable) - 2
+      last_dicent_index <- ncol(mytable) - 4
       num_rows <- nrow(mytable)
 
 
@@ -330,6 +332,8 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
         mytable[row, "X"] <- as.integer(xf)
         mytable[row, "DI"] <- var / mean
         mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
+        mytable[row, "y"] <- mytable[row, "X"] / mytable[row, "N"]
+        mytable[row, "y_err"] <- sqrt(var / mytable[row, "N"])
       }
 
       return(mytable)
