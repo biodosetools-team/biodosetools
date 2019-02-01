@@ -488,7 +488,9 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       cell <- cases_data[["N"]]
       disp <- cases_data[["DI"]]
 
-      # data <- cases_data
+      counts <- cases_data[1,] %>%
+        select(contains("C")) %>%
+        as.numeric()
     })
 
     # Input of the parameters of the dose-effect linear-quadratic
@@ -520,8 +522,8 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Data test is stored in vector y
 
-    y <- c(rep(0, 160), rep(1, 55), rep(2, 19), rep(3, 17), rep(4, 9), rep(5, 4))
-    # y <- data
+    # y <- c(rep(0, 160), rep(1, 55), rep(2, 19), rep(3, 17), rep(4, 9), rep(5, 4))
+    y <- rep(seq(0, length(counts) - 1, 1), counts)
 
     x <- c(rep(1, length(y)))
     fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
