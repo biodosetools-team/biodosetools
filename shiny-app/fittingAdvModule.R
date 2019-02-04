@@ -352,13 +352,22 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
   })
 
   # Output ----
-  output$hotable <- renderRHandsontable({
-    hot <- rhandsontable(
-      changed_data()
-    )
-    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
-    return(hot)
-  })
+output$hotable <- renderRHandsontable({
+  hot <- changed_data() %>%
+    rhandsontable() %>%
+    hot_col(c(1, 2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
+    hot_col(ncol(changed_data()), renderer = "
+           function (instance, td, row, col, prop, value, cellProperties) {
+             Handsontable.renderers.NumericRenderer.apply(this, arguments);
+             if (value > 1.96) {
+              td.style.background = 'pink';
+             }
+           }") %>%
+    hot_table(highlightCol = TRUE, highlightRow = TRUE)
+
+  hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+  return(hot)
+})
 }
 
 fittingAdvTable <- function(input, output, session, stringsAsFactors) {
