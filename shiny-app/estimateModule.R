@@ -348,6 +348,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
     #
     hot <- changed_data() %>%
       rhandsontable() %>%
+      hot_cols(colWidths = 50) %>%
       hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
       hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
@@ -490,21 +491,27 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
     # Coefficients 'fit_coeffs'
     if(input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 75) %>%
+      hot_cols(format = "0.000")
   })
 
   output$var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if(input$button_view_fit_data <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.0000000")
   })
 
   output$cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if(input$button_view_fit_data <= 0) return(NULL)
     data()[["cor_mat"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # output$plot <- renderPlot(
@@ -722,21 +729,27 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     # Estimated yields
     if(input$button_estimate <= 0) return(NULL)
     data()[["est_yields"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   output$est_doses <- renderRHandsontable({
     # Estimated recieved doses
     if(input$button_estimate <= 0) return(NULL)
     data()[["est_doses"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   output$est_frac <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose x1
     if(input$button_estimate <= 0) return(NULL)
     data()[["est_frac"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # output$plot <- renderPlot(

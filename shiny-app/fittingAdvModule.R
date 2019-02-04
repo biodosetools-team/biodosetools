@@ -355,6 +355,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 output$hotable <- renderRHandsontable({
   hot <- changed_data() %>%
     rhandsontable() %>%
+    hot_cols(colWidths = 50) %>%
     hot_col(c(1, 2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
     hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
@@ -571,21 +572,27 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Coefficients 'fit_coeffs'
     if(input$button_fit <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 75) %>%
+      hot_cols(format = "0.000")
   })
 
   output$var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if(input$button_fit <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.0000000")
   })
 
   output$cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if(input$button_fit <= 0) return(NULL)
     data()[["cor_mat"]] %>%
-      rhandsontable()
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   output$plot <- renderPlot(
