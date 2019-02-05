@@ -204,7 +204,6 @@ estimateUI <- function(id, label) {
           trigger = ns("help_assessment"),
           size = "large",
           withMathJax(includeMarkdown("help/assessment.md"))
-          # TODO: Make new help dialogue
         )
       )
     ),
@@ -223,7 +222,23 @@ estimateUI <- function(id, label) {
           h4("Yields"),
           rHandsontableOutput(ns("est_yields")),
           h4("Doses"),
-          rHandsontableOutput(ns("est_doses")),
+          div(
+            class = "side-widget",
+          rHandsontableOutput(ns("est_doses"))
+          ),
+          bsButton(ns("help_mixed_yields"),
+                   # class = "rightAlign",
+                   label = "",
+                   icon = icon("question"),
+                   style = "default", size = "default"
+          ),
+          bsModal(
+            id = ns("help_mixed_yields_dialog"),
+            title = "Help: Assessment selection",
+            trigger = ns("help_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/mixed_yields.md"))
+          ),
           h4("Fraction"),
           rHandsontableOutput(ns("est_frac"))
         )
