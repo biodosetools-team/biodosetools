@@ -209,13 +209,17 @@ estimateUI <- function(id, label) {
       )
     ),
 
-    # Estimations ----
+    # tabBox: Estimations ----
     fluidRow(
       tabBox(
         width = 7,
         side = "left",
+        selected = "Partial/Heterogeneous",
         tabPanel(
-          title = "Results",
+          title = "Whole body"
+        ),
+        tabPanel(
+          title = "Partial/Heterogeneous",
           h4("Yields"),
           rHandsontableOutput(ns("est_yields")),
           h4("Doses"),
