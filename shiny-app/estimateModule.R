@@ -215,7 +215,9 @@ estimateUI <- function(id, label) {
         side = "left",
         selected = "Partial/Heterogeneous",
         tabPanel(
-          title = "Whole body"
+          title = "Whole body",
+          h4("Estimated dose"),
+          rHandsontableOutput(ns("est_doses_whole"))
         ),
         tabPanel(
           title = "Partial/Heterogeneous",
@@ -557,7 +559,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
 estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
-  # Calculations ----
+  # Calcs: get variables ----
   data <- reactive({
     input$button_estimate
 
@@ -570,6 +572,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       aberr <- cases_data[["X"]]
       cell <- cases_data[["N"]]
       disp <- cases_data[["DI"]]
+
+      yield_obs <- cases_data[["y"]]
 
       counts <- cases_data[1,] %>%
         select(contains("C")) %>%
@@ -611,6 +615,19 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     # Input of the parameter gamma and its variance
     gam <- 0.3706479
     sigma[4, 4] <- 0.009164707
+
+
+    # Calcs: whole-body ----
+
+    x_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs
+    }, c(0.1, 30))$root
+
+    est_doses_whole <- data.frame(
+      x1 = x_whole
+    )
+
+    # Calcs: mixed ----
 
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
@@ -749,9 +766,10 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Make list of results to return
     results_list <- list(
-      est_yields = est_yields,
-      est_doses  = est_doses,
-      est_frac   = est_frac
+      est_doses_whole  = est_doses_whole,
+      est_yields       = est_yields,
+      est_doses        = est_doses,
+      est_frac         = est_frac
     )
 
     return(results_list)
@@ -767,8 +785,17 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(format = "0.000")
   })
 
+  output$est_doses_whole <- renderRHandsontable({
+    # Estimated recieved doses (whole-body)
+    if(input$button_estimate <= 0) return(NULL)
+    data()[["est_doses_whole"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
   output$est_doses <- renderRHandsontable({
-    # Estimated recieved doses
+    # Estimated recieved doses (partial/heterogeneous)
     if(input$button_estimate <= 0) return(NULL)
     data()[["est_doses"]] %>%
       rhandsontable() %>%
