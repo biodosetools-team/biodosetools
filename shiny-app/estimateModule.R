@@ -219,9 +219,9 @@ estimateUI <- function(id, label) {
         ),
         tabPanel(
           title = "Partial/Heterogeneous",
-          h4("Yields"),
+          h4("Fraction of cells and yield of aberration"),
           rHandsontableOutput(ns("est_yields")),
-          h4("Doses"),
+          h4("Dose ... by the irradiated fraction"),
           div(
             class = "side-widget",
           rHandsontableOutput(ns("est_doses"))
@@ -239,7 +239,7 @@ estimateUI <- function(id, label) {
             size = "large",
             withMathJax(includeMarkdown("help/mixed_yields.md"))
           ),
-          h4("Fraction"),
+          h4("Initial fraction of irradiated cells"),
           rHandsontableOutput(ns("est_frac"))
         )
       )
@@ -666,7 +666,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       y_estimate = c(estim[2], estim[3]),
       y_std_err = c(std_estim[2], std_estim[3]),
       f_estimate = c(estim[1], 1 - estim[1]),
-      f_std_err = c(std_estim[1], std_estim[1])
+      f_std_err = rep(std_estim[1], 2)
     )
 
     row.names(est_yields) <-  c("x1", "x2")
@@ -708,15 +708,18 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Estimated fraction of irradiated blood for dose x1
-    est_F <- frac(beta0, beta1, beta2, gam, f1, m1, m2)
+    est_F1 <- frac(beta0, beta1, beta2, gam, f1, m1, m2)
+    est_F2 <- 1 - est_F1
 
     # Approximated standard error
-    std_err_F <- F * (1 - F) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+    std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
 
     est_frac <- data.frame(
-      estimate = est_F,
-      std_err = std_err_F
+      estimate = c(est_F1, est_F2),
+      std_err = rep(std_err_F1, 2)
     )
+
+    row.names(est_frac) <-  c("x1", "x2")
 
     # Gradient
     h <- 0.000001
