@@ -86,16 +86,16 @@ estimateUI <- function(id, label) {
           h4("Fit formula"),
           verbatimTextOutput(ns("fit_formula")),
           h4("Coefficients"),
-          rHandsontableOutput(ns("fit_coeffs"))
+          rHandsontableOutput(ns("fit_coeffs")),
+          h4("Variance-covariance matrix"),
+          rHandsontableOutput(ns("var_cov_mat"))
         ),
         tabPanel(
           h4("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
           title = "Summary statistics",
           h4("Correlation matrix"),
-          rHandsontableOutput(ns("cor_mat")),
-          h4("Variance-covariance matrix"),
-          rHandsontableOutput(ns("var_cov_mat"))
+          rHandsontableOutput(ns("cor_mat"))
         )
       )
     ),
@@ -548,6 +548,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       cases_data <- hot_to_r(input$hotable)
+      fit_coeffs <- hot_to_r(input$fit_coeffs)
+      var_cov_mat <- hot_to_r(input$var_cov_mat)
 
       dose <- cases_data[["D"]]
       aberr <- cases_data[["X"]]
@@ -565,20 +567,29 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
 
     # Input of the parameters of the dose-effect linear-quadratic model
-    beta0 <- 0.0008867
-    beta1 <- 0.1285732
-    beta2 <- 0.0552981
+    # beta0 <- 0.0008867
+    # beta1 <- 0.1285732
+    # beta2 <- 0.0552981
+    beta0 <- fit_coeffs[1, "Estimate"]
+    beta1 <- fit_coeffs[2, "Estimate"]
+    beta2 <- fit_coeffs[3, "Estimate"]
 
     # Input of the Variance-covariance matrix of the parameters
     sigma <- numeric(49)
     dim(sigma) <- c(7, 7)
-    sigma[1, 1] <- 8.864896e-07
-    sigma[2, 2] <- 3.946474e-04
-    sigma[3, 3] <- 1.900512e-05
-    sigma[1, 2] <- -8.526986e-07
-    sigma[1, 3] <- 1.046383e-07
+    # sigma[1, 1] <- 8.864896e-07
+    # sigma[2, 2] <- 3.946474e-04
+    # sigma[3, 3] <- 1.900512e-05
+    # sigma[1, 2] <- -8.526986e-07
+    # sigma[1, 3] <- 1.046383e-07
+    # sigma[2, 3] <- -6.817431e-05
+    sigma[1, 1] <- var_cov_mat[1, 1]
+    sigma[2, 2] <- var_cov_mat[2, 2]
+    sigma[3, 3] <- var_cov_mat[3, 3]
+    sigma[1, 2] <- var_cov_mat[1, 2]
+    sigma[1, 3] <- var_cov_mat[1, 3]
+    sigma[2, 3] <- var_cov_mat[2, 3]
     sigma[2, 1] <- sigma[1, 2]
-    sigma[2, 3] <- -6.817431e-05
     sigma[3, 1] <- sigma[1, 3]
     sigma[3, 2] <- sigma[2, 3]
 
