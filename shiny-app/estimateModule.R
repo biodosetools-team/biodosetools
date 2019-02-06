@@ -249,25 +249,30 @@ estimateUI <- function(id, label) {
         ),
 
         # Gamma selection
-        splitLayout(
-          cellWidths = c("50%", "50%"),
-          numericInput(
-            ns("gamma"), "Gamma",
-            value = 0.3706479, step = 0.01
+        conditionalPanel(
+          condition = "input.assessment_select != 'whole-body'",
+          ns = ns,
+          splitLayout(
+            cellWidths = c("50%", "50%"),
+            numericInput(
+              ns("gamma"), "Gamma",
+              value = 0.3706479, step = 0.01
+            ),
+            numericInput(
+              ns("gamma_error"), "Std. error Gamma",
+              value = 0.009164707, step = 0.0001
+            )
           ),
-          numericInput(
-            ns("gamma_error"), "Std. error Gamma",
-            value = 0.009164707, step = 0.0001
+          # Help button
+          bsButton(
+            ns("help_gamma"),
+            # class = "side-widget-tall",
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
           )
         ),
-        # Help button
-        # bsButton(
-        #   ns("help_gamma"),
-        #   # class = "side-widget-tall",
-        #   label = "",
-        #   icon = icon("question"),
-        #   style = "default", size = "default"
-        # ),
+        br(),
         actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
       )
     ),
