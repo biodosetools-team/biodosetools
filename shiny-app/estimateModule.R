@@ -208,41 +208,67 @@ estimateUI <- function(id, label) {
       )
     ),
 
-    # tabBox: Estimations ----
     fluidRow(
-      tabBox(
-        width = 7,
-        side = "left",
-        selected = "Partial/Heterogeneous",
-        tabPanel(
-          title = "Whole body",
-          h4("Estimated dose"),
-          rHandsontableOutput(ns("est_doses_whole"))
-        ),
-        tabPanel(
-          title = "Partial/Heterogeneous",
-          h4("Fraction of cells and yield of aberration"),
-          rHandsontableOutput(ns("est_yields")),
-          h4("Dose ... by the irradiated fraction"),
+      # tabBox: Estimations ----
+      column(
+        width = 6,
+        tabBox(
+          width = 12,
+          side = "left",
+          selected = "Partial/Heterogeneous",
+          tabPanel(
+            title = "Whole body",
+            h4("Estimated dose"),
+            rHandsontableOutput(ns("est_doses_whole"))
+          ),
+          tabPanel(
+            title = "Partial/Heterogeneous",
+            h4("Fraction of cells and yield of aberration"),
+            rHandsontableOutput(ns("est_yields")),
+            h4("Dose ... by the irradiated fraction"),
+            div(
+              class = "side-widget",
+              rHandsontableOutput(ns("est_doses"))
+            ),
+            bsButton(ns("help_mixed_yields"),
+                     # class = "rightAlign",
+                     label = "",
+                     icon = icon("question"),
+                     style = "default", size = "default"
+            ),
+            bsModal(
+              id = ns("help_mixed_yields_dialog"),
+              title = "Help: Assessment selection",
+              trigger = ns("help_mixed_yields"),
+              size = "large",
+              withMathJax(includeMarkdown("help/mixed_yields.md"))
+            ),
+            h4("Initial fraction of irradiated cells"),
+            rHandsontableOutput(ns("est_frac"))
+          )
+        )
+      ),
+      # Plot box ----
+      column(
+        width = 6,
+        box(
+          width = 12,
+          title = "Curve plot",
+          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+          # Plot
+          plotOutput(ns("plot")),
+          # Download plot
+          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
           div(
-            class = "side-widget",
-          rHandsontableOutput(ns("est_doses"))
-          ),
-          bsButton(ns("help_mixed_yields"),
-                   # class = "rightAlign",
-                   label = "",
-                   icon = icon("question"),
-                   style = "default", size = "default"
-          ),
-          bsModal(
-            id = ns("help_mixed_yields_dialog"),
-            title = "Help: Assessment selection",
-            trigger = ns("help_mixed_yields"),
-            size = "large",
-            withMathJax(includeMarkdown("help/mixed_yields.md"))
-          ),
-          h4("Initial fraction of irradiated cells"),
-          rHandsontableOutput(ns("est_frac"))
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_plot_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".png", ".pdf"),
+              selected = ".png"
+            )
+          )
         )
       )
     )
@@ -559,8 +585,8 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
 estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
-  # Calcs: get variables ----
   data <- reactive({
+    # Calcs: get variables ----
     input$button_estimate
 
     isolate({
@@ -619,13 +645,34 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: whole-body ----
 
+    gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
+
+    yields_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(yield_obs, 0)),]
+
+    yield_obs_l <-yields_row[["Sl"]]
+    yield_obs_u <-yields_row[["Su"]]
+
+    # Calculate projections
     x_whole <- uniroot(function(d) {
       beta0 + beta1 * d + beta2 * d^2 - yield_obs
     }, c(0.1, 30))$root
 
+    x_l_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
+    }, c(0.1, 30))$root
+
+    x_u_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
+    }, c(0.1, 30))$root
+
+    # Whole-body estimation results
     est_doses_whole <- data.frame(
-      x1 = x_whole
+      yield = c(yield_obs_l, yield_obs, yield_obs_u),
+      dose  = c(x_l_whole, x_whole, x_u_whole)
     )
+
+    row.names(est_doses_whole) <-  c("lower", "base", "upper")
+
 
     # Calcs: mixed ----
 
@@ -812,25 +859,26 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(format = "0.000")
   })
 
-  # output$plot <- renderPlot(
-  #   # Plot of the data and fitted curve
-  #   res = 120, {
-  #     if(input$button_view_fit_data <= 0) return(NULL)
-  #     data()[["gg_curve"]]
-  #   }
-  # )
+  output$plot <- renderPlot(
+    # Plot of the data and fitted curve
+    res = 120, {
+      if(input$button_view_fit_data <= 0) return(NULL)
+      # data()[["gg_curve"]]
+      NULL
+    }
+  )
 
   # Export plot ----
-  # output$save_plot <- downloadHandler(
-  #   filename = function() {
-  #     paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
-  #   },
-  #   content = function(file) {
-  #     ggsave(plot = data()[["gg_curve"]], filename = file,
-  #            width = 6, height = 4.5, dpi = 96,
-  #            device = gsub("\\.", "", input$save_plot_format))
-  #   }
-  # )
+  output$save_plot <- downloadHandler(
+    filename = function() {
+      paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
+    },
+    content = function(file) {
+      ggsave(plot = data()[["gg_curve"]], filename = file,
+             width = 6, height = 4.5, dpi = 96,
+             device = gsub("\\.", "", input$save_plot_format))
+    }
+  )
 
   # Export report ----
   # output$save_report <- downloadHandler(
