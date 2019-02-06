@@ -102,8 +102,8 @@ fittingAdvUI <- function(id, label) {
             selectInput(
               ns("family_select"),
               label = "Fitting model",
-              choices = list("Poisson" = 1, "Quasipoisson" = 2),
-              selected = 1
+              choices = list("Poisson" = "poisson", "Quasipoisson" = "quasipoisson"),
+              selected = "poisson"
             ),
             # Use dispersion factor
             awesomeCheckbox(
@@ -444,21 +444,12 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     fit_link <- "identity"
 
-    # Select model family
-    if (model_family == 1) {
-      family_select <- "poisson"
-    } else if (model_family == 2) {
-      family_select <- "quasipoisson"
-    }
-    # TODO: add automatic selection?
-
     # Calculate fit
     fit_results <- glm(
       formula = fit_formula,
-      family = eval(parse(text = paste(family_select, "(link =", fit_link, ")"))),
+      family = eval(parse(text = paste(model_family, "(link =", fit_link, ")"))),
       weights = weights,
       data = model_data
-      # ,start = abs(coef(glm(fit_formula, weights = weights, data = model_data)))
     )
 
     # Summarise fit
