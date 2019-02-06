@@ -39,7 +39,7 @@ fittingAdvUI <- function(id, label) {
                 title = "Help: Count data input",
                 trigger = ns("help_input_count_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/input_count_data.md"))
+                withMathJax(includeMarkdown("help/help_input_count_data.md"))
               )
             ),
             # Load from file ----
@@ -59,7 +59,7 @@ fittingAdvUI <- function(id, label) {
                 title = "Help: Loading count data",
                 trigger = ns("help_load_count_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/load_count_data.md"))
+                withMathJax(includeMarkdown("help/help_load_count_data.md"))
               )
             ),
             # Buttons
@@ -102,7 +102,7 @@ fittingAdvUI <- function(id, label) {
             selectInput(
               ns("family_select"),
               label = "Fitting model",
-              choices = list("Automatic" = 0, "Poisson" = 1, "Quasipoisson" = 2),
+              choices = list("Poisson" = 1, "Quasipoisson" = 2),
               selected = 1
             ),
             # Use dispersion factor
@@ -123,7 +123,7 @@ fittingAdvUI <- function(id, label) {
               title = "Help: Fitting options",
               trigger = ns("help_fit"),
               size = "large",
-              withMathJax(includeMarkdown("help/fitting_options.md"))
+              withMathJax(includeMarkdown("help/help_fitting_options.md"))
             )
           )
         )
@@ -159,7 +159,7 @@ fittingAdvUI <- function(id, label) {
     fluidRow(
       column(
         width = 6,
-        # Main tabBox ----
+        # tabBox: Fit results ----
         tabBox(
           width = 12,
           side = "left",
@@ -214,7 +214,7 @@ fittingAdvUI <- function(id, label) {
             title = "Help: Save fit data",
             trigger = ns("help_save_fit_data"),
             size = "large",
-            withMathJax(includeMarkdown("help/input_count_data.md"))
+            withMathJax(includeMarkdown("help/help_input_count_data.md"))
             # TODO: Make new help
           )
         )
@@ -356,7 +356,7 @@ output$hotable <- renderRHandsontable({
   hot <- changed_data() %>%
     rhandsontable() %>%
     hot_cols(colWidths = 50) %>%
-    hot_col(c(1, 2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
+    hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
     hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);

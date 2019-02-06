@@ -41,7 +41,7 @@ estimateUI <- function(id, label) {
                 title = "Help: Manual fit data input",
                 trigger = ns("help_input_fit_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/input_fit_data.md"))
+                withMathJax(includeMarkdown("help/help_input_fit_data.md"))
               )
             ),
             # Load from file ----
@@ -61,7 +61,7 @@ estimateUI <- function(id, label) {
                 title = "Help: Loading fit data",
                 trigger = ns("help_load_fit_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/load_fit_data.md"))
+                withMathJax(includeMarkdown("help/help_load_fit_data.md"))
               )
             ),
             # Buttons
@@ -133,7 +133,7 @@ estimateUI <- function(id, label) {
               #   title = "Help: Cases data input",
               #   trigger = ns("help_input_cases_data"),
               #   size = "large",
-              #   withMathJax(includeMarkdown("help/input_cases_data.md"))
+              #   withMathJax(includeMarkdown("help/help_input_cases_data.md"))
               # )
             ),
             conditionalPanel(
@@ -152,7 +152,7 @@ estimateUI <- function(id, label) {
               #   title = "Help: Loading cases data",
               #   trigger = ns("help_load_cases_data"),
               #   size = "large",
-              #   withMathJax(includeMarkdown("help/load_cases_data.md"))
+              #   withMathJax(includeMarkdown("help/help_load_cases_data.md"))
               # )
             ),
             # Gamma selection
@@ -189,7 +189,7 @@ estimateUI <- function(id, label) {
                 title = "Help: Cases data input",
                 trigger = ns("help_input_cases_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/input_cases_data.md"))
+                withMathJax(includeMarkdown("help/help_input_cases_data.md"))
               )
             ),
             conditionalPanel(
@@ -207,7 +207,7 @@ estimateUI <- function(id, label) {
                 title = "Help: Loading cases data",
                 trigger = ns("help_load_cases_data"),
                 size = "large",
-                withMathJax(includeMarkdown("help/load_cases_data.md"))
+                withMathJax(includeMarkdown("help/help_load_cases_data.md"))
               )
             ),
             # Buttons
@@ -258,7 +258,7 @@ estimateUI <- function(id, label) {
           title = "Help: Assessment selection",
           trigger = ns("help_assessment"),
           size = "large",
-          withMathJax(includeMarkdown("help/assessment.md"))
+          withMathJax(includeMarkdown("help/help_assessment.md"))
         )
       )
     ),
@@ -278,9 +278,9 @@ estimateUI <- function(id, label) {
           ),
           tabPanel(
             title = "Partial/Heterogeneous",
-            h4("Fraction of cells and yield of aberration"),
+            h4("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_yields")),
-            h4("Dose ... by the irradiated fraction"),
+            h4("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
               rHandsontableOutput(ns("est_doses"))
@@ -296,7 +296,7 @@ estimateUI <- function(id, label) {
               title = "Help: Assessment selection",
               trigger = ns("help_mixed_yields"),
               size = "large",
-              withMathJax(includeMarkdown("help/mixed_yields.md"))
+              withMathJax(includeMarkdown("help/help_mixed_yields.md"))
             ),
             h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac"))
@@ -701,17 +701,21 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     yield_obs_u <- yields_row[["Su"]]
 
     # Calculate projections
-    x_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs
-    }, c(0.1, 30))$root
+    # x_whole <- uniroot(function(d) {
+    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs
+    # }, c(0.1, 30))$root
+    #
+    # x_l_whole <- uniroot(function(d) {
+    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
+    # }, c(0.1, 30))$root
+    #
+    # x_u_whole <- uniroot(function(d) {
+    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
+    # }, c(0.1, 30))$root
 
-    x_l_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
-    }, c(0.1, 30))$root
-
-    x_u_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
-    }, c(0.1, 30))$root
+    x_whole <- 0
+    x_l_whole <- 0
+    x_u_whole <- 0
 
     # Whole-body estimation results
     est_doses_whole <- data.frame(
@@ -825,6 +829,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Approximated standard error
     std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+    # std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * 0 + st[1, 1] / (f1^2 * (1 - f1)^2))
 
     est_frac <- data.frame(
       estimate = c(est_F1, est_F2),
