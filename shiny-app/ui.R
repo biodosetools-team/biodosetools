@@ -46,10 +46,10 @@ sidebar <- dashboardSidebar(
       selectize = TRUE
     ),
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-main", icon = icon("th-list"), startExpanded = T,
-             menuSubItem("Simple Fitting", tabName = "tab-fitting-simple",icon = icon("cog")),
-             menuSubItem("Advanced Fitting", tabName = "tab-fitting-adv", icon = icon("cogs"), selected = T)
+             menuSubItem("Fitting", tabName = "tab-fitting-adv", icon = icon("cogs")),
+             menuSubItem("Simplified Fitting", tabName = "tab-fitting-simple",icon = icon("cog"))
     ),
-    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator")),
+    menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator"), selected = T),
     # menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
     # menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
     # menuItem("Intercomparison Tests", tabName = "tab-inter-test", icon = icon("check-circle"))
