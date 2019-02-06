@@ -695,27 +695,26 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
 
-    yields_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(yield_obs, 0)), ]
+    aberr_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(aberr, 0)), ]
 
-    yield_obs_l <- yields_row[["Sl"]]
-    yield_obs_u <- yields_row[["Su"]]
+    aberr_obs_l <- aberr_row[["Sl"]]
+    aberr_obs_u <- aberr_row[["Su"]]
+
+    yield_obs_l <- aberr_obs_l / cell
+    yield_obs_u <- aberr_obs_u / cell
 
     # Calculate projections
-    # x_whole <- uniroot(function(d) {
-    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs
-    # }, c(0.1, 30))$root
-    #
-    # x_l_whole <- uniroot(function(d) {
-    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
-    # }, c(0.1, 30))$root
-    #
-    # x_u_whole <- uniroot(function(d) {
-    #   beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
-    # }, c(0.1, 30))$root
+    x_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs
+    }, c(0.1, 30))$root
 
-    x_whole <- 0
-    x_l_whole <- 0
-    x_u_whole <- 0
+    x_l_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
+    }, c(0.1, 30))$root
+
+    x_u_whole <- uniroot(function(d) {
+      beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
+    }, c(0.1, 30))$root
 
     # Whole-body estimation results
     est_doses_whole <- data.frame(
