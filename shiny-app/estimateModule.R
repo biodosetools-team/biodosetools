@@ -9,7 +9,7 @@ estimateUI <- function(id, label) {
     h2("Dose estimation"),
 
     fluidRow(
-      # Curve fitting options ----
+      # box: Curve fitting options ----
       box(
         width = 5,
         title = "Curve fitting data options",
@@ -30,7 +30,8 @@ estimateUI <- function(id, label) {
               p("Work in progress"),
               # TODO: fit data input
               # Help button
-              bsButton(ns("help_input_fit_data"),
+              bsButton(
+                ns("help_input_fit_data"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
@@ -50,7 +51,8 @@ estimateUI <- function(id, label) {
               ns = ns,
               fileInput(ns("load_fit_data"), label = "File input"),
               # Help button
-              bsButton(ns("help_load_fit_data"),
+              bsButton(
+                ns("help_load_fit_data"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
@@ -101,7 +103,7 @@ estimateUI <- function(id, label) {
     ),
 
     fluidRow(
-      # Data input options ----
+      # box: Data input options ----
       box(
         width = 5,
         title = "Data input options",
@@ -120,69 +122,14 @@ estimateUI <- function(id, label) {
               condition = "!input.load_cases_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)#,
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
-              # bsButton(ns("help_input_cases_data"),
-              #   class = "rightAlign",
-              #   label = "",
-              #   icon = icon("question"),
-              #   style = "default", size = "default"
-              # ),
-              # bsModal(
-              #   id = ns("help_input_cases_data_dialog"),
-              #   title = "Help: Cases data input",
-              #   trigger = ns("help_input_cases_data"),
-              #   size = "large",
-              #   withMathJax(includeMarkdown("help/help_input_cases_data.md"))
-              # )
-            ),
-            conditionalPanel(
-              condition = "input.load_cases_data_check",
-              ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input")#,
-              # Help button
-              # bsButton(ns("help_load_cases_data"),
-              #   class = "rightAlign",
-              #   label = "",
-              #   icon = icon("question"),
-              #   style = "default", size = "default"
-              # ),
-              # bsModal(
-              #   id = ns("help_load_cases_data_dialog"),
-              #   title = "Help: Loading cases data",
-              #   trigger = ns("help_load_cases_data"),
-              #   size = "large",
-              #   withMathJax(includeMarkdown("help/help_load_cases_data.md"))
-              # )
-            ),
-            # Gamma selection
-            splitLayout(
-              cellWidths = c("50%", "50%"),
-              numericInput(
-                ns("gamma"), "Gamma",
-                value = 0.3706479, step = 0.01),
-              numericInput(
-                ns("gamma_error"), "Std. error Gamma",
-                value = 0.009164707, step = 0.0001)
-            ),
-            # Help button
-            # bsButton(ns("help_gamma"),
-            #          # class = "side-widget-tall",
-            #          label = "",
-            #          icon = icon("question"),
-            #          style = "default", size = "default"
-            # )
-
-            # Help buttons
-            conditionalPanel(
-              condition = "!input.load_cases_data_check",
-              ns = ns,
-              # Help button
-              bsButton(ns("help_input_cases_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+              bsButton(
+                ns("help_input_cases_data"),
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_cases_data_dialog"),
@@ -195,12 +142,14 @@ estimateUI <- function(id, label) {
             conditionalPanel(
               condition = "input.load_cases_data_check",
               ns = ns,
+              fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
-              bsButton(ns("help_load_cases_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+              bsButton(
+                ns("help_load_cases_data"),
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_cases_data_dialog"),
@@ -221,14 +170,21 @@ estimateUI <- function(id, label) {
           )
         )
       ),
-      # Hot Table ----
+      # hot: Cases input ----
       box(
         width = 7,
         title = "Data input",
         status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-        rHandsontableOutput(ns("hotable")),
-        # Button
-        br(),
+        rHandsontableOutput(ns("hotable"))
+      ),
+
+      # box: Estimation options ----
+      box(
+        width = 7,
+        title = "Dose estimation options",
+        status = "warning", solidHeader = F, collapsible = T, collapsed = F,
+
+        # Assessment selection
         div(
           class = "side-widget-tall",
           selectInput(
@@ -245,21 +201,74 @@ estimateUI <- function(id, label) {
           )
         ),
         # Help button
-        bsButton(ns("help_assessment"),
+        bsButton(
+          ns("help_assessment"),
           # class = "side-widget",
           label = "",
           icon = icon("question"),
           style = "default", size = "default"
         ),
-        div(class = "widget-sep", br()),
-        actionButton(ns("button_estimate"), class = "inputs-button", "Estimate dose"),
         bsModal(
           id = ns("help_assessment_dialog"),
           title = "Help: Assessment selection",
           trigger = ns("help_assessment"),
           size = "large",
           withMathJax(includeMarkdown("help/help_assessment.md"))
-        )
+        ),
+        div(class = "widget-sep", br()),
+
+        # Curve method selection
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("curve_method_select"),
+            label = "Error calculation",
+            # label = NULL,
+            width = "150px",
+            choices = list(
+              "Merkle's method" = "merkle",
+              "Simple method" = "simple"
+            ),
+            selected = "simple"
+          )
+        ),
+        # Help button
+        bsButton(
+          ns("help_curve_method"),
+          # class = "side-widget",
+          label = "",
+          icon = icon("question"),
+          style = "default", size = "default"
+        ),
+        bsModal(
+          id = ns("help_assessment_dialog"),
+          title = "Help: Assessment selection",
+          trigger = ns("help_curve_method"),
+          size = "large",
+          withMathJax(includeMarkdown("help/help_assessment.md"))
+        ),
+
+        # Gamma selection
+        splitLayout(
+          cellWidths = c("50%", "50%"),
+          numericInput(
+            ns("gamma"), "Gamma",
+            value = 0.3706479, step = 0.01
+          ),
+          numericInput(
+            ns("gamma_error"), "Std. error Gamma",
+            value = 0.009164707, step = 0.0001
+          )
+        ),
+        # Help button
+        # bsButton(
+        #   ns("help_gamma"),
+        #   # class = "side-widget-tall",
+        #   label = "",
+        #   icon = icon("question"),
+        #   style = "default", size = "default"
+        # ),
+        actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
       )
     ),
 
@@ -285,7 +294,8 @@ estimateUI <- function(id, label) {
               class = "side-widget",
               rHandsontableOutput(ns("est_doses"))
             ),
-            bsButton(ns("help_mixed_yields"),
+            bsButton(
+              ns("help_mixed_yields"),
               # class = "rightAlign",
               label = "",
               icon = icon("question"),
@@ -303,7 +313,7 @@ estimateUI <- function(id, label) {
           )
         )
       ),
-      # Plot box ----
+      # box: Plot curves ----
       column(
         width = 6,
         box(
