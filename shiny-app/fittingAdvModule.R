@@ -28,11 +28,12 @@ fittingAdvUI <- function(id, label) {
               numericInput(ns("num_doses"), "Number of doses", value = 11),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
-              bsButton(ns("help_input_count_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+              bsButton(
+                ns("help_input_count_data"),
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_count_data_dialog"),
@@ -48,11 +49,12 @@ fittingAdvUI <- function(id, label) {
               ns = ns,
               fileInput(ns("load_count_data"), label = "File input"),
               # Help button
-              bsButton(ns("help_load_count_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+              bsButton(
+                ns("help_load_count_data"),
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_count_data_dialog"),
@@ -112,7 +114,8 @@ fittingAdvUI <- function(id, label) {
               value = FALSE, status = "warning"
             ),
             # Help button
-            bsButton(ns("help_fit"),
+            bsButton(
+              ns("help_fit"),
               class = "rightAlign",
               label = "",
               icon = icon("question"),
@@ -203,11 +206,12 @@ fittingAdvUI <- function(id, label) {
           div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
           # Help button
-          bsButton(ns("help_save_fit_data"),
-                   class = "rightAlign",
-                   label = "",
-                   icon = icon("question"),
-                   style = "default", size = "default"
+          bsButton(
+            ns("help_save_fit_data"),
+            class = "rightAlign",
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
           ),
           bsModal(
             id = ns("help__save_fit_data_dialog"),
@@ -352,23 +356,23 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
   })
 
   # Output ----
-output$hotable <- renderRHandsontable({
-  hot <- changed_data() %>%
-    rhandsontable() %>%
-    hot_cols(colWidths = 50) %>%
-    hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
-    hot_col(ncol(changed_data()), renderer = "
+  output$hotable <- renderRHandsontable({
+    hot <- changed_data() %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 50) %>%
+      hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
+      hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
               td.style.background = 'pink';
              }
            }") %>%
-    hot_table(highlightCol = TRUE, highlightRow = TRUE)
+      hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
-  hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
-  return(hot)
-})
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
+  })
 }
 
 fittingAdvTable <- function(input, output, session, stringsAsFactors) {
@@ -480,8 +484,8 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Generalized curves
     yield_fun <- function(x) {
       general_fit_coeffs[[1]] +
-      general_fit_coeffs[[2]] * x +
-      general_fit_coeffs[[3]] * x * x
+        general_fit_coeffs[[2]] * x +
+        general_fit_coeffs[[3]] * x * x
     }
 
     chisq_df <- nrow(fit_coeffs)
@@ -490,11 +494,11 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     yield_error_fun <- function(x) {
       sqrt(
         general_var_cov_mat[["x0", "x0"]] +
-        general_var_cov_mat[["x1", "x1"]] * x * x +
-        general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
-        2 * general_var_cov_mat[["x0", "x1"]] * x +
-        2 * general_var_cov_mat[["x0", "x2"]] * x * x +
-        2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+          general_var_cov_mat[["x1", "x1"]] * x * x +
+          general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
+          2 * general_var_cov_mat[["x0", "x1"]] * x +
+          2 * general_var_cov_mat[["x0", "x2"]] * x * x +
+          2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
       )
     }
 
@@ -539,20 +543,20 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
   # Results outputs ----
   output$fit_results <- renderPrint({
     # Result of curve fit 'fit_results'
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
   output$fit_formula <- renderPrint({
     # Fitting formula
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]$formula
     # TODO: transform this into LaTeX output?
   })
 
   output$fit_statistics <- renderRHandsontable({
     # Model-level statistics using broom::glance
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
       select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
       mutate(null.deviance = as.character(null.deviance)) %>%
@@ -561,7 +565,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 75) %>%
@@ -570,7 +574,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   output$var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -579,7 +583,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   output$cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
-    if(input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -589,7 +593,7 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
   output$plot <- renderPlot(
     # Plot of the data and fitted curve
     res = 120, {
-      if(input$button_fit <= 0) return(NULL)
+      if (input$button_fit <= 0) return(NULL)
       data()[["gg_curve"]]
     }
   )
@@ -630,9 +634,11 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
     },
     content = function(file) {
-      ggsave(plot = data()[["gg_curve"]], filename = file,
-             width = 6, height = 4.5, dpi = 96,
-             device = gsub("\\.", "", input$save_plot_format))
+      ggsave(
+        plot = data()[["gg_curve"]], filename = file,
+        width = 6, height = 4.5, dpi = 96,
+        device = gsub("\\.", "", input$save_plot_format)
+      )
     }
   )
 
