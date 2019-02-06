@@ -31,10 +31,10 @@ estimateUI <- function(id, label) {
               # TODO: fit data input
               # Help button
               bsButton(ns("help_input_fit_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_input_fit_data_dialog"),
@@ -51,10 +51,10 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_fit_data"), label = "File input"),
               # Help button
               bsButton(ns("help_load_fit_data"),
-                       class = "rightAlign",
-                       label = "",
-                       icon = icon("question"),
-                       style = "default", size = "default"
+                class = "rightAlign",
+                label = "",
+                icon = icon("question"),
+                style = "default", size = "default"
               ),
               bsModal(
                 id = ns("help_load_fit_data_dialog"),
@@ -69,9 +69,9 @@ estimateUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
           )
         )
       ),
@@ -120,7 +120,63 @@ estimateUI <- function(id, label) {
               condition = "!input.load_cases_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)#,
+              # Help button
+              # bsButton(ns("help_input_cases_data"),
+              #   class = "rightAlign",
+              #   label = "",
+              #   icon = icon("question"),
+              #   style = "default", size = "default"
+              # ),
+              # bsModal(
+              #   id = ns("help_input_cases_data_dialog"),
+              #   title = "Help: Cases data input",
+              #   trigger = ns("help_input_cases_data"),
+              #   size = "large",
+              #   withMathJax(includeMarkdown("help/input_cases_data.md"))
+              # )
+            ),
+            conditionalPanel(
+              condition = "input.load_cases_data_check",
+              ns = ns,
+              fileInput(ns("load_cases_data"), label = "File input")#,
+              # Help button
+              # bsButton(ns("help_load_cases_data"),
+              #   class = "rightAlign",
+              #   label = "",
+              #   icon = icon("question"),
+              #   style = "default", size = "default"
+              # ),
+              # bsModal(
+              #   id = ns("help_load_cases_data_dialog"),
+              #   title = "Help: Loading cases data",
+              #   trigger = ns("help_load_cases_data"),
+              #   size = "large",
+              #   withMathJax(includeMarkdown("help/load_cases_data.md"))
+              # )
+            ),
+            # Gamma selection
+            splitLayout(
+              cellWidths = c("50%", "50%"),
+              numericInput(
+                ns("gamma"), "Gamma",
+                value = 0.3706479, step = 0.01),
+              numericInput(
+                ns("gamma_error"), "Std. error Gamma",
+                value = 0.009164707, step = 0.0001)
+            ),
+            # Help button
+            # bsButton(ns("help_gamma"),
+            #          # class = "side-widget-tall",
+            #          label = "",
+            #          icon = icon("question"),
+            #          style = "default", size = "default"
+            # )
+
+            # Help buttons
+            conditionalPanel(
+              condition = "!input.load_cases_data_check",
+              ns = ns,
               # Help button
               bsButton(ns("help_input_cases_data"),
                        class = "rightAlign",
@@ -139,7 +195,6 @@ estimateUI <- function(id, label) {
             conditionalPanel(
               condition = "input.load_cases_data_check",
               ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
               bsButton(ns("help_load_cases_data"),
                        class = "rightAlign",
@@ -160,9 +215,9 @@ estimateUI <- function(id, label) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
+            "Note that previously introduced data will be deleted.",
+            "bottom",
+            options = list(container = "body")
           )
         )
       ),
@@ -191,10 +246,10 @@ estimateUI <- function(id, label) {
         ),
         # Help button
         bsButton(ns("help_assessment"),
-                 # class = "side-widget",
-                 label = "",
-                 icon = icon("question"),
-                 style = "default", size = "default"
+          # class = "side-widget",
+          label = "",
+          icon = icon("question"),
+          style = "default", size = "default"
         ),
         div(class = "widget-sep", br()),
         actionButton(ns("button_estimate"), class = "inputs-button", "Estimate dose"),
@@ -231,10 +286,10 @@ estimateUI <- function(id, label) {
               rHandsontableOutput(ns("est_doses"))
             ),
             bsButton(ns("help_mixed_yields"),
-                     # class = "rightAlign",
-                     label = "",
-                     icon = icon("question"),
-                     style = "default", size = "default"
+              # class = "rightAlign",
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
             ),
             bsModal(
               id = ns("help_mixed_yields_dialog"),
@@ -404,7 +459,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
               td.style.background = 'pink';
              }
            }")
-      # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+    # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
@@ -514,20 +569,20 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
   # Results outputs ----
   output$fit_results <- renderPrint({
     # Result of curve fit 'fit_results'
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
   output$fit_formula <- renderPrint({
     # Fitting formula
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_results"]]$formula
     # TODO: transform this into LaTeX output?
   })
 
   output$fit_statistics <- renderRHandsontable({
     # Model-level statistics using broom::glance
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
       select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
       mutate(null.deviance = as.character(null.deviance)) %>%
@@ -536,7 +591,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 75) %>%
@@ -545,7 +600,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   output$var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -554,7 +609,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   output$cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
-    if(input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -584,7 +639,6 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
 
 estimateMixedResults <- function(input, output, session, stringsAsFactors) {
-
   data <- reactive({
     # Calcs: get variables ----
     input$button_estimate
@@ -601,9 +655,12 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
       yield_obs <- cases_data[["y"]]
 
-      counts <- cases_data[1,] %>%
+      counts <- cases_data[1, ] %>%
         select(contains("C")) %>%
         as.numeric()
+
+      gamma <- input$gamma
+      gamma_error <- input$gamma_error
     })
 
     # Data test is stored in vector y
@@ -612,9 +669,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
 
     # Input of the parameters of the dose-effect linear-quadratic model
-    # beta0 <- 0.0008867
-    # beta1 <- 0.1285732
-    # beta2 <- 0.0552981
     beta0 <- fit_coeffs[1, "Estimate"]
     beta1 <- fit_coeffs[2, "Estimate"]
     beta2 <- fit_coeffs[3, "Estimate"]
@@ -622,12 +676,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     # Input of the Variance-covariance matrix of the parameters
     sigma <- numeric(49)
     dim(sigma) <- c(7, 7)
-    # sigma[1, 1] <- 8.864896e-07
-    # sigma[2, 2] <- 3.946474e-04
-    # sigma[3, 3] <- 1.900512e-05
-    # sigma[1, 2] <- -8.526986e-07
-    # sigma[1, 3] <- 1.046383e-07
-    # sigma[2, 3] <- -6.817431e-05
     sigma[1, 1] <- var_cov_mat[1, 1]
     sigma[2, 2] <- var_cov_mat[2, 2]
     sigma[3, 3] <- var_cov_mat[3, 3]
@@ -639,18 +687,18 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     sigma[3, 2] <- sigma[2, 3]
 
     # Input of the parameter gamma and its variance
-    gam <- 0.3706479
-    sigma[4, 4] <- 0.009164707
+    gam <- gamma
+    sigma[4, 4] <- gamma_error
 
 
     # Calcs: whole-body ----
 
     gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
 
-    yields_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(yield_obs, 0)),]
+    yields_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(yield_obs, 0)), ]
 
-    yield_obs_l <-yields_row[["Sl"]]
-    yield_obs_u <-yields_row[["Su"]]
+    yield_obs_l <- yields_row[["Sl"]]
+    yield_obs_u <- yields_row[["Su"]]
 
     # Calculate projections
     x_whole <- uniroot(function(d) {
@@ -668,10 +716,10 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     # Whole-body estimation results
     est_doses_whole <- data.frame(
       yield = c(yield_obs_l, yield_obs, yield_obs_u),
-      dose  = c(x_l_whole, x_whole, x_u_whole)
+      dose = c(x_l_whole, x_whole, x_u_whole)
     )
 
-    row.names(est_doses_whole) <-  c("lower", "base", "upper")
+    row.names(est_doses_whole) <- c("lower", "base", "upper")
 
 
     # Calcs: mixed ----
@@ -733,7 +781,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       f_std_err = rep(std_estim[1], 2)
     )
 
-    row.names(est_yields) <-  c("x1", "x2")
+    row.names(est_yields) <- c("x1", "x2")
 
     # Estimated received doses
     x1 <- uniroot(function(d) {
@@ -783,7 +831,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       std_err = rep(std_err_F1, 2)
     )
 
-    row.names(est_frac) <-  c("x1", "x2")
+    row.names(est_frac) <- c("x1", "x2")
 
     # Gradient
     h <- 0.000001
@@ -813,10 +861,10 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Make list of results to return
     results_list <- list(
-      est_doses_whole  = est_doses_whole,
-      est_yields       = est_yields,
-      est_doses        = est_doses,
-      est_frac         = est_frac
+      est_doses_whole = est_doses_whole,
+      est_yields = est_yields,
+      est_doses = est_doses,
+      est_frac = est_frac
     )
 
     return(results_list)
@@ -825,7 +873,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
   # Results outputs ----
   output$est_yields <- renderRHandsontable({
     # Estimated yields
-    if(input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) return(NULL)
     data()[["est_yields"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -834,7 +882,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_doses_whole <- renderRHandsontable({
     # Estimated recieved doses (whole-body)
-    if(input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) return(NULL)
     data()[["est_doses_whole"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -843,7 +891,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_doses <- renderRHandsontable({
     # Estimated recieved doses (partial/heterogeneous)
-    if(input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) return(NULL)
     data()[["est_doses"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -852,7 +900,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_frac <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose x1
-    if(input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) return(NULL)
     data()[["est_frac"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -862,7 +910,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
   output$plot <- renderPlot(
     # Plot of the data and fitted curve
     res = 120, {
-      if(input$button_view_fit_data <= 0) return(NULL)
+      if (input$button_view_fit_data <= 0) return(NULL)
       # data()[["gg_curve"]]
       NULL
     }
@@ -874,9 +922,11 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
     },
     content = function(file) {
-      ggsave(plot = data()[["gg_curve"]], filename = file,
-             width = 6, height = 4.5, dpi = 96,
-             device = gsub("\\.", "", input$save_plot_format))
+      ggsave(
+        plot = data()[["gg_curve"]], filename = file,
+        width = 6, height = 4.5, dpi = 96,
+        device = gsub("\\.", "", input$save_plot_format)
+      )
     }
   )
 
