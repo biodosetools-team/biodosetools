@@ -88,16 +88,16 @@ estimateUI <- function(id, label) {
           h4("Fit formula"),
           verbatimTextOutput(ns("fit_formula")),
           h4("Coefficients"),
-          rHandsontableOutput(ns("fit_coeffs")),
-          h4("Variance-covariance matrix"),
-          rHandsontableOutput(ns("var_cov_mat"))
+          rHandsontableOutput(ns("fit_coeffs"))
         ),
         tabPanel(
           h4("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
           title = "Summary statistics",
           h4("Correlation matrix"),
-          rHandsontableOutput(ns("cor_mat"))
+          rHandsontableOutput(ns("cor_mat")),
+          h4("Variance-covariance matrix"),
+          rHandsontableOutput(ns("var_cov_mat"))
         )
       )
     ),
@@ -369,13 +369,8 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
     })
 
     if (!load_cases_data) {
-      # Doses data frame
-      # data_dose <- data.frame(
-      #   D = rep(0.0, num_cases)
-      # )
-
       # Base data frame
-      data_base <- data.frame(
+      full_data <- data.frame(
         matrix(
           0,
           nrow = num_cases,
@@ -383,12 +378,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
         )
       )
 
-      colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
-
-      # Full data frame
-      # full_data <- cbind(data_dose, data_base) %>%
-      # dplyr::mutate(D = as.numeric(D))
-      full_data <- data_base
+      colnames(full_data) <- paste0("C", seq(0, num_dicentrics - 1, 1))
     } else {
       full_data <- read.csv(cases_data$datapath, header = TRUE) %>%
         mutate_at(vars(starts_with("C")), funs(as.integer(.)))
@@ -522,60 +512,12 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
       }
     }
 
-    # # Generalized curves
-    # yield_fun <- function(x) {
-    #   general_fit_coeffs[[1]] +
-    #     general_fit_coeffs[[2]] * x +
-    #     general_fit_coeffs[[3]] * x * x
-    # }
-    #
-    # chisq_df <- nrow(fit_coeffs)
-    # R_factor <- sqrt(qchisq(.95, df = chisq_df))
-    #
-    # yield_error_fun <- function(x) {
-    #   sqrt(
-    #     general_var_cov_mat[["x0", "x0"]] +
-    #       general_var_cov_mat[["x1", "x1"]] * x * x +
-    #       general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
-    #       2 * general_var_cov_mat[["x0", "x1"]] * x +
-    #       2 * general_var_cov_mat[["x0", "x2"]] * x * x +
-    #       2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
-    #   )
-    # }
-    #
-    # # Plot data
-    # plot_data <- broom::augment(fit_results)
-    #
-    # curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
-    #   mutate(
-    #     yield = yield_fun(dose),
-    #     yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
-    #     yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
-    #   )
-    #
-    # # Make plot
-    # gg_curve <- ggplot(plot_data / x0) +
-    #   # Observed data
-    #   geom_point(aes(x = x1, y = aberr)) +
-    #   # Fitted curve
-    #   stat_function(
-    #     data = data.frame(x = c(0, max(x1 / x0))),
-    #     mapping = aes(x),
-    #     fun = function(x) yield_fun(x),
-    #     linetype = "dashed"
-    #   ) +
-    #   # Confidence bands (Merkle, 1983)
-    #   geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-    #   labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
-    #   theme_bw()
-
     # Make list of results to return
     results_list <- list(
       fit_results = fit_results,
       fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
       cor_mat = cor_mat
-      # gg_curve = gg_curve
     )
 
     return(results_list)
@@ -630,26 +572,6 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
-
-  # output$plot <- renderPlot(
-  #   # Plot of the data and fitted curve
-  #   res = 120, {
-  #     if(input$button_view_fit_data <= 0) return(NULL)
-  #     data()[["gg_curve"]]
-  #   }
-  # )
-
-  # Export plot ----
-  # output$save_plot <- downloadHandler(
-  #   filename = function() {
-  #     paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
-  #   },
-  #   content = function(file) {
-  #     ggsave(plot = data()[["gg_curve"]], filename = file,
-  #            width = 6, height = 4.5, dpi = 96,
-  #            device = gsub("\\.", "", input$save_plot_format))
-  #   }
-  # )
 }
 
 
@@ -659,25 +581,105 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     input$button_estimate
 
     isolate({
-      cases_data <- hot_to_r(input$hotable)
-      fit_coeffs <- hot_to_r(input$fit_coeffs)
-      var_cov_mat <- hot_to_r(input$var_cov_mat)
+      # Fit data
+      load_fit_data <- input$load_fit_data_check
+      fit_data <- input$load_fit_data
 
-      dose <- cases_data[["D"]]
+      # Cases data
+      cases_data <- hot_to_r(input$hotable)
+
       aberr <- cases_data[["X"]]
       cell <- cases_data[["N"]]
-      disp <- cases_data[["DI"]]
-
       yield_obs <- cases_data[["y"]]
 
       counts <- cases_data[1, ] %>%
         select(contains("C")) %>%
         as.numeric()
 
+      # Gamma input
       gamma <- input$gamma
       gamma_error <- input$gamma_error
     })
 
+    # Get fitting data ----
+    if (load_fit_data) {
+      fit_results <- readRDS(fit_data$datapath)
+    }
+
+    # Summarise fit
+    fit_summary <- summary(fit_results, correlation = TRUE)
+    # cor_mat <- fit_summary$correlation
+    fit_coeffs <- fit_summary$coefficients
+    var_cov_mat <- vcov(fit_results)
+
+    # Generalized variance-covariance matrix
+    general_fit_coeffs <- numeric(length = 3L)
+    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+
+    for (var in rownames(fit_coeffs)) {
+      general_fit_coeffs[var] <- fit_coeffs[var, "Estimate"]
+    }
+
+    # Generalized fit coefficients
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
+    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+
+    for (x_var in rownames(var_cov_mat)) {
+      for (y_var in colnames(var_cov_mat)) {
+        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+      }
+    }
+
+    # Generalized curves
+    yield_fun <- function(x) {
+      general_fit_coeffs[[1]] +
+        general_fit_coeffs[[2]] * x +
+        general_fit_coeffs[[3]] * x * x
+    }
+
+    chisq_df <- nrow(fit_coeffs)
+    R_factor <- sqrt(qchisq(.95, df = chisq_df))
+
+    yield_error_fun <- function(x) {
+      sqrt(
+        general_var_cov_mat[["x0", "x0"]] +
+          general_var_cov_mat[["x1", "x1"]] * x * x +
+          general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
+          2 * general_var_cov_mat[["x0", "x1"]] * x +
+          2 * general_var_cov_mat[["x0", "x2"]] * x * x +
+          2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+      )
+    }
+
+    # Plot data
+    plot_data <- broom::augment(fit_results)
+    x0 <- fit_results$data[[1]]
+    x1 <- fit_results$data[[2]]
+
+    curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
+      mutate(
+        yield = yield_fun(dose),
+        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
+        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+      )
+
+    # Make base plot
+    gg_curve <- ggplot(plot_data / x0) +
+      # Fitted curve
+      stat_function(
+        data = data.frame(x = c(0, max(x1 / x0))),
+        mapping = aes(x),
+        fun = function(x) yield_fun(x),
+        linetype = "dashed"
+      ) +
+      # Confidence bands (Merkle, 1983)
+      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+      labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
+      theme_bw()
+
+
+    # Get cases data ----
     # Data test is stored in vector y
     y <- rep(seq(0, length(counts) - 1, 1), counts)
     x <- c(rep(1, length(y)))
@@ -706,7 +708,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     sigma[4, 4] <- gamma_error
 
 
-    # Calcs: whole-body ----
+    # Calcs: whole-body estimation ----
 
     gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
 
@@ -740,7 +742,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     row.names(est_doses_whole) <- c("lower", "base", "upper")
 
 
-    # Calcs: mixed ----
+    # Calcs: mixed dose estimation ----
 
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
@@ -843,7 +845,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Approximated standard error
     std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
-    # std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * 0 + st[1, 1] / (f1^2 * (1 - f1)^2))
 
     est_frac <- data.frame(
       estimate = c(est_F1, est_F2),
@@ -853,37 +854,45 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     row.names(est_frac) <- c("x1", "x2")
 
     # Gradient
-    h <- 0.000001
-    if (m2 > 0.01) {
-      c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
-      c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
-      c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
-      c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-      c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
-      c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
-      c8 <- (frac(beta0, beta1, beta2, gam, f1, m1, m2 + h) - F) / h
-      grad <- c(c1, c2, c3, c5, c6, c7, c8)
-      sqrt(t(grad) %*% sigma %*% grad)
-    }
+    # h <- 0.000001
+    # if (m2 > 0.01) {
+    #   c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
+    #   c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
+    #   c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
+    #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+    #   c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
+    #   c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
+    #   c8 <- (frac(beta0, beta1, beta2, gam, f1, m1, m2 + h) - F) / h
+    #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
+    #   sqrt(t(grad) %*% sigma %*% grad)
+    # }
+    #
+    # if (m2 <= 0.01) {
+    #   c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
+    #   c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
+    #   c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
+    #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+    #   c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
+    #   c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
+    #   grad <- c(c1, c2, c3, c5, c6, c7)
+    #   sigma2 <- sigma[1:6, 1:6]
+    #   sqrt(t(grad) %*% sigma2 %*% grad)
+    # }
 
-    if (m2 <= 0.01) {
-      c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
-      c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
-      c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
-      c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-      c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
-      c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
-      grad <- c(c1, c2, c3, c5, c6, c7)
-      sigma2 <- sigma[1:6, 1:6]
-      sqrt(t(grad) %*% sigma2 %*% grad)
-    }
+
+    # Update plot ----
+
+    gg_curve <- gg_curve +
+      # Estimated whole-body doses
+      geom_point(data = est_doses_whole, aes(x = dose, y = yield))
 
     # Make list of results to return
     results_list <- list(
       est_doses_whole = est_doses_whole,
       est_yields = est_yields,
       est_doses = est_doses,
-      est_frac = est_frac
+      est_frac = est_frac,
+      gg_curve = gg_curve
     )
 
     return(results_list)
@@ -929,9 +938,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
   output$plot <- renderPlot(
     # Plot of the data and fitted curve
     res = 120, {
-      if (input$button_view_fit_data <= 0) return(NULL)
-      # data()[["gg_curve"]]
-      NULL
+      if (input$button_estimate <= 0) return(NULL)
+      data()[["gg_curve"]]
     }
   )
 
