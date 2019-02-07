@@ -707,6 +707,13 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     gam <- gamma
     sigma[4, 4] <- gamma_error
 
+    # Projection functions ----
+    project_yield_base <- function(yield) {
+      uniroot(function(dose) {
+        yield_fun(dose) - yield
+      }, c(0.1, 30))$root
+    }
+
 
     # Calcs: whole-body estimation ----
 
@@ -721,17 +728,9 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     yield_obs_u <- aberr_obs_u / cell
 
     # Calculate projections
-    x_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs
-    }, c(0.1, 30))$root
-
-    x_l_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs_l
-    }, c(0.1, 30))$root
-
-    x_u_whole <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - yield_obs_u
-    }, c(0.1, 30))$root
+    x_whole <- project_yield_base(yield_obs)
+    x_l_whole <- project_yield_base(yield_obs_l)
+    x_u_whole <- project_yield_base(yield_obs_u)
 
     # Whole-body estimation results
     est_doses_whole <- data.frame(
@@ -804,16 +803,12 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     row.names(est_yields) <- c("x1", "x2")
 
     # Estimated received doses
-    x1 <- uniroot(function(d) {
-      beta0 + beta1 * d + beta2 * d^2 - m1
-    }, c(0.1, 30))$root
+    x1 <- project_yield_base(m1)
 
     if (m2 <= 0.01) {
       x2 <- 0
     } else {
-      x2 <- uniroot(function(d) {
-        beta0 + beta1 * d + beta2 * d^2 - m2
-      }, c(0.1, 30))$root
+      x2 <- project_yield_base(m2)
     }
 
     est_doses <- data.frame(
@@ -821,17 +816,13 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       x2 = x2
     )
 
-    frac <- function(b0, b1, b2, g, f, mu1, mu2) {
-      x1 <- uniroot(function(d) {
-        b0 + b1 * d + b2 * d^2 - mu1
-      }, c(0.1, 30))$root
+    frac <- function(g, f, mu1, mu2) {
+      x1 <- project_yield_base(mu1)
 
       if (mu2 <= 0.01) {
         x2 <- 0
       } else {
-        x2 <- uniroot(function(d) {
-          b0 + b1 * d + b2 * d^2 - mu2
-        }, c(0.1, 30))$root
+        x2 <- project_yield_base(mu2)
       }
 
       frac <- f / (f + (1 - f) * exp(g * (x2 - x1)))
@@ -840,7 +831,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Estimated fraction of irradiated blood for dose x1
-    est_F1 <- frac(beta0, beta1, beta2, gam, f1, m1, m2)
+    est_F1 <- frac(gam, f1, m1, m2)
     est_F2 <- 1 - est_F1
 
     # Approximated standard error
