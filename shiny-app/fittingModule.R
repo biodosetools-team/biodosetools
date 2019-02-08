@@ -9,7 +9,7 @@ fittingUI <- function(id, label) {
     h2("Dose-effect Fitting"),
     fluidRow(
       column(
-        width = 4,
+        width = 5,
         # Input box ----
         box(
           width = 12,
@@ -60,26 +60,30 @@ fittingUI <- function(id, label) {
 
       # Results tabBox ----
       column(
-        width = 8,
+        width = 7,
         # Main tabBox ----
-          tabBox(
-            width = 12,
-            side = "left",
-            tabPanel(
-              title = "Result of curve fit",
-              h4("Fit summary"),
-              verbatimTextOutput(ns("fit_results")),
-              h4("Coefficients"),
-              rHandsontableOutput(ns("fit_coeffs"))
-            ),
-            tabPanel(
-              title = "Summary statistics",
-              h4("Correlation matrix"),
-              rHandsontableOutput(ns("cor_mat")),
-              h4("Variance-covariance matrix"),
-              rHandsontableOutput(ns("var_cov_mat"))
-            )
+        tabBox(
+          width = 12,
+          side = "left",
+          tabPanel(
+            title = "Result of curve fit",
+            # h4("Fit summary"),
+            # verbatimTextOutput(ns("fit_results")),
+            h4("Fit formula"),
+            verbatimTextOutput(ns("fit_formula")),
+            h4("Coefficients"),
+            rHandsontableOutput(ns("fit_coeffs"))
+          ),
+          tabPanel(
+            h4("Model-level statistics"),
+            rHandsontableOutput(ns("fit_statistics")),
+            title = "Summary statistics",
+            h4("Correlation matrix"),
+            rHandsontableOutput(ns("cor_mat")),
+            h4("Variance-covariance matrix"),
+            rHandsontableOutput(ns("var_cov_mat"))
           )
+        )
         # tabBox(
         #   width = 12,
         #   side = "left",
@@ -105,9 +109,9 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
     })
 
     data <- data.frame(
-      Dose = dose,
-      Aberrations = as.integer(aberr),
-      Cells = as.integer(cell)
+      D = dose,
+      N = as.integer(cell),
+      X = as.integer(aberr)
     )
 
     data <- rhandsontable(data)
@@ -161,28 +165,53 @@ fittingResults <- function(input, output, session, stringsAsFactors) {
     return(results_list)
   })
 
-  ## Results outputs ----
+  # Results outputs ----
   output$fit_results <- renderPrint({
-    # "Result of curve fit 'fit_results'"
-    if(input$button_fit <= 0) return(NULL)
+    # Result of curve fit 'fit_results'
+    if (input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
 
+  output$fit_formula <- renderPrint({
+    # Fitting formula
+    if (input$button_fit <= 0) return(NULL)
+    data()[["fit_results"]]$formula
+    # TODO: transform this into LaTeX output?
+  })
+
+  output$fit_statistics <- renderRHandsontable({
+    # Model-level statistics using broom::glance
+    if (input$button_fit <= 0) return(NULL)
+    broom::glance(data()[["fit_results"]]) %>%
+      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      mutate(null.deviance = as.character(null.deviance)) %>%
+      rhandsontable()
+  })
+
   output$fit_coeffs <- renderRHandsontable({
-    # "Coefficients 'fit_coeffs'"
-    if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["fit_coeffs"]])
+    # Coefficients 'fit_coeffs'
+    if (input$button_fit <= 0) return(NULL)
+    data()[["fit_coeffs"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 75) %>%
+      hot_cols(format = "0.000")
   })
 
   output$var_cov_mat <- renderRHandsontable({
-    # "variance-covariance matrix 'var_cov_mat'"
-    if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["var_cov_mat"]])
+    # Variance-covariance matrix 'var_cov_mat'
+    if (input$button_fit <= 0) return(NULL)
+    data()[["var_cov_mat"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.0000000")
   })
 
   output$cor_mat <- renderRHandsontable({
-    # "Correlation matrix 'cor_mat'"
-    if(input$button_fit <= 0) return(NULL)
-    rhandsontable(data()[["cor_mat"]])
+    # Correlation matrix 'cor_mat'
+    if (input$button_fit <= 0) return(NULL)
+    data()[["cor_mat"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 }
