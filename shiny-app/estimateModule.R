@@ -654,33 +654,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       )
     }
 
-    # Plot data
-    plot_data <- broom::augment(fit_results)
-    x0 <- fit_results$data[[1]]
-    x1 <- fit_results$data[[2]]
-
-    curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
-      mutate(
-        yield = yield_fun(dose),
-        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
-        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
-      )
-
-    # Make base plot
-    gg_curve <- ggplot(plot_data / x0) +
-      # Fitted curve
-      stat_function(
-        data = data.frame(x = c(0, max(x1 / x0))),
-        mapping = aes(x),
-        fun = function(x) yield_fun(x),
-        linetype = "dashed"
-      ) +
-      # Confidence bands (Merkle, 1983)
-      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-      labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
-      theme_bw()
-
-
     # Get cases data ----
     # Data test is stored in vector y
     y <- rep(seq(0, length(counts) - 1, 1), counts)
@@ -746,6 +719,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: whole-body estimation ----
 
+    # Calculate CI using Gardner's table
     gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
 
     aberr_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(aberr, 0)), ]
@@ -774,6 +748,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
+    # TODO: Generalize loglik and MLE to all possible fittings
     loglik <- function(b) {
       loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
 
@@ -796,31 +771,41 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       m1 <- MLE$par[3]
       m2 <- MLE$par[2]
       f1 <- 1 - f1
-      stm <- st
-      stm[2, 2] <- st[3, 3]
-      stm[3, 3] <- st[2, 2]
-      stm[1, 2] <- st[1, 3]
-      stm[1, 3] <- st[1, 2]
-      stm[2, 1] <- stm[1, 2]
-      stm[3, 1] <- stm[1, 3]
-      st <- stm
+      # stm <- st
+      # stm[2, 2] <- st[3, 3]
+      # stm[3, 3] <- st[2, 2]
+      # stm[1, 2] <- st[1, 3]
+      # stm[1, 3] <- st[1, 2]
+      # stm[2, 1] <- stm[1, 2]
+      # stm[3, 1] <- stm[1, 3]
+      # st <- stm
     }
 
-    sigma[5, 5] <- st[1, 1]
-    sigma[6, 6] <- st[2, 2]
-    sigma[7, 7] <- st[3, 3]
-    sigma[5, 6] <- st[1, 2]
-    sigma[5, 7] <- st[1, 3]
-    sigma[6, 7] <- st[2, 3]
-    sigma[6, 5] <- st[1, 2]
-    sigma[7, 5] <- st[1, 3]
-    sigma[7, 6] <- st[2, 3]
+    # sigma[5, 5] <- st[1, 1]
+    # sigma[6, 6] <- st[2, 2]
+    # sigma[7, 7] <- st[3, 3]
+    # sigma[5, 6] <- st[1, 2]
+    # sigma[5, 7] <- st[1, 3]
+    # sigma[6, 7] <- st[2, 3]
+    # sigma[6, 5] <- st[1, 2]
+    # sigma[7, 5] <- st[1, 3]
+    # sigma[7, 6] <- st[2, 3]
 
     # Estimated parameters and its standard errors
     # First parameter is the mixing proportion
     # the second and third parameters are the yields
     estim <- c(f1, m1, m2)
     std_estim <- sqrt(diag(st))
+
+    m1_l <- m1 - std_estim[2]
+    m1_u <- m1 + std_estim[2]
+    m2_l <- m2 - std_estim[3]
+    m2_u <- m2 + std_estim[3]
+
+    # Fix negative yields
+    if (m2_l <= 0) {
+      m2_l <- 0
+    }
 
     est_yields <- data.frame(
       y_estimate = c(estim[2], estim[3]),
@@ -833,17 +818,36 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Estimated received doses
     x1 <- project_yield_base(m1)
+    x1_l <- project_yield_lower(m1_l)
+    x1_u <- project_yield_upper(m1_u)
 
     if (m2 <= 0.01) {
       x2 <- 0
+      x2_l <- 0
+      x2_u <- 0
     } else {
       x2 <- project_yield_base(m2)
+      if (m2_l > 0) {
+        x2_l <- project_yield_lower(m2_l)
+      } else {
+        x2_l <- 0
+      }
+      x2_u <- project_yield_upper(m2_u)
     }
 
-    est_doses <- data.frame(
-      x1 = x1,
-      x2 = x2
+    est_yields_mixed <- data.frame(
+      x1 = c(m1_l, m1, m1_u),
+      x2 = c(m2_l, m2, m2_u)
     )
+
+    row.names(est_yields_mixed) <- c("lower", "base", "upper")
+
+    est_doses <- data.frame(
+      x1 = c(x1_l, x1, x1_u),
+      x2 = c(x2_l, x2, x2_u)
+    )
+
+    row.names(est_doses) <- c("lower", "base", "upper")
 
     frac <- function(g, f, mu1, mu2) {
       x1 <- project_yield_base(mu1)
@@ -902,9 +906,47 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Update plot ----
 
+    # Data set for dose plotting
+    est_full_doses <- data.frame(
+      dose = c(est_doses_whole[["dose"]], est_doses[["x1"]], est_doses[["x2"]]),
+      yield = c(est_doses_whole[["yield"]], est_yields_mixed[["x1"]], est_yields_mixed[["x2"]]),
+      type = c(rep("whole-body", 3), rep("mixed X1", 3), rep("mixed X2", 3)),
+      level = rep(c("lower", "base", "upper"), 3)
+    )
+
+    max_dose <- 1.05 * max(est_full_doses[["dose"]])
+
+    # Data set from fit
+    plot_data <- broom::augment(fit_results)
+    x0 <- fit_results$data[[1]]
+    x1 <- fit_results$data[[2]]
+
+    curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
+      mutate(
+        yield = yield_fun(dose),
+        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
+        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+      )
+
+    # Make base plot
+    gg_curve <- ggplot(plot_data / x0) +
+      # Fitted curve
+      stat_function(
+        data = data.frame(x = c(0, max_dose)),
+        mapping = aes(x),
+        fun = function(x) yield_fun(x),
+        linetype = "dashed"
+      ) +
+      # Confidence bands (Merkle, 1983)
+      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+      labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
+      theme_bw()
+
+    # Add doses to plot
     gg_curve <- gg_curve +
       # Estimated whole-body doses
-      geom_point(data = est_doses_whole, aes(x = dose, y = yield))
+      geom_point(data = est_full_doses, aes(x = dose, y = yield, colour = type, shape = level)) +
+      labs(colour = "Assessment", shape = "Confidence interval")
 
     # Make list of results to return
     results_list <- list(
