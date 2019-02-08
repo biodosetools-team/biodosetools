@@ -584,6 +584,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       # Fit data
       load_fit_data <- input$load_fit_data_check
       fit_data <- input$load_fit_data
+      assessment <- input$assessment_select
+      curve_method <- input$curve_method_select
 
       # Cases data
       cases_data <- hot_to_r(input$hotable)
@@ -707,11 +709,38 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     gam <- gamma
     sigma[4, 4] <- gamma_error
 
+
     # Projection functions ----
     project_yield_base <- function(yield) {
       uniroot(function(dose) {
         yield_fun(dose) - yield
       }, c(0.1, 30))$root
+    }
+
+    if (curve_method == "merkle") {
+      project_yield_lower <- function(yield) {
+        uniroot(function(dose) {
+          yield_fun(dose) + R_factor * yield_error_fun(dose) - yield
+        }, c(0.1, 30))$root
+      }
+
+      project_yield_upper <- function(yield) {
+        uniroot(function(dose) {
+          yield_fun(dose) - R_factor * yield_error_fun(dose) - yield
+        }, c(0.1, 30))$root
+      }
+    } else if (curve_method == "simple") {
+      project_yield_lower <- function(yield) {
+        uniroot(function(dose) {
+          yield_fun(dose) - yield
+        }, c(0.1, 30))$root
+      }
+
+      project_yield_upper <- function(yield) {
+        uniroot(function(dose) {
+          yield_fun(dose) - yield
+        }, c(0.1, 30))$root
+      }
     }
 
 
@@ -729,8 +758,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     # Calculate projections
     x_whole <- project_yield_base(yield_obs)
-    x_l_whole <- project_yield_base(yield_obs_l)
-    x_u_whole <- project_yield_base(yield_obs_u)
+    x_l_whole <- project_yield_lower(yield_obs_l)
+    x_u_whole <- project_yield_upper(yield_obs_u)
 
     # Whole-body estimation results
     est_doses_whole <- data.frame(
