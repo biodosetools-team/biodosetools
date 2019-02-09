@@ -29,18 +29,18 @@ fittingAdvUI <- function(id, label) {
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
               bsButton(
-                ns("help_input_count_data"),
+                ns("help_count_data_input"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_input_count_data_dialog"),
+                id = ns("help_count_data_input_dialog"),
                 title = "Help: Count data input",
-                trigger = ns("help_input_count_data"),
+                trigger = ns("help_count_data_input"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_input_count_data.md"))
+                withMathJax(includeMarkdown("help/help_count_data_input.md"))
               )
             ),
             # Load from file ----
@@ -50,18 +50,18 @@ fittingAdvUI <- function(id, label) {
               fileInput(ns("load_count_data"), label = "File input"),
               # Help button
               bsButton(
-                ns("help_load_count_data"),
+                ns("help_count_data_load"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_load_count_data_dialog"),
+                id = ns("help_count_data_load_dialog"),
                 title = "Help: Loading count data",
-                trigger = ns("help_load_count_data"),
+                trigger = ns("help_count_data_load"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_load_count_data.md"))
+                withMathJax(includeMarkdown("help/help_count_data_load.md"))
               )
             ),
             # Buttons
@@ -115,16 +115,16 @@ fittingAdvUI <- function(id, label) {
             ),
             # Help button
             bsButton(
-              ns("help_fit"),
+              ns("help_fitting_options"),
               class = "rightAlign",
               label = "",
               icon = icon("question"),
               style = "default", size = "default"
             ),
             bsModal(
-              id = ns("help_fit_dialog"),
+              id = ns("help_fitting_options_dialog"),
               title = "Help: Fitting options",
-              trigger = ns("help_fit"),
+              trigger = ns("help_fitting_options"),
               size = "large",
               withMathJax(includeMarkdown("help/help_fitting_options.md"))
             )
@@ -207,19 +207,19 @@ fittingAdvUI <- function(id, label) {
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
           # Help button
           bsButton(
-            ns("help_save_fit_data"),
+            ns("help_fit_data_save"),
             class = "rightAlign",
             label = "",
             icon = icon("question"),
             style = "default", size = "default"
           ),
           bsModal(
-            id = ns("help__save_fit_data_dialog"),
+            id = ns("help_fit_data_save_dialog"),
             title = "Help: Save fit data",
-            trigger = ns("help_save_fit_data"),
+            trigger = ns("help_fit_data_save"),
             size = "large",
-            withMathJax(includeMarkdown("help/help_input_count_data.md"))
-            # TODO: Make new help
+            withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+            # TODO: finish dialogue
           )
         )
       ),

@@ -31,18 +31,19 @@ estimateUI <- function(id, label) {
               # TODO: fit data input
               # Help button
               bsButton(
-                ns("help_input_fit_data"),
+                ns("help_fit_data_input"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_input_fit_data_dialog"),
+                id = ns("help_fit_data_input_dialog"),
                 title = "Help: Manual fit data input",
-                trigger = ns("help_input_fit_data"),
+                trigger = ns("help_fit_data_input"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_input_fit_data.md"))
+                withMathJax(includeMarkdown("help/help_fit_data_input.md"))
+                # TODO: finish dialogue
               )
             ),
             # Load from file ----
@@ -52,18 +53,19 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_fit_data"), label = "File input"),
               # Help button
               bsButton(
-                ns("help_load_fit_data"),
+                ns("help_fit_data_load"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_load_fit_data_dialog"),
+                id = ns("help_fit_data_load_dialog"),
                 title = "Help: Loading fit data",
-                trigger = ns("help_load_fit_data"),
+                trigger = ns("help_fit_data_load"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_load_fit_data.md"))
+                withMathJax(includeMarkdown("help/help_fit_data_load.md"))
+                # TODO: finish dialogue
               )
             ),
             # Buttons
@@ -125,18 +127,18 @@ estimateUI <- function(id, label) {
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
               # Help button
               bsButton(
-                ns("help_input_cases_data"),
+                ns("help_cases_data_input"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_input_cases_data_dialog"),
+                id = ns("help_cases_data_input_dialog"),
                 title = "Help: Cases data input",
-                trigger = ns("help_input_cases_data"),
+                trigger = ns("help_cases_data_input"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_input_cases_data.md"))
+                withMathJax(includeMarkdown("help/help_cases_data_input.md"))
               )
             ),
             conditionalPanel(
@@ -145,18 +147,18 @@ estimateUI <- function(id, label) {
               fileInput(ns("load_cases_data"), label = "File input"),
               # Help button
               bsButton(
-                ns("help_load_cases_data"),
+                ns("help_cases_data_load"),
                 class = "rightAlign",
                 label = "",
                 icon = icon("question"),
                 style = "default", size = "default"
               ),
               bsModal(
-                id = ns("help_load_cases_data_dialog"),
+                id = ns("help_cases_data_load_dialog"),
                 title = "Help: Loading cases data",
-                trigger = ns("help_load_cases_data"),
+                trigger = ns("help_cases_data_load"),
                 size = "large",
-                withMathJax(includeMarkdown("help/help_load_cases_data.md"))
+                withMathJax(includeMarkdown("help/help_cases_data_load.md"))
               )
             ),
             # Buttons
@@ -202,18 +204,18 @@ estimateUI <- function(id, label) {
         ),
         # Help button
         bsButton(
-          ns("help_assessment"),
+          ns("help_dose_assessment"),
           # class = "side-widget",
           label = "",
           icon = icon("question"),
           style = "default", size = "default"
         ),
         bsModal(
-          id = ns("help_assessment_dialog"),
+          id = ns("help_dose_assessment_dialog"),
           title = "Help: Assessment selection",
-          trigger = ns("help_assessment"),
+          trigger = ns("help_dose_assessment"),
           size = "large",
-          withMathJax(includeMarkdown("help/help_assessment.md"))
+          withMathJax(includeMarkdown("help/help_dose_assessment.md"))
         ),
         div(class = "widget-sep", br()),
 
@@ -234,18 +236,19 @@ estimateUI <- function(id, label) {
         ),
         # Help button
         bsButton(
-          ns("help_curve_method"),
+          ns("help_dose_curve_method"),
           # class = "side-widget",
           label = "",
           icon = icon("question"),
           style = "default", size = "default"
         ),
         bsModal(
-          id = ns("help_assessment_dialog"),
+          id = ns("help_dose_curve_method_dialog"),
           title = "Help: Assessment selection",
-          trigger = ns("help_curve_method"),
+          trigger = ns("help_dose_curve_method"),
           size = "large",
-          withMathJax(includeMarkdown("help/help_assessment.md"))
+          withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+          # TODO: finish dialogue
         ),
 
         # Gamma selection
@@ -265,11 +268,19 @@ estimateUI <- function(id, label) {
           ),
           # Help button
           bsButton(
-            ns("help_gamma"),
+            ns("help_dose_gamma"),
             # class = "side-widget-tall",
             label = "",
             icon = icon("question"),
             style = "default", size = "default"
+          ),
+          bsModal(
+            id = ns("help_dose_gamma_dialog"),
+            title = "Help: Gamma selection",
+            trigger = ns("help_dose_gamma"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_gamma.md"))
+            # TODO: finish dialogue
           )
         ),
         br(),
@@ -300,18 +311,18 @@ estimateUI <- function(id, label) {
               rHandsontableOutput(ns("est_doses"))
             ),
             bsButton(
-              ns("help_mixed_yields"),
+              ns("help_dose_mixed_yields"),
               # class = "rightAlign",
               label = "",
               icon = icon("question"),
               style = "default", size = "default"
             ),
             bsModal(
-              id = ns("help_mixed_yields_dialog"),
+              id = ns("help_dose_mixed_yields_dialog"),
               title = "Help: Assessment selection",
-              trigger = ns("help_mixed_yields"),
+              trigger = ns("help_dose_mixed_yields"),
               size = "large",
-              withMathJax(includeMarkdown("help/help_mixed_yields.md"))
+              withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
             ),
             h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac"))
