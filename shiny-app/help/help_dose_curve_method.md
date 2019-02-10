@@ -1,5 +1,4 @@
-If the $u$ -value is overdispersed, $u > 1.96$, it should be indicative of either
-- A non-homogeneous exposure to low-LET radiation.
-- An exposure to a high-LET radiation.
+Two methods for error calculation can be selected:
 
-If it is suspected an exposure to low-LET radiation, partial or heterogeneous dose estimation should be applied.
+- Merkle's method: considering both curve calibration and measurement errors.
+- Simple method: condidering measurement errors only.

@@ -248,61 +248,110 @@ estimateUI <- function(id, label) {
           trigger = ns("help_dose_curve_method"),
           size = "large",
           withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
-          # TODO: finish dialogue
         ),
 
-        # Gamma selection
+        # Coefficient conditional input
         conditionalPanel(
           condition = "input.assessment_select != 'whole-body'",
           ns = ns,
-          splitLayout(
-            cellWidths = c("50%", "50%"),
-            numericInput(
-              ns("gamma"), "Gamma",
-              value = 0.3706479, step = 0.01
-            ),
-            numericInput(
-              ns("gamma_error"), "Std. error Gamma",
-              value = 0.009164707, step = 0.0001
+
+          br(),
+
+          # Coefficient input selection
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("fraction_coeff_select"),
+              label = "Coefficient",
+              width = "150px",
+              choices = list(
+                "D0" = "d0",
+                "Gamma" = "gamma"
+              ),
+              selected = "gamma"
             )
           ),
           # Help button
           bsButton(
-            ns("help_dose_gamma"),
+            ns("help_fraction_coeff_select"),
             # class = "side-widget-tall",
             label = "",
             icon = icon("question"),
             style = "default", size = "default"
           ),
           bsModal(
-            id = ns("help_dose_gamma_dialog"),
-            title = "Help: Gamma selection",
-            trigger = ns("help_dose_gamma"),
+            id = ns("help_fraction_coeff_select_dialog"),
+            title = "Help: Coefficient for estimation of fraction of irradiated cells",
+            trigger = ns("help_fraction_coeff_select"),
             size = "large",
-            withMathJax(includeMarkdown("help/help_dose_gamma.md"))
-            # TODO: finish dialogue
+            withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
+          ),
+
+          div(class = "widget-sep", br()),
+
+          div(
+            class = "side-widget",
+            # Input gamma
+            conditionalPanel(
+              condition = "input.fraction_coeff_select == 'gamma'",
+              ns = ns,
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "150px",
+                  ns("gamma_coeff"), "Gamma",
+                  value = 0.3706479, step = 0.01
+                )
+              ),
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "150px",
+                  ns("gamma_error"), "Error of gamma",
+                  value = 0.009164707, step = 0.0001
+                )
+              )
+            ),
+            # Input D0
+            conditionalPanel(
+              condition = "input.fraction_coeff_select == 'd0'",
+              ns = ns,
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "150px",
+                  ns("d0_coeff"), "D0",
+                  value = 2.7, step = 0.01,
+                  min = 2.7, max = 3.5
+                )
+              )
+            )
           )
+
         ),
+
         br(),
         actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
       )
     ),
 
     fluidRow(
-      # tabBox: Estimations ----
+      # box: Estimation results ----
       column(
         width = 6,
-        tabBox(
+        box(
           width = 12,
-          side = "left",
-          selected = "Partial/Heterogeneous",
-          tabPanel(
-            title = "Whole body",
-            h4("Estimated dose"),
-            rHandsontableOutput(ns("est_doses_whole"))
-          ),
-          tabPanel(
-            title = "Partial/Heterogeneous",
+          title = "Results",
+          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+
+          h3("Whole-body"),
+          h4("Whole-body estimated dose"),
+          rHandsontableOutput(ns("est_doses_whole")),
+
+          conditionalPanel(
+            condition = "input.assessment_select != 'whole-body'",
+            ns = ns,
+            h3("Partial/Heterogeneous"),
             h4("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_yields")),
             h4("Dose recieved by the irradiated fraction"),
@@ -319,7 +368,7 @@ estimateUI <- function(id, label) {
             ),
             bsModal(
               id = ns("help_dose_mixed_yields_dialog"),
-              title = "Help: Assessment selection",
+              title = "Help: Partial and heterogeneous exposures",
               trigger = ns("help_dose_mixed_yields"),
               size = "large",
               withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -328,6 +377,42 @@ estimateUI <- function(id, label) {
             rHandsontableOutput(ns("est_frac"))
           )
         )
+        # tabBox(
+        #   width = 12,
+        #   side = "left",
+        #   selected = "Partial/Heterogeneous",
+        #   tabPanel(
+        #     title = "Whole body",
+        #     h4("Estimated dose"),
+        #     rHandsontableOutput(ns("est_doses_whole"))
+        #   ),
+        #   tabPanel(
+        #     title = "Partial/Heterogeneous",
+        #     h4("Observed fraction of irradiated cells and its yield"),
+        #     rHandsontableOutput(ns("est_yields")),
+        #     h4("Dose recieved by the irradiated fraction"),
+        #     div(
+        #       class = "side-widget",
+        #       rHandsontableOutput(ns("est_doses"))
+        #     ),
+        #     bsButton(
+        #       ns("help_dose_mixed_yields"),
+        #       # class = "rightAlign",
+        #       label = "",
+        #       icon = icon("question"),
+        #       style = "default", size = "default"
+        #     ),
+        #     bsModal(
+        #       id = ns("help_dose_mixed_yields_dialog"),
+        #       title = "Help: Assessment selection",
+        #       trigger = ns("help_dose_mixed_yields"),
+        #       size = "large",
+        #       withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+        #     ),
+        #     h4("Initial fraction of irradiated cells"),
+        #     rHandsontableOutput(ns("est_frac"))
+        #   )
+        # )
       ),
       # box: Plot curves ----
       column(
@@ -609,10 +694,13 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
         select(contains("C")) %>%
         as.numeric()
 
-      # Gamma input
-      gamma <- input$gamma
-      gamma_error <- input$gamma_error
+      # Coefficient input selection
+      fraction_coeff <- input$fraction_coeff_select
     })
+
+    cat(assessment)
+    cat(curve_method)
+    cat(fraction_coeff)
 
     # Get fitting data ----
     if (load_fit_data) {
@@ -664,34 +752,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
           2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
       )
     }
-
-    # Get cases data ----
-    # Data test is stored in vector y
-    y <- rep(seq(0, length(counts) - 1, 1), counts)
-    x <- c(rep(1, length(y)))
-    fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
-
-    # Input of the parameters of the dose-effect linear-quadratic model
-    beta0 <- fit_coeffs[1, "Estimate"]
-    beta1 <- fit_coeffs[2, "Estimate"]
-    beta2 <- fit_coeffs[3, "Estimate"]
-
-    # Input of the Variance-covariance matrix of the parameters
-    sigma <- numeric(49)
-    dim(sigma) <- c(7, 7)
-    sigma[1, 1] <- var_cov_mat[1, 1]
-    sigma[2, 2] <- var_cov_mat[2, 2]
-    sigma[3, 3] <- var_cov_mat[3, 3]
-    sigma[1, 2] <- var_cov_mat[1, 2]
-    sigma[1, 3] <- var_cov_mat[1, 3]
-    sigma[2, 3] <- var_cov_mat[2, 3]
-    sigma[2, 1] <- sigma[1, 2]
-    sigma[3, 1] <- sigma[1, 3]
-    sigma[3, 2] <- sigma[2, 3]
-
-    # Input of the parameter gamma and its variance
-    gam <- gamma
-    sigma[4, 4] <- gamma_error
 
 
     # Projection functions ----
@@ -756,174 +816,219 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
 
     # Calcs: mixed dose estimation ----
+    if (assessment != "whole-body") {
+      # Get cases data
+      # Data test is stored in vector y
+      y <- rep(seq(0, length(counts) - 1, 1), counts)
+      x <- c(rep(1, length(y)))
+      fit <- mixtools::poisregmixEM(y, x, addintercept = F, k = 2)
+      # TODO: review if k needs to be changed
 
-    # First parameter is the mixing proportion
-    # the second and third parameters are the yields
-    # TODO: Generalize loglik and MLE to all possible fittings
-    loglik <- function(b) {
-      loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
+      # Input of the parameters of the dose-effect linear-quadratic model
+      beta0 <- fit_coeffs[1, "Estimate"]
+      beta1 <- fit_coeffs[2, "Estimate"]
+      beta2 <- fit_coeffs[3, "Estimate"]
 
-      return(-loglik)
-    }
+      # Input of the Variance-covariance matrix of the parameters
+      sigma <- numeric(49)
+      dim(sigma) <- c(7, 7)
+      sigma[1, 1] <- var_cov_mat[1, 1]
+      sigma[2, 2] <- var_cov_mat[2, 2]
+      sigma[3, 3] <- var_cov_mat[3, 3]
+      sigma[1, 2] <- var_cov_mat[1, 2]
+      sigma[1, 3] <- var_cov_mat[1, 3]
+      sigma[2, 3] <- var_cov_mat[2, 3]
+      sigma[2, 1] <- sigma[1, 2]
+      sigma[3, 1] <- sigma[1, 3]
+      sigma[3, 2] <- sigma[2, 3]
 
-    MLE <- optim(
-      c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
-      loglik,
-      method = c("L-BFGS-B"),
-      lower = c(0.01, 0.01, 0.01), upper = c(0.99, Inf, Inf), hessian = T
-    )
-
-    st <- solve(MLE$hessian)
-    m1 <- MLE$par[2]
-    m2 <- MLE$par[3]
-    f1 <- MLE$par[1]
-
-    if (m1 < m2) {
-      m1 <- MLE$par[3]
-      m2 <- MLE$par[2]
-      f1 <- 1 - f1
-      # stm <- st
-      # stm[2, 2] <- st[3, 3]
-      # stm[3, 3] <- st[2, 2]
-      # stm[1, 2] <- st[1, 3]
-      # stm[1, 3] <- st[1, 2]
-      # stm[2, 1] <- stm[1, 2]
-      # stm[3, 1] <- stm[1, 3]
-      # st <- stm
-    }
-
-    # sigma[5, 5] <- st[1, 1]
-    # sigma[6, 6] <- st[2, 2]
-    # sigma[7, 7] <- st[3, 3]
-    # sigma[5, 6] <- st[1, 2]
-    # sigma[5, 7] <- st[1, 3]
-    # sigma[6, 7] <- st[2, 3]
-    # sigma[6, 5] <- st[1, 2]
-    # sigma[7, 5] <- st[1, 3]
-    # sigma[7, 6] <- st[2, 3]
-
-    # Estimated parameters and its standard errors
-    # First parameter is the mixing proportion
-    # the second and third parameters are the yields
-    estim <- c(f1, m1, m2)
-    std_estim <- sqrt(diag(st))
-
-    m1_l <- m1 - std_estim[2]
-    m1_u <- m1 + std_estim[2]
-    m2_l <- m2 - std_estim[3]
-    m2_u <- m2 + std_estim[3]
-
-    # Fix negative yields
-    if (m2_l <= 0) {
-      m2_l <- 0
-    }
-
-    est_yields <- data.frame(
-      y_estimate = c(estim[2], estim[3]),
-      y_std_err = c(std_estim[2], std_estim[3]),
-      f_estimate = c(estim[1], 1 - estim[1]),
-      f_std_err = rep(std_estim[1], 2)
-    )
-
-    row.names(est_yields) <- c("x1", "x2")
-
-    # Estimated received doses
-    x1 <- project_yield_base(m1)
-    x1_l <- project_yield_lower(m1_l)
-    x1_u <- project_yield_upper(m1_u)
-
-    if (m2 <= 0.01) {
-      x2 <- 0
-      x2_l <- 0
-      x2_u <- 0
-    } else {
-      x2 <- project_yield_base(m2)
-      if (m2_l > 0) {
-        x2_l <- project_yield_lower(m2_l)
-      } else {
-        x2_l <- 0
+      # Input of the parameter gamma and its variance
+      if (fraction_coeff == "gamma") {
+        gamma <- input$gamma_coeff
+        sigma[4, 4] <- input$gamma_error
+      } else if (fraction_coeff == "d0"){
+        gamma <- 1 / input$d0_coeff
+        sigma[4, 4] <- 0
       }
-      x2_u <- project_yield_upper(m2_u)
-    }
 
-    est_yields_mixed <- data.frame(
-      x1 = c(m1_l, m1, m1_u),
-      x2 = c(m2_l, m2, m2_u)
-    )
+      # First parameter is the mixing proportion
+      # the second and third parameters are the yields
+      # TODO: Generalize loglik and MLE to all possible fittings
+      loglik <- function(b) {
+        loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
 
-    row.names(est_yields_mixed) <- c("lower", "base", "upper")
+        return(-loglik)
+      }
 
-    est_doses <- data.frame(
-      x1 = c(x1_l, x1, x1_u),
-      x2 = c(x2_l, x2, x2_u)
-    )
+      MLE <- optim(
+        c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
+        loglik,
+        method = c("L-BFGS-B"),
+        lower = c(0.01, 0.01, 0.01), upper = c(0.99, Inf, Inf), hessian = T
+      )
 
-    row.names(est_doses) <- c("lower", "base", "upper")
+      st <- solve(MLE$hessian)
+      m1 <- MLE$par[2]
+      m2 <- MLE$par[3]
+      f1 <- MLE$par[1]
 
-    frac <- function(g, f, mu1, mu2) {
-      x1 <- project_yield_base(mu1)
+      if (m1 < m2) {
+        m1 <- MLE$par[3]
+        m2 <- MLE$par[2]
+        f1 <- 1 - f1
+        # stm <- st
+        # stm[2, 2] <- st[3, 3]
+        # stm[3, 3] <- st[2, 2]
+        # stm[1, 2] <- st[1, 3]
+        # stm[1, 3] <- st[1, 2]
+        # stm[2, 1] <- stm[1, 2]
+        # stm[3, 1] <- stm[1, 3]
+        # st <- stm
+      }
 
-      if (mu2 <= 0.01) {
+      # sigma[5, 5] <- st[1, 1]
+      # sigma[6, 6] <- st[2, 2]
+      # sigma[7, 7] <- st[3, 3]
+      # sigma[5, 6] <- st[1, 2]
+      # sigma[5, 7] <- st[1, 3]
+      # sigma[6, 7] <- st[2, 3]
+      # sigma[6, 5] <- st[1, 2]
+      # sigma[7, 5] <- st[1, 3]
+      # sigma[7, 6] <- st[2, 3]
+
+      # Estimated parameters and its standard errors
+      # First parameter is the mixing proportion
+      # the second and third parameters are the yields
+      estim <- c(f1, m1, m2)
+      std_estim <- sqrt(diag(st))
+
+      m1_l <- m1 - std_estim[2]
+      m1_u <- m1 + std_estim[2]
+      m2_l <- m2 - std_estim[3]
+      m2_u <- m2 + std_estim[3]
+
+      # Fix negative yields
+      if (m2_l <= 0) {
+        m2_l <- 0
+      }
+
+      est_yields <- data.frame(
+        y_estimate = c(estim[2], estim[3]),
+        y_std_err = c(std_estim[2], std_estim[3]),
+        f_estimate = c(estim[1], 1 - estim[1]),
+        f_std_err = rep(std_estim[1], 2)
+      )
+
+      row.names(est_yields) <- c("x1", "x2")
+
+      # Estimated received doses
+      x1 <- project_yield_base(m1)
+      x1_l <- project_yield_lower(m1_l)
+      x1_u <- project_yield_upper(m1_u)
+
+      if (m2 <= 0.01) {
         x2 <- 0
+        x2_l <- 0
+        x2_u <- 0
       } else {
-        x2 <- project_yield_base(mu2)
+        x2 <- project_yield_base(m2)
+        if (m2_l > 0) {
+          x2_l <- project_yield_lower(m2_l)
+        } else {
+          x2_l <- 0
+        }
+        x2_u <- project_yield_upper(m2_u)
       }
 
-      frac <- f / (f + (1 - f) * exp(g * (x2 - x1)))
+      est_yields_mixed <- data.frame(
+        x1 = c(m1_l, m1, m1_u),
+        x2 = c(m2_l, m2, m2_u)
+      )
 
-      return(frac)
+      row.names(est_yields_mixed) <- c("lower", "base", "upper")
+
+      est_doses <- data.frame(
+        x1 = c(x1_l, x1, x1_u),
+        x2 = c(x2_l, x2, x2_u)
+      )
+
+      row.names(est_doses) <- c("lower", "base", "upper")
+
+      frac <- function(g, f, mu1, mu2) {
+        x1 <- project_yield_base(mu1)
+
+        if (mu2 <= 0.01) {
+          x2 <- 0
+        } else {
+          x2 <- project_yield_base(mu2)
+        }
+
+        frac <- f / (f + (1 - f) * exp(g * (x2 - x1)))
+
+        return(frac)
+      }
+
+      # Estimated fraction of irradiated blood for dose x1
+      est_F1 <- frac(gamma, f1, m1, m2)
+      est_F2 <- 1 - est_F1
+
+      # Approximated standard error
+      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+
+      est_frac <- data.frame(
+        estimate = c(est_F1, est_F2),
+        std_err = rep(std_err_F1, 2)
+      )
+
+      row.names(est_frac) <- c("x1", "x2")
+
+      # Gradient
+      # h <- 0.000001
+      # if (m2 > 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, m1, m2) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, m1, m2) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, m1, m2) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, m1, m2) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, m1 + h, m2) - F) / h
+      #   c8 <- (frac(beta0, beta1, beta2, gamma, f1, m1, m2 + h) - F) / h
+      #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
+      #   sqrt(t(grad) %*% sigma %*% grad)
+      # }
+      #
+      # if (m2 <= 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, m1, m2) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, m1, m2) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, m1, m2) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, m1, m2) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, m1 + h, m2) - F) / h
+      #   grad <- c(c1, c2, c3, c5, c6, c7)
+      #   sigma2 <- sigma[1:6, 1:6]
+      #   sqrt(t(grad) %*% sigma2 %*% grad)
+      # }
+
     }
-
-    # Estimated fraction of irradiated blood for dose x1
-    est_F1 <- frac(gam, f1, m1, m2)
-    est_F2 <- 1 - est_F1
-
-    # Approximated standard error
-    std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
-
-    est_frac <- data.frame(
-      estimate = c(est_F1, est_F2),
-      std_err = rep(std_err_F1, 2)
-    )
-
-    row.names(est_frac) <- c("x1", "x2")
-
-    # Gradient
-    # h <- 0.000001
-    # if (m2 > 0.01) {
-    #   c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
-    #   c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
-    #   c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
-    #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-    #   c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
-    #   c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
-    #   c8 <- (frac(beta0, beta1, beta2, gam, f1, m1, m2 + h) - F) / h
-    #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
-    #   sqrt(t(grad) %*% sigma %*% grad)
-    # }
-    #
-    # if (m2 <= 0.01) {
-    #   c1 <- (frac(beta0 + h, beta1, beta2, gam, f1, m1, m2) - F) / h
-    #   c2 <- (frac(beta0, beta1 + h, beta2, gam, f1, m1, m2) - F) / h
-    #   c3 <- (frac(beta0, beta1, beta2 + h, gam, f1, m1, m2) - F) / h
-    #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-    #   c6 <- (frac(beta0, beta1, beta2, gam, f1 + h, m1, m2) - F) / h
-    #   c7 <- (frac(beta0, beta1, beta2, gam, f1, m1 + h, m2) - F) / h
-    #   grad <- c(c1, c2, c3, c5, c6, c7)
-    #   sigma2 <- sigma[1:6, 1:6]
-    #   sqrt(t(grad) %*% sigma2 %*% grad)
-    # }
-
 
     # Update plot ----
 
     # Data set for dose plotting
-    est_full_doses <- data.frame(
-      dose = c(est_doses_whole[["dose"]], est_doses[["x1"]], est_doses[["x2"]]),
-      yield = c(est_doses_whole[["yield"]], est_yields_mixed[["x1"]], est_yields_mixed[["x2"]]),
-      type = c(rep("whole-body", 3), rep("mixed X1", 3), rep("mixed X2", 3)),
-      level = rep(c("lower", "base", "upper"), 3)
-    )
+
+    if (assessment == "whole-body") {
+      est_full_doses <- data.frame(
+        dose = c(est_doses_whole[["dose"]]),
+        yield = c(est_doses_whole[["yield"]]),
+        type = c(rep("whole-body", 3)),
+        level = rep(c("lower", "base", "upper"), 1)
+      )
+    } else {
+      est_full_doses <- data.frame(
+        dose = c(est_doses_whole[["dose"]], est_doses[["x1"]], est_doses[["x2"]]),
+        yield = c(est_doses_whole[["yield"]], est_yields_mixed[["x1"]], est_yields_mixed[["x2"]]),
+        type = c(rep("whole-body", 3), rep("mixed X1", 3), rep("mixed X2", 3)),
+        level = rep(c("lower", "base", "upper"), 3)
+      )
+    }
 
     max_dose <- 1.05 * max(est_full_doses[["dose"]])
 
@@ -960,27 +1065,27 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       labs(colour = "Assessment", shape = "Confidence interval")
 
     # Make list of results to return
-    results_list <- list(
-      est_doses_whole = est_doses_whole,
-      est_yields = est_yields,
-      est_doses = est_doses,
-      est_frac = est_frac,
-      gg_curve = gg_curve
-    )
+    if (assessment == "whole-body") {
+      results_list <- list(
+        est_doses_whole = est_doses_whole,
+        gg_curve = gg_curve
+      )
+    } else {
+      results_list <- list(
+        assessment = assessment,
+        est_doses_whole = est_doses_whole,
+        est_yields = est_yields,
+        est_doses = est_doses,
+        est_frac = est_frac,
+        gg_curve = gg_curve
+      )
+    }
+
 
     return(results_list)
   })
 
   # Results outputs ----
-  output$est_yields <- renderRHandsontable({
-    # Estimated yields
-    if (input$button_estimate <= 0) return(NULL)
-    data()[["est_yields"]] %>%
-      rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
-  })
-
   output$est_doses_whole <- renderRHandsontable({
     # Estimated recieved doses (whole-body)
     if (input$button_estimate <= 0) return(NULL)
@@ -990,9 +1095,18 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(format = "0.000")
   })
 
+  output$est_yields <- renderRHandsontable({
+    # Estimated yields
+    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
+    data()[["est_yields"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
   output$est_doses <- renderRHandsontable({
     # Estimated recieved doses (partial/heterogeneous)
-    if (input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
     data()[["est_doses"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -1001,7 +1115,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_frac <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose x1
-    if (input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
     data()[["est_frac"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
