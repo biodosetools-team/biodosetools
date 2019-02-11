@@ -13,10 +13,27 @@ params:
   gg_curve: NA
 ---
 
+```{r include=FALSE}
+library(xfun)
+xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+```
+
+```{r include=FALSE}
+embed_var <- function(x, ...) {
+  # f = tempfile(fileext = '.rds')
+  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  saveRDS(x, f)
+  xfun::embed_file(f, ...)
+}
+```
 
 ### Result of curve fit
 ```{r echo=FALSE}
 params$fit_result
+```
+
+```{r echo=FALSE}
+embed_var(params$fit_result)
 ```
 
 ### Coefficients
