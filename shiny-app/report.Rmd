@@ -3,8 +3,11 @@ title: "Curve fitting report"
 author: "Biodose Tools"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
-  html_document:
-    theme: cosmo
+  prettydoc::html_pretty:
+    theme: cayman
+  # html_document:
+    # theme: cosmo
+    # css: style.css
 params:
   fit_result: NA
   fit_coeffs: NA
