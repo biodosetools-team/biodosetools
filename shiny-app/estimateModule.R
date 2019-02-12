@@ -898,13 +898,13 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       )
 
       st <- solve(MLE$hessian)
-      m1 <- MLE$par[2]
-      m2 <- MLE$par[3]
+      yield1 <- MLE$par[2]
+      yield2 <- MLE$par[3]
       f1 <- MLE$par[1]
 
-      if (m1 < m2) {
-        m1 <- MLE$par[3]
-        m2 <- MLE$par[2]
+      if (yield1 < yield2) {
+        yield1 <- MLE$par[3]
+        yield2 <- MLE$par[2]
         f1 <- 1 - f1
         stm <- st
         stm[2, 2] <- st[3, 3]
@@ -930,17 +930,17 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       # Estimated parameters and its standard errors
       # First parameter is the mixing proportion
       # the second and third parameters are the yields
-      estim <- c(f1, m1, m2)
+      estim <- c(f1, yield1, yield2)
       std_estim <- sqrt(diag(st))
 
-      m1_l <- m1 - std_estim[2]
-      m1_u <- m1 + std_estim[2]
-      m2_l <- m2 - std_estim[3]
-      m2_u <- m2 + std_estim[3]
+      yield1_l <- yield1 - std_estim[2]
+      yield1_u <- yield1 + std_estim[2]
+      yield2_l <- yield2 - std_estim[3]
+      yield2_u <- yield2 + std_estim[3]
 
       # Fix negative yields
-      if (m2_l <= 0) {
-        m2_l <- 0
+      if (yield2_l <= 0) {
+        yield2_l <- 0
       }
 
       est_mixing_prop <- data.frame(
@@ -953,58 +953,58 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       row.names(est_mixing_prop) <- c("x1", "x2")
 
       # Estimated received doses
-      x1 <- project_yield_base(m1)
-      x1_l <- project_yield_lower(m1_l)
-      x1_u <- project_yield_upper(m1_u)
+      dose1 <- project_yield_base(yield1)
+      dose1_l <- project_yield_lower(yield1_l)
+      dose1_u <- project_yield_upper(yield1_u)
 
-      if (m2 <= 0.01) {
-        x2 <- 0
-        x2_l <- 0
-        x2_u <- project_yield_upper(m2_u)
+      if (yield2 <= 0.01) {
+        dose2 <- 0
+        dose2_l <- 0
+        dose2_u <- project_yield_upper(yield2_u)
       } else {
-        x2 <- project_yield_base(m2)
-        if (m2_l > 0) {
-          x2_l <- project_yield_lower(m2_l)
+        dose2 <- project_yield_base(yield2)
+        if (yield2_l > 0) {
+          dose2_l <- project_yield_lower(yield2_l)
         } else {
-          x2_l <- 0
+          dose2_l <- 0
         }
-        x2_u <- project_yield_upper(m2_u)
+        dose2_u <- project_yield_upper(yield2_u)
       }
 
       est_yields <- data.frame(
-        x1 = c(m1_l, m1, m1_u),
-        x2 = c(m2_l, m2, m2_u)
+        yield1 = c(yield1_l, yield1, yield1_u),
+        yield2 = c(yield2_l, yield2, yield2_u)
       )
 
       row.names(est_yields) <- c("lower", "base", "upper")
 
       est_doses <- data.frame(
-        x1 = c(x1_l, x1, x1_u),
-        x2 = c(x2_l, x2, x2_u)
+        dose1 = c(dose1_l, dose1, dose1_u),
+        dose2 = c(dose2_l, dose2, dose2_u)
       )
 
       row.names(est_doses) <- c("lower", "base", "upper")
 
       frac <- function(g, f, mu1, mu2) {
-        x1 <- project_yield_base(mu1)
+        dose1 <- project_yield_base(mu1)
 
         if (mu2 <= 0.01) {
-          x2 <- 0
+          dose2 <- 0
         } else {
-          x2 <- project_yield_base(mu2)
+          dose2 <- project_yield_base(mu2)
         }
 
-        frac <- f / (f + (1 - f) * exp(g * (x2 - x1)))
+        frac <- f / (f + (1 - f) * exp(g * (dose2 - dose1)))
 
         return(frac)
       }
 
-      # Estimated fraction of irradiated blood for dose x1
-      est_F1 <- frac(gamma, f1, m1, m2)
+      # Estimated fraction of irradiated blood for dose dose1
+      est_F1 <- frac(gamma, f1, yield1, yield2)
       est_F2 <- 1 - est_F1
 
       # Approximated standard error
-      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((x2 - x1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((dose2 - dose1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
 
       est_frac <- data.frame(
         estimate = c(est_F1, est_F2),
@@ -1016,25 +1016,25 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       # WIP: This is not requiered yet
       # Gradient
       # h <- 0.000001
-      # if (m2 > 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, m1, m2) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, m1, m2) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, m1, m2) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, m1, m2) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, m1 + h, m2) - F) / h
-      #   c8 <- (frac(beta0, beta1, beta2, gamma, f1, m1, m2 + h) - F) / h
+      # if (yield2 > 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, yield1, yield2) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, yield1, yield2) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, yield1, yield2) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, yield1, yield2) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, yield1, yield2) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, yield1 + h, yield2) - F) / h
+      #   c8 <- (frac(beta0, beta1, beta2, gamma, f1, yield1, yield2 + h) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
       #   sqrt(t(grad) %*% sigma %*% grad)
       # }
       #
-      # if (m2 <= 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, m1, m2) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, m1, m2) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, m1, m2) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, m1, m2) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, m1, m2) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, m1 + h, m2) - F) / h
+      # if (yield2 <= 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, yield1, yield2) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, yield1, yield2) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, yield1, yield2) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, yield1, yield2) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, yield1, yield2) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, yield1 + h, yield2) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7)
       #   sigma2 <- sigma[1:6, 1:6]
       #   sqrt(t(grad) %*% sigma2 %*% grad)
@@ -1086,8 +1086,8 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       )
     } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
-        dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["x1"]],  est_doses_hetero[["x2"]]),
-        yield = c(est_doses_whole[["yield"]], est_yields_hetero[["x1"]], est_yields_hetero[["x2"]]),
+        dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
+        yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
         type =  c(rep("whole-body", 3), rep("heterogeneous X1", 3), rep("heterogeneous X2", 3)),
         level = rep(c("lower", "base", "upper"), 3)
       )
@@ -1179,7 +1179,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_frac_partial <- renderRHandsontable({
-    # Estimated fraction of irradiated blood for dose x1 (partial)
+    # Estimated fraction of irradiated blood for dose dose1 (partial)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
     data()[["est_frac_partial"]] %>%
       rhandsontable() %>%
@@ -1206,7 +1206,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_frac_hetero <- renderRHandsontable({
-    # Estimated fraction of irradiated blood for dose x1 (heterogeneous)
+    # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_frac_hetero"]] %>%
       rhandsontable() %>%
