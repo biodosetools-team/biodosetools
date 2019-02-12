@@ -27,8 +27,8 @@ estimateUI <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-              p("Work in progress"),
-              # TODO: fit data input
+              p("This part has not been implemented yet."),
+              # TODO: add fit data input widgets
               # Help button
               bsButton(
                 ns("help_fit_data_input"),
@@ -262,13 +262,13 @@ estimateUI <- function(id, label) {
             class = "side-widget-tall",
             selectInput(
               ns("fraction_coeff_select"),
-              label = "Coefficient",
+              label = "Survival coefficient",
               width = "150px",
               choices = list(
                 "D0" = "d0",
                 "Gamma" = "gamma"
               ),
-              selected = "gamma"
+              selected = "d0"
             )
           ),
           # Help button
@@ -344,14 +344,21 @@ estimateUI <- function(id, label) {
           title = "Results",
           status = "success", solidHeader = F, collapsible = T, collapsed = F,
 
-          h3("Whole-body"),
           h4("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
 
           conditionalPanel(
-            condition = "input.assessment_select != 'whole-body'",
+            condition = "input.assessment_select == 'partial'",
             ns = ns,
-            h3("Partial/Heterogeneous"),
+            h4("Dose recieved by the irradiated fraction"),
+            rHandsontableOutput(ns("est_doses_partial")),
+            h4("Initial fraction of irradiated cells"),
+            rHandsontableOutput(ns("est_frac_partial"))
+          ),
+
+          conditionalPanel(
+            condition = "input.assessment_select == 'hetero'",
+            ns = ns,
             h4("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_yields")),
             h4("Dose recieved by the irradiated fraction"),
@@ -377,42 +384,6 @@ estimateUI <- function(id, label) {
             rHandsontableOutput(ns("est_frac"))
           )
         )
-        # tabBox(
-        #   width = 12,
-        #   side = "left",
-        #   selected = "Partial/Heterogeneous",
-        #   tabPanel(
-        #     title = "Whole body",
-        #     h4("Estimated dose"),
-        #     rHandsontableOutput(ns("est_doses_whole"))
-        #   ),
-        #   tabPanel(
-        #     title = "Partial/Heterogeneous",
-        #     h4("Observed fraction of irradiated cells and its yield"),
-        #     rHandsontableOutput(ns("est_yields")),
-        #     h4("Dose recieved by the irradiated fraction"),
-        #     div(
-        #       class = "side-widget",
-        #       rHandsontableOutput(ns("est_doses"))
-        #     ),
-        #     bsButton(
-        #       ns("help_dose_mixed_yields"),
-        #       # class = "rightAlign",
-        #       label = "",
-        #       icon = icon("question"),
-        #       style = "default", size = "default"
-        #     ),
-        #     bsModal(
-        #       id = ns("help_dose_mixed_yields_dialog"),
-        #       title = "Help: Assessment selection",
-        #       trigger = ns("help_dose_mixed_yields"),
-        #       size = "large",
-        #       withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
-        #     ),
-        #     h4("Initial fraction of irradiated cells"),
-        #     rHandsontableOutput(ns("est_frac"))
-        #   )
-        # )
       ),
       # box: Plot curves ----
       column(
@@ -671,7 +642,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 }
 
 
-estimateMixedResults <- function(input, output, session, stringsAsFactors) {
+estimateResults <- function(input, output, session, stringsAsFactors) {
   data <- reactive({
     # Calcs: get variables ----
     input$button_estimate
@@ -697,10 +668,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
     })
-
-    cat(assessment)
-    cat(curve_method)
-    cat(fraction_coeff)
 
     # Get fitting data ----
     if (load_fit_data) {
@@ -814,9 +781,57 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
 
     row.names(est_doses_whole) <- c("lower", "base", "upper")
 
+    # Calcs: partial dose estimation ----
+    if (assessment == "partial") {
 
-    # Calcs: mixed dose estimation ----
-    if (assessment != "whole-body") {
+      S <- aberr
+      n <- cell
+      n0 <- cases_data[["C0"]]
+
+      # Yield calculation
+      y_partial <- uniroot(function(x) {
+        x / (1 - exp(-x)) - S / (n - n0)
+      }, c(0.00001, 5))$root
+
+      y_partial_var <-
+        (y_partial * (1 - exp(-y_partial))^2) /
+        ((n - n0) * (1 - exp(-y_partial) - y_partial * exp(-y_partial)))
+
+      y_partial_l <- y_partial - 1.96 * sqrt(y_partial_var)
+      y_partial_u <- y_partial + 1.96 * sqrt(y_partial_var)
+
+      # Dose estimation
+      x_partial <- project_yield_base(y_partial)
+      x_l_partial <- project_yield_lower(y_partial_l)
+      x_u_partial <- project_yield_upper(y_partial_u)
+
+      # Partial estimation results
+      est_doses_partial <- data.frame(
+        yield = c(y_partial_l, y_partial, y_partial_u),
+        dose = c(x_l_partial, x_partial, x_u_partial)
+      )
+
+      # Input of the parameter gamma and its variance
+      if (fraction_coeff == "gamma") {
+        gamma <- input$gamma_coeff
+      } else if (fraction_coeff == "d0"){
+        gamma <- 1 / input$d0_coeff
+      }
+
+      # Irradiated fraction
+      f <- S / (n * y_partial)
+      p <- exp(-x_partial * gamma)
+
+      est_F_partial <- (f / p) / (1 - f + f / p)
+
+      est_frac_partial <- data.frame(
+        estimate = c(est_F_partial)
+      )
+    }
+
+
+    # Calcs: heterogeneous dose estimation ----
+    if (assessment == "hetero") {
       # Get cases data
       # Data test is stored in vector y
       y <- rep(seq(0, length(counts) - 1, 1), counts)
@@ -876,14 +891,14 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
         m1 <- MLE$par[3]
         m2 <- MLE$par[2]
         f1 <- 1 - f1
-        # stm <- st
-        # stm[2, 2] <- st[3, 3]
-        # stm[3, 3] <- st[2, 2]
-        # stm[1, 2] <- st[1, 3]
-        # stm[1, 3] <- st[1, 2]
-        # stm[2, 1] <- stm[1, 2]
-        # stm[3, 1] <- stm[1, 3]
-        # st <- stm
+        stm <- st
+        stm[2, 2] <- st[3, 3]
+        stm[3, 3] <- st[2, 2]
+        stm[1, 2] <- st[1, 3]
+        stm[1, 3] <- st[1, 2]
+        stm[2, 1] <- stm[1, 2]
+        stm[3, 1] <- stm[1, 3]
+        st <- stm
       }
 
       # sigma[5, 5] <- st[1, 1]
@@ -929,7 +944,7 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       if (m2 <= 0.01) {
         x2 <- 0
         x2_l <- 0
-        x2_u <- 0
+        x2_u <- project_yield_upper(m2_u)
       } else {
         x2 <- project_yield_base(m2)
         if (m2_l > 0) {
@@ -940,12 +955,12 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
         x2_u <- project_yield_upper(m2_u)
       }
 
-      est_yields_mixed <- data.frame(
+      est_yields_hetero <- data.frame(
         x1 = c(m1_l, m1, m1_u),
         x2 = c(m2_l, m2, m2_u)
       )
 
-      row.names(est_yields_mixed) <- c("lower", "base", "upper")
+      row.names(est_yields_hetero) <- c("lower", "base", "upper")
 
       est_doses <- data.frame(
         x1 = c(x1_l, x1, x1_u),
@@ -1021,11 +1036,18 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
         type = c(rep("whole-body", 3)),
         level = rep(c("lower", "base", "upper"), 1)
       )
-    } else {
+    } else if (assessment == "partial") {
+      est_full_doses <- data.frame(
+        dose = c(est_doses_whole[["dose"]], est_doses_partial[["dose"]]),
+        yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
+        type = c(rep("whole-body", 3), rep("partial", 3)),
+        level = rep(c("lower", "base", "upper"), 2)
+      )
+    } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
         dose = c(est_doses_whole[["dose"]], est_doses[["x1"]], est_doses[["x2"]]),
-        yield = c(est_doses_whole[["yield"]], est_yields_mixed[["x1"]], est_yields_mixed[["x2"]]),
-        type = c(rep("whole-body", 3), rep("mixed X1", 3), rep("mixed X2", 3)),
+        yield = c(est_doses_whole[["yield"]], est_yields_hetero[["x1"]], est_yields_hetero[["x2"]]),
+        type = c(rep("whole-body", 3), rep("heterogeneous X1", 3), rep("heterogeneous X2", 3)),
         level = rep(c("lower", "base", "upper"), 3)
       )
     }
@@ -1061,16 +1083,28 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
     # Add doses to plot
     gg_curve <- gg_curve +
       # Estimated whole-body doses
-      geom_point(data = est_full_doses, aes(x = dose, y = yield, colour = type, shape = level)) +
+      geom_point(data = est_full_doses,
+                 aes(x = dose, y = yield, colour = type, shape = level),
+                 size = 2) +
       labs(colour = "Assessment", shape = "Confidence interval")
 
+    # Return list ----
     # Make list of results to return
     if (assessment == "whole-body") {
       results_list <- list(
+        assessment = assessment,
         est_doses_whole = est_doses_whole,
         gg_curve = gg_curve
       )
-    } else {
+    } else if (assessment == "partial") {
+      results_list <- list(
+        assessment = assessment,
+        est_doses_whole = est_doses_whole,
+        est_doses_partial = est_doses_partial,
+        est_frac_partial = est_frac_partial,
+        gg_curve = gg_curve
+      )
+    } else if (assessment == "hetero"){
       results_list <- list(
         assessment = assessment,
         est_doses_whole = est_doses_whole,
@@ -1080,7 +1114,6 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
         gg_curve = gg_curve
       )
     }
-
 
     return(results_list)
   })
@@ -1095,9 +1128,27 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(format = "0.000")
   })
 
+  output$est_doses_partial <- renderRHandsontable({
+    # Estimated recieved doses (partial)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    data()[["est_doses_partial"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  output$est_frac_partial <- renderRHandsontable({
+    # Estimated fraction of irradiated blood for dose x1 (partial)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    data()[["est_frac_partial"]] %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
   output$est_yields <- renderRHandsontable({
-    # Estimated yields
-    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
+    # Estimated yields (heterogeneous)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_yields"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -1105,8 +1156,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_doses <- renderRHandsontable({
-    # Estimated recieved doses (partial/heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
+    # Estimated recieved doses (heterogeneous)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_doses"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
@@ -1114,8 +1165,8 @@ estimateMixedResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_frac <- renderRHandsontable({
-    # Estimated fraction of irradiated blood for dose x1
-    if (input$button_estimate <= 0 || data()[["assessment"]] == "whole-body") return(NULL)
+    # Estimated fraction of irradiated blood for dose x1 (heterogeneous)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_frac"]] %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
