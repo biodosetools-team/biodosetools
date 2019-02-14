@@ -198,7 +198,7 @@ fittingAdvUI <- function(id, label) {
               ns("save_fit_data_format"),
               label = NULL,
               width = "85px",
-              choices = list(".rds", ".csv", ".tex"),
+              choices = list(".rds"),
               selected = ".rds"
             )
           ),
@@ -620,11 +620,11 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
     content = function(file) {
       if (input$save_fit_data_format == ".rds") {
         saveRDS(data()[["fit_results"]], file = file)
-      } else if (input$save_fit_data_format == ".csv") {
-        write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
-      } else if (input$save_fit_data_format == ".tex") {
-        print(xtable::xtable(data()[["fit_coeffs"]]), type = "latex", file)
-      }
+      } #else if (input$save_fit_data_format == ".csv") {
+      #   write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
+      # } else if (input$save_fit_data_format == ".tex") {
+      #   print(xtable::xtable(data()[["fit_coeffs"]]), type = "latex", file)
+      # }
     }
   )
 
