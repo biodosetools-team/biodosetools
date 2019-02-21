@@ -756,17 +756,18 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Dose estimation functions ----
 
-
     # Calcs: whole-body estimation
-
     estimate_whole_body <- function(aberr, cell, y_obs) {
       # Calculate CI using Gardner's table
-      gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
+      # gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
+      # aberr_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(aberr, 0)), ]
+      # aberr_l <- aberr_row[["Sl"]]
+      # aberr_u <- aberr_row[["Su"]]
 
-      aberr_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(aberr, 0)), ]
-
-      aberr_l <- aberr_row[["Sl"]]
-      aberr_u <- aberr_row[["Su"]]
+      # Calculate CI using Exact Poisson tests
+      aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = 0.95)[["conf.int"]]
+      aberr_l <- aberr_row[1]
+      aberr_u <- aberr_row[2]
 
       yield_l <- aberr_l / cell
       yield_u <- aberr_u / cell
@@ -841,7 +842,6 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       return(results_list)
     }
-
 
     # Calcs: heterogeneous dose estimation
     estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff) {
