@@ -12,8 +12,8 @@ server <- function(input, output) {
 
 
   # Fitting ----
-  # callModule(module = fittingTable, id = "fitting", reactive(input$button_fit))
-  # callModule(module = fittingResults, id = "fitting", reactive(input$button_fit))
+  callModule(module = fittingTable, id = "fitting", reactive(input$button_fit))
+  callModule(module = fittingResults, id = "fitting", reactive(input$button_fit))
 
   # Advanced Fitting ----
   callModule(module = fittingAdvHotTable, id = "adv_fitting")

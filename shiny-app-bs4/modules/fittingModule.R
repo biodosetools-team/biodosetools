@@ -4,96 +4,88 @@ fittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  tabItem(
+  bs4TabItem(
     tabName = label,
     h2("Dose-effect Fitting"),
     fluidRow(
-      column(
+      # Input box ----
+      bs4Card(
         width = 5,
-        # Input box ----
-        box(
-          width = 12,
-          title = "Inputs",
-          status = "primary", solidHeader = F, collapsible = T,
-          # Inputs
-          textInput(
-            inputId = ns("dose"),
-            label = "Dose",
-            value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"
-          ),
-          textInput(
-            inputId = ns("aberr"),
-            label = "Aberrations",
-            value = "8,14,22,55,100,109,100,103,108,103,107"
-          ),
-          textInput(
-            inputId = ns("cells"),
-            label = "Cells",
-            value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"
-          ),
-
-          # Tooltips
-          bsTooltip(ns("dose"), "List of doses",
-            "right",
-            options = list(container = "body")
-          ),
-          bsTooltip(ns("aberr"), "Aberrations count",
-            "right",
-            options = list(container = "body")
-          ),
-          bsTooltip(ns("cells"), "Cells count",
-            "right",
-            options = list(container = "body")
-          ),
-
-          # Button
-          actionButton(ns("button_fit"), class = "inputs-button", "Calculate fit")
+        title = "Inputs",
+        status = "primary", solidHeader = T, collapsible = T, closable = F,
+        # Inputs
+        textInput(
+          inputId = ns("dose"),
+          label = "Dose",
+          value = "0,0.1,0.25,0.5,0.75,1,1.5,2,3,4,5"
         ),
-        # Data box ----
-        box(
-          width = 12,
-          title = "Data",
-          status = "success", solidHeader = F, collapsible = T, collapsed = T,
-          rHandsontableOutput(outputId = ns("table"))
-        )
+        textInput(
+          inputId = ns("aberr"),
+          label = "Aberrations",
+          value = "8,14,22,55,100,109,100,103,108,103,107"
+        ),
+        textInput(
+          inputId = ns("cells"),
+          label = "Cells",
+          value = "5000,5002,2008,2002,1832,1168,562,332,193,103,59"
+        ),
+
+        # Tooltips
+        bsTooltip(ns("dose"), "List of doses",
+                  "right",
+                  options = list(container = "body")
+        ),
+        bsTooltip(ns("aberr"), "Aberrations count",
+                  "right",
+                  options = list(container = "body")
+        ),
+        bsTooltip(ns("cells"), "Cells count",
+                  "right",
+                  options = list(container = "body")
+        ),
+
+        # Button
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fit")
       ),
 
       # Results tabBox ----
-      column(
+      # tabBox: Fit results ----
+      bs4TabCard(
         width = 7,
-        # Main tabBox ----
-        tabBox(
-          width = 12,
-          side = "left",
-          tabPanel(
-            title = "Result of curve fit",
-            # h4("Fit summary"),
-            # verbatimTextOutput(ns("fit_results")),
-            h4("Fit formula"),
-            verbatimTextOutput(ns("fit_formula")),
-            h4("Coefficients"),
-            rHandsontableOutput(ns("fit_coeffs"))
-          ),
-          tabPanel(
-            h4("Model-level statistics"),
-            rHandsontableOutput(ns("fit_statistics")),
-            title = "Summary statistics",
-            h4("Correlation matrix"),
-            rHandsontableOutput(ns("cor_mat")),
-            h4("Variance-covariance matrix"),
-            rHandsontableOutput(ns("var_cov_mat"))
-          )
+        side = "left",
+        # tabPanel(
+        bs4TabPanel(
+          # title = "Result of curve fit",
+          tabName = "Result of curve fit",
+          active = TRUE,
+          # h4("Fit summary"),
+          # verbatimTextOutput(ns("fit_results")),
+          h4("Fit formula"),
+          verbatimTextOutput(ns("fit_formula")),
+          h4("Coefficients"),
+          rHandsontableOutput(ns("fit_coeffs"))
+        ),
+        # tabPanel(
+        bs4TabPanel(
+          # title = "Summary statistics",
+          tabName = "Summary statistics",
+          h4("Model-level statistics"),
+          rHandsontableOutput(ns("fit_statistics")),
+          h4("Correlation matrix"),
+          rHandsontableOutput(ns("cor_mat")),
+          h4("Variance-covariance matrix"),
+          rHandsontableOutput(ns("var_cov_mat"))
         )
-        # tabBox(
-        #   width = 12,
-        #   side = "left",
-        #   # selected = "Tab3",
-        #   tabPanel("Result of curve fit", verbatimTextOutput(ns("result"))),
-        #   tabPanel("Coefficients", verbatimTextOutput(ns("fit_coeffs"))),
-        #   tabPanel("Variance-covariance matrix", verbatimTextOutput(ns("var_cov_mat"))),
-        #   tabPanel("Correlation matrix", verbatimTextOutput(ns("corma")))
-        # )
+      ),
+
+      # Data box ----
+      bs4Card(
+        width = 5,
+        title = "Data",
+        status = "success", solidHeader = T, collapsible = T, closable = F, collapsed = T,
+        rHandsontableOutput(outputId = ns("table"))
       )
+
     )
   )
 }

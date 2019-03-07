@@ -3,16 +3,17 @@
 fittingAdvUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
-  tabItem(
+
+  bs4TabItem(
     tabName = label,
     h2("Dose-effect Fitting"),
 
     fluidRow(
       # Data input options ----
-      box(
+      bs4Card(
         width = 5,
         title = "Data input options",
-        status = "warning", solidHeader = F, collapsible = T,
+        status = "warning", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -77,10 +78,10 @@ fittingAdvUI <- function(id, label) {
       ),
 
       # Fitting options ----
-      box(
+      bs4Card(
         width = 5,
         title = "Fitting options",
-        status = "warning", solidHeader = F, collapsible = T,
+        status = "warning", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -135,10 +136,10 @@ fittingAdvUI <- function(id, label) {
 
     # Hot Table ----
     fluidRow(
-      box(
+      bs4Card(
         width = 12,
         title = "Data input",
-        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
+        status = "primary", solidHeader = T, collapsible = T, closable = F,
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
@@ -163,11 +164,14 @@ fittingAdvUI <- function(id, label) {
       column(
         width = 6,
         # tabBox: Fit results ----
-        tabBox(
+        bs4TabCard(
           width = 12,
           side = "left",
-          tabPanel(
-            title = "Result of curve fit",
+          # tabPanel(
+          bs4TabPanel(
+            # title = "Result of curve fit",
+            tabName = "Result of curve fit",
+            active = TRUE,
             # h4("Fit summary"),
             # verbatimTextOutput(ns("fit_results")),
             h4("Fit formula"),
@@ -175,10 +179,12 @@ fittingAdvUI <- function(id, label) {
             h4("Coefficients"),
             rHandsontableOutput(ns("fit_coeffs"))
           ),
-          tabPanel(
+          # tabPanel(
+          bs4TabPanel(
+            # title = "Summary statistics",
+            tabName = "Summary statistics",
             h4("Model-level statistics"),
             rHandsontableOutput(ns("fit_statistics")),
-            title = "Summary statistics",
             h4("Correlation matrix"),
             rHandsontableOutput(ns("cor_mat")),
             h4("Variance-covariance matrix"),
@@ -186,10 +192,10 @@ fittingAdvUI <- function(id, label) {
           )
         ),
         # Export data and results ----
-        box(
+        bs4Card(
           width = 12,
           title = "Export results",
-          status = "danger", solidHeader = F, collapsible = T, collapsed = F,
+          status = "danger", solidHeader = T, collapsible = T, closable = F,
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
           div(
@@ -226,10 +232,10 @@ fittingAdvUI <- function(id, label) {
       column(
         width = 6,
         # Plot box ----
-        box(
+        bs4Card(
           width = 12,
           title = "Curve plot",
-          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+          status = "success", solidHeader = T, collapsible = T, closable = F,
           # Plot
           plotOutput(ns("plot")),
           # Download plot

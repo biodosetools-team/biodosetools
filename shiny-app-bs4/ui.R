@@ -14,9 +14,14 @@ i18n <- Translator$new(translation_csvs_path = "translations")
 # Set language
 i18n$set_translation_language("it")
 
-source("global.R")
+
+
+# Theming ----
+source("libs/theming.R", local = T)
 
 # Modules ----
+source("global.R")
+
 source("modules/fittingModule.R")
 source("modules/fittingAdvModule.R")
 source("modules/estimateModule.R")
@@ -73,7 +78,6 @@ sidebar <- bs4DashSidebar(
   opacity = 1,
 
   bs4SidebarMenu(
-    # bs4SidebarHeader("Cards"),
 
     bs4SidebarMenuItem(
       "About this App",
@@ -81,94 +85,28 @@ sidebar <- bs4DashSidebar(
       icon = "home"
     ),
 
-    # selectInput(
-    #   "experiment_select", "Experiment",
-    #   choices = c(
-    #     "Dicentrics",
-    #     "Micronuclei",
-    #     "Translocations",
-    #     "H2AX",
-    #     "Intercomparison Tests"
-    #   ),
-    #   selected = "Dicentrics",
-    #   multiple = FALSE,
-    #   selectize = TRUE
-    # ),
+    # Modules
+    bs4SidebarHeader("Modules"),
+
+    bs4SidebarMenuItem(
+      "Fitting",
+      tabName = "tab-fitting-adv",
+      icon = "cogs"
+    ),
+
+    bs4SidebarMenuItem(
+      "Simplified fitting",
+      tabName = "tab-fitting-simple",
+      icon = "cog"
+    ),
 
     bs4SidebarMenuItem(
       "Dose estimation",
       tabName = "tab-estimate",
-      icon = "desktop"
+      icon = "calculator"
     ),
 
-
-    # bs4SidebarHeader("Cards"),
-    # bs4SidebarMenuItem(
-    #   "Basic cards",
-    #   tabName = "cards",
-    #   icon = "sliders"
-    # ),
-    # bs4SidebarMenuItem(
-    #   "Social cards",
-    #   tabName = "socialcards",
-    #   icon = "id-card"
-    # ),
-    # bs4SidebarMenuItem(
-    #   "Tab cards",
-    #   tabName = "tabcards",
-    #   icon = "picture-o"
-    # ),
-    # bs4SidebarMenuItem(
-    #   "Sortable cards",
-    #   tabName = "sortablecards",
-    #   icon = "object-ungroup"
-    # ),
-    # bs4SidebarMenuItem(
-    #   "Stats elements",
-    #   tabName = "statsboxes",
-    #   icon = "bank"
-    # ),
-    # bs4SidebarHeader("Boxes"),
-    # bs4SidebarMenuItem(
-    #   "Basic boxes",
-    #   tabName = "boxes",
-    #   icon = "desktop"
-    # ),
-    # bs4SidebarMenuItem(
-    #   "Value/Info boxes",
-    #   tabName = "valueboxes",
-    #   icon = "suitcase"
-    # ),
-    # bs4SidebarHeader("BS4 gallery"),
-    # bs4SidebarMenuItem(
-    #   HTML(
-    #     paste(
-    #       "Gallery 1",
-    #       bs4Badge(
-    #         "new",
-    #         position = "right",
-    #         status = "danger"
-    #       )
-    #     )
-    #   ),
-    #   tabName = "gallery1",
-    #   icon = "paint-brush"
-    # ),
-    # bs4SidebarMenuItem(
-    #   HTML(
-    #     paste(
-    #       "Gallery 2",
-    #       bs4Badge(
-    #         "!",
-    #         position = "right",
-    #         status = "success"
-    #       )
-    #     )
-    #   ),
-    #   tabName = "gallery2",
-    #   icon = "map"
-    # )
-
+    # Language selector
     bs4SidebarHeader("Language"),
 
     pickerInput(
@@ -224,18 +162,20 @@ body <- bs4DashBody(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
   ),
 
+  theme_buttons_biodose_tools,
+
   bs4TabItems(
+    # Home page
     home,
+
+    # Fitting
+    fittingUI(id = "fitting", label = "tab-fitting-simple"),
+
+    # Advanced Fitting
+    fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
+
+    # Dose Estimation
     estimateUI(id = "estimate", label = "tab-estimate")# locale = i18n)
-    # basic_cards_tab,
-    # social_cards_tab,
-    # tab_cards_tab,
-    # sortable_cards_tab,
-    # statsboxes_tab,
-    # boxes_tab,
-    # value_boxes_tab,
-    # gallery_1_tab,
-    # gallery_2_tab
   )
 )
 
