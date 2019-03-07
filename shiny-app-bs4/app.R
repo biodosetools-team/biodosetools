@@ -1,0 +1,15 @@
+library(shiny)
+library(fontawesome)
+library(shinydashboard)
+library(shinyWidgets)
+library(shinyBS)
+library(bs4Dash)
+
+# Source UI and Server -------------------------------------
+
+options(shiny.sanitize.errors = FALSE)
+
+source("ui.R", local=F)
+source("server.R", local=F)
+
+shiny::shinyApp(ui, server)

@@ -1,0 +1,8 @@
+/* Fonts */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Slab:400,700');
+
+h1, h2, h3, h4 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
