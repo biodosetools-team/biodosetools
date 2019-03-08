@@ -2,6 +2,12 @@
 source("libs/theming.R", local = T)
 source("libs/widgets_functions.R", local = T)
 
+html_tags <- tags$head(
+  tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+  tags$link(rel = "stylesheet", type = "text/css", href = "sidebar.css"),
+  tags$link(rel = "icon", type = "image/x-icon", href = "favicon.png"),
+  tags$link(rel = "icon", sizes = "192x192", href="favicon-highres.png")
+)
 
 # Navbar ---------------------------------------------------
 
@@ -125,10 +131,7 @@ home <- bs4TabItem(
 
 # Body
 body <- bs4DashBody(
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$link(rel = "stylesheet", type = "text/css", href = "sidebar.css")
-  ),
+  html_tags,
 
   theme_buttons_biodose_tools,
 
