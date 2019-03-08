@@ -45,7 +45,7 @@ sidebar <- bs4DashMySidebar(
   skin = "light",
   status = "primary",
   title = "Biodose Tools",
-  brandColor = "warning",
+  brandColor = "biodose-tools",
   url = NULL,
   src = "icon_small.svg",
   elevation = 1,
@@ -133,6 +133,8 @@ home <- bs4TabItem(
 body <- bs4DashBody(
   html_tags,
 
+  theme_sidebar_color_biodose_tools,
+  theme_cards_biodose_tools,
   theme_buttons_biodose_tools,
 
   bs4TabItems(

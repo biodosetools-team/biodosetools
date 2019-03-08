@@ -35,33 +35,26 @@ export_color =         "#F6A945"
 export_color_border =  "#eb8a0b"
 export_color_hover =   "#ffba63"
 
-# Box colors
-# primary_color <- "rgb(15,124,191)"
-# success_color <- "rgb(59,133,95)"
-# warning_color <- "rgb(178,83,149)"
-# danger_color <-  "rgb(207,57,92)"
-primary_color <- inputs_color
-success_color <- results_color
-warning_color <- options_color
-danger_color <-  export_color
 
-box_back_color <- "rgb(255,255,255)"
+# Sidebar theming ------------------------------------------
 
-# TabBox colors
-# tabbox_tabtext_color <-          "rgb(42,102,98)"
-# tabbox_tabtext_selected_color <- "rgb(207,57,92)"
-# tabbox_back_color <-             "rgb(248,248,248)"
-# tabbox_highlight_color <-        "rgb(207,57,92)"
-tabbox_tabtext_color <-          "black"
-tabbox_tabtext_selected_color <- "black"
-tabbox_back_color <-             box_back_color
-tabbox_highlight_color <-        results_color
+theme_sidebar_color_biodose_tools <- bs4DashSidebarColor(
+  back_color = main_color
+)
 
 
+# Cards theming --------------------------------------------
+
+theme_cards_biodose_tools <- bs4DashCardsStatus(
+  options_color = options_color,
+  inputs_color  = inputs_color,
+  results_color = results_color,
+  export_color  = export_color
+)
 
 # Button theming -------------------------------------------
 
-theme_buttons_biodose_tools <- shinyDashboardButtonsStatus(
+theme_buttons_biodose_tools <- bs4DashButtonsStatus(
   # Home colors
   home_color = home_color,
   home_color_border = home_color_border,
