@@ -1,7 +1,6 @@
 ## app.R ##shi
 library(shiny)
 library(shinydashboard)
-# library(shinyjs)
 library(markdown)
 
 # Source UI and Server -------------------------------------

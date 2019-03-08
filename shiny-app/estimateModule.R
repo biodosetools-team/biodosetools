@@ -1,12 +1,13 @@
 # Dose Estimateion Modules ------------------------------------------
 
-estimateUI <- function(id, label) {
+estimateUI <- function(id, label, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
   tabItem(
     tabName = label,
-    h2("Dose estimation"),
+    # h2("Dose estimation"),
+    h2(locale$t("Hello Shiny!")),
 
     fluidRow(
       # box: Curve fitting options ----
@@ -337,74 +338,68 @@ estimateUI <- function(id, label) {
 
     fluidRow(
       # box: Estimation results ----
-      column(
+      box(
         width = 6,
-        box(
-          width = 12,
-          title = "Results",
-          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+        title = "Results",
+        status = "success", solidHeader = F, collapsible = T, collapsed = F,
 
-          h4("Whole-body estimated dose"),
-          rHandsontableOutput(ns("est_doses_whole")),
+        h4("Whole-body estimated dose"),
+        rHandsontableOutput(ns("est_doses_whole")),
 
-          conditionalPanel(
-            condition = "input.assessment_select == 'partial'",
-            ns = ns,
-            h4("Dose recieved by the irradiated fraction"),
-            rHandsontableOutput(ns("est_doses_partial")),
-            h4("Initial fraction of irradiated cells"),
-            rHandsontableOutput(ns("est_frac_partial"))
+        conditionalPanel(
+          condition = "input.assessment_select == 'partial'",
+          ns = ns,
+          h4("Dose recieved by the irradiated fraction"),
+          rHandsontableOutput(ns("est_doses_partial")),
+          h4("Initial fraction of irradiated cells"),
+          rHandsontableOutput(ns("est_frac_partial"))
+        ),
+
+        conditionalPanel(
+          condition = "input.assessment_select == 'hetero'",
+          ns = ns,
+          h4("Observed fraction of irradiated cells and its yield"),
+          rHandsontableOutput(ns("est_mixing_prop_hetero")),
+          h4("Dose recieved by the irradiated fraction"),
+          div(
+            class = "side-widget",
+            rHandsontableOutput(ns("est_doses_hetero"))
           ),
-
-          conditionalPanel(
-            condition = "input.assessment_select == 'hetero'",
-            ns = ns,
-            h4("Observed fraction of irradiated cells and its yield"),
-            rHandsontableOutput(ns("est_mixing_prop_hetero")),
-            h4("Dose recieved by the irradiated fraction"),
-            div(
-              class = "side-widget",
-              rHandsontableOutput(ns("est_doses_hetero"))
-            ),
-            bsButton(
-              ns("help_dose_mixed_yields"),
-              # class = "rightAlign",
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-            bsModal(
-              id = ns("help_dose_mixed_yields_dialog"),
-              title = "Help: Partial and heterogeneous exposures",
-              trigger = ns("help_dose_mixed_yields"),
-              size = "large",
-              withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
-            ),
-            h4("Initial fraction of irradiated cells"),
-            rHandsontableOutput(ns("est_frac_hetero"))
-          )
+          bsButton(
+            ns("help_dose_mixed_yields"),
+            # class = "rightAlign",
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+          bsModal(
+            id = ns("help_dose_mixed_yields_dialog"),
+            title = "Help: Partial and heterogeneous exposures",
+            trigger = ns("help_dose_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          ),
+          h4("Initial fraction of irradiated cells"),
+          rHandsontableOutput(ns("est_frac_hetero"))
         )
       ),
       # box: Plot curves ----
-      column(
+      box(
         width = 6,
-        box(
-          width = 12,
-          title = "Curve plot",
-          status = "success", solidHeader = F, collapsible = T, collapsed = F,
-          # Plot
-          plotOutput(ns("plot")),
-          # Download plot
-          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("save_plot_format"),
-              label = NULL,
-              width = "85px",
-              choices = list(".png", ".pdf"),
-              selected = ".png"
-            )
+        title = "Curve plot",
+        status = "success", solidHeader = F, collapsible = T, collapsed = F,
+        # Plot
+        plotOutput(ns("plot")),
+        # Download plot
+        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("save_plot_format"),
+            label = NULL,
+            width = "85px",
+            choices = list(".png", ".pdf"),
+            selected = ".png"
           )
         )
       )
