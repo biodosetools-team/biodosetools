@@ -33,3 +33,48 @@ bs4DashMySidebar <- function(..., title = NULL, skin = "dark", status = "primary
   )
   sidebarTag
 }
+
+
+# Function: bs4DashMyNavbar----
+
+bs4DashMyNavbar <- function(..., skin = "light", status = "white", border = TRUE,
+                            sidebarIcon = "bars", controlbarIcon = "th", leftUi = NULL,
+                            rightUi = NULL, fixed = FALSE) {
+  navbarTag <- shiny::tags$nav(
+    class = paste0(
+      "main-header navbar navbar-expand bg-",
+      status, " navbar-", skin, if (isTRUE(border)) {
+        " border-bottom"
+      } else {
+        NULL
+      }, if (fixed) {
+        " fixed-top"
+      } else {
+        NULL
+      }
+    ), shiny::tags$ul(class = "navbar-nav", shiny::tags$li(
+      class = "nav-item",
+      shiny::tags$a(
+        class = "nav-link", `data-widget` = "pushmenu",
+        href = "#", shiny::icon(sidebarIcon)
+      )
+    ), leftUi),
+    ...#,
+    # shiny::tags$ul(
+    #   class = "navbar-nav ml-auto", rightUi,
+    #   shiny::tags$li(class = "nav-item", shiny::tags$a(
+    #     id = "controlbar-toggle",
+    #     class = "nav-link", `data-widget` = "control-sidebar",
+    #     `data-slide` = "true", href = "#", shiny::icon(controlbarIcon)
+    #   ))
+    # )
+  )
+  shiny::tagList(
+    shiny::singleton(shiny::tags$head(shiny::tags$style(shiny::HTML(paste0(
+      ".fa-",
+      sidebarIcon, "{\n                 color: #000;\n              }\n               .fa-",
+      controlbarIcon, "{\n                 color: #000;\n               }\n              "
+    ))))),
+    navbarTag
+  )
+}

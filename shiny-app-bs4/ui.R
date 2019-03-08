@@ -6,6 +6,7 @@ library(rhandsontable)
 library(shinyWidgets)
 library(shinyBS)
 
+
 # Locales ----
 library(shiny.i18n)
 
@@ -13,7 +14,6 @@ library(shiny.i18n)
 i18n <- Translator$new(translation_csvs_path = "translations")
 # Set language
 i18n$set_translation_language("it")
-
 
 
 # Theming ----
@@ -27,9 +27,10 @@ source("modules/fittingModule.R")
 source("modules/fittingAdvModule.R")
 source("modules/estimateModule.R")
 
+
 # Navbar ---------------------------------------------------
 
-navbar <- bs4DashNavbar(
+navbar <- bs4DashMyNavbar(
   skin = "dark",
   status = "white",
 
@@ -121,7 +122,6 @@ sidebar <- bs4DashMySidebar(
 )
 
 
-
 # Body -----------------------------------------------------
 
 # Home screen
@@ -152,7 +152,7 @@ home <- bs4TabItem(
 body <- bs4DashBody(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$link(rel = "stylesheet", type = "text/css", href = "sidebar_new.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "sidebar.css")
   ),
 
   theme_buttons_biodose_tools,
@@ -173,31 +173,6 @@ body <- bs4DashBody(
 )
 
 
-# Control Bar ----------------------------------------------
-
-controlbar <- bs4DashControlbar(
-  skin = "light",
-  title = "My right sidebar",
-  setSliderColor(sliderId = 1, "black"),
-  sliderInput("obs", "Number of observations:",
-              min = 0, max = 1000, value = 500
-  ),
-  column(
-    width = 12,
-    align = "center",
-    radioButtons(
-      "dist",
-      "Distribution type:",
-      c("Normal" = "norm",
-        "Uniform" = "unif",
-        "Log-normal" = "lnorm",
-        "Exponential" = "exp")
-    )
-  )
-)
-
-
-
 # Footer ---------------------------------------------------
 
 footer <- bs4DashFooter(
@@ -205,14 +180,14 @@ footer <- bs4DashFooter(
   right_text = "2019"
 )
 
-# Build UI -------------------------------------------------
 
+# Build UI -------------------------------------------------
 
 ui <- bs4DashPage(
   navbar = navbar,
   sidebar = sidebar,
   body = body,
-  controlbar = controlbar,
+  controlbar = NULL,
   footer = footer,
   title = "Biodose Tools"
 )
