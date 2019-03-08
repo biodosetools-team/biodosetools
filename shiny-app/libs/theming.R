@@ -73,6 +73,8 @@ success_color <- results_color
 warning_color <- options_color
 danger_color <-  export_color
 
+box_back_color <- "rgb(255,255,255)"
+
 # TabBox colors
 # tabbox_tabtext_color <-          "rgb(42,102,98)"
 # tabbox_tabtext_selected_color <- "rgb(207,57,92)"
@@ -80,7 +82,7 @@ danger_color <-  export_color
 # tabbox_highlight_color <-        "rgb(207,57,92)"
 tabbox_tabtext_color <-          "black"
 tabbox_tabtext_selected_color <- "black"
-tabbox_back_color <-             "rgb(248,248,248)"
+tabbox_back_color <-             box_back_color
 tabbox_highlight_color <-        results_color
 
 
@@ -92,7 +94,8 @@ theme_biodose_tools <- shinyDashboardThemeDIY(
   appFontFamily = "Roboto",
   appFontColor = "black",
   bodyFontSize = 16,
-  bodyBackColor = "white",
+  # bodyBackColor = "#F4F6F9",
+  bodyBackColor = "#F7FAFC",
 
   # Header ----
   logoBackColor = head_color,
@@ -105,63 +108,44 @@ theme_biodose_tools <- shinyDashboardThemeDIY(
   headerBoxShadowSize = "0px 3px 2px",
 
   # Sidebar ----
-  sidebarBackColor = cssGradientThreeColors(
-    direction = "right",
-    colorStart = "rgb(241,241,241)",
-    colorMiddle = "rgb(237,237,237)",
-    colorEnd = "rgb(210,210,210)",
-    colorStartPos = 0,
-    colorMiddlePos = 97,
-    colorEndPos = 100
-  ),
-  sidebarPadding = 0,
+  sidebarBackColor = "rgb(255,255,255)",
+  sidebarPadding = "",
   sidebarMenuBackColor = "transparent",
-  sidebarMenuPadding = 0,
+  sidebarMenuPadding = 30,
   sidebarMenuBorderRadius = 0,
-  sidebarShadowRadius = "0px 0px 0px",
-  sidebarShadowColor = "",
+  # sidebarShadowRadius = "0 10px 10px",
+  # sidebarShadowColor = "rgba(0,0,0,.39)",
+  sidebarShadowRadius = "0 0 36px 0",
+  sidebarShadowColor = "rgba(136,152,170,.15)",
   sidebarUserTextColor = "black",
   sidebarSearchBackColor = "white",
   sidebarSearchIconColor = head_color_alt,
   sidebarSearchBorderColor = "rgb(210,210,210)",
+
   sidebarTabTextColor = "black",
   sidebarTabTextSize = 14,
   sidebarTabBorderStyle = "none",
   sidebarTabBorderColor = "",
   sidebarTabBorderWidth = 0,
-  sidebarTabBackColorSelected = cssGradientThreeColors(
-    direction = "down",
-    colorStart = "rgb(193,193,193)",
-    colorMiddle = "rgb(216,216,216)",
-    colorEnd = "rgb(218,218,218)",
-    colorStartPos = 0,
-    colorMiddlePos = 5,
-    colorEndPos = 100
-  ),
-  sidebarTabTextColorSelected = accent_color,
-  sidebarTabRadiusSelected = "0px",
-  sidebarTabBackColorHover = cssGradientThreeColors(
-    direction = "right",
-    colorStart = "rgb(230,230,230)",
-    colorMiddle = "rgb(225,225,225)",
-    colorEnd = "rgb(210,210,210)",
-    colorStartPos = 0,
-    colorMiddlePos = 97,
-    colorEndPos = 100
-  ),
-  sidebarTabTextColorHover = "black",
+
+  sidebarTabBackColorSelected = "#5B5EA8",
+  sidebarTabTextColorSelected = "rgb(255,255,255)",
+  sidebarTabRadiusSelected = "5px",
+
+  sidebarTabBackColorHover = "rgb(234,234,234)",
+  sidebarTabTextColorHover = "rgb(0,0,0)",
   sidebarTabBorderStyleHover = "none",
-  sidebarTabBorderColorHover = "",
+  sidebarTabBorderColorHover = "none",
   sidebarTabBorderWidthHover = 0,
-  sidebarTabRadiusHover = "0px",
+  sidebarTabRadiusHover = "5px",
 
   # Boxes ----
-  boxBackColor = "rgb(248,248,248)",
-  boxBorderRadius = 3,
-  boxShadowSize = "0px 0px 0px",
-  boxShadowColor = "",
+  boxBackColor = box_back_color,
+  boxBorderRadius = 5,
+  boxShadowSize = "0 1px 5px",
+  boxShadowColor = "rgba(0, 0, 0, .1)",
   boxTitleSize = 18,
-  boxDefaultColor = "rgb(248,248,248)",
+  boxDefaultColor = box_back_color,
   boxPrimaryColor = primary_color,
   boxSuccessColor = success_color,
   boxWarningColor = warning_color,
@@ -169,7 +153,7 @@ theme_biodose_tools <- shinyDashboardThemeDIY(
   boxTopBorder = 6,
 
   # tabBoxes ----
-  tabBoxTabColor = "rgb(248,248,248)",
+  tabBoxTabColor = tabbox_back_color,
   tabBoxTabTextSize = 14,
   tabBoxTabTextColor = tabbox_tabtext_color,
   tabBoxTabTextColorSelected = tabbox_tabtext_selected_color,

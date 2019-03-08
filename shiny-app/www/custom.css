@@ -6,3 +6,30 @@ h1, h2, h3, h4 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
+
+.skin-blue .main-sidebar .sidebar .sidebar-menu .hover a {
+
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+}
+
+.skin-blue .main-sidebar .sidebar .sidebar-menu a {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+}
+
+.skin-blue .main-sidebar .sidebar .sidebar-menu .active {
+
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+}
+
+
+
+.content {
+  padding-left: 25px;
+  padding-right: 25px;
+}
