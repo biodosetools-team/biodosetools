@@ -5,3 +5,9 @@
 *.Rproj
 gof/
 src/
+0-modules
+tests/
+shiny-i18n-examples/
+bs4dash-example/
+column_operations.R
+deploy_shinyapp.R
