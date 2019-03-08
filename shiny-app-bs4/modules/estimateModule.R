@@ -14,7 +14,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4Card(
         width = 5,
         title = "Curve fitting data options",
-        status = "warning", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -116,7 +116,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4Card(
         width = 5,
         title = "Data input options",
-        status = "warning", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -185,7 +185,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4Card(
         width = 12,
         title = "Data input",
-        status = "primary", solidHeader = T, collapsible = T, closable = F,
+        status = "inputs", solidHeader = T, collapsible = T, closable = F,
         rHandsontableOutput(ns("hotable"))
       ),
 
@@ -193,7 +193,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4Card(
         width = 12,
         title = "Dose estimation options",
-        status = "warning", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = T, collapsible = T, closable = F,
 
         # Assessment selection
         div(
@@ -352,7 +352,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4Card(
           width = 12,
           title = "Results",
-          status = "success", solidHeader = T, collapsible = T, closable = F,
+          status = "results", solidHeader = T, collapsible = T, closable = F,
 
           h4("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
@@ -401,7 +401,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4Card(
           width = 12,
           title = "Curve plot",
-          status = "success", solidHeader = T, collapsible = T, closable = F,
+          status = "results", solidHeader = T, collapsible = T, closable = F,
           # Plot
           plotOutput(ns("plot")),
           # Download plot

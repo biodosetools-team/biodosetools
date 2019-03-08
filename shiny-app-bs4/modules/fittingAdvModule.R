@@ -13,7 +13,7 @@ fittingAdvUI <- function(id, label) {
       bs4Card(
         width = 5,
         title = "Data input options",
-        status = "warning", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -81,7 +81,7 @@ fittingAdvUI <- function(id, label) {
       bs4Card(
         width = 5,
         title = "Fitting options",
-        status = "warning", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = T, collapsible = T, closable = F,
         fluidRow(
           column(
             width = 12,
@@ -139,7 +139,7 @@ fittingAdvUI <- function(id, label) {
       bs4Card(
         width = 12,
         title = "Data input",
-        status = "primary", solidHeader = T, collapsible = T, closable = F,
+        status = "inputs", solidHeader = T, collapsible = T, closable = F,
         rHandsontableOutput(ns("hotable")),
         # Button
         br(),
@@ -195,7 +195,7 @@ fittingAdvUI <- function(id, label) {
         bs4Card(
           width = 12,
           title = "Export results",
-          status = "danger", solidHeader = T, collapsible = T, closable = F,
+          status = "export", solidHeader = T, collapsible = T, closable = F,
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
           div(
@@ -235,7 +235,7 @@ fittingAdvUI <- function(id, label) {
         bs4Card(
           width = 12,
           title = "Curve plot",
-          status = "success", solidHeader = T, collapsible = T, closable = F,
+          status = "results", solidHeader = T, collapsible = T, closable = F,
           # Plot
           plotOutput(ns("plot")),
           # Download plot
