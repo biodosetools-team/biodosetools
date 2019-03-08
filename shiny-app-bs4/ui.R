@@ -18,6 +18,7 @@ i18n$set_translation_language("it")
 
 # Theming ----
 source("libs/theming.R", local = T)
+source("libs/widgets_functions.R", local = T)
 
 # Modules ----
 source("global.R")
@@ -26,38 +27,29 @@ source("modules/fittingModule.R")
 source("modules/fittingAdvModule.R")
 source("modules/estimateModule.R")
 
-# UI -------------------------------------------------------
-
-
-# plot 2
-x <- seq(-2 * pi, 2 * pi, length.out = 1000)
-df <- data.frame(x, y1 = sin(x), y2 = cos(x))
-
-# plot 3
-x <- rnorm(200)
-y <- rnorm(200)
-
-
 # Navbar ---------------------------------------------------
 
 navbar <- bs4DashNavbar(
   skin = "dark",
   status = "white",
 
-  selectInput(
-    "experiment_select",
-    # label = "Experiment",
-    label = NULL,
-    choices = c(
-      "Dicentrics",
-      "Micronuclei",
-      "Translocations",
-      "H2AX",
-      "Intercomparison Tests"
-    ),
-    selected = "Dicentrics",
-    multiple = FALSE,
-    selectize = TRUE
+  div(
+    style = "margin-bottom: -20px;",
+    selectInput(
+      "experiment_select",
+      # label = "Experiment",
+      label = NULL,
+      choices = c(
+        "Dicentrics",
+        "Micronuclei",
+        "Translocations",
+        "H2AX",
+        "Intercomparison Tests"
+      ),
+      selected = "Dicentrics",
+      multiple = FALSE,
+      selectize = TRUE
+    )
   ),
 
   # Right UI
@@ -67,7 +59,7 @@ navbar <- bs4DashNavbar(
 
 # Sidebar --------------------------------------------------
 
-sidebar <- bs4DashSidebar(
+sidebar <- bs4DashMySidebar(
   skin = "light",
   status = "primary",
   title = "Biodose Tools",
@@ -159,7 +151,8 @@ home <- bs4TabItem(
 # Body
 body <- bs4DashBody(
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = "sidebar_new.css")
   ),
 
   theme_buttons_biodose_tools,
