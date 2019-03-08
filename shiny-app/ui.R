@@ -6,6 +6,13 @@ library(rhandsontable)
 library(shinyWidgets)
 library(shinyjs)
 library(shinyBS)
+library(shiny.i18n)
+
+# File with translations
+i18n <- Translator$new(translation_csvs_path = "translations")
+# Set language
+i18n$set_translation_language("it")
+
 
 # Theming
 source("libs/theming.R", local = T)
@@ -14,6 +21,7 @@ source("libs/theming.R", local = T)
 source("fittingModule.R")
 source("fittingAdvModule.R")
 source("estimateModule.R")
+
 
 
 # Header ---------------------------------------------------
@@ -32,10 +40,11 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "sidebarmenu",
     menuItem("About this App", tabName = "home", icon = icon("home"), selected = F),
+
     selectInput(
       "experiment_select", "Experiment",
       choices = c(
-        "Dicentrics",
+        "Dicentrics" = "dicent",
         "Micronuclei",
         "Translocations",
         "H2AX",
@@ -45,10 +54,13 @@ sidebar <- dashboardSidebar(
       multiple = FALSE,
       selectize = TRUE
     ),
+
     menuItem("Dose-effect Fitting", tabName = "tab-fitting-main", icon = icon("th-list"), startExpanded = T,
              menuSubItem("Fitting", tabName = "tab-fitting-adv", icon = icon("cogs")),
              menuSubItem("Simplified Fitting", tabName = "tab-fitting-simple",icon = icon("cog"))
     ),
+
+
     menuItem("Dose Estimation", tabName = "tab-estimate", icon = icon("calculator"), selected = T),
     # menuItem("Training", tabName = "tab-training", icon = icon("user-check"))
     # menuItem("Check Distribution", tabName = "tab-check-dists", icon = icon("area-chart")),
@@ -110,7 +122,7 @@ body <- dashboardBody(
     fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
 
     # Dose Estimation ----
-    estimateUI(id = "estimate", label = "tab-estimate")
+    estimateUI(id = "estimate", label = "tab-estimate", locale = i18n)
 
   )
 )
