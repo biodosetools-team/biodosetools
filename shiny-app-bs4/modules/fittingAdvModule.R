@@ -10,7 +10,7 @@ fittingAdvUI <- function(id, label) {
 
     fluidRow(
       # Data input options ----
-      bs4Card(
+      bs4MyCard(
         width = 5,
         title = "Data input options",
         status = "options", solidHeader = T, collapsible = T, closable = F,
@@ -27,43 +27,13 @@ fittingAdvUI <- function(id, label) {
               condition = "!input.load_count_data_check",
               ns = ns,
               numericInput(ns("num_doses"), "Number of doses", value = 11),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
-              # Help button
-              bsButton(
-                ns("help_count_data_input"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_count_data_input_dialog"),
-                title = "Help: Count data input",
-                trigger = ns("help_count_data_input"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_count_data_input.md"))
-              )
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             # Load from file ----
             conditionalPanel(
               condition = "input.load_count_data_check",
               ns = ns,
-              fileInput(ns("load_count_data"), label = "File input"),
-              # Help button
-              bsButton(
-                ns("help_count_data_load"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_count_data_load_dialog"),
-                title = "Help: Loading count data",
-                trigger = ns("help_count_data_load"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_count_data_load.md"))
-              )
+              fileInput(ns("load_count_data"), label = "File input")
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
@@ -74,11 +44,49 @@ fittingAdvUI <- function(id, label) {
             "bottom",
             options = list(container = "body")
           )
+        ),
+
+        # Help button
+        topButton =
+          bsButton(
+            ns("help_count_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+        # Help modal
+        bs4MyModal(
+          id = ns("help_count_data_dialog"),
+          title = "Help: Count data input",
+          trigger = ns("help_count_data"),
+          size = "large",
+
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_count_data_option"),
+            label = NULL,
+            choices = c(
+              "Manual input" = "manual",
+              "Load data"    = "load"
+            )
+          ),
+          # Contents
+          conditionalPanel(
+            condition = "input.help_count_data_option == 'manual'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_count_data_input.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_count_data_option == 'load'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_count_data_load.md"))
+          )
         )
       ),
 
       # Fitting options ----
-      bs4Card(
+      bs4MyCard(
         width = 5,
         title = "Fitting options",
         status = "options", solidHeader = T, collapsible = T, closable = F,
@@ -113,30 +121,34 @@ fittingAdvUI <- function(id, label) {
               inputId = ns("slider_disp_select"),
               label = "Use σ²/y = 1",
               value = FALSE, status = "warning"
-            ),
-            # Help button
-            bsButton(
-              ns("help_fitting_options"),
-              class = "rightAlign",
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-            bsModal(
-              id = ns("help_fitting_options_dialog"),
-              title = "Help: Fitting options",
-              trigger = ns("help_fitting_options"),
-              size = "large",
-              withMathJax(includeMarkdown("help/help_fitting_options.md"))
             )
           )
+        ),
+        # Help button
+        topButton =
+          bsButton(
+            ns("help_fitting_options"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+        # Help Modal
+        bs4MyModal(
+          id = ns("help_fitting_options_dialog"),
+          title = "Help: ",
+          trigger = ns("help_fitting_options"),
+          size = "large",
+
+          # Contents
+          withMathJax(includeMarkdown("help/help_fitting_options.md"))
         )
       )
     ),
 
     # Hot Table ----
     fluidRow(
-      bs4Card(
+      bs4MyCard(
         width = 12,
         title = "Data input",
         status = "inputs", solidHeader = T, collapsible = T, closable = F,
@@ -164,14 +176,38 @@ fittingAdvUI <- function(id, label) {
       column(
         width = 6,
         # tabBox: Fit results ----
-        bs4TabCard(
+        # bs4TabCard(
+        #   width = 12,
+        #   side = "left",
+        #   # tabPanel(
+        #   bs4TabPanel(
+        #     # title = "Result of curve fit",
+        #     tabName = "Result of curve fit",
+        #     active = TRUE,
+        #     # h4("Fit summary"),
+        #     # verbatimTextOutput(ns("fit_results")),
+        #     h4("Fit formula"),
+        #     verbatimTextOutput(ns("fit_formula")),
+        #     h4("Coefficients"),
+        #     rHandsontableOutput(ns("fit_coeffs"))
+        #   ),
+        #   # tabPanel(
+        #   bs4TabPanel(
+        #     # title = "Summary statistics",
+        #     tabName = "Summary statistics",
+        #     h4("Model-level statistics"),
+        #     rHandsontableOutput(ns("fit_statistics")),
+        #     h4("Correlation matrix"),
+        #     rHandsontableOutput(ns("cor_mat")),
+        #     h4("Variance-covariance matrix"),
+        #     rHandsontableOutput(ns("var_cov_mat"))
+        #   )
+        # ),
+        tabBox(
           width = 12,
           side = "left",
-          # tabPanel(
-          bs4TabPanel(
-            # title = "Result of curve fit",
-            tabName = "Result of curve fit",
-            active = TRUE,
+          tabPanel(
+            title = "Result of curve fit",
             # h4("Fit summary"),
             # verbatimTextOutput(ns("fit_results")),
             h4("Fit formula"),
@@ -179,10 +215,8 @@ fittingAdvUI <- function(id, label) {
             h4("Coefficients"),
             rHandsontableOutput(ns("fit_coeffs"))
           ),
-          # tabPanel(
-          bs4TabPanel(
-            # title = "Summary statistics",
-            tabName = "Summary statistics",
+          tabPanel(
+            title = "Summary statistics",
             h4("Model-level statistics"),
             rHandsontableOutput(ns("fit_statistics")),
             h4("Correlation matrix"),
@@ -192,7 +226,7 @@ fittingAdvUI <- function(id, label) {
           )
         ),
         # Export data and results ----
-        bs4Card(
+        bs4MyCard(
           width = 12,
           title = "Export results",
           status = "export", solidHeader = T, collapsible = T, closable = F,
@@ -211,28 +245,33 @@ fittingAdvUI <- function(id, label) {
           # Download report
           div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
+
           # Help button
-          bsButton(
-            ns("help_fit_data_save"),
-            class = "rightAlign",
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-          bsModal(
+          topButton =
+            bsButton(
+              ns("help_fit_data_save"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+          # Help Modal
+          bs4MyModal(
             id = ns("help_fit_data_save_dialog"),
-            title = "Help: Save fit data",
+            title = "Help: ",
             trigger = ns("help_fit_data_save"),
             size = "large",
+
+            # Contents
             withMathJax(includeMarkdown("help/help_fit_data_save.md"))
-            # TODO: finish dialogue
           )
+
         )
       ),
       column(
         width = 6,
         # Plot box ----
-        bs4Card(
+        bs4MyCard(
           width = 12,
           title = "Curve plot",
           status = "results", solidHeader = T, collapsible = T, closable = F,
