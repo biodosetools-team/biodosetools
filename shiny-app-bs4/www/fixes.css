@@ -1,0 +1,24 @@
+/* Fix modals (shinyBS) */
+.modal-header .close, .modal-header .mailbox-attachment-close {
+	margin: -0.5rem -0.5rem -1rem auto;
+}
+
+.modal-header {
+	display: block;
+}
+
+/* Fix radioGroupButtons (shinyWidgets) */
+.btn>input[type=checkbox], .btn>input[type=radio] {
+	display: none;
+}
+
+/* Fix selectize input height */
+.selectize-dropdown, .selectize-input, .selectize-input input {
+    line-height: 24px;
+}
+
+/* Fix extra margin below file selection widget */
+label.input-group-btn {
+    margin-bottom: 0;
+}
+
