@@ -37,6 +37,11 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
               fileInput(ns("load_fit_data"), label = "File input")
             ),
+            # Case description
+            textAreaInput(
+              inputId = ns("case_description"),
+              label = "Case description",
+              placeholder = "Summary of the case"),
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
           ),
@@ -333,7 +338,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           # Help modal
           bs4MyModal(
             id = ns("help_estimate_options_dialog"),
-            title = "Help: ",
+            title = "Help: Dose estimation options",
             trigger = ns("help_estimate_options"),
             size = "large",
 
