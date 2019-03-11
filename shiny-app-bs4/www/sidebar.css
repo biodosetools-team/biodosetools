@@ -1,22 +1,18 @@
 /* Fixed sidebar */
 
-/* header */
-.skin-blue .main-header .navbar {
-  position: fixed;
-  width:100%;
+/* Image */
+.img-circle {
+    border-radius: 0
 }
 
-/* sidebar header */
-.skin-blue .main-header .logo {
-  position: fixed;
+/* Colors */
+
+.sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
+    color: #fff;
+    background-color: #48449f
 }
 
-.skin-blue .main-sidebar {
-  position: fixed;
-  padding-top: 60px;
-}
-
-/* body */
-.content-wrapper, .right-side {
-  padding-top: 50px;
+/* Fix z-index for modals */
+.main-sidebar {
+    z-index: 1040;
 }
