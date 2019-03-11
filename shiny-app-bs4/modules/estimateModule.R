@@ -11,7 +11,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
 
     fluidRow(
       # box: Curve fitting options ----
-      bs4Card(
+      bs4MyCard(
         width = 5,
         title = "Curve fitting data options",
         status = "options", solidHeader = T, collapsible = T, closable = F,
@@ -74,9 +74,9 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
           )
         )
       ),
@@ -113,7 +113,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
 
     fluidRow(
       # box: Data input options ----
-      bs4Card(
+      bs4MyCard(
         width = 5,
         title = "Data input options",
         status = "options", solidHeader = T, collapsible = T, closable = F,
@@ -173,175 +173,186 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
           )
         )
       ),
       # hot: Cases input ----
       column(
-      width = 7,
-      bs4Card(
-        width = 12,
-        title = "Data input",
-        status = "inputs", solidHeader = T, collapsible = T, closable = F,
-        rHandsontableOutput(ns("hotable"))
-      ),
-
-      # box: Estimation options ----
-      bs4Card(
-        width = 12,
-        title = "Dose estimation options",
-        status = "options", solidHeader = T, collapsible = T, closable = F,
-
-        # Assessment selection
-        div(
-          class = "side-widget-tall",
-          selectInput(
-            ns("assessment_select"),
-            label = "Assessment",
-            # label = NULL,
-            width = "150px",
-            choices = list(
-              "Whole body" = "whole-body",
-              "Partial" = "partial",
-              "Heterogeneous" = "hetero"
-            ),
-            selected = "whole-body"
-          )
-        ),
-        # Help button
-        bsButton(
-          ns("help_dose_assessment"),
-          # class = "side-widget",
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ),
-        bsModal(
-          id = ns("help_dose_assessment_dialog"),
-          title = "Help: Assessment selection",
-          trigger = ns("help_dose_assessment"),
-          size = "large",
-          withMathJax(includeMarkdown("help/help_dose_assessment.md"))
-        ),
-        div(class = "widget-sep", br()),
-
-        # Curve method selection
-        div(
-          class = "side-widget-tall",
-          selectInput(
-            ns("curve_method_select"),
-            label = "Error calculation",
-            # label = NULL,
-            width = "150px",
-            choices = list(
-              "Merkle's method" = "merkle",
-              "Simple method" = "simple"
-            ),
-            selected = "merkle"
-          )
-        ),
-        # Help button
-        bsButton(
-          ns("help_dose_curve_method"),
-          # class = "side-widget",
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ),
-        bsModal(
-          id = ns("help_dose_curve_method_dialog"),
-          title = "Help: Assessment selection",
-          trigger = ns("help_dose_curve_method"),
-          size = "large",
-          withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+        width = 7,
+        bs4MyCard(
+          width = 12,
+          title = "Data input",
+          status = "inputs", solidHeader = T, collapsible = T, closable = F,
+          rHandsontableOutput(ns("hotable"))
         ),
 
-        # Coefficient conditional input
-        conditionalPanel(
-          condition = "input.assessment_select != 'whole-body'",
-          ns = ns,
+        # box: Estimation options ----
+        bs4MyCard(
+          width = 12,
+          title = "Dose estimation options",
+          status = "options", solidHeader = T, collapsible = T, closable = F,
 
-          br(),
-
-          # Coefficient input selection
+          # Assessment selection
           div(
             class = "side-widget-tall",
             selectInput(
-              ns("fraction_coeff_select"),
-              label = "Survival coefficient",
-              width = "150px",
+              ns("assessment_select"),
+              label = "Assessment",
+              # label = NULL,
+              width = "175px",
               choices = list(
-                "D0" = "d0",
-                "Gamma" = "gamma"
+                "Whole body"    = "whole-body",
+                "Partial"       = "partial",
+                "Heterogeneous" = "hetero"
               ),
-              selected = "d0"
+              selected = "whole-body"
             )
           ),
-          # Help button
-          bsButton(
-            ns("help_fraction_coeff_select"),
-            # class = "side-widget-tall",
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-          bsModal(
-            id = ns("help_fraction_coeff_select_dialog"),
-            title = "Help: Coefficient for estimation of fraction of irradiated cells",
-            trigger = ns("help_fraction_coeff_select"),
-            size = "large",
-            withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
-          ),
-
           div(class = "widget-sep", br()),
 
+          # Curve method selection
           div(
-            class = "side-widget",
-            # Input gamma
-            conditionalPanel(
-              condition = "input.fraction_coeff_select == 'gamma'",
-              ns = ns,
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("gamma_coeff"), "Gamma",
-                  value = 0.3706479, step = 0.01
-                )
+            class = "side-widget-tall",
+            selectInput(
+              ns("curve_method_select"),
+              label = "Error calculation",
+              # label = NULL,
+              width = "175px",
+              choices = list(
+                "Merkle's method" = "merkle",
+                "Simple method"   = "simple"
               ),
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("gamma_error"), "Error of gamma",
-                  value = 0.009164707, step = 0.0001
-                )
+              selected = "merkle"
+            )
+          ),
+
+          # Coefficient conditional input
+          conditionalPanel(
+            condition = "input.assessment_select != 'whole-body'",
+            ns = ns,
+
+            br(),
+
+            # Coefficient input selection
+            div(
+              class = "side-widget-tall",
+              selectInput(
+                ns("fraction_coeff_select"),
+                label = "Survival coefficient",
+                width = "175px",
+                choices = list(
+                  "D0" = "d0",
+                  "Gamma" = "gamma"
+                ),
+                selected = "d0"
               )
             ),
-            # Input D0
-            conditionalPanel(
-              condition = "input.fraction_coeff_select == 'd0'",
-              ns = ns,
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("d0_coeff"), "D0",
-                  value = 2.7, step = 0.01,
-                  min = 2.7, max = 3.5
+
+            div(class = "widget-sep", br()),
+
+            div(
+              class = "side-widget",
+              # Input gamma
+              conditionalPanel(
+                condition = "input.fraction_coeff_select == 'gamma'",
+                ns = ns,
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "150px",
+                    ns("gamma_coeff"), "Gamma",
+                    value = 0.3706479, step = 0.01
+                  )
+                ),
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "150px",
+                    ns("gamma_error"), "Error of gamma",
+                    value = 0.009164707, step = 0.0001
+                  )
+                )
+              ),
+              # Input D0
+              conditionalPanel(
+                condition = "input.fraction_coeff_select == 'd0'",
+                ns = ns,
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "150px",
+                    ns("d0_coeff"), "D0",
+                    value = 2.7, step = 0.01,
+                    min = 2.7, max = 3.5
+                  )
                 )
               )
+            )
+          ),
+
+          conditionalPanel(
+            condition = "input.assessment_select == 'whole-body'",
+            ns = ns,
+            br()
+          ),
+
+          conditionalPanel(
+            condition = "input.assessment_select != 'whole-body'",
+            ns = ns,
+            br()
+          ),
+
+          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose"),
+
+          # Help button
+          topButton =
+            bsButton(
+              ns("help_estimate_options"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_estimate_options_dialog"),
+            title = "Help: ",
+            trigger = ns("help_estimate_options"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_estimate_options_option"),
+              label = NULL,
+              choices = c(
+                "Assessment"           = "assess",
+                "Error calculation"    = "error",
+                "Survival coefficient" = "surv_coeff"
+              )
+
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'assess'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_assessment.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'error'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'surv_coeff'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
             )
           )
 
-        ),
-
-        br(),
-        actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
-      )
+        )
       )
     ),
 
@@ -349,7 +360,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       # box: Estimation results ----
       column(
         width = 6,
-        bs4Card(
+        bs4MyCard(
           width = 12,
           title = "Results",
           status = "results", solidHeader = T, collapsible = T, closable = F,
@@ -398,7 +409,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       # box: Plot curves ----
       column(
         width = 6,
-        bs4Card(
+        bs4MyCard(
           width = 12,
           title = "Curve plot",
           status = "results", solidHeader = T, collapsible = T, closable = F,
