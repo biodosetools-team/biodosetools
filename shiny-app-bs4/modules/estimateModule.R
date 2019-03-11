@@ -28,46 +28,14 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-              p("This part has not been implemented yet."),
+              p("This part has not been implemented yet.")
               # TODO: add fit data input widgets
-              # Help button
-              bsButton(
-                ns("help_fit_data_input"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_fit_data_input_dialog"),
-                title = "Help: Manual fit data input",
-                trigger = ns("help_fit_data_input"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_fit_data_input.md"))
-                # TODO: finish dialogue
-              )
             ),
             # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
               ns = ns,
-              fileInput(ns("load_fit_data"), label = "File input"),
-              # Help button
-              bsButton(
-                ns("help_fit_data_load"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_fit_data_load_dialog"),
-                title = "Help: Loading fit data",
-                trigger = ns("help_fit_data_load"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_fit_data_load.md"))
-                # TODO: finish dialogue
-              )
+              fileInput(ns("load_fit_data"), label = "File input")
             ),
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
@@ -77,6 +45,44 @@ estimateUI <- function(id, label) { #, locale = i18n) {
                     "Note that previously introduced data will be deleted.",
                     "bottom",
                     options = list(container = "body")
+          )
+        ),
+
+        # Help button
+        topButton =
+          bsButton(
+            ns("help_fit_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+        # Help modal
+        bs4MyModal(
+          id = ns("help_fit_data_dialog"),
+          title = "Help: Fitting data input",
+          trigger = ns("help_fit_data"),
+          size = "large",
+
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_fit_data_option"),
+            label = NULL,
+            choices = c(
+              "Manual input" = "manual",
+              "Load data"    = "load"
+            )
+          ),
+          # Contents
+          conditionalPanel(
+            condition = "input.help_fit_data_option == 'manual'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fit_data_input.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_fit_data_option == 'load'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fit_data_load.md"))
           )
         )
       ),
