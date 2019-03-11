@@ -276,12 +276,30 @@ fittingAdvUI <- function(id, label) {
           # Help Modal
           bs4MyModal(
             id = ns("help_fit_data_save_dialog"),
-            title = "Help: ",
+            title = "Help: Export results",
             trigger = ns("help_fit_data_save"),
             size = "large",
 
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_fit_data_save_option"),
+              label = NULL,
+              choices = c(
+                "Fitting results" = "data",
+                "Report"          = "report"
+              )
+            ),
             # Contents
-            withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+            conditionalPanel(
+              condition = "input.help_fit_data_save_option == 'data'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_fit_data_save_option == 'report'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+            )
           )
 
         )
