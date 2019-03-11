@@ -1,9 +1,3 @@
-# Load packages
-library(shiny)
-library(shinyWidgets)
-library(bs4Dash)
-library(plotly)
-
 # Locale ----
 
 countries <- c(

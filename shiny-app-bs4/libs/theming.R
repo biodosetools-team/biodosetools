@@ -52,6 +52,7 @@ theme_cards_biodose_tools <- bs4DashCardsStatus(
   export_color  = export_color
 )
 
+
 # Button theming -------------------------------------------
 
 theme_buttons_biodose_tools <- bs4DashButtonsStatus(

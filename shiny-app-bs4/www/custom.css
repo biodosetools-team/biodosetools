@@ -13,21 +13,21 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
 }
 
 
 /* Fix modals (shinyBS) */
 .modal-header .close, .modal-header .mailbox-attachment-close {
-    margin: -0.5rem -0.5rem -1rem auto;
+	margin: -0.5rem -0.5rem -1rem auto;
 }
 
 .modal-header {
-    display: block;
+	display: block;
 }
 
 /* Fix radioGroupButtons (shinyWidgets) */
 .btn>input[type=checkbox], .btn>input[type=radio] {
-    display: none;
+	display: none;
 }
