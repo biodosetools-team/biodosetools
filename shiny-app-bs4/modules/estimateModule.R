@@ -14,7 +14,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4MyCard(
         width = 5,
         title = "Curve fitting data options",
-        status = "options", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
           column(
             width = 12,
@@ -122,7 +122,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
       bs4MyCard(
         width = 5,
         title = "Data input options",
-        status = "options", solidHeader = T, collapsible = T, closable = F,
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
           column(
             width = 12,
@@ -204,7 +204,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4MyCard(
           width = 12,
           title = "Data input",
-          status = "inputs", solidHeader = T, collapsible = T, closable = F,
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           rHandsontableOutput(ns("hotable"))
         ),
 
@@ -212,7 +212,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4MyCard(
           width = 12,
           title = "Dose estimation options",
-          status = "options", solidHeader = T, collapsible = T, closable = F,
+          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           # Assessment selection
           div(
@@ -382,7 +382,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4MyCard(
           width = 12,
           title = "Results",
-          status = "results", solidHeader = T, collapsible = T, closable = F,
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           h4("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
@@ -429,7 +429,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4MyCard(
           width = 12,
           title = "Export results",
-          status = "export", solidHeader = T, collapsible = T, closable = F,
+          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Case description
           textAreaInput(
             inputId = ns("results_comments"),
@@ -498,7 +498,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         bs4MyCard(
           width = 12,
           title = "Curve plot",
-          status = "results", solidHeader = T, collapsible = T, closable = F,
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Plot
           plotOutput(ns("plot")),
           # Download plot

@@ -12,7 +12,7 @@ fittingUI <- function(id, label) {
       bs4Card(
         width = 5,
         title = "Inputs",
-        status = "inputs", solidHeader = T, collapsible = T, closable = F,
+        status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         # Inputs
         textInput(
           inputId = ns("dose"),
@@ -82,7 +82,7 @@ fittingUI <- function(id, label) {
       bs4Card(
         width = 5,
         title = "Data",
-        status = "results", solidHeader = T, collapsible = T, closable = F, collapsed = T,
+        status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE, collapsed = T,
         rHandsontableOutput(outputId = ns("table"))
       )
 
