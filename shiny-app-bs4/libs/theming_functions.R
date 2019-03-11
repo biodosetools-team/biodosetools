@@ -161,10 +161,10 @@ bs4DashCardsStatus <- function(options_color, inputs_color, results_color, expor
 #' @return HTML code. Theme for a shinydashboard application.
 
 bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border,
-                                        options_color, options_color_hover, options_color_border,
-                                        inputs_color, inputs_color_hover, inputs_color_border,
-                                        results_color, results_color_hover, results_color_border,
-                                        export_color, export_color_hover, export_color_border) {
+                                 options_color, options_color_hover, options_color_border,
+                                 inputs_color, inputs_color_hover, inputs_color_border,
+                                 results_color, results_color_hover, results_color_border,
+                                 export_color, export_color_hover, export_color_border) {
 
   htmltools::tags$head(
 
@@ -200,9 +200,9 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
 
           /* File selector widget */
 
-          .skin-blue .input-group-btn > .btn {
-            color: #000;
-            border-radius: 3px 0 0 3px;
+          .btn.btn-file {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
             border-style: solid none solid solid;
           }
 
@@ -216,6 +216,7 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
           .progress-bar {
             font-size: 15px;
             line-height: 25px;
+            background-color: ', options_color, ';
           }
 
           /* Home Button */
