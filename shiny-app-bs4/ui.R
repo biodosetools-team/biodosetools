@@ -5,6 +5,7 @@ library(shinydashboard)
 library(rhandsontable)
 library(shinyWidgets)
 library(shinyBS)
+library(bs4Dash)
 
 
 # Locales ----
@@ -29,6 +30,7 @@ source("modules/estimateModule.R")
 source("ui-elements.R")
 
 ui <- bs4DashPage(
+  sidebar_collapsed = TRUE,
   navbar = navbar,
   sidebar = sidebar,
   body = body,
