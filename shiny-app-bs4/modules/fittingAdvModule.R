@@ -136,12 +136,30 @@ fittingAdvUI <- function(id, label) {
         # Help Modal
         bs4MyModal(
           id = ns("help_fitting_options_dialog"),
-          title = "Help: ",
+          title = "Help: Fitting options",
           trigger = ns("help_fitting_options"),
           size = "large",
 
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_fitting_options_option"),
+            label = NULL,
+            choices = c(
+              "Fitting formula" = "formula",
+              "Fitting model"   = "model"
+            )
+          ),
           # Contents
-          withMathJax(includeMarkdown("help/help_fitting_options.md"))
+          conditionalPanel(
+            condition = "input.help_fitting_options_option == 'formula'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fitting_options_formula.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_fitting_options_option == 'model'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fitting_options_model.md"))
+          )
         )
       )
     ),
