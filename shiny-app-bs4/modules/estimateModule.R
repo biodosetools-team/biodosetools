@@ -37,11 +37,6 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
               fileInput(ns("load_fit_data"), label = "File input")
             ),
-            # Case description
-            textAreaInput(
-              inputId = ns("case_description"),
-              label = "Case description",
-              placeholder = "Summary of the case"),
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
           ),
@@ -149,6 +144,11 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
               fileInput(ns("load_cases_data"), label = "File input")
             ),
+            # Case description
+            textAreaInput(
+              inputId = ns("case_description"),
+              label = "Case description",
+              placeholder = "Short summary of the case"),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           ),
@@ -423,6 +423,73 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
+        ),
+
+        # Export data and results ----
+        bs4MyCard(
+          width = 12,
+          title = "Export results",
+          status = "export", solidHeader = T, collapsible = T, closable = F,
+          # Case description
+          textAreaInput(
+            inputId = ns("results_comments"),
+            label = "Comments",
+            placeholder = "Comments to be included on report"),
+
+          # Download fit data & report
+          downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_fit_data_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".rds"),
+              selected = ".rds"
+            )
+          ),
+          # Download report
+          div(class = "widget-sep", br()),
+          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+
+          # Help button
+          topButton =
+            bsButton(
+              ns("help_fit_data_save"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+          # Help Modal
+          bs4MyModal(
+            id = ns("help_fit_data_save_dialog"),
+            title = "Help: Export results",
+            trigger = ns("help_fit_data_save"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_fit_data_save_option"),
+              label = NULL,
+              choices = c(
+                "Fitting results" = "data",
+                "Report"          = "report"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fit_data_save_option == 'data'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_fit_data_save_option == 'report'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+            )
+          )
+
         )
       ),
       # box: Plot curves ----
