@@ -131,42 +131,12 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               condition = "!input.load_cases_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
-              # Help button
-              bsButton(
-                ns("help_cases_data_input"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_cases_data_input_dialog"),
-                title = "Help: Cases data input",
-                trigger = ns("help_cases_data_input"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_cases_data_input.md"))
-              )
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
               condition = "input.load_cases_data_check",
               ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input"),
-              # Help button
-              bsButton(
-                ns("help_cases_data_load"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_cases_data_load_dialog"),
-                title = "Help: Loading cases data",
-                trigger = ns("help_cases_data_load"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_cases_data_load.md"))
-              )
+              fileInput(ns("load_cases_data"), label = "File input")
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
@@ -176,6 +146,44 @@ estimateUI <- function(id, label) { #, locale = i18n) {
                     "Note that previously introduced data will be deleted.",
                     "bottom",
                     options = list(container = "body")
+          )
+        ),
+
+        # Help button
+        topButton =
+          bsButton(
+            ns("help_cases_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+        # Help modal
+        bs4MyModal(
+          id = ns("help_cases_data_dialog"),
+          title = "Help: Cases data input",
+          trigger = ns("help_cases_data"),
+          size = "large",
+
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_cases_data_option"),
+            label = NULL,
+            choices = c(
+              "Manual input" = "manual",
+              "Load data"    = "load"
+            )
+          ),
+          # Contents
+          conditionalPanel(
+            condition = "input.help_cases_data_option == 'manual'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_cases_data_input.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_cases_data_option == 'load'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_cases_data_load.md"))
           )
         )
       ),
@@ -262,7 +270,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
                 div(
                   class = "side-widget-tall",
                   numericInput(
-                    width = "150px",
+                    width = "175px",
                     ns("gamma_coeff"), "Gamma",
                     value = 0.3706479, step = 0.01
                   )
