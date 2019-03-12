@@ -1,0 +1,19 @@
+/* Add padding to tab contents */
+
+@media (max-width:575.98px) {
+
+	.tab-content>.active {
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+
+}
+
+@media (min-width:576px) {
+
+	.tab-content>.active {
+		padding-left: 30px;
+		padding-right: 30px;
+	}
+
+}

@@ -4,8 +4,9 @@ source("libs/widgets_functions.R", local = T)
 
 html_tags <- tags$head(
   tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-  tags$link(rel = "stylesheet", type = "text/css", href = "fixes.css"),
   tags$link(rel = "stylesheet", type = "text/css", href = "sidebar.css"),
+  tags$link(rel = "stylesheet", type = "text/css", href = "content.css"),
+  tags$link(rel = "stylesheet", type = "text/css", href = "fixes.css"),
   tags$link(rel = "icon", type = "image/x-icon", href = "favicon.png"),
   tags$link(rel = "icon", sizes = "192x192", href="favicon-highres.png")
 )
