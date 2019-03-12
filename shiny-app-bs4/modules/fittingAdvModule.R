@@ -9,7 +9,7 @@ fittingAdvUI <- function(id, label) {
     h2("Dose-effect Fitting"),
 
     fluidRow(
-      # Data input options ----
+      # Card: Data input options ----
       bs4MyCard(
         width = 5,
         title = "Data input options",
@@ -85,7 +85,7 @@ fittingAdvUI <- function(id, label) {
         )
       ),
 
-      # Fitting options ----
+      # Card: Fitting options ----
       bs4MyCard(
         width = 5,
         title = "Fitting options",
@@ -164,7 +164,7 @@ fittingAdvUI <- function(id, label) {
       )
     ),
 
-    # Hot Table ----
+    # Card: hot Count data input ----
     fluidRow(
       bs4MyCard(
         width = 12,
@@ -243,7 +243,7 @@ fittingAdvUI <- function(id, label) {
             rHandsontableOutput(ns("var_cov_mat"))
           )
         ),
-        # Export data and results ----
+        # Card: Export data and results ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,
@@ -307,7 +307,7 @@ fittingAdvUI <- function(id, label) {
       ),
       column(
         width = 6,
-        # Plot box ----
+        # Card: Plot box ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,

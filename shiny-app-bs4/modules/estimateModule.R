@@ -10,7 +10,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # box: Curve fitting options ----
+      # Card: Curve fitting options ----
       bs4MyCard(
         width = 5,
         title = "Curve fitting data options",
@@ -118,7 +118,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # box: Data input options ----
+      # Card: Data input options ----
       bs4MyCard(
         width = 5,
         title = "Data input options",
@@ -198,7 +198,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # hot: Cases input ----
+      # Card: hot Cases input ----
       column(
         width = 7,
         bs4MyCard(
@@ -209,7 +209,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           rHandsontableOutput(ns("hotable"))
         ),
 
-        # box: Estimation options ----
+        # Card: Estimation options ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,
@@ -378,7 +378,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # box: Estimation results ----
+      # Card: Estimation results ----
       column(
         width = 6,
         bs4MyCard(
@@ -428,7 +428,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           )
         ),
 
-        # box: Export data and results ----
+        # Card: Export data and results ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,
@@ -496,7 +496,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
 
         )
       ),
-      # box: Plot curves ----
+      # Card: Plot curves ----
       column(
         width = 6,
         bs4MyCard(
