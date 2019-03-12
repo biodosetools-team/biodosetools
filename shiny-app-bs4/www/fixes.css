@@ -14,11 +14,11 @@
 
 /* Fix selectize input height */
 .selectize-dropdown, .selectize-input, .selectize-input input {
-    line-height: 24px;
+	line-height: 24px;
 }
 
 /* Fix extra margin below file selection widget */
 label.input-group-btn {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
