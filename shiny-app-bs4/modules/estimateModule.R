@@ -203,6 +203,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         width = 7,
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           rHandsontableOutput(ns("hotable"))
@@ -211,6 +212,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         # box: Estimation options ----
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Dose estimation options",
           status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
@@ -381,6 +383,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         width = 6,
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Results",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
@@ -428,6 +431,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         # Export data and results ----
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Export results",
           status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Case description
@@ -497,6 +501,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
         width = 6,
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Curve plot",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Plot

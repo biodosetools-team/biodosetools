@@ -246,6 +246,7 @@ fittingAdvUI <- function(id, label) {
         # Export data and results ----
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Export results",
           status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Download fit data & report
@@ -309,6 +310,7 @@ fittingAdvUI <- function(id, label) {
         # Plot box ----
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Curve plot",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Plot

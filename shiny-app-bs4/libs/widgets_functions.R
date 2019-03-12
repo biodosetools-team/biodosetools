@@ -86,7 +86,7 @@ bs4MyCard <- function(..., title = NULL, footer = NULL, status = NULL, elevation
          width = 6, height = NULL, collapsible = TRUE, collapsed = FALSE,
          closable = TRUE, labelStatus = NULL, labelText = NULL, labelTooltip = NULL,
          dropdownMenu = NULL, dropdownIcon = "wrench", overflow = FALSE,
-         topButton = NULL) {
+         topButton = NULL, noPadding = FALSE) {
   cardCl <- if (!is.null(gradientColor)) {
     paste0("card bg-", gradientColor, "-gradient")
   }
@@ -184,8 +184,11 @@ bs4MyCard <- function(..., title = NULL, footer = NULL, status = NULL, elevation
     bodyTag, footerTag
   )
   shiny::tags$div(class = if (!is.null(width)) {
-    paste0("col-sm-", width)
-  }, cardTag)
+      paste0("col-sm-", width)
+    }, style = if (noPadding) {
+      "padding: 0!important"
+    },  cardTag
+  )
 }
 
 
