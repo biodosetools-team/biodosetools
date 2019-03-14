@@ -1,7 +1,7 @@
 # Locale ----
 
 countries <- c(
-  "en" = "Englsih",
+  "en" = "English",
   "es" = "Spanish",
   "de" = "German",
   "fr" = "French"
