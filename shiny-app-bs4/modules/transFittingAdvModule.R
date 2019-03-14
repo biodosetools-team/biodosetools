@@ -17,7 +17,94 @@ transFittingAdvUI <- function(id, label) {
         fluidRow(
           column(
             width = 12,
-            h4("Work in progress")
+
+            div(
+              class = "side-widget",
+              style = "width: 150px;",
+              awesomeRadio(
+                inputId = ns("trans_sex"),
+                status = "warning",
+                label = "Sex",
+                choices = c(
+                  "Male"   = "male",
+                  "Female" = "female"
+                ),
+                selected = "male"
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "width: 150px;",
+              awesomeCheckboxGroup(
+                inputId = ns("trans_conf"),
+                status = "warning",
+                label = "Confounders",
+                choices = c(
+                  "Age"     = "age",
+                  "Sex"     = "sex",
+                  "Smoking" = "smoke"
+                ),
+                selected = c("age")
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "width: 150px;",
+              awesomeCheckboxGroup(
+                inputId = ns("trans_color_scheme"),
+                status = "warning",
+                label = "Color scheme",
+                choices = c(
+                  "Use M-Fish" = "m_fish"
+                )
+              ),
+              pickerInput(
+                inputId = ns("Id008"),
+                label = "Colors",
+                choices = paste("Badge", c("info", "success", "danger", "primary",
+                                           "warning")),
+                options = list(
+                  `selected-text-format` = "count > 3"),
+                multiple = TRUE,
+                selected = "Badge danger",
+                choicesOpt = list(
+                  content = sprintf("<span class='label label-%s'>%s</span>",
+                                    c("info", "success", "danger", "primary", "warning"),
+                                    paste("Badge", c("info", "success", "danger", "primary",
+                                                     "warning"))))
+              )
+            ),
+
+            multiInput(
+              inputId = "Id010",
+              label = "Countries :",
+              choices = NULL,
+              choiceNames = lapply(seq_along(countries),
+                                   function(i) tagList(tags$img(src = flags[i],
+                                                                width = 20,
+                                                                height = 15), countries[i])),
+              choiceValues = countries,
+              options = list(
+                enable_search = FALSE,
+                non_selected_header = "Choices:",
+                selected_header = "Selected:"
+              )
+            ),
+
+            selectInput(
+              inputId = "Id0100",
+              label = "Colors",
+              choices = c(
+                "Age"     = "age",
+                "Sex"     = "sex",
+                "Smoking" = "smoke"
+              ),
+              multiple = TRUE
+            )
+
+
           )
         ),
 
