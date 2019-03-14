@@ -21,14 +21,13 @@ navbar <- bs4DashMyNavbar(
     style = "margin-bottom: -20px;",
     selectInput(
       "experiment_select",
-      # label = "Experiment",
       label = NULL,
       choices = c(
         "Dicentrics",
-        "Micronuclei",
-        "Translocations",
-        "H2AX",
-        "Intercomparison Tests"
+        # "Micronuclei",
+        "Translocations"#,
+        # "H2AX",
+        # "Intercomparison Tests"
       ),
       selected = "Dicentrics",
       multiple = FALSE,
@@ -62,7 +61,41 @@ sidebar <- bs4DashMySidebar(
     ),
 
     # Modules
-    bs4SidebarHeader("Modules"),
+    # bs4SidebarHeader("Modules"),
+    #
+    # Dicentrics
+    # conditionalPanel(
+    #   condition = "input.experiment_select == 'Dicentrics'",
+    #   bs4SidebarMenuItem(
+    #     "Fitting",
+    #     tabName = "tab-fitting-adv",
+    #     icon = "cogs"
+    #   ),
+    #
+    #   bs4SidebarMenuItem(
+    #     "Simplified fitting",
+    #     tabName = "tab-fitting-simple",
+    #     icon = "cog"
+    #   ),
+    #
+    #   bs4SidebarMenuItem(
+    #     "Dose estimation",
+    #     tabName = "tab-estimate",
+    #     icon = "calculator"
+    #   )
+    # ),
+    #
+    # Translocations
+    # conditionalPanel(
+    #   condition = "input.experiment_select == 'Translocations'",
+    #   bs4SidebarMenuItem(
+    #     "Fitting",
+    #     tabName = "tab-trans-fitting-adv",
+    #     icon = "cogs"
+    #   )
+    # ),
+
+    bs4SidebarHeader("Dicentrics"),
 
     bs4SidebarMenuItem(
       "Fitting",
@@ -80,6 +113,14 @@ sidebar <- bs4DashMySidebar(
       "Dose estimation",
       tabName = "tab-estimate",
       icon = "calculator"
+    ),
+
+    bs4SidebarHeader("Translocations"),
+
+    bs4SidebarMenuItem(
+      "Fitting",
+      tabName = "tab-trans-fitting-adv",
+      icon = "cogs"
     ),
 
     # Language selector
@@ -148,6 +189,7 @@ body <- bs4DashBody(
 
     # Advanced Fitting
     fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
+    transFittingAdvUI(id = "trans_adv_fitting", label = "tab-trans-fitting-adv"),
 
     # Dose Estimation
     estimateUI(id = "estimate", label = "tab-estimate")# locale = i18n)

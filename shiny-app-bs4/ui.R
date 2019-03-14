@@ -21,9 +21,13 @@ i18n$set_translation_language("it")
 
 # Modules ----
 
+# Dicentrics
 source("modules/fittingModule.R")
 source("modules/fittingAdvModule.R")
 source("modules/estimateModule.R")
+
+# Translocations
+source("modules/transFittingAdvModule.R")
 
 # Build UI -------------------------------------------------
 
