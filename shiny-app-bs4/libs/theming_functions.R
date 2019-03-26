@@ -317,38 +317,84 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
 
           /* Custom shinyBS status colors */
 
-          /* Options Checkbox */
+          /* Options Checkbox & Radio button */
+
           .checkbox-bs-warning input[type="checkbox"]:checked + label::before, .checkbox-bs-warning input[type="radio"]:checked + label::before {
             color: #fff;
             background-color: ', options_color, ';
             border-color:  ', options_color_border, ';
           }
 
-          .checkbox-bs-options input[type="checkbox"]:checked + label::before, .checkbox-bs-options input[type="radio"]:checked + label::before {
-            color: #fff;
+          .radio-bs-warning input[type="radio"] + label::after {
             background-color: ', options_color, ';
-            border-color:  ', options_color_border, ';
           }
 
-          /* Inputs Checkbox */
+          .radio-bs-warning input[type="radio"]:checked + label::after {
+            background-color: ', options_color, ';
+          }
+
+          .radio-bs-warning input[type="radio"]:checked + label::before {
+            border-color: ', options_color, ';
+          }
+
+          /* Inputs Checkbox & Radio button */
+
           .checkbox-bs-primary input[type="checkbox"]:checked + label::before, .checkbox-bs-primary input[type="radio"]:checked + label::before {
             color: #fff;
             background-color: ', inputs_color, ';
             border-color:  ', inputs_color_border, ';
           }
 
-          /* Results Checkbox */
+          .radio-bs-primary input[type="radio"] + label::after {
+            background-color: ', inputs_color, ';
+          }
+
+          .radio-bs-primary input[type="radio"]:checked + label::after {
+            background-color: ', inputs_color, ';
+          }
+
+          .radio-bs-primary input[type="radio"]:checked + label::before {
+            border-color: ', inputs_color, ';
+          }
+
+          /* Results Checkbox & Radio button */
+
           .checkbox-bs-success input[type="checkbox"]:checked + label::before, .checkbox-bs-success input[type="radio"]:checked + label::before {
             color: #fff;
             background-color: ', results_color, ';
             border-color:  ', results_color_border, ';
           }
 
-          /* Export Checkbox */
+          .radio-bs-success input[type="radio"] + label::after {
+            background-color: ', results_color, ';
+          }
+
+          .radio-bs-success input[type="radio"]:checked + label::after {
+            background-color: ', results_color, ';
+          }
+
+          .radio-bs-success input[type="radio"]:checked + label::before {
+            border-color: ', results_color, ';
+          }
+
+          /* Export Checkbox & Radio button */
+
           .checkbox-bs-danger input[type="checkbox"]:checked + label::before, .checkbox-bs-danger input[type="radio"]:checked + label::before {
             color: #fff;
             background-color: ', export_color, ';
             border-color:  ', export_color_border, ';
+          }
+
+          .radio-bs-danger input[type="radio"] + label::after {
+            background-color: ', export_color, ';
+          }
+
+          .radio-bs-danger input[type="radio"]:checked + label::after {
+            background-color: ', export_color, ';
+          }
+
+          .radio-bs-danger input[type="radio"]:checked + label::before {
+            border-color: ', export_color, ';
           }
 
           '
