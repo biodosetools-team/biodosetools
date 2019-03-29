@@ -11,7 +11,7 @@ transFittingAdvUI <- function(id, label) {
     fluidRow(
       # Card: Color options ----
       bs4MyCard(
-        width = 12,
+        width = 6,
         title = "Color options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
@@ -49,9 +49,22 @@ transFittingAdvUI <- function(id, label) {
               )
             ),
 
-            div(
-              class = "side-widget",
-              style = "width: 150px;",
+            selectizeInput(
+              inputId = ns("trans_chromosome_select"),
+              label = "Chromosomes",
+              choices = c(
+                1:21,
+                "X", "Y"
+              ),
+              options = list(
+                placeholder = 'Select stained chromosomes'
+              ),
+              multiple = TRUE
+            ),
+
+            # div(
+              # class = "side-widget",
+              # style = "width: 150px;",
               awesomeCheckboxGroup(
                 inputId = ns("trans_color_scheme"),
                 status = "warning",
@@ -60,50 +73,33 @@ transFittingAdvUI <- function(id, label) {
                   "Use M-Fish" = "m_fish"
                 )
               ),
-              pickerInput(
-                inputId = ns("Id008"),
+            # ),
+
+            conditionalPanel(
+              condition = "input.trans_color_scheme != 'm_fish'",
+              ns = ns,
+              selectizeInput(
+                inputId = ns("trans_color_select"),
                 label = "Colors",
-                choices = paste("Badge", c("info", "success", "danger", "primary",
-                                           "warning")),
+                choices = c(
+                  "Red"     = "age",
+                  "Green"     = "sex",
+                  "Orange" = "smoke",
+                  "Purple",
+                  "Yellow",
+                  "Cyan",
+                  "Magenta"
+                ),
                 options = list(
-                  `selected-text-format` = "count > 3"),
-                multiple = TRUE,
-                selected = "Badge danger",
-                choicesOpt = list(
-                  content = sprintf("<span class='label label-%s'>%s</span>",
-                                    c("info", "success", "danger", "primary", "warning"),
-                                    paste("Badge", c("info", "success", "danger", "primary",
-                                                     "warning"))))
+                  placeholder = 'Select used colors'#,
+                  # maxItems = 5
+                  # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                ),
+                multiple = TRUE
               )
             ),
 
-            multiInput(
-              inputId = "Id010",
-              label = "Countries :",
-              choices = NULL,
-              choiceNames = lapply(seq_along(countries),
-                                   function(i) tagList(tags$img(src = flags[i],
-                                                                width = 20,
-                                                                height = 15), countries[i])),
-              choiceValues = countries,
-              options = list(
-                enable_search = FALSE,
-                non_selected_header = "Choices:",
-                selected_header = "Selected:"
-              )
-            ),
-
-            selectInput(
-              inputId = "Id0100",
-              label = "Colors",
-              choices = c(
-                "Age"     = "age",
-                "Sex"     = "sex",
-                "Smoking" = "smoke"
-              ),
-              multiple = TRUE
-            )
-
+            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
 
           )
         ),
@@ -145,7 +141,23 @@ transFittingAdvUI <- function(id, label) {
             withMathJax(includeMarkdown("help/help_count_data_load.md"))
           )
         )
+      ),
+
+      # Card: Chromosome-color table ----
+      bs4MyCard(
+        width = 6,
+        title = "Chromosome data",
+        status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        fluidRow(
+          column(
+            width = 12,
+
+            rHandsontableOutput(outputId = ns("chromosome_table"))
+
+          )
+        )
       )
+
     ),
 
     fluidRow(
@@ -473,6 +485,37 @@ transFittingAdvUI <- function(id, label) {
   )
 }
 
+transChromosomeTable <- function(input, output, session, stringsAsFactors) {
+  table <- reactive({
+    input$button_upd_table
+
+    isolate({
+      chromosome <- input$trans_chromosome_select
+      # color <- input$trans_color_select
+    })
+
+    data <- data.frame(
+      Chromosome = sort(as.factor(chromosome)),
+      Stain = as.factor(rep(NA, length(chromosome)))
+    )
+
+    return(data)
+  })
+
+  # Output ----
+  output$chromosome_table <- renderRHandsontable({
+    hot <- table() %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 115) %>%
+      hot_col(col = 2, allowInvalid = TRUE)
+      # hot_validate_character(cols = 2, choices = as.factor(input$trans_color_select))
+
+      # hot_col(c(1), readOnly = TRUE)
+
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
+  })
+}
 
 transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
@@ -597,32 +640,6 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     return(hot)
   })
 }
-
-transFittingAdvTable <- function(input, output, session, stringsAsFactors) {
-  table <- reactive({
-    input$button_fit
-
-    isolate({
-      count_data <- hot_to_r(input$hotable)
-
-      dose <- count_data[["D"]]
-      aberr <- count_data[["X"]]
-      cell <- count_data[["N"]]
-    })
-
-    data.frame(
-      Dose = dose,
-      Aberrations = aberr,
-      Cells = cell
-    )
-  })
-
-  # Output ----
-  output$table <- renderTable({
-    table()
-  })
-}
-
 
 transFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
