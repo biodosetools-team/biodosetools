@@ -216,6 +216,23 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           title = "Dose estimation options",
           status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
+          # Type of exposure selection
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("exposure_select"),
+              label = "Exposure",
+              # label = NULL,
+              width = "175px",
+              choices = list(
+                "Acute"      = "acute",
+                "Protracted" = "protracted"
+              ),
+              selected = "acute"
+            )
+          ),
+          div(class = "widget-sep", br()),
+
           # Assessment selection
           div(
             class = "side-widget-tall",
@@ -247,6 +264,27 @@ estimateUI <- function(id, label) { #, locale = i18n) {
                 "Simple method"   = "simple"
               ),
               selected = "merkle"
+            )
+          ),
+
+          # Protracted timing
+
+          conditionalPanel(
+            condition = "input.exposure_select == 'protracted'",
+            ns = ns,
+
+            br(),
+
+            # Irradiation time
+            div(
+              class = "side-widget-tall",
+              numericInput(
+                ns("fraction_coeff_select"),
+                label = "Irradiation time",
+                width = "175px",
+                value = 1,
+                min = 0
+              )
             )
           ),
 
