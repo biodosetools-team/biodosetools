@@ -279,10 +279,11 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             div(
               class = "side-widget-tall",
               numericInput(
-                ns("fraction_coeff_select"),
+                ns("protracted_time"),
                 label = "Irradiation time",
                 width = "175px",
-                value = 1,
+                value = 0.5,
+                step = 0.1,
                 min = 0
               )
             )
@@ -801,6 +802,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       # Fit data
       load_fit_data <- input$load_fit_data_check
       fit_data <- input$load_fit_data
+      exposure <- input$exposure_select
       assessment <- input$assessment_select
       curve_method <- input$curve_method_select
 
@@ -849,17 +851,33 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       }
     }
 
-    # Generalized curves
+    # Protracted variables ----
+    protracted_g_function <- function(time, time_0) {
+      x <- time / time_0
+      g <- (2 / x^2) * (x - 1 + exp(-x))
+      return(g)
+    }
+
+    if (exposure == "protracted") {
+      protracted_time <- input$protracted_time
+      protracted_life_time <- 2
+      protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
+    } else {
+      protracted_g_value <- 1
+    }
+
+    # Generalized curves ----
     yield_fun <- function(x) {
       general_fit_coeffs[[1]] +
         general_fit_coeffs[[2]] * x +
-        general_fit_coeffs[[3]] * x * x
+        general_fit_coeffs[[3]] * x * x * protracted_g_value
     }
 
     chisq_df <- nrow(fit_coeffs)
     R_factor <- sqrt(qchisq(.95, df = chisq_df))
 
     yield_error_fun <- function(x) {
+      # TODO: How does the protracted function affect this function?
       sqrt(
         general_var_cov_mat[["x0", "x0"]] +
           general_var_cov_mat[["x1", "x1"]] * x * x +
@@ -869,7 +887,6 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
           2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
       )
     }
-
 
     # Projection functions ----
     project_yield_base <- function(yield) {
@@ -995,6 +1012,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: heterogeneous dose estimation
     estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff) {
+      # TODO: How does the protracted function affect this whole calculation?
 
       # Get cases data
       # Data test is stored in vector y
