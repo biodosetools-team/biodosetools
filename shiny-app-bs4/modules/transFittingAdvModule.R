@@ -82,9 +82,9 @@ transFittingAdvUI <- function(id, label) {
                 inputId = ns("trans_color_select"),
                 label = "Colors",
                 choices = c(
-                  "Red"     = "age",
-                  "Green"     = "sex",
-                  "Orange" = "smoke",
+                  "Red",
+                  "Green",
+                  "Orange",
                   "Purple",
                   "Yellow",
                   "Cyan",
@@ -545,8 +545,8 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
       rhandsontable() %>%
       hot_cols(colWidths = 115) %>%
       hot_col(col = 2, allowInvalid = TRUE) %>%
-      hot_col(c(1), readOnly = TRUE)
-      # hot_validate_character(cols = 2, choices = as.factor(input$trans_color_select))
+      hot_col(c(1), readOnly = TRUE) %>%
+      hot_col(col = 2, type = "dropdown", source = input$trans_color_select, strict = TRUE)
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
 
