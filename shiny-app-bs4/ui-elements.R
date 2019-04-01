@@ -126,7 +126,7 @@ sidebar <- bs4DashMySidebar(
     bs4SidebarMenuItem(
       "Fitting",
       tabName = "tab-trans-fitting-adv",
-      icon = "cogs"
+      icon = "paint-brush"
     ),
 
     # Language selector
