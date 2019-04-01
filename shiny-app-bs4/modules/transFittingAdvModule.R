@@ -45,7 +45,7 @@ transFittingAdvUI <- function(id, label) {
                   "Sex"     = "sex",
                   "Smoking" = "smoke"
                 ),
-                selected = c("age")
+                selected = NULL #c("age")
               )
             ),
 
@@ -99,7 +99,7 @@ transFittingAdvUI <- function(id, label) {
               )
             ),
 
-            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
+            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
 
           )
         ),
@@ -144,19 +144,41 @@ transFittingAdvUI <- function(id, label) {
       ),
 
       # Card: Chromosome-color table ----
-      bs4MyCard(
+      column(
         width = 6,
-        title = "Chromosome data",
-        status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-        fluidRow(
-          column(
-            width = 12,
 
-            rHandsontableOutput(outputId = ns("chromosome_table"))
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Chromosome data",
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
 
+              rHandsontableOutput(outputId = ns("chromosome_table"))
+
+            )
+          )
+        ),
+
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Genomic conversion factor",
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              p("Work in progress...")
+
+            )
           )
         )
+
       )
+
 
     ),
 
@@ -252,11 +274,11 @@ transFittingAdvUI <- function(id, label) {
               choices = list(
                 "Linear quadratic" = c(
                   "Y = C + αD + βD²" = "lin-quad",
-                  "Y = αD + βD²" = "lin-quad-no-int"
+                  "Y = αD + βD²"     = "lin-quad-no-int"
                 ),
                 "Linear" = c(
                   "Y = C + αD" = "lin",
-                  "Y = αD" = "lin-no-int"
+                  "Y = αD"     = "lin-no-int"
                 )
               ),
               selected = "lin-quad"
@@ -265,8 +287,21 @@ transFittingAdvUI <- function(id, label) {
             selectInput(
               ns("family_select"),
               label = "Fitting model",
-              choices = list("Poisson" = "poisson", "Quasipoisson" = "quasipoisson"),
+              choices = list(
+                "Poisson"      = "poisson",
+                "Quasipoisson" = "quasipoisson"
+              ),
               selected = "poisson"
+            ),
+            # Fitting model
+            selectInput(
+              ns("fitting_select"),
+              label = "Type of fitting",
+              choices = list(
+                "Regular"     = "reg_fit",
+                "Full genome" = "full_gen_fit"
+                ),
+              selected = "reg_fit"
             ),
             # Use dispersion factor
             awesomeCheckbox(
@@ -487,7 +522,7 @@ transFittingAdvUI <- function(id, label) {
 
 transChromosomeTable <- function(input, output, session, stringsAsFactors) {
   table <- reactive({
-    input$button_upd_table
+    input$button_upd_chrom_table
 
     isolate({
       chromosome <- input$trans_chromosome_select
@@ -504,15 +539,17 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
 
   # Output ----
   output$chromosome_table <- renderRHandsontable({
+    if (input$button_upd_chrom_table <= 0) return(NULL)
+
     hot <- table() %>%
       rhandsontable() %>%
       hot_cols(colWidths = 115) %>%
-      hot_col(col = 2, allowInvalid = TRUE)
+      hot_col(col = 2, allowInvalid = TRUE) %>%
+      hot_col(c(1), readOnly = TRUE)
       # hot_validate_character(cols = 2, choices = as.factor(input$trans_color_select))
 
-      # hot_col(c(1), readOnly = TRUE)
-
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+
     return(hot)
   })
 }
@@ -572,6 +609,10 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     # Create button dependency for updating dimensions
     input$button_upd_table
 
+    isolate({
+      fitting_select <- input$fitting_select
+    })
+
     if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
       return(previous())
@@ -598,6 +639,13 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
           X = as.integer(X),
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
         )
+
+      if (fitting_select == "full_gen_fit") {
+        mytable <- mytable %>%
+          mutate(
+            N = N * 0.43
+          )
+      }
 
       # Ugly method to calculate index of dispersion
       for (row in 1:num_rows) {
