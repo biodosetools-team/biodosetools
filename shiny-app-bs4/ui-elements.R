@@ -98,6 +98,12 @@ sidebar <- bs4DashMySidebar(
     bs4SidebarHeader("Dicentrics"),
 
     bs4SidebarMenuItem(
+      "Characteristic limits",
+      tabName = "tab-char-limits",
+      icon = "chart-area"
+    ),
+
+    bs4SidebarMenuItem(
       "Fitting",
       tabName = "tab-fitting-adv",
       icon = "cogs"
