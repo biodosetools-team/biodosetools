@@ -172,8 +172,6 @@ transFittingAdvUI <- function(id, label) {
             column(
               width = 12,
 
-              p("Work in progress..."),
-
               textOutput(ns("fraction"))
 
             )
@@ -568,9 +566,10 @@ transFractionToFullGenome <- function(input, output, session, stringsAsFactors) 
 
     isolate({
       dna_table <- data.table::fread("libs/dna-content-fractions.csv")
-      chromosome <-c(1, 2, 4, 3, 5, 6)
-      color <- c(rep("red", 3), rep("green", 3))
-      sex <- "male"
+      chromosome_table <- hot_to_r(input$chromosome_table)
+      chromosome <- chromosome_table[["Chromosome"]]
+      color <- chromosome_table[["Stain"]]
+      sex <- input$trans_sex
     })
 
     get_fraction <- function(dna_table, chromosome, color, sex) {
