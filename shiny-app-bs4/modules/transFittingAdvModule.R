@@ -62,18 +62,14 @@ transFittingAdvUI <- function(id, label) {
               multiple = TRUE
             ),
 
-            # div(
-              # class = "side-widget",
-              # style = "width: 150px;",
-              awesomeCheckboxGroup(
-                inputId = ns("trans_color_scheme"),
-                status = "warning",
-                label = "Color scheme",
-                choices = c(
-                  "Use M-Fish" = "m_fish"
-                )
-              ),
-            # ),
+            awesomeCheckboxGroup(
+              inputId = ns("trans_color_scheme"),
+              status = "warning",
+              label = "Color scheme",
+              choices = c(
+                "Use M-Fish" = "m_fish"
+              )
+            ),
 
             conditionalPanel(
               condition = "input.trans_color_scheme != 'm_fish'",
@@ -143,10 +139,10 @@ transFittingAdvUI <- function(id, label) {
         )
       ),
 
-      # Card: Chromosome-color table ----
       column(
         width = 6,
 
+        # Card: Chromosome-color table ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,
@@ -157,11 +153,16 @@ transFittingAdvUI <- function(id, label) {
               width = 12,
 
               rHandsontableOutput(outputId = ns("chromosome_table"))
+            ),
 
+            div(
+              style = "padding-left: 7.5px;",
+              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
             )
           )
         ),
 
+        # Card: Conversion factor to full genome ----
         bs4MyCard(
           width = 12,
           noPadding = TRUE,
@@ -171,7 +172,9 @@ transFittingAdvUI <- function(id, label) {
             column(
               width = 12,
 
-              p("Work in progress...")
+              p("Work in progress..."),
+
+              textOutput(ns("fraction"))
 
             )
           )
@@ -551,6 +554,72 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
 
     return(hot)
+  })
+}
+
+transFractionToFullGenome <- function(input, output, session, stringsAsFactors) {
+
+  # Calculate fraction ---------------------------------------
+
+  fraction <- reactive({
+
+    # Create button dependency for updating dimensions
+    input$button_calc_fraction
+
+    isolate({
+      dna_table <- data.table::fread("libs/dna-content-fractions.csv")
+      chromosome <-c(1, 2, 4, 3, 5, 6)
+      color <- c(rep("red", 3), rep("green", 3))
+      sex <- "male"
+    })
+
+    get_fraction <- function(dna_table, chromosome, color, sex) {
+      # Construct color/chromosome table
+      color_table <-
+        cbind(
+          color,
+          chromosome
+        ) %>%
+        as.data.frame() %>%
+        mutate(
+          chromosome = as.character(chromosome)
+        )
+
+      # Full table
+      full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
+        group_by(color) %>%
+        summarise(frac = sum(get(paste0("fraction_", sex))))
+
+      # Calculate first sum
+      single_sum <- full_table %>%
+        dplyr::select(frac) %>%
+        summarise(sum(frac * (1 - frac))) %>%
+        unname() %>%
+        unlist()
+
+      # Calculate second sum
+      if (nrow(full_table) >= 2) {
+        cross_sum <- full_table[["frac"]] %>%
+          combn(2) %>%
+          t() %>%
+          as.data.frame() %>%
+          summarise(sum(V1 * V2)) %>%
+          unname() %>%
+          unlist()
+      } else {
+        cross_sum <- 0
+      }
+
+      return(2 / 0.974 * (single_sum - cross_sum))
+    }
+
+    get_fraction(dna_table, chromosome, color, sex)
+  })
+
+  # Output ----
+  output$fraction <- renderPrint({
+    if (input$button_calc_fraction <= 0) return(NULL)
+    return(fraction())
   })
 }
 
