@@ -296,13 +296,13 @@ transFittingAdvUI <- function(id, label) {
             ),
             # Fitting model
             selectInput(
-              ns("fitting_select"),
-              label = "Type of fitting",
+              ns("frequency_select"),
+              label = "Translocation frequency",
               choices = list(
-                "Regular"     = "reg_fit",
-                "Full genome" = "full_gen_fit"
+                "Measured by FISH" = "measured_freq",
+                "Full genome"      = "full_gen_freq"
                 ),
-              selected = "reg_fit"
+              selected = "measured_freq"
             ),
             # Use dispersion factor
             awesomeCheckbox(
@@ -678,7 +678,7 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_table
 
     isolate({
-      fitting_select <- input$fitting_select
+      frequency_select <- input$frequency_select
     })
 
     if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
@@ -708,10 +708,10 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
         )
 
-      if (fitting_select == "full_gen_fit") {
+      if (frequency_select == "full_gen_freq") {
         mytable <- mytable %>%
           mutate(
-            N = N * 0.43
+            N = N / 0.43
           )
       }
 
