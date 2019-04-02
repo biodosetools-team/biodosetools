@@ -8,7 +8,7 @@ dna_table <- data.table::fread("shiny-app-bs4/libs/dna-content-fractions.csv")
 
 # Calculate fraction ---------------------------------------
 
-get_fraction <- function(dna_table, chromosome, color) {
+get_fraction <- function(dna_table, chromosome, color, sex) {
   # Construct color/chromosome table
   color_table <-
     cbind(
@@ -23,7 +23,7 @@ get_fraction <- function(dna_table, chromosome, color) {
   # Full table
   full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
     group_by(color) %>%
-    summarise(frac = sum(fraction_male))
+    summarise(frac = sum(get(paste0("fraction_", sex))))
 
   # Calculate first sum
   single_sum <- full_table %>%
@@ -51,20 +51,33 @@ get_fraction <- function(dna_table, chromosome, color) {
 
 # Test function --------------------------------------------
 
+# From Excel sheet
 get_fraction(
   dna_table,
   c(1, 4),
-  c("red", "green")
+  c("red", "green"),
+  "male"
 )
 
 get_fraction(
   dna_table,
   c(1, 4),
-  c("red", "red")
+  c("red", "red"),
+  "male"
 )
 
+# From IAEA
 get_fraction(
   dna_table,
   c(1, 2, 4, 3, 5, 6),
-  c(rep("red", 3), rep("green", 3))
+  c(rep("red", 3), rep("green", 3)),
+  "female"
 )
+
+get_fraction(
+  dna_table,
+  c(1, 2, 4),
+  c(rep("red", 3)),
+  "female"
+)
+
