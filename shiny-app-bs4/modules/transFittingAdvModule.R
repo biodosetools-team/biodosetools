@@ -154,9 +154,8 @@ transFittingAdvUI <- function(id, label) {
 
               rHandsontableOutput(outputId = ns("chromosome_table"))
             ),
-
             div(
-              style = "padding-left: 7.5px;",
+              style = "padding-left: 7.5px; padding-top: 23px;",
               actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
             )
           )
@@ -555,7 +554,7 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
-transFractionToFullGenome <- function(input, output, session, stringsAsFactors) {
+transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFactors) {
 
   # Calculate fraction ---------------------------------------
 
@@ -612,13 +611,25 @@ transFractionToFullGenome <- function(input, output, session, stringsAsFactors) 
       return(2 / 0.974 * (single_sum - cross_sum))
     }
 
-    get_fraction(dna_table, chromosome, color, sex)
+    return(get_fraction(dna_table, chromosome, color, sex))
   })
+
+  return(
+    list(frac = reactive(fraction()))
+  )
+}
+
+transFractionToFullGenome <- function(input, output, session, stringsAsFactors, fraction_value) {
+
+
+  # Retrieve fraction of translocations ----
+
+  value <- reactive(fraction_value$frac())
 
   # Output ----
   output$fraction <- renderPrint({
     if (input$button_calc_fraction <= 0) return(NULL)
-    return(fraction())
+    return(value())
   })
 }
 
@@ -679,6 +690,7 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       frequency_select <- input$frequency_select
+      # frac_to_full_genome <- input$
     })
 
     if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
