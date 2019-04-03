@@ -526,7 +526,6 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       chromosome <- input$trans_chromosome_select
-      # color <- input$trans_color_select
     })
 
     data <- data.frame(
@@ -566,10 +565,12 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
     isolate({
       dna_table <- data.table::fread("libs/dna-content-fractions.csv")
       chromosome_table <- hot_to_r(input$chromosome_table)
-      chromosome <- chromosome_table[["Chromosome"]]
+      chromosome <- chromosome_table[["Chromosome"]] %>% as.character()
       color <- chromosome_table[["Stain"]]
       sex <- input$trans_sex
     })
+
+
 
     get_fraction <- function(dna_table, chromosome, color, sex) {
       # Construct color/chromosome table
