@@ -19,10 +19,11 @@ server <- function(input, output) {
   callModule(module = fittingAdvResults, id = "adv_fitting")
 
   # Translocations ----
-  callModule(module = transFittingAdvHotTable, id = "trans_adv_fitting")
-  callModule(module = transChromosomeTable, id = "trans_adv_fitting")
   transFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_adv_fitting")
   callModule(module = transFractionToFullGenome, id = "trans_adv_fitting", fraction_value = transFraction)
+
+  callModule(module = transFittingAdvHotTable, id = "trans_adv_fitting", fraction_value = transFraction)
+  callModule(module = transChromosomeTable, id = "trans_adv_fitting")
   callModule(module = transFittingAdvResults, id = "trans_adv_fitting")
 
   # Estimate ----

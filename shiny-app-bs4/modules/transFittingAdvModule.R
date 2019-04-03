@@ -624,16 +624,16 @@ transFractionToFullGenome <- function(input, output, session, stringsAsFactors, 
 
   # Retrieve fraction of translocations ----
 
-  value <- reactive(fraction_value$frac())
+  fraction <- reactive(fraction_value$frac())
 
   # Output ----
   output$fraction <- renderPrint({
     if (input$button_calc_fraction <= 0) return(NULL)
-    return(value())
+    return(fraction())
   })
 }
 
-transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
+transFittingAdvHotTable <- function(input, output, session, stringsAsFactors, fraction_value) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -721,9 +721,12 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         )
 
       if (frequency_select == "full_gen_freq") {
+        # Get fraction of translocations from transFractionToFullGenomeCalc() module
+        fraction <- fraction_value$frac()
+
         mytable <- mytable %>%
           mutate(
-            N = N / 0.43
+            N = N / fraction
           )
       }
 
