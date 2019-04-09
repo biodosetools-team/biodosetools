@@ -5,8 +5,9 @@
 *.Rproj
 gof/
 src/
-0-modules
 tests/
+modules_src/
+0-modules
 help_template.R
 column_operations.R
 deploy_shinyapp.R
