@@ -24,7 +24,7 @@ navbar <- bs4DashMyNavbar(
       label = NULL,
       choices = c(
         "Dicentrics",
-        # "Micronuclei",
+        "Micronuclei",
         "Translocations"#,
         # "H2AX",
         # "Intercomparison Tests"
@@ -34,6 +34,13 @@ navbar <- bs4DashMyNavbar(
       selectize = TRUE
     )
   ),
+
+  # Bookmarking
+  div(
+    style = "margin-bottom: 3px; margin-left: 10px; ",
+    bookmarkButton()
+  ),
+
 
   # Right UI
   rightUi = NULL
@@ -124,7 +131,16 @@ sidebar <- bs4DashMySidebar(
     bs4SidebarHeader("Translocations"),
 
     bs4SidebarMenuItem(
-      "Fitting",
+      HTML(
+        paste(
+          "Fitting",
+          bs4Badge(
+            "in progress",
+            position = "right",
+            status = "danger"
+          )
+        )
+      ),
       tabName = "tab-trans-fitting-adv",
       icon = "paint-brush"
     ),

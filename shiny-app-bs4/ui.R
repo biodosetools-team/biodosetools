@@ -33,12 +33,14 @@ source("modules/transFittingAdvModule.R")
 
 source("ui-elements.R")
 
-ui <- bs4DashPage(
-  sidebar_collapsed = TRUE,
-  navbar = navbar,
-  sidebar = sidebar,
-  body = body,
-  controlbar = NULL,
-  footer = footer,
-  title = "Biodose Tools"
-)
+ui <- function() {
+  bs4DashPage(
+    sidebar_collapsed = TRUE,
+    navbar = navbar,
+    sidebar = sidebar,
+    body = body,
+    controlbar = NULL,
+    footer = footer,
+    title = "Biodose Tools"
+  )
+}
