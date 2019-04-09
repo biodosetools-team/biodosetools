@@ -1,20 +1,20 @@
 # Dose Estimateion Modules ------------------------------------------
 
-estimateUI <- function(id, label, locale = i18n) {
+estimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  tabItem(
+  bs4TabItem(
     tabName = label,
-    # h2("Dose estimation"),
-    h2(locale$t("Hello Shiny!")),
+    h2("Dose estimation"),
+    # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # box: Curve fitting options ----
-      box(
+      # Card: Curve fitting options ----
+      bs4MyCard(
         width = 5,
         title = "Curve fitting data options",
-        status = "warning", solidHeader = F, collapsible = T,
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
           column(
             width = 12,
@@ -28,64 +28,74 @@ estimateUI <- function(id, label, locale = i18n) {
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-              p("This part has not been implemented yet."),
+              p("This part has not been implemented yet.")
               # TODO: add fit data input widgets
-              # Help button
-              bsButton(
-                ns("help_fit_data_input"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_fit_data_input_dialog"),
-                title = "Help: Manual fit data input",
-                trigger = ns("help_fit_data_input"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_fit_data_input.md"))
-                # TODO: finish dialogue
-              )
             ),
             # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
               ns = ns,
-              fileInput(ns("load_fit_data"), label = "File input"),
-              # Help button
-              bsButton(
-                ns("help_fit_data_load"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_fit_data_load_dialog"),
-                title = "Help: Loading fit data",
-                trigger = ns("help_fit_data_load"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_fit_data_load.md"))
-                # TODO: finish dialogue
-              )
+              fileInput(ns("load_fit_data"), label = "File input")
             ),
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
+          )
+        ),
+
+        # Help button
+        topButton =
+          bsButton(
+            ns("help_fit_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+        # Help modal
+        bs4MyModal(
+          id = ns("help_fit_data_dialog"),
+          title = "Help: Fitting data input",
+          trigger = ns("help_fit_data"),
+          size = "large",
+
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_fit_data_option"),
+            label = NULL,
+            choices = c(
+              "Manual input" = "manual",
+              "Load data"    = "load"
+            )
+          ),
+          # Contents
+          conditionalPanel(
+            condition = "input.help_fit_data_option == 'manual'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fit_data_input.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_fit_data_option == 'load'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_fit_data_load.md"))
           )
         )
       ),
       # tabBox: Curve fitting overview ----
-      tabBox(
+      # tabBox(
+      bs4TabCard(
         width = 7,
         side = "left",
-        tabPanel(
-          title = "Result of curve fit",
+        # tabPanel(
+        bs4TabPanel(
+          # title = "Result of curve fit",
+          tabName = "Result of curve fit",
+          active = TRUE,
           # h4("Fit summary"),
           # verbatimTextOutput(ns("fit_results")),
           h4("Fit formula"),
@@ -93,10 +103,12 @@ estimateUI <- function(id, label, locale = i18n) {
           h4("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
-        tabPanel(
+        # tabPanel(
+        bs4TabPanel(
+          # title = "Summary statistics",
+          tabName = "Summary statistics",
           h4("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
-          title = "Summary statistics",
           h4("Correlation matrix"),
           rHandsontableOutput(ns("cor_mat")),
           h4("Variance-covariance matrix"),
@@ -106,11 +118,11 @@ estimateUI <- function(id, label, locale = i18n) {
     ),
 
     fluidRow(
-      # box: Data input options ----
-      box(
+      # Card: Data input options ----
+      bs4MyCard(
         width = 5,
         title = "Data input options",
-        status = "warning", solidHeader = F, collapsible = T,
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
           column(
             width = 12,
@@ -125,225 +137,294 @@ estimateUI <- function(id, label, locale = i18n) {
               condition = "!input.load_cases_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5),
-              # Help button
-              bsButton(
-                ns("help_cases_data_input"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_cases_data_input_dialog"),
-                title = "Help: Cases data input",
-                trigger = ns("help_cases_data_input"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_cases_data_input.md"))
-              )
+              numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
               condition = "input.load_cases_data_check",
               ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input"),
-              # Help button
-              bsButton(
-                ns("help_cases_data_load"),
-                class = "rightAlign",
-                label = "",
-                icon = icon("question"),
-                style = "default", size = "default"
-              ),
-              bsModal(
-                id = ns("help_cases_data_load_dialog"),
-                title = "Help: Loading cases data",
-                trigger = ns("help_cases_data_load"),
-                size = "large",
-                withMathJax(includeMarkdown("help/help_cases_data_load.md"))
-              )
+              fileInput(ns("load_cases_data"), label = "File input")
             ),
+            # Case description
+            textAreaInput(
+              inputId = ns("case_description"),
+              label = "Case description",
+              placeholder = "Short summary of the case"),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           ),
           # Tooltip
           bsTooltip(ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
-          )
-        )
-      ),
-      # hot: Cases input ----
-      box(
-        width = 7,
-        title = "Data input",
-        status = "primary", solidHeader = F, collapsible = T, collapsed = F,
-        rHandsontableOutput(ns("hotable"))
-      ),
-
-      # box: Estimation options ----
-      box(
-        width = 7,
-        title = "Dose estimation options",
-        status = "warning", solidHeader = F, collapsible = T, collapsed = F,
-
-        # Assessment selection
-        div(
-          class = "side-widget-tall",
-          selectInput(
-            ns("assessment_select"),
-            label = "Assessment",
-            # label = NULL,
-            width = "150px",
-            choices = list(
-              "Whole body" = "whole-body",
-              "Partial" = "partial",
-              "Heterogeneous" = "hetero"
-            ),
-            selected = "whole-body"
+                    "Note that previously introduced data will be deleted.",
+                    "bottom",
+                    options = list(container = "body")
           )
         ),
+
         # Help button
-        bsButton(
-          ns("help_dose_assessment"),
-          # class = "side-widget",
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ),
-        bsModal(
-          id = ns("help_dose_assessment_dialog"),
-          title = "Help: Assessment selection",
-          trigger = ns("help_dose_assessment"),
-          size = "large",
-          withMathJax(includeMarkdown("help/help_dose_assessment.md"))
-        ),
-        div(class = "widget-sep", br()),
-
-        # Curve method selection
-        div(
-          class = "side-widget-tall",
-          selectInput(
-            ns("curve_method_select"),
-            label = "Error calculation",
-            # label = NULL,
-            width = "150px",
-            choices = list(
-              "Merkle's method" = "merkle",
-              "Simple method" = "simple"
-            ),
-            selected = "merkle"
-          )
-        ),
-        # Help button
-        bsButton(
-          ns("help_dose_curve_method"),
-          # class = "side-widget",
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ),
-        bsModal(
-          id = ns("help_dose_curve_method_dialog"),
-          title = "Help: Assessment selection",
-          trigger = ns("help_dose_curve_method"),
-          size = "large",
-          withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
-        ),
-
-        # Coefficient conditional input
-        conditionalPanel(
-          condition = "input.assessment_select != 'whole-body'",
-          ns = ns,
-
-          br(),
-
-          # Coefficient input selection
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("fraction_coeff_select"),
-              label = "Survival coefficient",
-              width = "150px",
-              choices = list(
-                "D0" = "d0",
-                "Gamma" = "gamma"
-              ),
-              selected = "d0"
-            )
-          ),
-          # Help button
+        topButton =
           bsButton(
-            ns("help_fraction_coeff_select"),
-            # class = "side-widget-tall",
+            ns("help_cases_data"),
             label = "",
             icon = icon("question"),
             style = "default", size = "default"
           ),
-          bsModal(
-            id = ns("help_fraction_coeff_select_dialog"),
-            title = "Help: Coefficient for estimation of fraction of irradiated cells",
-            trigger = ns("help_fraction_coeff_select"),
-            size = "large",
-            withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
-          ),
 
+        # Help modal
+        bs4MyModal(
+          id = ns("help_cases_data_dialog"),
+          title = "Help: Cases data input",
+          trigger = ns("help_cases_data"),
+          size = "large",
+
+          # Option selection
+          radioGroupButtons(
+            inputId = ns("help_cases_data_option"),
+            label = NULL,
+            choices = c(
+              "Manual input" = "manual",
+              "Load data"    = "load"
+            )
+          ),
+          # Contents
+          conditionalPanel(
+            condition = "input.help_cases_data_option == 'manual'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_cases_data_input.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_cases_data_option == 'load'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_cases_data_load.md"))
+          )
+        )
+      ),
+      # Card: hot Cases input ----
+      column(
+        width = 7,
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Data input",
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          rHandsontableOutput(ns("hotable"))
+        ),
+
+        # Card: Estimation options ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Dose estimation options",
+          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          # Type of exposure selection
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("exposure_select"),
+              label = "Exposure",
+              # label = NULL,
+              width = "175px",
+              choices = list(
+                "Acute"      = "acute",
+                "Protracted" = "protracted"
+              ),
+              selected = "acute"
+            )
+          ),
           div(class = "widget-sep", br()),
 
+          # Assessment selection
           div(
-            class = "side-widget",
-            # Input gamma
-            conditionalPanel(
-              condition = "input.fraction_coeff_select == 'gamma'",
-              ns = ns,
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("gamma_coeff"), "Gamma",
-                  value = 0.3706479, step = 0.01
-                )
+            class = "side-widget-tall",
+            selectInput(
+              ns("assessment_select"),
+              label = "Assessment",
+              # label = NULL,
+              width = "175px",
+              choices = list(
+                "Whole body"    = "whole-body",
+                "Partial"       = "partial",
+                "Heterogeneous" = "hetero"
               ),
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("gamma_error"), "Error of gamma",
-                  value = 0.009164707, step = 0.0001
-                )
+              selected = "whole-body"
+            )
+          ),
+          div(class = "widget-sep", br()),
+
+          # Curve method selection
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("curve_method_select"),
+              label = "Error calculation",
+              # label = NULL,
+              width = "175px",
+              choices = list(
+                "Merkle's method" = "merkle",
+                "Simple method"   = "simple"
+              ),
+              selected = "merkle"
+            )
+          ),
+
+          # Protracted timing
+
+          conditionalPanel(
+            condition = "input.exposure_select == 'protracted'",
+            ns = ns,
+
+            br(),
+
+            # Irradiation time
+            div(
+              class = "side-widget-tall",
+              numericInput(
+                ns("protracted_time"),
+                label = "Irradiation time",
+                width = "175px",
+                value = 0.5,
+                step = 0.1,
+                min = 0
+              )
+            )
+          ),
+
+          # Coefficient conditional input
+          conditionalPanel(
+            condition = "input.assessment_select != 'whole-body'",
+            ns = ns,
+
+            br(),
+
+            # Coefficient input selection
+            div(
+              class = "side-widget-tall",
+              selectInput(
+                ns("fraction_coeff_select"),
+                label = "Survival coefficient",
+                width = "175px",
+                choices = list(
+                  "D0" = "d0",
+                  "Gamma" = "gamma"
+                ),
+                selected = "d0"
               )
             ),
-            # Input D0
-            conditionalPanel(
-              condition = "input.fraction_coeff_select == 'd0'",
-              ns = ns,
-              div(
-                class = "side-widget-tall",
-                numericInput(
-                  width = "150px",
-                  ns("d0_coeff"), "D0",
-                  value = 2.7, step = 0.01,
-                  min = 2.7, max = 3.5
+
+            div(class = "widget-sep", br()),
+
+            div(
+              class = "side-widget",
+              # Input gamma
+              conditionalPanel(
+                condition = "input.fraction_coeff_select == 'gamma'",
+                ns = ns,
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "175px",
+                    ns("gamma_coeff"), "Gamma",
+                    value = 0.3706479, step = 0.01
+                  )
+                ),
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "150px",
+                    ns("gamma_error"), "Error of gamma",
+                    value = 0.009164707, step = 0.0001
+                  )
+                )
+              ),
+              # Input D0
+              conditionalPanel(
+                condition = "input.fraction_coeff_select == 'd0'",
+                ns = ns,
+                div(
+                  class = "side-widget-tall",
+                  numericInput(
+                    width = "150px",
+                    ns("d0_coeff"), "D0",
+                    value = 2.7, step = 0.01,
+                    min = 2.7, max = 3.5
+                  )
                 )
               )
             )
+          ),
+
+          conditionalPanel(
+            condition = "input.assessment_select == 'whole-body'",
+            ns = ns,
+            br()
+          ),
+
+          conditionalPanel(
+            condition = "input.assessment_select != 'whole-body'",
+            ns = ns,
+            br()
+          ),
+
+          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose"),
+
+          # Help button
+          topButton =
+            bsButton(
+              ns("help_estimate_options"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_estimate_options_dialog"),
+            title = "Help: Dose estimation options",
+            trigger = ns("help_estimate_options"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_estimate_options_option"),
+              label = NULL,
+              choices = c(
+                "Assessment"           = "assess",
+                "Error calculation"    = "error",
+                "Survival coefficient" = "surv_coeff"
+              )
+
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'assess'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_assessment.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'error'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'surv_coeff'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
+            )
           )
 
-        ),
-
-        br(),
-        actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
+        )
       )
     ),
 
     fluidRow(
-      # box: Estimation results ----
+      # Card: Estimation results ----
       column(
         width = 6,
-        box(
+        bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Results",
-          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           h4("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
@@ -384,15 +465,84 @@ estimateUI <- function(id, label, locale = i18n) {
             h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
+        ),
+
+        # Card: Export data and results ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Save results",
+          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          # Case description
+          textAreaInput(
+            inputId = ns("results_comments"),
+            label = "Comments",
+            placeholder = "Comments to be included on report"),
+
+          # Download fit data & report
+          # downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
+          # div(
+          #   class = "side-widget-tall",
+          #   selectInput(
+          #     ns("save_fit_data_format"),
+          #     label = NULL,
+          #     width = "85px",
+          #     choices = list(".rds"),
+          #     selected = ".rds"
+          #   )
+          # ),
+          # Download report
+          # div(class = "widget-sep", br()),
+          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+
+          # Help button
+          topButton =
+            bsButton(
+              ns("help_fit_data_save"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+          # Help Modal
+          bs4MyModal(
+            id = ns("help_fit_data_save_dialog"),
+            title = "Help: Export results",
+            trigger = ns("help_fit_data_save"),
+            size = "large",
+
+            # Option selection
+            # radioGroupButtons(
+            #   inputId = ns("help_fit_data_save_option"),
+            #   label = NULL,
+            #   choices = c(
+            #     "Fitting results" = "data",
+            #     "Report"          = "report"
+            #   )
+            # ),
+            # Contents
+            # conditionalPanel(
+            #   condition = "input.help_fit_data_save_option == 'data'",
+            #   ns = ns,
+            #   withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+            # ),
+            # conditionalPanel(
+              # condition = "input.help_fit_data_save_option == 'report'",
+              # ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+            # )
+          )
+
         )
       ),
-      # box: Plot curves ----
+      # Card: Plot curves ----
       column(
         width = 6,
-        box(
+        bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Curve plot",
-          status = "success", solidHeader = F, collapsible = T, collapsed = F,
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
           # Plot
           plotOutput(ns("plot")),
           # Download plot
@@ -652,6 +802,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       # Fit data
       load_fit_data <- input$load_fit_data_check
       fit_data <- input$load_fit_data
+      exposure <- input$exposure_select
       assessment <- input$assessment_select
       curve_method <- input$curve_method_select
 
@@ -700,17 +851,34 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       }
     }
 
-    # Generalized curves
+    # Protracted variables ----
+    protracted_g_function <- function(time, time_0) {
+      x <- time / time_0
+      g <- (2 / x^2) * (x - 1 + exp(-x))
+      return(g)
+    }
+
+    if (exposure == "protracted") {
+      protracted_time <- input$protracted_time
+      protracted_life_time <- 2
+      protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
+    } else {
+      protracted_g_value <- 1
+    }
+
+    # Generalized curves ----
     yield_fun <- function(x) {
       general_fit_coeffs[[1]] +
         general_fit_coeffs[[2]] * x +
-        general_fit_coeffs[[3]] * x * x
+        general_fit_coeffs[[3]] * x * x * protracted_g_value
     }
 
     chisq_df <- nrow(fit_coeffs)
     R_factor <- sqrt(qchisq(.95, df = chisq_df))
+    # TODO: add option for 83
 
     yield_error_fun <- function(x) {
+      # TODO: How does the protracted function affect this function?
       sqrt(
         general_var_cov_mat[["x0", "x0"]] +
           general_var_cov_mat[["x1", "x1"]] * x * x +
@@ -720,7 +888,6 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
           2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
       )
     }
-
 
     # Projection functions ----
     project_yield_base <- function(yield) {
@@ -767,6 +934,8 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Calculate CI using Exact Poisson tests
       aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = 0.95)[["conf.int"]]
+      # TODO: add option for 83
+
       aberr_l <- aberr_row[1]
       aberr_u <- aberr_row[2]
 
@@ -846,6 +1015,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: heterogeneous dose estimation
     estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff) {
+      # TODO: How does the protracted function affect this whole calculation?
 
       # Get cases data
       # Data test is stored in vector y

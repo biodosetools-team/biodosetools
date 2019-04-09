@@ -7,7 +7,6 @@ gof/
 src/
 0-modules
 tests/
-shiny-i18n-examples/
-bs4dash-example/
+help_template.R
 column_operations.R
 deploy_shinyapp.R
