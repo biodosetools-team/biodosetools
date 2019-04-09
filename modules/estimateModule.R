@@ -268,7 +268,6 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           ),
 
           # Protracted timing
-
           conditionalPanel(
             condition = "input.exposure_select == 'protracted'",
             ns = ns,
@@ -280,11 +279,26 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               class = "side-widget-tall",
               numericInput(
                 ns("protracted_time"),
-                label = "Irradiation time",
+                label = "Irradiation time (h)",
                 width = "175px",
                 value = 0.5,
                 step = 0.1,
                 min = 0
+              )
+            ),
+            div(class = "widget-sep", br()),
+
+            # Rejoining time
+            div(
+              class = "side-widget-tall",
+              numericInput(
+                ns("protracted_life_time"),
+                label = "Rejoining time (h)",
+                width = "175px",
+                value = 2,
+                step = 0.1,
+                min = 2,
+                max = 5
               )
             )
           ),
@@ -860,7 +874,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     if (exposure == "protracted") {
       protracted_time <- input$protracted_time
-      protracted_life_time <- 2
+      protracted_life_time <- input$protracted_life_time
       protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
     } else {
       protracted_g_value <- 1
