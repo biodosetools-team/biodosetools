@@ -727,7 +727,7 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors, fr
 
         mytable <- mytable %>%
           mutate(
-            N = N / fraction
+            N = N * fraction
           )
       }
 
