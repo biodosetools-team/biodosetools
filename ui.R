@@ -8,18 +8,12 @@ library(shinyBS)
 library(bs4Dash)
 
 
-# Locales ----
-library(shiny.i18n)
+# Translations ---------------------------------------------
 
-source("global.R")
-
-# File with translations
-i18n <- Translator$new(translation_csvs_path = "translations")
-# Set language
-i18n$set_translation_language("it")
+source("translations/translations.R")
 
 
-# Modules ----
+# Modules --------------------------------------------------
 
 # Dicentrics
 source("modules/fittingModule.R")
