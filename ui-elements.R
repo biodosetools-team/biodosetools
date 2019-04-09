@@ -1,4 +1,5 @@
 # Theming --------------------------------------------------
+
 source("libs/theming.R", local = T)
 source("libs/widgets_functions.R", local = T)
 
@@ -175,9 +176,12 @@ home <- bs4TabItem(
   tabName = "home",
   h2("About this project", style = "margin-left: 10%;"),
   includeMarkdown("body.md"),
+
   # Buttons
   div(
     style = "margin-left: 10%;",
+
+    # GitHub icon
     actionButton(
       inputId = "github_link", label = "Source code",
       icon = icon("github"),
@@ -185,6 +189,8 @@ home <- bs4TabItem(
       onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
     ),
     div(class = "widget-sep", br()),
+
+    # Wiki/Documentation icon
     actionButton(
       inputId = "wiki_link", label = "Documentation",
       icon = icon("book"),
@@ -222,6 +228,6 @@ body <- bs4DashBody(
 # Footer ---------------------------------------------------
 
 footer <- bs4DashFooter(
-  copyrights = "Version 2.0.0-alpha",
+  copyrights = "Version 2019.04.09-beta",
   right_text = "2019"
 )
