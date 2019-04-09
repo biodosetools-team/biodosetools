@@ -736,8 +736,8 @@ fittingAdvResults <- function(input, output, session, stringsAsFactors) {
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
       tempReport <- file.path(tempdir(), "report.Rmd")
-      normReport <- file.path("report.Rmd")
-      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+      # normReport <- file.path("report.Rmd")
+      file.copy("reports/dicentrics-fitting-report.Rmd", tempReport, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
