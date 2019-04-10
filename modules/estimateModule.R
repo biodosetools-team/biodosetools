@@ -247,21 +247,49 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               selected = "whole-body"
             )
           ),
-          div(class = "widget-sep", br()),
+          # div(class = "widget-sep", br()),
 
           # Curve method selection
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("curve_method_select"),
-              label = "Error calculation",
-              width = "250px",
-              choices = list(
-                "Merkle's method (83%-83%)" = "merkle-83",
-                "Merkle's method (95%-95%)" = "merkle-95",
-                "Simple method"             = "simple"
-              ),
-              selected = "merkle-83"
+          conditionalPanel(
+            condition = "input.assessment_select != 'partial'",
+            ns = ns,
+
+            br(),
+
+            div(
+              class = "side-widget-tall",
+              selectInput(
+                ns("curve_method_select"),
+                label = "Error calculation",
+                width = "250px",
+                choices = list(
+                  "Merkle's method (83%-83%)" = "merkle-83",
+                  "Merkle's method (95%-95%)" = "merkle-95",
+                  "Simple method"             = "simple"
+                ),
+                selected = "merkle-83"
+              )
+            )
+          ),
+
+          # Partial method selection
+          conditionalPanel(
+            condition = "input.assessment_select == 'partial'",
+            ns = ns,
+
+            br(),
+
+            div(
+              class = "side-widget-tall",
+              selectInput(
+                ns("partial_method_select"),
+                label = "Calculation method",
+                width = "250px",
+                choices = list(
+                  "Dolphin" = "dolphin"
+                ),
+                selected = "dolphin"
+              )
             )
           ),
 
@@ -816,7 +844,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       fit_data <- input$load_fit_data
       exposure <- input$exposure_select
       assessment <- input$assessment_select
-      curve_method <- input$curve_method_select
+      # curve_method <- input$curve_method_select
 
       # Cases data
       cases_data <- hot_to_r(input$hotable)
@@ -832,6 +860,16 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
     })
+
+    # Get error/calculation method
+
+    if (assessment != "partial") {
+      curve_method <- input$curve_method_select
+    } else {
+      curve_method <- input$partial_method_select
+      # TODO: This variable is unused
+    }
+
 
     # Get fitting data ----
     if (load_fit_data) {
@@ -929,6 +967,9 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
     } else if (curve_method == "simple") {
       conf_int_curve <- 0 # This makes R_factor = 0
       conf_int_yield <- 0.95
+    } else {
+      conf_int_curve <- 0.83
+      conf_int_yield <- conf_int_curve
     }
 
     # Dose estimation functions ----
