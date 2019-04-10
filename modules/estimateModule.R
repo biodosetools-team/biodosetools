@@ -222,7 +222,6 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             selectInput(
               ns("exposure_select"),
               label = "Exposure",
-              # label = NULL,
               width = "175px",
               choices = list(
                 "Acute"      = "acute",
@@ -239,7 +238,6 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             selectInput(
               ns("assessment_select"),
               label = "Assessment",
-              # label = NULL,
               width = "175px",
               choices = list(
                 "Whole body"    = "whole-body",
@@ -257,13 +255,13 @@ estimateUI <- function(id, label) { #, locale = i18n) {
             selectInput(
               ns("curve_method_select"),
               label = "Error calculation",
-              # label = NULL,
-              width = "175px",
+              width = "250px",
               choices = list(
-                "Merkle's method" = "merkle",
-                "Simple method"   = "simple"
+                "Merkle's method (83%-83%)" = "merkle-83",
+                "Merkle's method (95%-95%)" = "merkle-95",
+                "Simple method"             = "simple"
               ),
-              selected = "merkle"
+              selected = "merkle-83"
             )
           ),
 
@@ -887,9 +885,11 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
         general_fit_coeffs[[3]] * x * x * protracted_g_value
     }
 
+    # R factor depeding on selected CI
     chisq_df <- nrow(fit_coeffs)
-    R_factor <- sqrt(qchisq(.95, df = chisq_df))
-    # TODO: add option for 83
+    R_factor <- function(conf_int = 0.95) {
+      sqrt(qchisq(conf_int, df = chisq_df))
+    }
 
     yield_error_fun <- function(x) {
       # TODO: How does the protracted function affect this function?
@@ -910,45 +910,34 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
       }, c(0.1, 30))$root
     }
 
-    if (curve_method == "merkle") {
-      project_yield_lower <- function(yield) {
-        uniroot(function(dose) {
-          yield_fun(dose) + R_factor * yield_error_fun(dose) - yield
-        }, c(0.1, 30))$root
-      }
+    project_yield_lower <- function(yield, conf_int) {
+      uniroot(function(dose) {
+        yield_fun(dose) + R_factor(conf_int) * yield_error_fun(dose) - yield
+      }, c(0.1, 30))$root
+    }
 
-      project_yield_upper <- function(yield) {
-        uniroot(function(dose) {
-          yield_fun(dose) - R_factor * yield_error_fun(dose) - yield
-        }, c(0.1, 30))$root
-      }
+    project_yield_upper <- function(yield, conf_int) {
+      uniroot(function(dose) {
+        yield_fun(dose) - R_factor(conf_int) * yield_error_fun(dose) - yield
+      }, c(0.1, 30))$root
+    }
+
+    # Select CI depending on selected method
+    if (grepl("merkle", curve_method, fixed = TRUE)) {
+      conf_int_curve <- paste0("0.", gsub("\\D", "", curve_method)) %>% as.numeric()
+      conf_int_yield <- conf_int_curve
     } else if (curve_method == "simple") {
-      project_yield_lower <- function(yield) {
-        uniroot(function(dose) {
-          yield_fun(dose) - yield
-        }, c(0.1, 30))$root
-      }
-
-      project_yield_upper <- function(yield) {
-        uniroot(function(dose) {
-          yield_fun(dose) - yield
-        }, c(0.1, 30))$root
-      }
+      conf_int_curve <- 0 # This makes R_factor = 0
+      conf_int_yield <- 0.95
     }
 
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(aberr, cell, y_obs) {
-      # Calculate CI using Gardner's table
-      # gardner_confidence_table <- data.table::fread("libs/gardner-confidence-table.csv")
-      # aberr_row <- gardner_confidence_table[which(gardner_confidence_table[["S"]] == round(aberr, 0)), ]
-      # aberr_l <- aberr_row[["Sl"]]
-      # aberr_u <- aberr_row[["Su"]]
+    estimate_whole_body <- function(aberr, cell, y_obs, conf_int_yield, conf_int_curve) {
 
       # Calculate CI using Exact Poisson tests
-      aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = 0.95)[["conf.int"]]
-      # TODO: add option for 83
+      aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
 
       aberr_l <- aberr_row[1]
       aberr_u <- aberr_row[2]
@@ -958,8 +947,8 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Calculate projections
       dose_b <- project_yield_base(yield_obs)
-      dose_l <- project_yield_lower(yield_l)
-      dose_u <- project_yield_upper(yield_u)
+      dose_l <- project_yield_lower(yield_l, conf_int_curve)
+      dose_u <- project_yield_upper(yield_u, conf_int_curve)
 
       # Whole-body estimation results
       est_doses <- data.frame(
@@ -992,8 +981,9 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Dose estimation
       dose_b <- project_yield_base(yield_b)
-      dose_l <- project_yield_lower(yield_l)
-      dose_u <- project_yield_upper(yield_u)
+      dose_l <- project_yield_lower(yield_l, 0.95)
+      dose_u <- project_yield_upper(yield_u, 0.95)
+      # TODO: This will become irrelevant once we use delta method
 
       # Partial estimation results
       est_doses <- data.frame(
@@ -1028,7 +1018,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: heterogeneous dose estimation
-    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff) {
+    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve) {
       # TODO: How does the protracted function affect this whole calculation?
 
       # Get cases data
@@ -1139,21 +1129,21 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Estimated received doses
       dose1 <- project_yield_base(yield1)
-      dose1_l <- project_yield_lower(yield1_l)
-      dose1_u <- project_yield_upper(yield1_u)
+      dose1_l <- project_yield_lower(yield1_l, conf_int_curve)
+      dose1_u <- project_yield_upper(yield1_u, conf_int_curve)
 
       if (yield2 <= 0.01) {
         dose2 <- 0
         dose2_l <- 0
-        dose2_u <- project_yield_upper(yield2_u)
+        dose2_u <- project_yield_upper(yield2_u, conf_int_curve)
       } else {
         dose2 <- project_yield_base(yield2)
         if (yield2_l > 0) {
-          dose2_l <- project_yield_lower(yield2_l)
+          dose2_l <- project_yield_lower(yield2_l, conf_int_curve)
         } else {
           dose2_l <- 0
         }
-        dose2_u <- project_yield_upper(yield2_u)
+        dose2_u <- project_yield_upper(yield2_u, conf_int_curve)
       }
 
       est_yields <- data.frame(
@@ -1238,13 +1228,18 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calculations ----
 
-    est_doses_whole <- estimate_whole_body(aberr, cell, y_obs)
+    # Calculate whole-body results
+    est_doses_whole <- estimate_whole_body(aberr, cell, y_obs, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
+      # Calculate partial results
       results_partial <- estimate_partial(aberr, cell, cases_data, fraction_coeff)
+      # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
     } else if (assessment == "hetero") {
-      results_hetero <- estimate_hetero(counts, fit_coeffs, var_cov_mat, fraction_coeff)
+      # Calculate heterogeneous result
+      results_hetero <- estimate_hetero(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve)
+      # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
       est_yields_hetero <- results_hetero[["est_yields"]]
       est_doses_hetero <- results_hetero[["est_doses"]]
@@ -1288,9 +1283,10 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
       mutate(
         yield = yield_fun(dose),
-        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
-        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+        yield_low = yield_fun(dose) - R_factor(0.83) * yield_error_fun(dose),
+        yield_upp = yield_fun(dose) + R_factor(0.83) * yield_error_fun(dose)
       )
+    # TODO: This should depend on the selected method
 
     # Make base plot
     gg_curve <- ggplot(plot_data / x0) +
