@@ -1,6 +1,6 @@
-# Dose Estimateion Modules ------------------------------------------
+# Dose Estimation Modules -------------------------------------------
 
-estimateUI <- function(id, label) { #, locale = i18n) {
+dicentEstimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -466,24 +466,24 @@ estimateUI <- function(id, label) { #, locale = i18n) {
           title = "Results",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          h4("Whole-body estimated dose"),
+          h6("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
 
           conditionalPanel(
             condition = "input.assessment_select == 'partial'",
             ns = ns,
-            h4("Dose recieved by the irradiated fraction"),
+            h5("Dose recieved by the irradiated fraction"),
             rHandsontableOutput(ns("est_doses_partial")),
-            h4("Initial fraction of irradiated cells"),
+            h5("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_partial"))
           ),
 
           conditionalPanel(
             condition = "input.assessment_select == 'hetero'",
             ns = ns,
-            h4("Observed fraction of irradiated cells and its yield"),
+            h5("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_mixing_prop_hetero")),
-            h4("Dose recieved by the irradiated fraction"),
+            h5("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
               rHandsontableOutput(ns("est_doses_hetero"))
@@ -502,7 +502,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
               withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
             ),
-            h4("Initial fraction of irradiated cells"),
+            h5("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
         ),
@@ -604,7 +604,7 @@ estimateUI <- function(id, label) { #, locale = i18n) {
 }
 
 
-estimateHotTable <- function(input, output, session, stringsAsFactors) {
+dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -730,7 +730,7 @@ estimateHotTable <- function(input, output, session, stringsAsFactors) {
 }
 
 
-estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
+dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({
@@ -833,7 +833,7 @@ estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 }
 
 
-estimateResults <- function(input, output, session, stringsAsFactors) {
+dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   data <- reactive({
     # Calcs: get variables ----
     input$button_estimate
@@ -985,6 +985,7 @@ estimateResults <- function(input, output, session, stringsAsFactors) {
 
       yield_l <- aberr_l / cell
       yield_u <- aberr_u / cell
+      # TODO: possible modification IAEA§9.7.3
 
       # Calculate projections
       dose_b <- project_yield_base(yield_obs)

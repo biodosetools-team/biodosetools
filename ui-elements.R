@@ -171,7 +171,7 @@ sidebar <- bs4DashMySidebar(
 
 # Body -----------------------------------------------------
 
-# Home screen
+# Home screen ----
 home <- bs4TabItem(
   tabName = "home",
   h2("About this project", style = "margin-left: 10%;"),
@@ -200,7 +200,7 @@ home <- bs4TabItem(
   )
 )
 
-# Body
+# Body object
 body <- bs4DashBody(
   html_tags,
 
@@ -212,15 +212,21 @@ body <- bs4DashBody(
     # Home page
     home,
 
+    # Dicentric Modules ----
+
     # Fitting
-    fittingUI(id = "fitting", label = "tab-fitting-simple"),
+    dicentFittingUI(id = "fitting", label = "tab-fitting-simple"),
+    # Advanced Fitting
+    dicentFittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
+    # Dose Estimation
+    dicentEstimateUI(id = "estimate", label = "tab-estimate"),# locale = i18n)
+
+    # Translocations Modules ----
 
     # Advanced Fitting
-    fittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
-    transFittingAdvUI(id = "trans_adv_fitting", label = "tab-trans-fitting-adv"),
+    transFittingAdvUI(id = "trans_adv_fitting", label = "tab-trans-fitting-adv")
 
-    # Dose Estimation
-    estimateUI(id = "estimate", label = "tab-estimate")# locale = i18n)
+    # Micronuclei Modules ----
   )
 )
 

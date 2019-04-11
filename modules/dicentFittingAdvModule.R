@@ -1,6 +1,6 @@
 # Advanced Fitting Modules ---------------------------------
 
-fittingAdvUI <- function(id, label) {
+dicentFittingAdvUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -334,7 +334,7 @@ fittingAdvUI <- function(id, label) {
 }
 
 
-fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
+dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -458,7 +458,7 @@ fittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
-fittingAdvTable <- function(input, output, session, stringsAsFactors) {
+dicentFittingAdvTable <- function(input, output, session, stringsAsFactors) {
   table <- reactive({
     input$button_fit
 
@@ -484,7 +484,7 @@ fittingAdvTable <- function(input, output, session, stringsAsFactors) {
 }
 
 
-fittingAdvResults <- function(input, output, session, stringsAsFactors) {
+dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({

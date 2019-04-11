@@ -10,25 +10,32 @@ library(ggplot2)
 
 server <- function(input, output) {
 
-  # Fitting ----
-  callModule(module = fittingTable, id = "fitting", reactive(input$button_fit))
-  callModule(module = fittingResults, id = "fitting", reactive(input$button_fit))
+  # Dicentrics Modules ----
 
-  # Advanced Fitting ----
-  callModule(module = fittingAdvHotTable, id = "adv_fitting")
-  callModule(module = fittingAdvResults, id = "adv_fitting")
+  # Fitting
+  callModule(module = dicentFittingTable, id = "fitting", reactive(input$button_fit))
+  callModule(module = dicentFittingResults, id = "fitting", reactive(input$button_fit))
 
-  # Translocations ----
-  transFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_adv_fitting")
+  # Advanced Fitting
+  callModule(module = dicentFittingAdvHotTable, id = "adv_fitting")
+  callModule(module = dicentFittingAdvResults, id = "adv_fitting")
+
+  # Dose Estimation
+  callModule(module = dicentEstimateHotTable, id = "estimate")
+  callModule(module = dicentEstimateFittingCurve, id = "estimate")
+  callModule(module = dicentEstimateResults, id = "estimate")
+
+  # Translocations Modules ----
+
+  # Advanced Fitting
+  transFraction <-
+    callModule(module = transFractionToFullGenomeCalc, id = "trans_adv_fitting")
   callModule(module = transFractionToFullGenome, id = "trans_adv_fitting", fraction_value = transFraction)
 
   callModule(module = transFittingAdvHotTable, id = "trans_adv_fitting", fraction_value = transFraction)
   callModule(module = transChromosomeTable, id = "trans_adv_fitting")
   callModule(module = transFittingAdvResults, id = "trans_adv_fitting")
 
-  # Estimate ----
-  callModule(module = estimateHotTable, id = "estimate")
-  callModule(module = estimateFittingCurve, id = "estimate")
-  callModule(module = estimateResults, id = "estimate")
+  # Micronuclei Modules ----
 
 }

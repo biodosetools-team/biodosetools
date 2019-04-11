@@ -1,6 +1,6 @@
 # Fitting Modules ------------------------------------------
 
-fittingUI <- function(id, label) {
+dicentFittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -90,7 +90,7 @@ fittingUI <- function(id, label) {
   )
 }
 
-fittingTable <- function(input, output, session, stringsAsFactors) {
+dicentFittingTable <- function(input, output, session, stringsAsFactors) {
   table <- reactive({
     input$button_fit
 
@@ -116,7 +116,7 @@ fittingTable <- function(input, output, session, stringsAsFactors) {
 }
 
 
-fittingResults <- function(input, output, session, stringsAsFactors) {
+dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({

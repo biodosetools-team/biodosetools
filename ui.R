@@ -16,9 +16,9 @@ source("translations/translations.R")
 # Modules --------------------------------------------------
 
 # Dicentrics
-source("modules/fittingModule.R")
-source("modules/fittingAdvModule.R")
-source("modules/estimateModule.R")
+source("modules/dicentFittingModule.R")
+source("modules/dicentFittingAdvModule.R")
+source("modules/dicentEstimateModule.R")
 
 # Translocations
 source("modules/transFittingAdvModule.R")
