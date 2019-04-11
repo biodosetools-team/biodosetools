@@ -105,8 +105,18 @@ sidebar <- bs4DashMySidebar(
 
     bs4SidebarHeader("Dicentrics"),
 
+
     bs4SidebarMenuItem(
-      "Characteristic limits",
+      HTML(
+        paste(
+          "Characteristic limits",
+          bs4Badge(
+            "in progress",
+            position = "right",
+            status = "danger"
+          )
+        )
+      ),
       tabName = "tab-char-limits",
       icon = "chart-area"
     ),
