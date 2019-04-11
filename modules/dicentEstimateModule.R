@@ -96,22 +96,22 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           # title = "Result of curve fit",
           tabName = "Result of curve fit",
           active = TRUE,
-          # h4("Fit summary"),
+          # h6("Fit summary"),
           # verbatimTextOutput(ns("fit_results")),
-          h4("Fit formula"),
+          h6("Fit formula"),
           verbatimTextOutput(ns("fit_formula")),
-          h4("Coefficients"),
+          h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
         # tabPanel(
         bs4TabPanel(
           # title = "Summary statistics",
           tabName = "Summary statistics",
-          h4("Model-level statistics"),
+          h6("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
-          h4("Correlation matrix"),
+          h6("Correlation matrix"),
           rHandsontableOutput(ns("cor_mat")),
-          h4("Variance-covariance matrix"),
+          h6("Variance-covariance matrix"),
           rHandsontableOutput(ns("var_cov_mat"))
         )
       )
@@ -471,18 +471,18 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           conditionalPanel(
             condition = "input.assessment_select == 'partial'",
             ns = ns,
-            h5("Dose recieved by the irradiated fraction"),
+            h6("Dose recieved by the irradiated fraction"),
             rHandsontableOutput(ns("est_doses_partial")),
-            h5("Initial fraction of irradiated cells"),
+            h6("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_partial"))
           ),
 
           conditionalPanel(
             condition = "input.assessment_select == 'hetero'",
             ns = ns,
-            h5("Observed fraction of irradiated cells and its yield"),
+            h6("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_mixing_prop_hetero")),
-            h5("Dose recieved by the irradiated fraction"),
+            h6("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
               rHandsontableOutput(ns("est_doses_hetero"))
@@ -501,7 +501,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
               withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
             ),
-            h5("Initial fraction of irradiated cells"),
+            h6("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
         ),

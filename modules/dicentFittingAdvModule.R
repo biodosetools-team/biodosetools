@@ -202,22 +202,22 @@ dicentFittingAdvUI <- function(id, label) {
         #     # title = "Result of curve fit",
         #     tabName = "Result of curve fit",
         #     active = TRUE,
-        #     # h4("Fit summary"),
+        #     # h6("Fit summary"),
         #     # verbatimTextOutput(ns("fit_results")),
-        #     h4("Fit formula"),
+        #     h6("Fit formula"),
         #     verbatimTextOutput(ns("fit_formula")),
-        #     h4("Coefficients"),
+        #     h6("Coefficients"),
         #     rHandsontableOutput(ns("fit_coeffs"))
         #   ),
         #   # tabPanel(
         #   bs4TabPanel(
         #     # title = "Summary statistics",
         #     tabName = "Summary statistics",
-        #     h4("Model-level statistics"),
+        #     h6("Model-level statistics"),
         #     rHandsontableOutput(ns("fit_statistics")),
-        #     h4("Correlation matrix"),
+        #     h6("Correlation matrix"),
         #     rHandsontableOutput(ns("cor_mat")),
-        #     h4("Variance-covariance matrix"),
+        #     h6("Variance-covariance matrix"),
         #     rHandsontableOutput(ns("var_cov_mat"))
         #   )
         # ),
@@ -226,20 +226,20 @@ dicentFittingAdvUI <- function(id, label) {
           side = "left",
           tabPanel(
             title = "Result of curve fit",
-            # h4("Fit summary"),
+            # h6("Fit summary"),
             # verbatimTextOutput(ns("fit_results")),
-            h4("Fit formula"),
+            h6("Fit formula"),
             verbatimTextOutput(ns("fit_formula")),
-            h4("Coefficients"),
+            h6("Coefficients"),
             rHandsontableOutput(ns("fit_coeffs"))
           ),
           tabPanel(
             title = "Summary statistics",
-            h4("Model-level statistics"),
+            h6("Model-level statistics"),
             rHandsontableOutput(ns("fit_statistics")),
-            h4("Correlation matrix"),
+            h6("Correlation matrix"),
             rHandsontableOutput(ns("cor_mat")),
-            h4("Variance-covariance matrix"),
+            h6("Variance-covariance matrix"),
             rHandsontableOutput(ns("var_cov_mat"))
           )
         ),
