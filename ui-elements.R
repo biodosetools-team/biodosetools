@@ -175,7 +175,7 @@ sidebar <- bs4DashMySidebar(
 home <- bs4TabItem(
   tabName = "home",
   h2("About this project", style = "margin-left: 10%;"),
-  includeMarkdown("body.md"),
+  includeMarkdown("www/body.md"),
 
   # Buttons
   div(
