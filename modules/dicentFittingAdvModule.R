@@ -33,7 +33,7 @@ dicentFittingAdvUI <- function(id, label) {
             conditionalPanel(
               condition = "input.load_count_data_check",
               ns = ns,
-              fileInput(ns("load_count_data"), label = "File input")
+              fileInput(ns("load_count_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")

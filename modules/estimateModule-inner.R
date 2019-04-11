@@ -1,6 +1,58 @@
-# Dose Estimation Modules -------------------------------------------
+# Dose Estimateion Modules ------------------------------------------
 
-dicentEstimateUI <- function(id, label) { #, locale = i18n) {
+dicCalcMethodUI <- function(id) {
+  ns <- NS(id)
+
+  fluidRow(
+    # Assessment selection
+    div(
+      class = "side-widget-tall",
+      uiOutput(ns("assessment_dynamic"))
+    ),
+    div(class = "widget-sep", br()),
+
+    # Curve method selection
+    div(
+      class = "side-widget-tall",
+      uiOutput(ns("method_dynamic"))
+    )
+  )
+}
+
+dicCalcMethod <- function(input, output, session) {
+  # Dynamic UI
+
+  output$assessment_dynamic <- renderUI({
+    selectInput(
+      session$ns("assessment_select"),
+      label = "Assessment",
+      width = "175px",
+      choices = list(
+        "Whole body"    = "whole-body",
+        "Partial"       = "partial",
+        "Heterogeneous" = "hetero"
+      ),
+      selected = "whole-body"
+    )
+  })
+
+  output$method_dynamic <- renderUI({
+    selectInput(
+      session$ns("curve_method_select"),
+      label = "Error calculation",
+      width = "250px",
+      choices = list(
+        "Merkle's method (83%-83%)" = "merkle-83",
+        "Merkle's method (95%-95%)" = "merkle-95",
+        "Simple method"             = "simple"
+      ),
+      selected = "merkle-83"
+    )
+  })
+}
+
+
+estimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -35,7 +87,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.load_fit_data_check",
               ns = ns,
-              fileInput(ns("load_fit_data"), label = "File input", accept = c(".rds"))
+              fileInput(ns("load_fit_data"), label = "File input")
             ),
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
@@ -142,7 +194,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.load_cases_data_check",
               ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
+              fileInput(ns("load_cases_data"), label = "File input")
             ),
             # Case description
             textAreaInput(
@@ -249,48 +301,25 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           ),
           div(class = "widget-sep", br()),
 
+          dicCalcMethodUI(ns("inner")),
+
           # Curve method selection
-          div(
-            style = "display: inline-block;",
-            conditionalPanel(
-              condition = "input.assessment_select != 'partial'",
-              ns = ns,
-
-              div(
-                class = "side-widget-tall",
-                selectInput(
-                  ns("curve_method_select"),
-                  label = "Error calculation",
-                  width = "250px",
-                  choices = list(
-                    "Merkle's method (83%-83%)" = "merkle-83",
-                    "Merkle's method (95%-95%)" = "merkle-95",
-                    "Simple method"             = "simple"
-                  ),
-                  selected = "merkle-83"
-                )
-              )
-            ),
-
-            # Partial method selection
-            conditionalPanel(
-              condition = "input.assessment_select == 'partial'",
-              ns = ns,
-
-              div(
-                class = "side-widget-tall",
-                selectInput(
-                  ns("partial_method_select"),
-                  label = "Calculation method",
-                  width = "250px",
-                  choices = list(
-                    "Dolphin" = "dolphin"
-                  ),
-                  selected = "dolphin"
-                )
-              )
-            )
-          ),
+          # div(
+          #   class = "side-widget-tall",
+          #   # selectInput(
+          #   #   ns("curve_method_select"),
+          #   #   label = "Error calculation",
+          #   #   width = "250px",
+          #   #   choices = list(
+          #   #     "Merkle's method (83%-83%)" = "merkle-83",
+          #   #     "Merkle's method (95%-95%)" = "merkle-95",
+          #   #     "Simple method"             = "simple"
+          #   #   ),
+          #   #   selected = "merkle-83"
+          #   # )
+          #   # uiOutput(ns("method_dynamic"))
+          #   dicCalcMethodUI(ns("inner"))
+          # ),
 
           # Protracted timing
           conditionalPanel(
@@ -465,24 +494,24 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           title = "Results",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          h6("Whole-body estimated dose"),
+          h4("Whole-body estimated dose"),
           rHandsontableOutput(ns("est_doses_whole")),
 
           conditionalPanel(
             condition = "input.assessment_select == 'partial'",
             ns = ns,
-            h5("Dose recieved by the irradiated fraction"),
+            h4("Dose recieved by the irradiated fraction"),
             rHandsontableOutput(ns("est_doses_partial")),
-            h5("Initial fraction of irradiated cells"),
+            h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_partial"))
           ),
 
           conditionalPanel(
             condition = "input.assessment_select == 'hetero'",
             ns = ns,
-            h5("Observed fraction of irradiated cells and its yield"),
+            h4("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_mixing_prop_hetero")),
-            h5("Dose recieved by the irradiated fraction"),
+            h4("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
               rHandsontableOutput(ns("est_doses_hetero"))
@@ -501,7 +530,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
               withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
             ),
-            h5("Initial fraction of irradiated cells"),
+            h4("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
         ),
@@ -603,7 +632,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 }
 
 
-dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
+estimateHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -729,7 +758,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 }
 
 
-dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors) {
+estimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
   # Calculations ----
   data <- reactive({
@@ -832,7 +861,9 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 }
 
 
-dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
+estimateResults <- function(input, output, session, stringsAsFactors) {
+  callModule(dicCalcMethod, "inner")
+
   data <- reactive({
     # Calcs: get variables ----
     input$button_estimate
@@ -843,7 +874,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       fit_data <- input$load_fit_data
       exposure <- input$exposure_select
       assessment <- input$assessment_select
-      # curve_method <- input$curve_method_select
+      curve_method <- input$`inner-curve_method_select`
 
       # Cases data
       cases_data <- hot_to_r(input$hotable)
@@ -859,16 +890,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
     })
-
-    # Get error/calculation method
-
-    if (assessment != "partial") {
-      curve_method <- input$curve_method_select
-    } else {
-      curve_method <- input$partial_method_select
-      # TODO: This variable is unused
-    }
-
 
     # Get fitting data ----
     if (load_fit_data) {
@@ -966,9 +987,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else if (curve_method == "simple") {
       conf_int_curve <- 0 # This makes R_factor = 0
       conf_int_yield <- 0.95
-    } else {
-      conf_int_curve <- 0.83
-      conf_int_yield <- conf_int_curve
     }
 
     # Dose estimation functions ----
@@ -984,7 +1002,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       yield_l <- aberr_l / cell
       yield_u <- aberr_u / cell
-      # TODO: possible modification IAEA§9.7.3
 
       # Calculate projections
       dose_b <- project_yield_base(yield_obs)
