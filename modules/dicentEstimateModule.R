@@ -247,48 +247,47 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               selected = "whole-body"
             )
           ),
-          # div(class = "widget-sep", br()),
+          div(class = "widget-sep", br()),
 
           # Curve method selection
-          conditionalPanel(
-            condition = "input.assessment_select != 'partial'",
-            ns = ns,
+          div(
+            style = "display: inline-block;",
+            conditionalPanel(
+              condition = "input.assessment_select != 'partial'",
+              ns = ns,
 
-            br(),
-
-            div(
-              class = "side-widget-tall",
-              selectInput(
-                ns("curve_method_select"),
-                label = "Error calculation",
-                width = "250px",
-                choices = list(
-                  "Merkle's method (83%-83%)" = "merkle-83",
-                  "Merkle's method (95%-95%)" = "merkle-95",
-                  "Simple method"             = "simple"
-                ),
-                selected = "merkle-83"
+              div(
+                class = "side-widget-tall",
+                selectInput(
+                  ns("curve_method_select"),
+                  label = "Error calculation",
+                  width = "250px",
+                  choices = list(
+                    "Merkle's method (83%-83%)" = "merkle-83",
+                    "Merkle's method (95%-95%)" = "merkle-95",
+                    "Simple method"             = "simple"
+                  ),
+                  selected = "merkle-83"
+                )
               )
-            )
-          ),
+            ),
 
-          # Partial method selection
-          conditionalPanel(
-            condition = "input.assessment_select == 'partial'",
-            ns = ns,
+            # Partial method selection
+            conditionalPanel(
+              condition = "input.assessment_select == 'partial'",
+              ns = ns,
 
-            br(),
-
-            div(
-              class = "side-widget-tall",
-              selectInput(
-                ns("partial_method_select"),
-                label = "Calculation method",
-                width = "250px",
-                choices = list(
-                  "Dolphin" = "dolphin"
-                ),
-                selected = "dolphin"
+              div(
+                class = "side-widget-tall",
+                selectInput(
+                  ns("partial_method_select"),
+                  label = "Calculation method",
+                  width = "250px",
+                  choices = list(
+                    "Dolphin" = "dolphin"
+                  ),
+                  selected = "dolphin"
+                )
               )
             )
           ),
