@@ -87,13 +87,13 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
         )
       ),
       # tabBox: Curve fitting overview ----
-      # tabBox(
       bs4TabCard(
+        id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        # tabPanel(
+        solidHeader = TRUE,
+        closable = FALSE,
         bs4TabPanel(
-          # title = "Result of curve fit",
           tabName = "Result of curve fit",
           active = TRUE,
           # h6("Fit summary"),
@@ -103,9 +103,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
-        # tabPanel(
         bs4TabPanel(
-          # title = "Summary statistics",
           tabName = "Summary statistics",
           h6("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
@@ -997,7 +995,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         dose  = c(dose_l, dose_b, dose_u)
       )
 
-      row.names(est_doses) <- c("lower", "base", "upper")
+      row.names(est_doses) <- c("lower", "estimate", "upper")
 
       # Return
       return(est_doses)
@@ -1192,14 +1190,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         yield2 = c(yield2_l, yield2, yield2_u)
       )
 
-      row.names(est_yields) <- c("lower", "base", "upper")
+      row.names(est_yields) <- c("lower", "estimate", "upper")
 
       est_doses <- data.frame(
         dose1 = c(dose1_l, dose1, dose1_u),
         dose2 = c(dose2_l, dose2, dose2_u)
       )
 
-      row.names(est_doses) <- c("lower", "base", "upper")
+      row.names(est_doses) <- c("lower", "estimate", "upper")
 
       frac <- function(g, f, mu1, mu2) {
         dose1 <- project_yield_base(mu1)
@@ -1296,21 +1294,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         dose =  c(est_doses_whole[["dose"]]),
         yield = c(est_doses_whole[["yield"]]),
         type =  c(rep("whole-body", 3)),
-        level = rep(c("lower", "base", "upper"), 1)
+        level = rep(c("lower", "estimate", "upper"), 1)
       )
     } else if (assessment == "partial") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
         yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
         type =  c(rep("whole-body", 3), rep("partial", 3)),
-        level = rep(c("lower", "base", "upper"), 2)
+        level = rep(c("lower", "estimate", "upper"), 2)
       )
     } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
         yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
         type =  c(rep("whole-body", 3), rep("heterogeneous X1", 3), rep("heterogeneous X2", 3)),
-        level = rep(c("lower", "base", "upper"), 3)
+        level = rep(c("lower", "estimate", "upper"), 3)
       )
     }
 
