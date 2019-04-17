@@ -49,13 +49,13 @@ dicentFittingUI <- function(id, label) {
       ),
 
       # Results tabBox ----
-      # tabBox: Fit results ----
       bs4TabCard(
+        id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        # tabPanel(
+        solidHeader = TRUE,
+        closable = FALSE,
         bs4TabPanel(
-          # title = "Result of curve fit",
           tabName = "Result of curve fit",
           active = TRUE,
           # h6("Fit summary"),
@@ -65,9 +65,7 @@ dicentFittingUI <- function(id, label) {
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
-        # tabPanel(
         bs4TabPanel(
-          # title = "Summary statistics",
           tabName = "Summary statistics",
           h6("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),

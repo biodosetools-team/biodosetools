@@ -194,55 +194,37 @@ dicentFittingAdvUI <- function(id, label) {
       column(
         width = 6,
         # tabBox: Fit results ----
-        # bs4TabCard(
-        #   width = 12,
-        #   side = "left",
-        #   # tabPanel(
-        #   bs4TabPanel(
-        #     # title = "Result of curve fit",
-        #     tabName = "Result of curve fit",
-        #     active = TRUE,
-        #     # h6("Fit summary"),
-        #     # verbatimTextOutput(ns("fit_results")),
-        #     h6("Fit formula"),
-        #     verbatimTextOutput(ns("fit_formula")),
-        #     h6("Coefficients"),
-        #     rHandsontableOutput(ns("fit_coeffs"))
-        #   ),
-        #   # tabPanel(
-        #   bs4TabPanel(
-        #     # title = "Summary statistics",
-        #     tabName = "Summary statistics",
-        #     h6("Model-level statistics"),
-        #     rHandsontableOutput(ns("fit_statistics")),
-        #     h6("Correlation matrix"),
-        #     rHandsontableOutput(ns("cor_mat")),
-        #     h6("Variance-covariance matrix"),
-        #     rHandsontableOutput(ns("var_cov_mat"))
-        #   )
-        # ),
-        tabBox(
-          width = 12,
-          side = "left",
-          tabPanel(
-            title = "Result of curve fit",
-            # h6("Fit summary"),
-            # verbatimTextOutput(ns("fit_results")),
-            h6("Fit formula"),
-            verbatimTextOutput(ns("fit_formula")),
-            h6("Coefficients"),
-            rHandsontableOutput(ns("fit_coeffs"))
-          ),
-          tabPanel(
-            title = "Summary statistics",
-            h6("Model-level statistics"),
-            rHandsontableOutput(ns("fit_statistics")),
-            h6("Correlation matrix"),
-            rHandsontableOutput(ns("cor_mat")),
-            h6("Variance-covariance matrix"),
-            rHandsontableOutput(ns("var_cov_mat"))
+        div(
+          # Ugly fix for inner fluidRow() padding
+          style = "margin-left: -7.5px; margin-right: -7.5px",
+          bs4TabCard(
+            id = ns("fit_results_tabs"),
+            width = 12,
+            side = "left",
+            solidHeader = TRUE,
+            closable = FALSE,
+            bs4TabPanel(
+              tabName = "Result of curve fit",
+              active = TRUE,
+              # h6("Fit summary"),
+              # verbatimTextOutput(ns("fit_results")),
+              h6("Fit formula"),
+              verbatimTextOutput(ns("fit_formula")),
+              h6("Coefficients"),
+              rHandsontableOutput(ns("fit_coeffs"))
+            ),
+            bs4TabPanel(
+              tabName = "Summary statistics",
+              h6("Model-level statistics"),
+              rHandsontableOutput(ns("fit_statistics")),
+              h6("Correlation matrix"),
+              rHandsontableOutput(ns("cor_mat")),
+              h6("Variance-covariance matrix"),
+              rHandsontableOutput(ns("var_cov_mat"))
+            )
           )
         ),
+
         # Card: Export data and results ----
         bs4MyCard(
           width = 12,
