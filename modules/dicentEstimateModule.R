@@ -939,7 +939,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Projection functions ----
-    project_yield_base <- function(yield) {
+    project_yield_estimate <- function(yield) {
       uniroot(function(dose) {
         yield_fun(dose) - yield
       }, c(0.1, 30))$root
@@ -977,22 +977,22 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Calculate CI using Exact Poisson tests
       aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
 
-      aberr_l <- aberr_row[1]
-      aberr_u <- aberr_row[2]
+      aberr_low <- aberr_row[1]
+      aberr_upp <- aberr_row[2]
 
-      yield_l <- aberr_l / cell
-      yield_u <- aberr_u / cell
+      yield_low <- aberr_low / cell
+      yield_upp <- aberr_upp / cell
       # TODO: possible modification IAEA§9.7.3
 
       # Calculate projections
-      dose_b <- project_yield_base(yield_obs)
-      dose_l <- project_yield_lower(yield_l, conf_int_curve)
-      dose_u <- project_yield_upper(yield_u, conf_int_curve)
+      dose_est <- project_yield_estimate(yield_obs)
+      dose_low <- project_yield_lower(yield_low, conf_int_curve)
+      dose_upp <- project_yield_upper(yield_upp, conf_int_curve)
 
       # Whole-body estimation results
       est_doses <- data.frame(
-        yield = c(yield_l, yield_obs, yield_u),
-        dose  = c(dose_l, dose_b, dose_u)
+        yield = c(yield_low, yield_obs, yield_upp),
+        dose  = c(dose_low, dose_est, dose_upp)
       )
 
       row.names(est_doses) <- c("lower", "estimate", "upper")
@@ -1007,27 +1007,27 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       cells_0 <- cases_data[["C0"]]
 
       # Yield calculation
-      yield_b <- uniroot(function(yield) {
+      yield_est <- uniroot(function(yield) {
         yield / (1 - exp(-yield)) - aberr / (cell - cells_0)
       }, c(0.00001, 5))$root
 
-      yield_b_var <-
-        (yield_b * (1 - exp(-yield_b))^2) /
-        ((cell - cells_0) * (1 - exp(-yield_b) - yield_b * exp(-yield_b)))
+      yield_est_var <-
+        (yield_est * (1 - exp(-yield_est))^2) /
+        ((cell - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
 
-      yield_l <- yield_b - 1.96 * sqrt(yield_b_var)
-      yield_u <- yield_b + 1.96 * sqrt(yield_b_var)
+      yield_low <- yield_est - 1.96 * sqrt(yield_est_var)
+      yield_upp <- yield_est + 1.96 * sqrt(yield_est_var)
 
       # Dose estimation
-      dose_b <- project_yield_base(yield_b)
-      dose_l <- project_yield_lower(yield_l, 0.95)
-      dose_u <- project_yield_upper(yield_u, 0.95)
+      dose_est <- project_yield_estimate(yield_est)
+      dose_low <- project_yield_lower(yield_low, 0.95)
+      dose_upp <- project_yield_upper(yield_upp, 0.95)
       # TODO: This will become irrelevant once we use delta method
 
       # Partial estimation results
       est_doses <- data.frame(
-        yield = c(yield_l, yield_b, yield_u),
-        dose = c(dose_l, dose_b, dose_u)
+        yield = c(yield_low, yield_est, yield_upp),
+        dose = c(dose_low, dose_est, dose_upp)
       )
 
       # Input of the parameter gamma and its variance
@@ -1038,8 +1038,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Irradiated fraction
-      f <- aberr / (cell * yield_b)
-      p <- exp(- dose_b * gamma)
+      f <- aberr / (cell * yield_est)
+      p <- exp(- dose_est * gamma)
 
       est_F <- (f / p) / (1 - f + f / p)
 
@@ -1112,14 +1112,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
 
       st <- solve(MLE$hessian)
-      yield1 <- MLE$par[2]
-      yield2 <- MLE$par[3]
-      f1 <- MLE$par[1]
+      yield1_est <- MLE$par[2]
+      yield2_est <- MLE$par[3]
+      frac1 <- MLE$par[1]
 
-      if (yield1 < yield2) {
-        yield1 <- MLE$par[3]
-        yield2 <- MLE$par[2]
-        f1 <- 1 - f1
+      if (yield1_est < yield2_est) {
+        yield1_est <- MLE$par[3]
+        yield2_est <- MLE$par[2]
+        frac1 <- 1 - frac1
         stm <- st
         stm[2, 2] <- st[3, 3]
         stm[3, 3] <- st[2, 2]
@@ -1144,81 +1144,81 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Estimated parameters and its standard errors
       # First parameter is the mixing proportion
       # the second and third parameters are the yields
-      estim <- c(f1, yield1, yield2)
+      estim <- c(frac1, yield1_est, yield2_est)
       std_estim <- sqrt(diag(st))
 
-      yield1_l <- yield1 - std_estim[2]
-      yield1_u <- yield1 + std_estim[2]
-      yield2_l <- yield2 - std_estim[3]
-      yield2_u <- yield2 + std_estim[3]
+      yield1_low <- yield1_est - std_estim[2]
+      yield1_upp <- yield1_est + std_estim[2]
+      yield2_low <- yield2_est - std_estim[3]
+      yield2_upp <- yield2_est + std_estim[3]
 
       # Fix negative yields
-      if (yield2_l <= 0) {
-        yield2_l <- 0
+      if (yield2_low <= 0) {
+        yield2_low <- 0
       }
 
       est_mixing_prop <- data.frame(
         y_estimate = c(estim[2], estim[3]),
-        y_std_err = c(std_estim[2], std_estim[3]),
+        y_std_err =  c(std_estim[2], std_estim[3]),
         f_estimate = c(estim[1], 1 - estim[1]),
-        f_std_err = rep(std_estim[1], 2)
+        f_std_err =  rep(std_estim[1], 2)
       )
 
       row.names(est_mixing_prop) <- c("x1", "x2")
 
       # Estimated received doses
-      dose1 <- project_yield_base(yield1)
-      dose1_l <- project_yield_lower(yield1_l, conf_int_curve)
-      dose1_u <- project_yield_upper(yield1_u, conf_int_curve)
+      dose1_est <- project_yield_estimate(yield1_est)
+      dose1_low <- project_yield_lower(yield1_low, conf_int_curve)
+      dose1_upp <- project_yield_upper(yield1_upp, conf_int_curve)
 
-      if (yield2 <= 0.01) {
-        dose2 <- 0
-        dose2_l <- 0
-        dose2_u <- project_yield_upper(yield2_u, conf_int_curve)
+      if (yield2_est <= 0.01) {
+        dose2_est <- 0
+        dose2_low <- 0
+        dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
       } else {
-        dose2 <- project_yield_base(yield2)
-        if (yield2_l > 0) {
-          dose2_l <- project_yield_lower(yield2_l, conf_int_curve)
+        dose2_est <- project_yield_estimate(yield2_est)
+        if (yield2_low > 0) {
+          dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
         } else {
-          dose2_l <- 0
+          dose2_low <- 0
         }
-        dose2_u <- project_yield_upper(yield2_u, conf_int_curve)
+        dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
       }
 
       est_yields <- data.frame(
-        yield1 = c(yield1_l, yield1, yield1_u),
-        yield2 = c(yield2_l, yield2, yield2_u)
+        yield1 = c(yield1_low, yield1_est, yield1_upp),
+        yield2 = c(yield2_low, yield2_est, yield2_upp)
       )
 
       row.names(est_yields) <- c("lower", "estimate", "upper")
 
       est_doses <- data.frame(
-        dose1 = c(dose1_l, dose1, dose1_u),
-        dose2 = c(dose2_l, dose2, dose2_u)
+        dose1 = c(dose1_low, dose1_est, dose1_upp),
+        dose2 = c(dose2_low, dose2_est, dose2_upp)
       )
 
       row.names(est_doses) <- c("lower", "estimate", "upper")
 
       frac <- function(g, f, mu1, mu2) {
-        dose1 <- project_yield_base(mu1)
+        dose1_est <- project_yield_estimate(mu1)
 
         if (mu2 <= 0.01) {
-          dose2 <- 0
+          dose2_est <- 0
         } else {
-          dose2 <- project_yield_base(mu2)
+          dose2_est <- project_yield_estimate(mu2)
         }
 
-        frac <- f / (f + (1 - f) * exp(g * (dose2 - dose1)))
+        frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
 
         return(frac)
       }
 
       # Estimated fraction of irradiated blood for dose dose1
-      est_F1 <- frac(gamma, f1, yield1, yield2)
+      est_F1 <- frac(gamma, frac1, yield1_est, yield2_est)
       est_F2 <- 1 - est_F1
 
       # Approximated standard error
-      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((dose2 - dose1)^2 * sigma[4, 4] + st[1, 1] / (f1^2 * (1 - f1)^2))
+      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
 
       est_frac <- data.frame(
         estimate = c(est_F1, est_F2),
@@ -1230,25 +1230,25 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # WIP: This is not requiered yet
       # Gradient
       # h <- 0.000001
-      # if (yield2 > 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, yield1, yield2) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, yield1, yield2) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, yield1, yield2) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, yield1, yield2) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, yield1, yield2) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, yield1 + h, yield2) - F) / h
-      #   c8 <- (frac(beta0, beta1, beta2, gamma, f1, yield1, yield2 + h) - F) / h
+      # if (yield2_est > 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+      #   c8 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est, yield2_est + h) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
       #   sqrt(t(grad) %*% sigma %*% grad)
       # }
       #
-      # if (yield2 <= 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, f1, yield1, yield2) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, f1, yield1, yield2) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, f1, yield1, yield2) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, f1, yield1, yield2) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, f1 + h, yield1, yield2) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, f1, yield1 + h, yield2) - F) / h
+      # if (yield2_est <= 0.01) {
+      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (frac(beta0, beta1, beta2, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (frac(beta0, beta1, beta2, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est + h, yield2_est) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7)
       #   sigma2 <- sigma[1:6, 1:6]
       #   sqrt(t(grad) %*% sigma2 %*% grad)
