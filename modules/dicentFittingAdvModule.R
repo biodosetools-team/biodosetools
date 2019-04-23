@@ -524,15 +524,20 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Summarise fit
     fit_summary <- summary(fit_results, correlation = TRUE)
     cor_mat <- fit_summary$correlation
-    fit_coeffs <- fit_summary$coefficients
     var_cov_mat <- vcov(fit_results)
+    # fit_coeffs <- fit_summary$coefficients
+    fit_coeffs <- broom::tidy(fit_results) %>%
+      select(-statistic) %>%
+      column_to_rownames(var = "term")
+    # rownames(fit_coeffs) <- fit_coeffs[["term"]]
+
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
     names(general_fit_coeffs) <- c("x0", "x1", "x2")
 
     for (var in rownames(fit_coeffs)) {
-      general_fit_coeffs[var] <- fit_coeffs[var, "Estimate"]
+      general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
     }
 
     # Generalized fit coefficients
