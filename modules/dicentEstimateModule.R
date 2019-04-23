@@ -464,13 +464,21 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           h6("Whole-body estimated dose"),
+          rHandsontableOutput(ns("est_yields_whole")),
+          br(),
           rHandsontableOutput(ns("est_doses_whole")),
 
           conditionalPanel(
             condition = "input.assessment_select == 'partial'",
             ns = ns,
+
+            br(),
             h6("Dose recieved by the irradiated fraction"),
+            rHandsontableOutput(ns("est_yields_partial")),
+            br(),
             rHandsontableOutput(ns("est_doses_partial")),
+
+            br(),
             h6("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_partial"))
           ),
@@ -478,11 +486,17 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           conditionalPanel(
             condition = "input.assessment_select == 'hetero'",
             ns = ns,
+
+            br(),
             h6("Observed fraction of irradiated cells and its yield"),
             rHandsontableOutput(ns("est_mixing_prop_hetero")),
+
+            br(),
             h6("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
+              rHandsontableOutput(ns("est_yields_hetero")),
+              br(),
               rHandsontableOutput(ns("est_doses_hetero"))
             ),
             bsButton(
@@ -499,6 +513,9 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
               withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
             ),
+            # TODO: Move this to the card help button
+
+            br(),
             h6("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
@@ -1039,6 +1056,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         dose = c(dose_low, dose_est, dose_upp)
       )
 
+      row.names(est_doses) <- c("lower", "estimate", "upper")
+
       # Input of the parameter gamma and its variance
       if (fraction_coeff == "gamma") {
         gamma <- input$gamma_coeff
@@ -1173,7 +1192,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         f_std_err =  rep(std_estim[1], 2)
       )
 
-      row.names(est_mixing_prop) <- c("x1", "x2")
+      row.names(est_mixing_prop) <- c("dose1", "dose2")
 
       # Estimated received doses
       dose1_est <- project_yield_estimate(yield1_est)
@@ -1234,7 +1253,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         std_err = rep(std_err_F1, 2)
       )
 
-      row.names(est_frac) <- c("x1", "x2")
+      row.names(est_frac) <- c("dose1", "dose2")
 
       # WIP: This is not requiered yet
       # Gradient
@@ -1379,6 +1398,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         assessment = assessment,
         est_doses_whole = est_doses_whole,
         est_mixing_prop_hetero = est_mixing_prop_hetero,
+        est_yields_hetero = est_yields_hetero,
         est_doses_hetero = est_doses_hetero,
         est_frac_hetero = est_frac_hetero,
         gg_curve = gg_curve
@@ -1389,10 +1409,37 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   # Results outputs ----
+  output$est_yields_whole <- renderRHandsontable({
+    # Estimated recieved doses (whole-body)
+    if (input$button_estimate <= 0) return(NULL)
+    data()[["est_doses_whole"]] %>%
+      dplyr::select(yield) %>%
+      t() %>%
+      as.data.frame() %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
   output$est_doses_whole <- renderRHandsontable({
     # Estimated recieved doses (whole-body)
     if (input$button_estimate <= 0) return(NULL)
     data()[["est_doses_whole"]] %>%
+      dplyr::select(dose) %>%
+      t() %>%
+      as.data.frame() %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  output$est_yields_partial <- renderRHandsontable({
+    # Estimated recieved doses (partial)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    data()[["est_doses_partial"]] %>%
+      dplyr::select(yield) %>%
+      t() %>%
+      as.data.frame() %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1402,6 +1449,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Estimated recieved doses (partial)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
     data()[["est_doses_partial"]] %>%
+      dplyr::select(dose) %>%
+      t() %>%
+      as.data.frame() %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1425,10 +1475,23 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(format = "0.000")
   })
 
+  output$est_yields_hetero <- renderRHandsontable({
+    # Estimated recieved doses (heterogeneous)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    data()[["est_yields_hetero"]] %>%
+      t() %>%
+      as.data.frame() %>%
+      rhandsontable() %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
   output$est_doses_hetero <- renderRHandsontable({
     # Estimated recieved doses (heterogeneous)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_doses_hetero"]] %>%
+      t() %>%
+      as.data.frame() %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
