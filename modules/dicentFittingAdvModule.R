@@ -210,6 +210,8 @@ dicentFittingAdvUI <- function(id, label) {
               # verbatimTextOutput(ns("fit_results")),
               h6("Fit formula"),
               verbatimTextOutput(ns("fit_formula")),
+
+              br(),
               h6("Coefficients"),
               rHandsontableOutput(ns("fit_coeffs"))
             ),
@@ -217,8 +219,12 @@ dicentFittingAdvUI <- function(id, label) {
               tabName = "Summary statistics",
               h6("Model-level statistics"),
               rHandsontableOutput(ns("fit_statistics")),
+
+              br(),
               h6("Correlation matrix"),
               rHandsontableOutput(ns("cor_mat")),
+
+              br(),
               h6("Variance-covariance matrix"),
               rHandsontableOutput(ns("var_cov_mat"))
             )
@@ -486,10 +492,10 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     })
 
     # Construct predictors and model data
-    x0 <- cell
-    x1 <- cell * dose
-    x2 <- cell * dose * dose
-    model_data <- list(x0, x1, x2, aberr)
+    C <- cell
+    α <- cell * dose
+    β <- cell * dose * dose
+    model_data <- list(C, α, β, aberr)
 
     # Weight selection
     if (disp_select) {
@@ -500,15 +506,15 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Select model formula
     if (model_formula == "lin-quad") {
-      fit_formula <- as.formula("aberr ~ -1 + x0 + x1 + x2")
+      fit_formula <- as.formula("aberr ~ -1 + C + α + β")
     } else if (model_formula == "lin") {
-      fit_formula <- as.formula("aberr ~ -1 + x0 + x1")
+      fit_formula <- as.formula("aberr ~ -1 + C + α")
     }
     else if (model_formula == "lin-quad-no-int") {
-      fit_formula <- as.formula("aberr ~ -1 + x1 + x2")
+      fit_formula <- as.formula("aberr ~ -1 + α + β")
     }
     else if (model_formula == "lin-no-int") {
-      fit_formula <- as.formula("aberr ~ -1 + x1")
+      fit_formula <- as.formula("aberr ~ -1 + α")
     }
 
     fit_link <- "identity"
@@ -534,7 +540,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+    names(general_fit_coeffs) <- c("C", "α", "β")
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -542,8 +548,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Generalized fit coefficients
     general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
-    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    rownames(general_var_cov_mat) <- c("C", "α", "β")
+    colnames(general_var_cov_mat) <- c("C", "α", "β")
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
@@ -563,19 +569,19 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     yield_error_fun <- function(x) {
       sqrt(
-        general_var_cov_mat[["x0", "x0"]] +
-          general_var_cov_mat[["x1", "x1"]] * x * x +
-          general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
-          2 * general_var_cov_mat[["x0", "x1"]] * x +
-          2 * general_var_cov_mat[["x0", "x2"]] * x * x +
-          2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+        general_var_cov_mat[["C", "C"]] +
+          general_var_cov_mat[["α", "α"]] * x * x +
+          general_var_cov_mat[["β", "β"]] * x * x * x * x +
+          2 * general_var_cov_mat[["C", "α"]] * x +
+          2 * general_var_cov_mat[["C", "β"]] * x * x +
+          2 * general_var_cov_mat[["α", "β"]] * x * x * x
       )
     }
 
     # Plot data
     plot_data <- broom::augment(fit_results)
 
-    curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
+    curves_data <- data.frame(dose = seq(0, max(α / C), length.out = 100)) %>%
       mutate(
         yield = yield_fun(dose),
         yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
@@ -583,12 +589,12 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       )
 
     # Make plot
-    gg_curve <- ggplot(plot_data / x0) +
+    gg_curve <- ggplot(plot_data / C) +
       # Observed data
-      geom_point(aes(x = x1, y = aberr)) +
+      geom_point(aes(x = α, y = aberr)) +
       # Fitted curve
       stat_function(
-        data = data.frame(x = c(0, max(x1 / x0))),
+        data = data.frame(x = c(0, max(α / C))),
         mapping = aes(x),
         fun = function(x) yield_fun(x),
         linetype = "dashed"
@@ -647,7 +653,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
+      hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.0000000")
   })
 
@@ -656,7 +662,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
+      hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
 

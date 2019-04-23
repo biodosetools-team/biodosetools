@@ -100,6 +100,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           # verbatimTextOutput(ns("fit_results")),
           h6("Fit formula"),
           verbatimTextOutput(ns("fit_formula")),
+
+          br(),
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
@@ -107,8 +109,12 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           tabName = "Summary statistics",
           h6("Model-level statistics"),
           rHandsontableOutput(ns("fit_statistics")),
+
+          br(),
           h6("Correlation matrix"),
           rHandsontableOutput(ns("cor_mat")),
+
+          br(),
           h6("Variance-covariance matrix"),
           rHandsontableOutput(ns("var_cov_mat"))
         )
@@ -771,7 +777,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+    names(general_fit_coeffs) <- c("C", "α", "β")
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -779,8 +785,8 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 
     # Generalized fit coefficients
     general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
-    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    rownames(general_var_cov_mat) <- c("C", "α", "β")
+    colnames(general_var_cov_mat) <- c("C", "α", "β")
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
@@ -836,7 +842,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
+      hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.0000000")
   })
 
@@ -845,7 +851,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
+      hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
 }
@@ -907,7 +913,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("x0", "x1", "x2")
+    names(general_fit_coeffs) <- c("C", "α", "β")
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -915,8 +921,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Generalized fit coefficients
     general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("x0", "x1", "x2")
-    colnames(general_var_cov_mat) <- c("x0", "x1", "x2")
+    rownames(general_var_cov_mat) <- c("C", "α", "β")
+    colnames(general_var_cov_mat) <- c("C", "α", "β")
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
@@ -955,12 +961,12 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     yield_error_fun <- function(x) {
       # TODO: How does the protracted function affect this function?
       sqrt(
-        general_var_cov_mat[["x0", "x0"]] +
-          general_var_cov_mat[["x1", "x1"]] * x * x +
-          general_var_cov_mat[["x2", "x2"]] * x * x * x * x +
-          2 * general_var_cov_mat[["x0", "x1"]] * x +
-          2 * general_var_cov_mat[["x0", "x2"]] * x * x +
-          2 * general_var_cov_mat[["x1", "x2"]] * x * x * x
+        general_var_cov_mat[["C", "C"]] +
+          general_var_cov_mat[["α", "α"]] * x * x +
+          general_var_cov_mat[["β", "β"]] * x * x * x * x +
+          2 * general_var_cov_mat[["C", "α"]] * x +
+          2 * general_var_cov_mat[["C", "β"]] * x * x +
+          2 * general_var_cov_mat[["α", "β"]] * x * x * x
       )
     }
 
@@ -1344,8 +1350,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Data set from fit
     plot_data <- broom::augment(fit_results)
-    x0 <- fit_results$data[[1]]
-    x1 <- fit_results$data[[2]]
+    C <- fit_results$data[[1]]
+    α <- fit_results$data[[2]]
 
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
       mutate(
@@ -1356,7 +1362,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # TODO: This should depend on the selected method
 
     # Make base plot
-    gg_curve <- ggplot(plot_data / x0) +
+    gg_curve <- ggplot(plot_data / C) +
       # Fitted curve
       stat_function(
         data = data.frame(x = c(0, max_dose)),
