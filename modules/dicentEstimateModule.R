@@ -99,9 +99,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           # h6("Fit summary"),
           # verbatimTextOutput(ns("fit_results")),
           h6("Fit formula"),
-          verbatimTextOutput(ns("fit_formula")),
+          # verbatimTextOutput(ns("fit_formula")),
+          uiOutput(ns("fit_formula_tex")),
 
-          br(),
+          # br(),
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
@@ -775,6 +776,21 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
       tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
+    # Parse model formula
+    fit_formula <- fit_results$formula
+
+    if (fit_formula == as.formula("aberr ~ -1 + C + α + β")) {
+      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+    } else if (fit_formula == as.formula("aberr ~ -1 + C + α")) {
+      fit_formula_tex <- "Y = C + \\alpha D"
+    }
+    else if (fit_formula == as.formula("aberr ~ -1 + α + β")) {
+      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+    }
+    else if (fit_formula == as.formula("aberr ~ -1 + α")) {
+      fit_formula_tex <- "Y = \\alpha D"
+    }
+
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
     names(general_fit_coeffs) <- c("C", "α", "β")
@@ -796,10 +812,11 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 
     # Make list of results to return
     results_list <- list(
-      fit_results = fit_results,
-      fit_coeffs = fit_coeffs,
-      var_cov_mat = var_cov_mat,
-      cor_mat = cor_mat
+      fit_results     = fit_results,
+      fit_coeffs      = fit_coeffs,
+      var_cov_mat     = var_cov_mat,
+      cor_mat         = cor_mat,
+      fit_formula_tex = fit_formula_tex
     )
 
     return(results_list)
@@ -817,6 +834,12 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_results"]]$formula
     # TODO: transform this into LaTeX output?
+  })
+
+  output$fit_formula_tex <- renderUI({
+    # Fitting formula
+    if (input$button_view_fit_data <= 0) return(NULL)
+    withMathJax(paste0("$$", data()[["fit_formula_tex"]],"$$"))
   })
 
   output$fit_statistics <- renderRHandsontable({
@@ -909,7 +932,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
-
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
