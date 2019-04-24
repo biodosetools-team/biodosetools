@@ -659,7 +659,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
       colnames(full_data) <- paste0("C", seq(0, num_dicentrics - 1, 1))
     } else {
       full_data <- read.csv(cases_data$datapath, header = TRUE) %>%
-        mutate_at(vars(starts_with("C")), funs(as.integer(.)))
+        dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
     }
 
     return(full_data)
@@ -678,7 +678,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
       # Calculated columns
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           N = 0,
           X = 0,
           y = 0,
@@ -687,7 +687,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
           u = 0
         ) %>%
         # select(D, N, X, everything())
-        select(N, X, everything())
+        dplyr::select(N, X, everything())
 
       first_dicent_index <- 3
       last_dicent_index <- ncol(mytable) - 4
@@ -695,7 +695,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
 
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           # D = as.numeric(D),
           X = as.integer(X),
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
@@ -771,7 +771,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     var_cov_mat <- vcov(fit_results)
     # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
-      select(-statistic) %>%
+      dplyr::select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
@@ -823,8 +823,8 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     # Model-level statistics using broom::glance
     if (input$button_view_fit_data <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
-      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
-      mutate(null.deviance = as.character(null.deviance)) %>%
+      dplyr::select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      dplyr::mutate(null.deviance = as.character(null.deviance)) %>%
       rhandsontable()
   })
 

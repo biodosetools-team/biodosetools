@@ -580,19 +580,19 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
           chromosome
         ) %>%
         as.data.frame() %>%
-        mutate(
+        dplyr::mutate(
           chromosome = as.character(chromosome)
         )
 
       # Full table
       full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
-        group_by(color) %>%
-        summarise(frac = sum(get(paste0("fraction_", sex))))
+        dplyr::group_by(color) %>%
+        dplyr::summarise(frac = sum(get(paste0("fraction_", sex))))
 
       # Calculate first sum
       single_sum <- full_table %>%
         dplyr::select(frac) %>%
-        summarise(sum(frac * (1 - frac))) %>%
+        dplyr::summarise(sum(frac * (1 - frac))) %>%
         unname() %>%
         unlist()
 
@@ -602,7 +602,7 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
           combn(2) %>%
           t() %>%
           as.data.frame() %>%
-          summarise(sum(V1 * V2)) %>%
+          dplyr::summarise(sum(V1 * V2)) %>%
           unname() %>%
           unlist()
       } else {
@@ -678,7 +678,7 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors, fr
         dplyr::mutate(D = as.numeric(D))
     } else {
       full_data <- read.csv(count_data$datapath, header = TRUE) %>%
-        mutate_at(vars(starts_with("C")), funs(as.integer(.)))
+        dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
     }
 
     return(full_data)
@@ -702,20 +702,20 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors, fr
 
       # Calculated columns
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           N = 0,
           X = 0,
           DI = 0,
           u = 0
         ) %>%
-        select(D, N, X, everything())
+        dplyr::select(D, N, X, everything())
 
       first_dicent_index <- 4
       last_dicent_index <- ncol(mytable) - 2
       num_rows <- nrow(mytable)
 
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           D = as.numeric(D),
           X = as.integer(X),
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
@@ -726,7 +726,7 @@ transFittingAdvHotTable <- function(input, output, session, stringsAsFactors, fr
         fraction <- fraction_value$frac()
 
         mytable <- mytable %>%
-          mutate(
+          dplyr::mutate(
             N = N * fraction
           )
       }
@@ -878,7 +878,7 @@ transFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     plot_data <- broom::augment(fit_results)
 
     curves_data <- data.frame(dose = seq(0, max(x1 / x0), length.out = 100)) %>%
-      mutate(
+      dplyr::mutate(
         yield = yield_fun(dose),
         yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
         yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
@@ -930,8 +930,8 @@ transFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Model-level statistics using broom::glance
     if (input$button_fit <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
-      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
-      mutate(null.deviance = as.character(null.deviance)) %>%
+      dplyr::select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      dplyr::mutate(null.deviance = as.character(null.deviance)) %>%
       rhandsontable()
   })
 

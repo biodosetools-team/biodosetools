@@ -366,7 +366,7 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         dplyr::mutate(D = as.numeric(D))
     } else {
       full_data <- read.csv(count_data$datapath, header = TRUE) %>%
-        mutate_at(vars(starts_with("C")), funs(as.integer(.)))
+        dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
     }
 
     return(full_data)
@@ -385,20 +385,20 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
       # Calculated columns
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           N = 0,
           X = 0,
           DI = 0,
           u = 0
         ) %>%
-        select(D, N, X, everything())
+        dplyr::select(D, N, X, everything())
 
       first_dicent_index <- 4
       last_dicent_index <- ncol(mytable) - 2
       num_rows <- nrow(mytable)
 
       mytable <- mytable %>%
-        mutate(
+        dplyr::mutate(
           D = as.numeric(D),
           X = as.integer(X),
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
@@ -533,7 +533,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     var_cov_mat <- vcov(fit_results)
     # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
-      select(-statistic) %>%
+      dplyr::select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
@@ -582,7 +582,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     plot_data <- broom::augment(fit_results)
 
     curves_data <- data.frame(dose = seq(0, max(α / C), length.out = 100)) %>%
-      mutate(
+      dplyr::mutate(
         yield = yield_fun(dose),
         yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
         yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
@@ -634,8 +634,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Model-level statistics using broom::glance
     if (input$button_fit <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
-      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
-      mutate(null.deviance = as.character(null.deviance)) %>%
+      dplyr::select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      dplyr::mutate(null.deviance = as.character(null.deviance)) %>%
       rhandsontable()
   })
 

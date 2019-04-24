@@ -173,8 +173,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     # Model-level statistics using broom::glance
     if (input$button_fit <= 0) return(NULL)
     broom::glance(data()[["fit_results"]]) %>%
-      select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
-      mutate(null.deviance = as.character(null.deviance)) %>%
+      dplyr::select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>%
+      dplyr::mutate(null.deviance = as.character(null.deviance)) %>%
       rhandsontable()
   })
 
