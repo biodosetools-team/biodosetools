@@ -772,7 +772,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
       select(-statistic) %>%
-      column_to_rownames(var = "term")
+      tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
     # Generalized variance-covariance matrix
@@ -907,7 +907,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
       select(-statistic) %>%
-      column_to_rownames(var = "term")
+      tibble::column_to_rownames(var = "term")
     # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
 
