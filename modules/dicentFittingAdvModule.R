@@ -209,9 +209,10 @@ dicentFittingAdvUI <- function(id, label) {
               # h6("Fit summary"),
               # verbatimTextOutput(ns("fit_results")),
               h6("Fit formula"),
-              verbatimTextOutput(ns("fit_formula")),
+              # verbatimTextOutput(ns("fit_formula")),
+              uiOutput(ns("fit_formula_tex")),
 
-              br(),
+              # br(),
               h6("Coefficients"),
               rHandsontableOutput(ns("fit_coeffs"))
             ),
@@ -507,14 +508,18 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Select model formula
     if (model_formula == "lin-quad") {
       fit_formula <- as.formula("aberr ~ -1 + C + α + β")
+      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
     } else if (model_formula == "lin") {
       fit_formula <- as.formula("aberr ~ -1 + C + α")
+      fit_formula_tex <- "Y = C + \\alpha D"
     }
     else if (model_formula == "lin-quad-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + α + β")
+      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
     }
     else if (model_formula == "lin-no-int") {
       fit_formula <- as.formula("aberr ~ -1 + α")
+      fit_formula_tex <- "Y = \\alpha D"
     }
 
     fit_link <- "identity"
@@ -610,6 +615,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
       cor_mat = cor_mat,
+      fit_formula_tex = fit_formula_tex,
       gg_curve = gg_curve
     )
 
@@ -623,11 +629,16 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     data()[["fit_results"]]
   })
 
-  output$fit_formula <- renderPrint({
+  # output$fit_formula <- renderPrint({
+  #   # Fitting formula
+  #   if (input$button_fit <= 0) return(NULL)
+  #   data()[["fit_results"]]$formula
+  # })
+
+  output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_fit <= 0) return(NULL)
-    data()[["fit_results"]]$formula
-    # TODO: transform this into LaTeX output?
+    withMathJax(paste0("$$", data()[["fit_formula_tex"]],"$$"))
   })
 
   output$fit_statistics <- renderRHandsontable({
