@@ -1253,7 +1253,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # Partial estimation results
         est_doses <- data.frame(
           # yield = c(yield_low, yield_est, yield_upp),
-          yield = c(lambda.est - sd.lambda, lambda.est, lambda.est + sd.lambda),
+          yield = c(lambda.est - qnorm(ci + (1 - ci) / 2) * sd.lambda, lambda.est, lambda.est + qnorm(ci + (1 - ci) / 2) * sd.lambda),
           # dose = c(dose_low, dose_est, dose_upp)
           dose = res1
         )
