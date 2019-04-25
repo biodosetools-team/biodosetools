@@ -1057,7 +1057,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial <- function(case_data, fraction_coeff) {
+    estimate_partial_legacy <- function(case_data, fraction_coeff) {
 
       aberr <- case_data[["X"]]
       cell <- case_data[["N"]]
@@ -1113,6 +1113,170 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
 
       return(results_list)
+    }
+
+    # estimate_partial_dolphin <- function(cases_data, cal.glm, ci = 0.95, d0 = 2.7, cov = TRUE) {
+    estimate_partial_dolphin <- function(cases_data, cal.glm, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
+      # dics is a vector with dicentrics
+      # cal.glm is a glm object
+      # if cov.par = TRUE, the covariance between lambda and
+      # the zero inflation parameter is used for uncertainty estimation
+      # if cov = TRUE the covariances of the calibration coefficients are used
+      # if covariances are not available cov = FALSE should be used
+
+      # Function to swith between F > 1, F <0 and 0 < F < 1
+      switch.F <- function(x) {
+        if (x > 1) {
+          return(3)
+        }
+        if (x < 0) {
+          return(1)
+        }
+        if (x >= 0 | x <= 1) {
+          return(2)
+        }
+      }
+
+      # Function to get the fisher information matrix
+      fun.get.cov.ZIP.ML <- function(lambda, pi, ni) {
+        # for the parameters of a ZIP distribution (lambda and pi)
+        # where 1-p is the fraction of extra zeros
+        I <- matrix(NA, nr = 2, nc = 2)
+        I[2, 2] <- ni * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
+        I[1, 2] <- I[2, 1] <- ni * exp(-lambda) / (1 - pi + pi * exp(-lambda))
+        I[1, 1] <- ni * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
+        cov.est <- solve(I)
+        return(cov.est)
+      }
+
+      # Input of the parameter gamma and its variance
+      if (fraction_coeff == "gamma") {
+        # gamma <- input$gamma_coeff
+        d0 <- 1 / input$gamma_coeff
+      } else if (fraction_coeff == "d0"){
+        # gamma <- 1 / input$d0_coeff
+        d0 <- input$d0_coeff
+      }
+
+      X <- cases_data[["X"]]
+      ni <- cases_data[["N"]]
+      n0 <- cases_data[["C0"]]
+
+            A <- cal.glm$coef[1]
+      alpha <- cal.glm$coef[2]
+      beta <- cal.glm$coef[3]
+      v <- vcov(cal.glm)
+
+      if (ni - n0 == 0) {
+        # if there are no cells with > 1 dic, the resulting matrix includes only NA's
+        # this should be handled somewhere downstream
+        res <- matrix(NA, 2, 3)
+        return(res)
+      } else {
+
+        # get estimates for pi and lambda:
+        f_est <- function(y) {
+          y / (1 - exp(-y)) - X / (ni - n0)
+        }
+        lambda.est <- uniroot(f_est, c(1e-16, 100))$root # maybe adjust the search interval for uniroot function
+        pi.est <- X / (lambda.est * ni)
+        z <- alpha^2 + 4 * beta * (lambda.est - A)
+
+        # get estimate for dose and fraction irradiated:
+        est.dose <- (-alpha + sqrt(z)) / (2 * beta)
+        F.est <- pi.est * exp(est.dose / d0) / (1 - pi.est + pi.est * exp(est.dose / d0))
+
+        # Derivatives of regression curve coefs:
+
+        d.lambda <- (z)^(-0.5)
+        d.A <- -(z)^(-0.5)
+        d.beta <- (4 * beta * (lambda.est - A) * (z^(-0.5)) + 2 * alpha - 2 * z^(0.5)) / (4 * beta^2)
+        d.alpha <- (1 / (2 * beta)) * (-1 + alpha * z^(-0.5))
+
+        # get the covariance matrix for the parameters of the ZIP distribution:
+        cov.est <- fun.get.cov.ZIP.ML(lambda = lambda.est, pi = pi.est, ni = ni)
+        cov.extended <- matrix(0, nr = 5, nc = 5)
+        cov.extended[1:3, 1:3] <- v
+        cov.extended[4:5, 4:5] <- cov.est
+
+        # Get variance of dose based on delta methods (see Savage et al.):
+        sd.lambda <- sqrt(cov.est[1, 1])
+
+        if (cov) {
+          var.dose.a <-
+            (d.A^2) * v[1, 1] +
+            (d.alpha^2) * v[2, 2] +
+            (d.beta^2) * v[3, 3] +
+            (d.lambda^2) * (sd.lambda^2) +
+            2 * (d.alpha * d.beta) * v[3, 2] +
+            2* (d.A * d.alpha) * v[2, 1] +
+            2 * (d.A * d.beta) * v[3, 1]
+        } else {
+          var.dose.a <-
+            (d.A^2) * v[1, 1] +
+            (d.alpha^2) * v[2, 2] +
+            (d.beta^2) * v[3, 3] +
+            (d.lambda^2) * (sd.lambda^2)
+        }
+
+        # get confidence interval of dose estimates:
+
+        ci.lwr.a <- est.dose - qnorm(ci + (1 - ci) / 2) * sqrt(var.dose.a)
+        ci.upr.a <- est.dose + qnorm(ci + (1 - ci) / 2) * sqrt(var.dose.a)
+
+        res1 <- c(
+          ifelse(ci.lwr.a < 0, 0, ci.lwr.a),
+          ifelse(est.dose < 0, 0, est.dose),
+          ifelse(ci.upr.a < 0, 0, ci.upr.a)
+        ) # doses < 0 are set to zero
+
+        # Get standard error of fraction irradiated by deltamethod:
+        # x5=pi.est, x4: lambda.est, x1:A, x2:alpha, x3:beta
+        formula <- paste(
+          "~ x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0,
+          "))/(1-x5+x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0, ")))",
+          sep = ""
+        )
+        sd.F <- msm::deltamethod(as.formula(formula), mean = c(A, alpha, beta, lambda.est, pi.est), cov = cov.extended)
+
+        # get confidence interval of fraction irradiated:
+        F.u <- F.est + qnorm(ci + (1 - ci) / 2) * sd.F
+        F.l <- F.est - qnorm(ci + (1 - ci) / 2) * sd.F
+
+        # set to zero if F < 0 and to 1 if F > 1
+        res2 <- c(
+          switch(switch.F(F.l), 0, F.l, 1),
+          switch(switch.F(F.est), 0, F.est, 1),
+          switch(switch.F(F.u), 0, F.u, 1)
+        )
+
+        # Partial estimation results
+        est_doses <- data.frame(
+          # yield = c(yield_low, yield_est, yield_upp),
+          yield = c(lambda.est - sd.lambda, lambda.est, lambda.est + sd.lambda),
+          # dose = c(dose_low, dose_est, dose_upp)
+          dose = res1
+        )
+
+        row.names(est_doses) <- c("lower", "estimate", "upper")
+
+        # Estimated fraction
+        est_frac <- data.frame(
+          # estimate = c(est_F)
+          estimate = res2
+        )
+
+        row.names(est_frac) <- c("lower", "estimate", "upper")
+
+        # Return
+        results_list <- list(
+          est_doses = est_doses,
+          est_frac  = est_frac
+        )
+
+        return(results_list)
+
+      }
     }
 
     # Calcs: heterogeneous dose estimation
@@ -1330,7 +1494,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     est_doses_whole <- estimate_whole_body(case_data, y_obs, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
       # Calculate partial results
-      results_partial <- estimate_partial(case_data, fraction_coeff)
+      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff)
+      results_partial <- estimate_partial_dolphin(case_data, cal.glm = fit_results, ci = 0.95, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
