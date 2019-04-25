@@ -133,21 +133,21 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             width = 12,
             # Load data from file
             awesomeCheckbox(
-              inputId = ns("load_cases_data_check"),
+              inputId = ns("load_case_data_check"),
               label = "Load data from file",
               value = FALSE, status = "warning"
             ),
             # Inputs
             conditionalPanel(
-              condition = "!input.load_cases_data_check",
+              condition = "!input.load_case_data_check",
               ns = ns,
               numericInput(ns("num_cases"), "Number of cases", value = 1),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
-              condition = "input.load_cases_data_check",
+              condition = "input.load_case_data_check",
               ns = ns,
-              fileInput(ns("load_cases_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
+              fileInput(ns("load_case_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
             ),
             # Case description
             textAreaInput(
@@ -641,13 +641,13 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_table
 
     isolate({
-      load_cases_data <- input$load_cases_data_check
-      cases_data <- input$load_cases_data
+      load_case_data <- input$load_case_data_check
+      case_data <- input$load_case_data
       num_cases <- as.numeric(input$num_cases)
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
-    if (!load_cases_data) {
+    if (!load_case_data) {
       # Base data frame
       full_data <- data.frame(
         matrix(
@@ -659,7 +659,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
       colnames(full_data) <- paste0("C", seq(0, num_dicentrics - 1, 1))
     } else {
-      full_data <- read.csv(cases_data$datapath, header = TRUE) %>%
+      full_data <- read.csv(case_data$datapath, header = TRUE) %>%
         dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
     }
 
@@ -894,13 +894,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # curve_method <- input$curve_method_select
 
       # Cases data
-      cases_data <- hot_to_r(input$hotable)
+      case_data <- hot_to_r(input$hotable)
 
-      aberr <- cases_data[["X"]]
-      cell <- cases_data[["N"]]
-      yield_obs <- cases_data[["y"]]
+      yield_obs <- case_data[["y"]]
 
-      counts <- cases_data[1, ] %>%
+      counts <- case_data[1, ] %>%
         select(contains("C")) %>%
         as.numeric()
 
@@ -1026,7 +1024,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(aberr, cell, y_obs, conf_int_yield, conf_int_curve) {
+    estimate_whole_body <- function(case_data, y_obs, conf_int_yield, conf_int_curve) {
+
+      aberr <- case_data[["X"]]
+      cell <- case_data[["N"]]
 
       # Calculate CI using Exact Poisson tests
       aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
@@ -1056,9 +1057,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial <- function(aberr, cell, cases_data, fraction_coeff) {
+    estimate_partial <- function(case_data, fraction_coeff) {
 
-      cells_0 <- cases_data[["C0"]]
+      aberr <- case_data[["X"]]
+      cell <- case_data[["N"]]
+      cells_0 <- case_data[["C0"]]
 
       # Yield calculation
       yield_est <- uniroot(function(yield) {
@@ -1324,10 +1327,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Calculations ----
 
     # Calculate whole-body results
-    est_doses_whole <- estimate_whole_body(aberr, cell, y_obs, conf_int_yield, conf_int_curve)
+    est_doses_whole <- estimate_whole_body(case_data, y_obs, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
       # Calculate partial results
-      results_partial <- estimate_partial(aberr, cell, cases_data, fraction_coeff)
+      results_partial <- estimate_partial(case_data, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
