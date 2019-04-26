@@ -1115,16 +1115,15 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       return(results_list)
     }
 
-    estimate_partial_dolphin <- function(cases_data, fit_results, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
-      # dics is a vector with dicentrics
+    estimate_partial_dolphin <- function(case_data, fit_results, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
+      # case_data is the data input
       # fit_results is a glm object
-      # if cov.par = TRUE, the covariance between lambda and
-      # the zero inflation parameter is used for uncertainty estimation
       # if cov = TRUE the covariances of the calibration coefficients are used
       # if covariances are not available cov = FALSE should be used
+      # TODO: this should be automatized
 
       # Function to swith between F > 1, F <0 and 0 < F < 1
-      switch.F <- function(x) {
+      switch_fraction <- function(x) {
         if (x > 1) {
           return(3)
         }
@@ -1137,7 +1136,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Function to get the fisher information matrix
-      fun.get.cov.ZIP.ML <- function(lambda, pi, ni) {
+      get_cov_ZIP_ML <- function(lambda, pi, ni) {
         # for the parameters of a ZIP distribution (lambda and pi)
         # where 1-p is the fraction of extra zeros
         I <- matrix(NA, nr = 2, nc = 2)
@@ -1145,6 +1144,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         I[1, 2] <- I[2, 1] <- ni * exp(-lambda) / (1 - pi + pi * exp(-lambda))
         I[1, 1] <- ni * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
         cov.est <- solve(I)
+
         return(cov.est)
       }
 
@@ -1157,9 +1157,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         d0 <- input$d0_coeff
       }
 
-      X <- cases_data[["X"]]
-      ni <- cases_data[["N"]]
-      n0 <- cases_data[["C0"]]
+      X <- case_data[["X"]]
+      ni <- case_data[["N"]]
+      n0 <- case_data[["C0"]]
 
       A <- fit_results$coef[1]
       alpha <- fit_results$coef[2]
@@ -1193,7 +1193,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         d.alpha <- (1 / (2 * beta)) * (-1 + alpha * z^(-0.5))
 
         # get the covariance matrix for the parameters of the ZIP distribution:
-        cov.est <- fun.get.cov.ZIP.ML(lambda = lambda.est, pi = pi.est, ni = ni)
+        cov.est <- get_cov_ZIP_ML(lambda = lambda.est, pi = pi.est, ni = ni)
         cov.extended <- matrix(0, nr = 5, nc = 5)
         cov.extended[1:3, 1:3] <- v
         cov.extended[4:5, 4:5] <- cov.est
@@ -1244,9 +1244,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         # set to zero if F < 0 and to 1 if F > 1
         res2 <- c(
-          switch(switch.F(F.l), 0, F.l, 1),
-          switch(switch.F(F.est), 0, F.est, 1),
-          switch(switch.F(F.u), 0, F.u, 1)
+          switch(switch_fraction(F.l), 0, F.l, 1),
+          switch(switch_fraction(F.est), 0, F.est, 1),
+          switch(switch_fraction(F.u), 0, F.u, 1)
         )
 
         # Partial estimation results
