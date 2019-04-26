@@ -994,19 +994,19 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     project_yield_estimate <- function(yield) {
       uniroot(function(dose) {
         yield_fun(dose) - yield
-      }, c(0.1, 30))$root
+      }, c(1e-16, 100))$root
     }
 
     project_yield_lower <- function(yield, conf_int) {
       uniroot(function(dose) {
         yield_fun(dose) + R_factor(conf_int) * yield_error_fun(dose) - yield
-      }, c(0.1, 30))$root
+      }, c(1e-16, 100))$root
     }
 
     project_yield_upper <- function(yield, conf_int) {
       uniroot(function(dose) {
         yield_fun(dose) - R_factor(conf_int) * yield_error_fun(dose) - yield
-      }, c(0.1, 30))$root
+      }, c(1e-16, 100))$root
     }
 
     # Select CI depending on selected method
@@ -1057,7 +1057,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_legacy <- function(case_data, fraction_coeff, ci = 0.95) {
+    estimate_partial_legacy <- function(case_data, fraction_coeff, conf_int = 0.95) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
@@ -1066,19 +1066,19 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Yield calculation
       yield_est <- uniroot(function(yield) {
         yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
-      }, c(0.00001, 5))$root
+      }, c(1e-16, 100))$root
 
       yield_est_var <-
         (yield_est * (1 - exp(-yield_est))^2) /
         ((cells - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
 
-      yield_low <- yield_est - qnorm(ci + (1 - ci) / 2) * sqrt(yield_est_var)
-      yield_upp <- yield_est + qnorm(ci + (1 - ci) / 2) * sqrt(yield_est_var)
+      yield_low <- yield_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(yield_est_var)
+      yield_upp <- yield_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(yield_est_var)
 
       # Dose estimation
       dose_est <- project_yield_estimate(yield_est)
-      dose_low <- project_yield_lower(yield_low, ci)
-      dose_upp <- project_yield_upper(yield_upp, ci)
+      dose_low <- project_yield_lower(yield_low, conf_int)
+      dose_upp <- project_yield_upper(yield_upp, conf_int)
 
       # Partial estimation results
       est_doses <- data.frame(
@@ -1102,8 +1102,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       F_est <- (f / p) / (1 - f + f / p)
 
       est_frac <- data.frame(
-        estimate = c(F_est)
+        fraction = c(F_est)
       )
+
+      row.names(est_frac) <- c("estimate")
 
       # Return
       results_list <- list(
@@ -1114,7 +1116,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       return(results_list)
     }
 
-    estimate_partial_dolphin <- function(case_data, fit_results, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
+    estimate_partial_dolphin <- function(case_data, fit_results, conf_int = 0.95, fraction_coeff = "d0", cov = TRUE) {
       # case_data is the data input
       # fit_results is a glm object
       # if cov = TRUE the covariances of the calibration coefficients are used
@@ -1199,8 +1201,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         lambda_est_sd <- sqrt(cov_est[1, 1])
 
         # Get confidence interval of lambda estimates
-        lambda_low <- lambda_est - qnorm(ci + (1 - ci) / 2) * lambda_est_sd
-        lambda_upp <- lambda_est + qnorm(ci + (1 - ci) / 2) * lambda_est_sd
+        lambda_low <- lambda_est - qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+        lambda_upp <- lambda_est + qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
         if (cov) {
           dose_est_var <-
@@ -1220,8 +1222,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         }
 
         # Get confidence interval of dose estimates
-        dose_low <- dose_est - qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
-        dose_upp <- dose_est + qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
+        dose_low <- dose_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+        dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
         # Partial estimation results
         est_doses <- data.frame(
@@ -1245,8 +1247,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
 
         # Get confidence interval of fraction irradiated:
-        F_upp <- F_est + qnorm(ci + (1 - ci) / 2) * F_est_sd
-        F_low <- F_est - qnorm(ci + (1 - ci) / 2) * F_est_sd
+        F_upp <- F_est + qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
+        F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
         # Set to zero if F < 0 and to 1 if F > 1
         F_low <- switch(switch_fraction(F_low), 0, F_low, 1)
@@ -1255,7 +1257,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         # Estimated fraction
         est_frac <- data.frame(
-          estimate = c(F_low, F_est, F_upp)
+          fraction = c(F_low, F_est, F_upp)
         )
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
@@ -1283,9 +1285,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # TODO: review if k needs to be changed
 
       # Input of the parameters of the dose-effect linear-quadratic model
-      beta0 <- fit_coeffs[1, "estimate"]
-      beta1 <- fit_coeffs[2, "estimate"]
-      beta2 <- fit_coeffs[3, "estimate"]
+      C <- fit_coeffs[1, "estimate"]
+      α <- fit_coeffs[2, "estimate"]
+      β <- fit_coeffs[3, "estimate"]
 
       # Input of the Variance-covariance matrix of the parameters
       sigma <- numeric(49)
@@ -1445,24 +1447,24 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Gradient
       # h <- 0.000001
       # if (yield2_est > 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-      #   c8 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est, yield2_est + h) - F) / h
+      #   c1 <- (frac(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (frac(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (frac(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (frac(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (frac(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (frac(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+      #   c8 <- (frac(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
       #   sqrt(t(grad) %*% sigma %*% grad)
       # }
       #
       # if (yield2_est <= 0.01) {
-      #   c1 <- (frac(beta0 + h, beta1, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (frac(beta0, beta1 + h, beta2, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (frac(beta0, beta1, beta2 + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (frac(beta0, beta1, beta2, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (frac(beta0, beta1, beta2, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (frac(beta0, beta1, beta2, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+      #   c1 <- (frac(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (frac(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (frac(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (frac(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (frac(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (frac(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7)
       #   sigma2 <- sigma[1:6, 1:6]
       #   sqrt(t(grad) %*% sigma2 %*% grad)
@@ -1485,8 +1487,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     est_doses_whole <- estimate_whole_body(case_data, y_obs, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
       # Calculate partial results
-      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff, ci = 0.95)
-      results_partial <- estimate_partial_dolphin(case_data, fit_results, ci = 0.95, fraction_coeff)
+      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff, conf_int = 0.95)
+      results_partial <- estimate_partial_dolphin(case_data, fit_results, conf_int = 0.95, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
