@@ -1057,7 +1057,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_legacy <- function(case_data, fraction_coeff) {
+    estimate_partial_legacy <- function(case_data, fraction_coeff, ci = 0.95) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
@@ -1072,14 +1072,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         (yield_est * (1 - exp(-yield_est))^2) /
         ((cells - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
 
-      yield_low <- yield_est - 1.96 * sqrt(yield_est_var)
-      yield_upp <- yield_est + 1.96 * sqrt(yield_est_var)
+      yield_low <- yield_est - qnorm(ci + (1 - ci) / 2) * sqrt(yield_est_var)
+      yield_upp <- yield_est + qnorm(ci + (1 - ci) / 2) * sqrt(yield_est_var)
 
       # Dose estimation
       dose_est <- project_yield_estimate(yield_est)
-      dose_low <- project_yield_lower(yield_low, 0.95)
-      dose_upp <- project_yield_upper(yield_upp, 0.95)
-      # TODO: This will become irrelevant once we use delta method
+      dose_low <- project_yield_lower(yield_low, ci)
+      dose_upp <- project_yield_upper(yield_upp, ci)
 
       # Partial estimation results
       est_doses <- data.frame(
@@ -1486,7 +1485,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     est_doses_whole <- estimate_whole_body(case_data, y_obs, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
       # Calculate partial results
-      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff)
+      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff, ci = 0.95)
       results_partial <- estimate_partial_dolphin(case_data, fit_results, ci = 0.95, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
