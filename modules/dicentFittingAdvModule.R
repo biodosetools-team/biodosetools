@@ -347,7 +347,7 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
     if (!load_count_data) {
       # Doses data frame
-      data_dose <- data.frame(
+      data_doses <- data.frame(
         D = rep(0.0, num_doses)
       )
 
@@ -363,7 +363,7 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
       colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
 
       # Full data frame
-      full_data <- cbind(data_dose, data_base) %>%
+      full_data <- cbind(data_doses, data_base) %>%
         dplyr::mutate(D = as.numeric(D))
     } else {
       full_data <- read.csv(count_data$datapath, header = TRUE) %>%
@@ -454,15 +454,15 @@ dicentFittingAdvTable <- function(input, output, session, stringsAsFactors) {
     isolate({
       count_data <- hot_to_r(input$hotable)
 
-      dose <- count_data[["D"]]
+      doses <- count_data[["D"]]
       aberr <- count_data[["X"]]
-      cell <- count_data[["N"]]
+      cells <- count_data[["N"]]
     })
 
     data.frame(
-      Dose = dose,
+      Dose = doses,
       Aberrations = aberr,
-      Cells = cell
+      Cells = cells
     )
   })
 
@@ -482,9 +482,9 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     isolate({
       count_data <- hot_to_r(input$hotable)
 
-      dose <- count_data[["D"]]
+      doses <- count_data[["D"]]
       aberr <- count_data[["X"]]
-      cell <- count_data[["N"]]
+      cells <- count_data[["N"]]
       disp <- count_data[["DI"]]
 
       model_formula <- input$formula_select
@@ -493,14 +493,14 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     })
 
     # Construct predictors and model data
-    C <- cell
-    α <- cell * dose
-    β <- cell * dose * dose
+    C <- cells
+    α <- cells * doses
+    β <- cells * doses * doses
     model_data <- list(C, α, β, aberr)
 
     # Weight selection
     if (disp_select) {
-      weights <- rep(1, length(dose))
+      weights <- rep(1, length(doses))
     } else {
       weights <- 1 / disp
     }

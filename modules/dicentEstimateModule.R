@@ -1027,7 +1027,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     estimate_whole_body <- function(case_data, y_obs, conf_int_yield, conf_int_curve) {
 
       aberr <- case_data[["X"]]
-      cell <- case_data[["N"]]
+      cells <- case_data[["N"]]
 
       # Calculate CI using Exact Poisson tests
       aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
@@ -1035,8 +1035,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       aberr_low <- aberr_row[1]
       aberr_upp <- aberr_row[2]
 
-      yield_low <- aberr_low / cell
-      yield_upp <- aberr_upp / cell
+      yield_low <- aberr_low / cells
+      yield_upp <- aberr_upp / cells
       # TODO: possible modification IAEA§9.7.3
 
       # Calculate projections
@@ -1060,17 +1060,17 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     estimate_partial_legacy <- function(case_data, fraction_coeff) {
 
       aberr <- case_data[["X"]]
-      cell <- case_data[["N"]]
+      cells <- case_data[["N"]]
       cells_0 <- case_data[["C0"]]
 
       # Yield calculation
       yield_est <- uniroot(function(yield) {
-        yield / (1 - exp(-yield)) - aberr / (cell - cells_0)
+        yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
       }, c(0.00001, 5))$root
 
       yield_est_var <-
         (yield_est * (1 - exp(-yield_est))^2) /
-        ((cell - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
+        ((cells - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
 
       yield_low <- yield_est - 1.96 * sqrt(yield_est_var)
       yield_upp <- yield_est + 1.96 * sqrt(yield_est_var)
@@ -1097,7 +1097,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Irradiated fraction
-      f <- aberr / (cell * yield_est)
+      f <- aberr / (cells * yield_est)
       p <- exp(- dose_est * gamma)
 
       est_F <- (f / p) / (1 - f + f / p)
@@ -1115,10 +1115,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       return(results_list)
     }
 
-    # estimate_partial_dolphin <- function(cases_data, cal.glm, ci = 0.95, d0 = 2.7, cov = TRUE) {
-    estimate_partial_dolphin <- function(cases_data, cal.glm, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
+    estimate_partial_dolphin <- function(cases_data, fit_results, ci = 0.95, fraction_coeff = "d0", cov = TRUE) {
       # dics is a vector with dicentrics
-      # cal.glm is a glm object
+      # fit_results is a glm object
       # if cov.par = TRUE, the covariance between lambda and
       # the zero inflation parameter is used for uncertainty estimation
       # if cov = TRUE the covariances of the calibration coefficients are used
@@ -1153,7 +1152,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       if (fraction_coeff == "gamma") {
         # gamma <- input$gamma_coeff
         d0 <- 1 / input$gamma_coeff
-      } else if (fraction_coeff == "d0"){
+      } else if (fraction_coeff == "d0") {
         # gamma <- 1 / input$d0_coeff
         d0 <- input$d0_coeff
       }
@@ -1162,10 +1161,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ni <- cases_data[["N"]]
       n0 <- cases_data[["C0"]]
 
-            A <- cal.glm$coef[1]
-      alpha <- cal.glm$coef[2]
-      beta <- cal.glm$coef[3]
-      v <- vcov(cal.glm)
+      A <- fit_results$coef[1]
+      alpha <- fit_results$coef[2]
+      beta <- fit_results$coef[3]
+      v <- vcov(fit_results)
 
       if (ni - n0 == 0) {
         # if there are no cells with > 1 dic, the resulting matrix includes only NA's
@@ -1209,7 +1208,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
             (d.beta^2) * v[3, 3] +
             (d.lambda^2) * (sd.lambda^2) +
             2 * (d.alpha * d.beta) * v[3, 2] +
-            2* (d.A * d.alpha) * v[2, 1] +
+            2 * (d.A * d.alpha) * v[2, 1] +
             2 * (d.A * d.beta) * v[3, 1]
         } else {
           var.dose.a <-
@@ -1271,11 +1270,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # Return
         results_list <- list(
           est_doses = est_doses,
-          est_frac  = est_frac
+          est_frac = est_frac
         )
 
         return(results_list)
-
       }
     }
 
@@ -1495,7 +1493,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     if (assessment == "partial") {
       # Calculate partial results
       # results_partial <- estimate_partial_legacy(case_data, fraction_coeff)
-      results_partial <- estimate_partial_dolphin(case_data, cal.glm = fit_results, ci = 0.95, fraction_coeff)
+      results_partial <- estimate_partial_dolphin(case_data, fit_results, ci = 0.95, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
