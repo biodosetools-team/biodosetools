@@ -191,9 +191,10 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_fit <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
+      formatC(format = "e", digits = 3) %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.0000000")
+      hot_cols(colWidths = 100) %>%
+      hot_cols(halign = "htRight")
   })
 
   output$cor_mat <- renderRHandsontable({
@@ -201,7 +202,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       rhandsontable() %>%
-      hot_cols(colWidths = 80) %>%
+      hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
 }
