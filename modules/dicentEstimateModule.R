@@ -1136,123 +1136,120 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Function to get the fisher information matrix
-      get_cov_ZIP_ML <- function(lambda, pi, ni) {
-        # for the parameters of a ZIP distribution (lambda and pi)
+      get_cov_ZIP_ML <- function(lambda, pi, cells) {
+        # For the parameters of a ZIP distribution (lambda and pi)
         # where 1-p is the fraction of extra zeros
-        I <- matrix(NA, nr = 2, nc = 2)
-        I[2, 2] <- ni * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
-        I[1, 2] <- I[2, 1] <- ni * exp(-lambda) / (1 - pi + pi * exp(-lambda))
-        I[1, 1] <- ni * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
-        cov.est <- solve(I)
+        info_mat <- matrix(NA, nrow = 2, ncol = 2)
+        info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
+        info_mat[1, 2] <- info_mat[2, 1] <- cells * exp(-lambda) / (1 - pi + pi * exp(-lambda))
+        info_mat[1, 1] <- cells * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
+        cov_est <- solve(info_mat)
 
-        return(cov.est)
+        return(cov_est)
       }
 
       # Input of the parameter gamma and its variance
       if (fraction_coeff == "gamma") {
-        # gamma <- input$gamma_coeff
         d0 <- 1 / input$gamma_coeff
       } else if (fraction_coeff == "d0") {
-        # gamma <- 1 / input$d0_coeff
         d0 <- input$d0_coeff
       }
 
-      X <- case_data[["X"]]
-      ni <- case_data[["N"]]
-      n0 <- case_data[["C0"]]
+      aberr <- case_data[["X"]]
+      cells <- case_data[["N"]]
+      cells_0 <- case_data[["C0"]]
 
-      A <- fit_results$coef[1]
-      alpha <- fit_results$coef[2]
-      beta <- fit_results$coef[3]
-      v <- vcov(fit_results)
+      C <- fit_results$coef[1]
+      α <- fit_results$coef[2]
+      β <- fit_results$coef[3]
+      var_cov_mat <- vcov(fit_results)
 
-      if (ni - n0 == 0) {
-        # if there are no cells with > 1 dic, the resulting matrix includes only NA's
-        # this should be handled somewhere downstream
+      if (cells - cells_0 == 0) {
+        # If there are no cells with > 1 dic, the resulting matrix includes only NA's
+        # This should be handled somewhere downstream
         res <- matrix(NA, 2, 3)
         return(res)
       } else {
 
-        # get estimates for pi and lambda:
-        f_est <- function(y) {
-          y / (1 - exp(-y)) - X / (ni - n0)
-        }
-        lambda.est <- uniroot(f_est, c(1e-16, 100))$root # maybe adjust the search interval for uniroot function
-        pi.est <- X / (lambda.est * ni)
-        z <- alpha^2 + 4 * beta * (lambda.est - A)
+        # Get estimates for pi and lambda
+        # Maybe adjust the search interval for uniroot function
+        lambda_est <- uniroot(function(yield) {
+          yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
+        }, c(1e-16, 100))$root
 
-        # get estimate for dose and fraction irradiated:
-        est.dose <- (-alpha + sqrt(z)) / (2 * beta)
-        F.est <- pi.est * exp(est.dose / d0) / (1 - pi.est + pi.est * exp(est.dose / d0))
+        pi_est <- aberr / (lambda_est * cells)
+        z <- α^2 + 4 * β * (lambda_est - C)
+
+        # Get estimate for dose and fraction irradiated:
+        dose_est <- (-α + sqrt(z)) / (2 * β)
+        F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
         # Derivatives of regression curve coefs:
+        deriv_lambda <- (z)^(-0.5)
+        deriv_C <- -(z)^(-0.5)
+        deriv_β <- (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+        deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
 
-        d.lambda <- (z)^(-0.5)
-        d.A <- -(z)^(-0.5)
-        d.beta <- (4 * beta * (lambda.est - A) * (z^(-0.5)) + 2 * alpha - 2 * z^(0.5)) / (4 * beta^2)
-        d.alpha <- (1 / (2 * beta)) * (-1 + alpha * z^(-0.5))
-
-        # get the covariance matrix for the parameters of the ZIP distribution:
-        cov.est <- get_cov_ZIP_ML(lambda = lambda.est, pi = pi.est, ni = ni)
-        cov.extended <- matrix(0, nr = 5, nc = 5)
-        cov.extended[1:3, 1:3] <- v
-        cov.extended[4:5, 4:5] <- cov.est
+        # Get the covariance matrix for the parameters of the ZIP distribution:
+        cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
+        cov_extended <- matrix(0, nr = 5, nc = 5)
+        cov_extended[1:3, 1:3] <- var_cov_mat
+        cov_extended[4:5, 4:5] <- cov_est
 
         # Get variance of dose based on delta methods (see Savage et al.):
-        sd.lambda <- sqrt(cov.est[1, 1])
+        lambda_est_sd <- sqrt(cov_est[1, 1])
 
         if (cov) {
-          var.dose.a <-
-            (d.A^2) * v[1, 1] +
-            (d.alpha^2) * v[2, 2] +
-            (d.beta^2) * v[3, 3] +
-            (d.lambda^2) * (sd.lambda^2) +
-            2 * (d.alpha * d.beta) * v[3, 2] +
-            2 * (d.A * d.alpha) * v[2, 1] +
-            2 * (d.A * d.beta) * v[3, 1]
+          dose_est_var <-
+            (deriv_C^2) * var_cov_mat[1, 1] +
+            (deriv_α^2) * var_cov_mat[2, 2] +
+            (deriv_β^2) * var_cov_mat[3, 3] +
+            (deriv_lambda^2) * (lambda_est_sd^2) +
+            2 * (deriv_α * deriv_β) * var_cov_mat[3, 2] +
+            2 * (deriv_C * deriv_α) * var_cov_mat[2, 1] +
+            2 * (deriv_C * deriv_β) * var_cov_mat[3, 1]
         } else {
-          var.dose.a <-
-            (d.A^2) * v[1, 1] +
-            (d.alpha^2) * v[2, 2] +
-            (d.beta^2) * v[3, 3] +
-            (d.lambda^2) * (sd.lambda^2)
+          dose_est_var <-
+            (deriv_C^2) * var_cov_mat[1, 1] +
+            (deriv_α^2) * var_cov_mat[2, 2] +
+            (deriv_β^2) * var_cov_mat[3, 3] +
+            (deriv_lambda^2) * (lambda_est_sd^2)
         }
 
-        # get confidence interval of dose estimates:
-
-        ci.lwr.a <- est.dose - qnorm(ci + (1 - ci) / 2) * sqrt(var.dose.a)
-        ci.upr.a <- est.dose + qnorm(ci + (1 - ci) / 2) * sqrt(var.dose.a)
+        # Get confidence interval of dose estimates:
+        dose_low <- dose_est - qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
+        dose_upp <- dose_est + qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
 
         res1 <- c(
-          ifelse(ci.lwr.a < 0, 0, ci.lwr.a),
-          ifelse(est.dose < 0, 0, est.dose),
-          ifelse(ci.upr.a < 0, 0, ci.upr.a)
+          ifelse(dose_low < 0, 0, dose_low),
+          ifelse(dose_est < 0, 0, dose_est),
+          ifelse(dose_upp < 0, 0, dose_upp)
         ) # doses < 0 are set to zero
 
         # Get standard error of fraction irradiated by deltamethod:
-        # x5=pi.est, x4: lambda.est, x1:A, x2:alpha, x3:beta
+        # x5=pi_est, x4: lambda_est, x1:C, x2:alpha, x3:beta
         formula <- paste(
           "~ x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0,
           "))/(1-x5+x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0, ")))",
           sep = ""
         )
-        sd.F <- msm::deltamethod(as.formula(formula), mean = c(A, alpha, beta, lambda.est, pi.est), cov = cov.extended)
+        F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
 
-        # get confidence interval of fraction irradiated:
-        F.u <- F.est + qnorm(ci + (1 - ci) / 2) * sd.F
-        F.l <- F.est - qnorm(ci + (1 - ci) / 2) * sd.F
+        # Get confidence interval of fraction irradiated:
+        F_upp <- F_est + qnorm(ci + (1 - ci) / 2) * F_est_sd
+        F_low <- F_est - qnorm(ci + (1 - ci) / 2) * F_est_sd
 
-        # set to zero if F < 0 and to 1 if F > 1
+        # Set to zero if F < 0 and to 1 if F > 1
         res2 <- c(
-          switch(switch_fraction(F.l), 0, F.l, 1),
-          switch(switch_fraction(F.est), 0, F.est, 1),
-          switch(switch_fraction(F.u), 0, F.u, 1)
+          switch(switch_fraction(F_low), 0, F_low, 1),
+          switch(switch_fraction(F_est), 0, F_est, 1),
+          switch(switch_fraction(F_upp), 0, F_upp, 1)
         )
 
         # Partial estimation results
         est_doses <- data.frame(
           # yield = c(yield_low, yield_est, yield_upp),
-          yield = c(lambda.est - qnorm(ci + (1 - ci) / 2) * sd.lambda, lambda.est, lambda.est + qnorm(ci + (1 - ci) / 2) * sd.lambda),
+          yield = c(lambda_est - qnorm(ci + (1 - ci) / 2) * lambda_est_sd, lambda_est, lambda_est + qnorm(ci + (1 - ci) / 2) * lambda_est_sd),
           # dose = c(dose_low, dose_est, dose_upp)
           dose = res1
         )
