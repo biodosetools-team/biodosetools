@@ -504,7 +504,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               class = "side-widget",
               rHandsontableOutput(ns("est_yields_hetero")),
               br(),
-              rHandsontableOutput(ns("est_doses_hetero"))
+              rHandsontableOutput(ns("est_doses_hetero")),
+              br()
             ),
             bsButton(
               ns("help_dose_mixed_yields"),
@@ -522,7 +523,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
             # TODO: Move this to the card help button
 
-            br(),
             h6("Initial fraction of irradiated cells"),
             rHandsontableOutput(ns("est_frac_hetero"))
           )
@@ -1100,10 +1100,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       f <- aberr / (cells * yield_est)
       p <- exp(- dose_est * gamma)
 
-      est_F <- (f / p) / (1 - f + f / p)
+      F_est <- (f / p) / (1 - f + f / p)
 
       est_frac <- data.frame(
-        estimate = c(est_F)
+        estimate = c(F_est)
       )
 
       # Return
@@ -1169,6 +1169,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # This should be handled somewhere downstream
         res <- matrix(NA, 2, 3)
         return(res)
+        # TODO: this needs to be adapted to return the same structure
       } else {
 
         # Get estimates for pi and lambda
@@ -1180,9 +1181,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         pi_est <- aberr / (lambda_est * cells)
         z <- α^2 + 4 * β * (lambda_est - C)
 
-        # Get estimate for dose and fraction irradiated:
+        # Get estimate for dose:
         dose_est <- (-α + sqrt(z)) / (2 * β)
-        F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
         # Derivatives of regression curve coefs:
         deriv_lambda <- (z)^(-0.5)
@@ -1196,8 +1196,12 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         cov_extended[1:3, 1:3] <- var_cov_mat
         cov_extended[4:5, 4:5] <- cov_est
 
-        # Get variance of dose based on delta methods (see Savage et al.):
+        # Get variance of lambda based on delta methods (see Savage et al.):
         lambda_est_sd <- sqrt(cov_est[1, 1])
+
+        # Get confidence interval of lambda estimates
+        lambda_low <- lambda_est - qnorm(ci + (1 - ci) / 2) * lambda_est_sd
+        lambda_upp <- lambda_est + qnorm(ci + (1 - ci) / 2) * lambda_est_sd
 
         if (cov) {
           dose_est_var <-
@@ -1216,15 +1220,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
             (deriv_lambda^2) * (lambda_est_sd^2)
         }
 
-        # Get confidence interval of dose estimates:
+        # Get confidence interval of dose estimates
         dose_low <- dose_est - qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
         dose_upp <- dose_est + qnorm(ci + (1 - ci) / 2) * sqrt(dose_est_var)
 
-        res1 <- c(
-          ifelse(dose_low < 0, 0, dose_low),
-          ifelse(dose_est < 0, 0, dose_est),
-          ifelse(dose_upp < 0, 0, dose_upp)
-        ) # doses < 0 are set to zero
+        # Partial estimation results
+        est_doses <- data.frame(
+          yield = c(lambda_low, lambda_est, lambda_upp),
+          dose = c(dose_low, dose_est, dose_upp)
+        ) %>%
+          mutate(dose = ifelse(dose < 0, 0, dose))
+
+        row.names(est_doses) <- c("lower", "estimate", "upper")
+
+        # Get estimate for fraction irradiated
+        F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
         # Get standard error of fraction irradiated by deltamethod:
         # x5=pi_est, x4: lambda_est, x1:C, x2:alpha, x3:beta
@@ -1240,26 +1250,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         F_low <- F_est - qnorm(ci + (1 - ci) / 2) * F_est_sd
 
         # Set to zero if F < 0 and to 1 if F > 1
-        res2 <- c(
-          switch(switch_fraction(F_low), 0, F_low, 1),
-          switch(switch_fraction(F_est), 0, F_est, 1),
-          switch(switch_fraction(F_upp), 0, F_upp, 1)
-        )
-
-        # Partial estimation results
-        est_doses <- data.frame(
-          # yield = c(yield_low, yield_est, yield_upp),
-          yield = c(lambda_est - qnorm(ci + (1 - ci) / 2) * lambda_est_sd, lambda_est, lambda_est + qnorm(ci + (1 - ci) / 2) * lambda_est_sd),
-          # dose = c(dose_low, dose_est, dose_upp)
-          dose = res1
-        )
-
-        row.names(est_doses) <- c("lower", "estimate", "upper")
+        F_low <- switch(switch_fraction(F_low), 0, F_low, 1)
+        F_est <- switch(switch_fraction(F_est), 0, F_est, 1)
+        F_upp <- switch(switch_fraction(F_upp), 0, F_upp, 1)
 
         # Estimated fraction
         est_frac <- data.frame(
-          # estimate = c(est_F)
-          estimate = res2
+          estimate = c(F_low, F_est, F_upp)
         )
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
@@ -1432,15 +1429,15 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Estimated fraction of irradiated blood for dose dose1
-      est_F1 <- frac(gamma, frac1, yield1_est, yield2_est)
-      est_F2 <- 1 - est_F1
+      F1_est <- frac(gamma, frac1, yield1_est, yield2_est)
+      F2_est <- 1 - F1_est
 
       # Approximated standard error
-      std_err_F1 <- est_F1 * (1 - est_F1) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
+      F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
 
       est_frac <- data.frame(
-        estimate = c(est_F1, est_F2),
-        std_err = rep(std_err_F1, 2)
+        estimate = c(F1_est, F2_est),
+        std_err = rep(F1_est_sd, 2)
       )
 
       row.names(est_frac) <- c("dose1", "dose2")
@@ -1652,6 +1649,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Estimated fraction of irradiated blood for dose dose1 (partial)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
     data()[["est_frac_partial"]] %>%
+      t() %>%
+      as.data.frame() %>%
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
