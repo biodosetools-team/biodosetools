@@ -897,8 +897,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Cases data
       case_data <- hot_to_r(input$hotable)
 
-      yield_obs <- case_data[["y"]]
-
       counts <- case_data[1, ] %>%
         select(contains("C")) %>%
         as.numeric()
@@ -972,6 +970,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         general_fit_coeffs[[3]] * x * x * protracted_g_value
     }
 
+
+
     # R factor depeding on selected CI
     chisq_df <- nrow(fit_coeffs)
     R_factor <- function(conf_int = 0.95) {
@@ -990,25 +990,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
     }
 
-    # Projection functions ----
-    project_yield_estimate <- function(yield) {
-      uniroot(function(dose) {
-        yield_fun(dose) - yield
-      }, c(1e-16, 100))$root
-    }
-
-    project_yield_lower <- function(yield, conf_int) {
-      uniroot(function(dose) {
-        yield_fun(dose) + R_factor(conf_int) * yield_error_fun(dose) - yield
-      }, c(1e-16, 100))$root
-    }
-
-    project_yield_upper <- function(yield, conf_int) {
-      uniroot(function(dose) {
-        yield_fun(dose) - R_factor(conf_int) * yield_error_fun(dose) - yield
-      }, c(1e-16, 100))$root
-    }
-
     # Select CI depending on selected method
     if (grepl("merkle", curve_method, fixed = TRUE)) {
       conf_int_curve <- paste0("0.", gsub("\\D", "", curve_method)) %>% as.numeric()
@@ -1021,13 +1002,85 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       conf_int_yield <- conf_int_curve
     }
 
+    # Calculate infimums of the different curves
+    yield_low_inf <- yield_fun(0) - R_factor(conf_int_curve) * yield_error_fun(0)
+    yield_est_inf <- yield_fun(0)
+    yield_upp_inf <- yield_fun(0) + R_factor(conf_int_curve) * yield_error_fun(0)
+
+    # Projection functions ----
+
+    project_yield_estimate <- function(yield) {
+      if (yield >= yield_est_inf) {
+        uniroot(function(dose) {
+          yield_fun(dose) - yield
+        }, c(1e-16, 100))$root
+      } else {
+        0
+      }
+    }
+
+    project_yield_lower <- function(yield, conf_int) {
+      if (yield >= yield_low_inf) {
+        uniroot(function(dose) {
+          yield_fun(dose) + R_factor(conf_int) * yield_error_fun(dose) - yield
+        }, c(1e-16, 100))$root
+      } else {
+        0
+      }
+    }
+
+    project_yield_upper <- function(yield, conf_int) {
+      if (yield >= yield_upp_inf) {
+        uniroot(function(dose) {
+          yield_fun(dose) - R_factor(conf_int) * yield_error_fun(dose) - yield
+        }, c(1e-16, 100))$root
+      } else {
+        0
+      }
+    }
+
+
+    # Correction functions -------------------------------------
+
+    # Correct negative values
+    correct_negative_vals <- function(x) {
+      ifelse(x < 0, 0, x)
+    }
+
+    # Correct yields if they are below the curve
+    correct_yield <- function(yield) {
+      yield_name <- deparse(substitute(yield))
+      suffix <- stringr::str_extract(yield_name, "est|low|upp")
+      yield_inf <- get(paste("yield", suffix, "inf", sep = "_"))
+
+      if (yield < yield_inf) {
+        yield <- 0
+      }
+      yield <- correct_negative_vals(yield)
+
+      return(yield)
+    }
+
+    # Function to make sure F is bounded by 0 and 1
+    correct_boundary <- function(x) {
+      if (x > 1) {
+        return(1)
+      } else if (x < 0) {
+        return(0)
+      } else {
+        return(x)
+      }
+    }
+
+
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(case_data, y_obs, conf_int_yield, conf_int_curve) {
+    estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
+      yield_est <- case_data[["y"]]
 
       # Calculate CI using Exact Poisson tests
       aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
@@ -1039,14 +1092,19 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       yield_upp <- aberr_upp / cells
       # TODO: possible modification IAEA§9.7.3
 
+      # Correct "unrootable" yields
+      yield_est <- correct_yield(yield_est)
+      yield_low <- correct_yield(yield_low)
+      yield_upp <- correct_yield(yield_upp)
+
       # Calculate projections
-      dose_est <- project_yield_estimate(yield_obs)
+      dose_est <- project_yield_estimate(yield_est)
       dose_low <- project_yield_lower(yield_low, conf_int_curve)
       dose_upp <- project_yield_upper(yield_upp, conf_int_curve)
 
       # Whole-body estimation results
       est_doses <- data.frame(
-        yield = c(yield_low, yield_obs, yield_upp),
+        yield = c(yield_low, yield_est, yield_upp),
         dose  = c(dose_low, dose_est, dose_upp)
       )
 
@@ -1057,84 +1115,12 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_legacy <- function(case_data, fraction_coeff, conf_int = 0.95) {
-
-      aberr <- case_data[["X"]]
-      cells <- case_data[["N"]]
-      cells_0 <- case_data[["C0"]]
-
-      # Yield calculation
-      yield_est <- uniroot(function(yield) {
-        yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
-      }, c(1e-16, 100))$root
-
-      yield_est_var <-
-        (yield_est * (1 - exp(-yield_est))^2) /
-        ((cells - cells_0) * (1 - exp(-yield_est) - yield_est * exp(-yield_est)))
-
-      yield_low <- yield_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(yield_est_var)
-      yield_upp <- yield_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(yield_est_var)
-
-      # Dose estimation
-      dose_est <- project_yield_estimate(yield_est)
-      dose_low <- project_yield_lower(yield_low, conf_int)
-      dose_upp <- project_yield_upper(yield_upp, conf_int)
-
-      # Partial estimation results
-      est_doses <- data.frame(
-        yield = c(yield_low, yield_est, yield_upp),
-        dose = c(dose_low, dose_est, dose_upp)
-      )
-
-      row.names(est_doses) <- c("lower", "estimate", "upper")
-
-      # Input of the parameter gamma and its variance
-      if (fraction_coeff == "gamma") {
-        gamma <- input$gamma_coeff
-      } else if (fraction_coeff == "d0"){
-        gamma <- 1 / input$d0_coeff
-      }
-
-      # Irradiated fraction
-      f <- aberr / (cells * yield_est)
-      p <- exp(- dose_est * gamma)
-
-      F_est <- (f / p) / (1 - f + f / p)
-
-      est_frac <- data.frame(
-        fraction = c(F_est)
-      )
-
-      row.names(est_frac) <- c("estimate")
-
-      # Return
-      results_list <- list(
-        est_doses = est_doses,
-        est_frac  = est_frac
-      )
-
-      return(results_list)
-    }
-
     estimate_partial_dolphin <- function(case_data, fit_results, conf_int = 0.95, fraction_coeff = "d0", cov = TRUE) {
       # case_data is the data input
       # fit_results is a glm object
       # if cov = TRUE the covariances of the calibration coefficients are used
       # if covariances are not available cov = FALSE should be used
       # TODO: this should be automatized
-
-      # Function to swith between F > 1, F <0 and 0 < F < 1
-      switch_fraction <- function(x) {
-        if (x > 1) {
-          return(3)
-        }
-        if (x < 0) {
-          return(1)
-        }
-        if (x >= 0 | x <= 1) {
-          return(2)
-        }
-      }
 
       # Function to get the fisher information matrix
       get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -1219,18 +1205,25 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
             (deriv_α^2) * var_cov_mat[2, 2] +
             (deriv_β^2) * var_cov_mat[3, 3] +
             (deriv_lambda^2) * (lambda_est_sd^2)
+          # TODO: These values shouldn't even exist if cov == FALSE
         }
 
         # Get confidence interval of dose estimates
         dose_low <- dose_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
         dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
+        # Correct negative values
+        lambda_low <- correct_negative_vals(lambda_low)
+        lambda_upp <- correct_negative_vals(lambda_upp)
+        dose_low <- correct_negative_vals(dose_low)
+        dose_est <- correct_negative_vals(dose_est)
+        dose_upp <- correct_negative_vals(dose_upp)
+
         # Partial estimation results
         est_doses <- data.frame(
           yield = c(lambda_low, lambda_est, lambda_upp),
           dose = c(dose_low, dose_est, dose_upp)
-        ) %>%
-          mutate(dose = ifelse(dose < 0, 0, dose))
+        )
 
         row.names(est_doses) <- c("lower", "estimate", "upper")
 
@@ -1251,9 +1244,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
         # Set to zero if F < 0 and to 1 if F > 1
-        F_low <- switch(switch_fraction(F_low), 0, F_low, 1)
-        F_est <- switch(switch_fraction(F_est), 0, F_est, 1)
-        F_upp <- switch(switch_fraction(F_upp), 0, F_upp, 1)
+        F_low <- F_low %>% correct_boundary()
+        F_est <- F_est %>% correct_boundary()
+        F_upp <- F_upp %>% correct_boundary()
 
         # Estimated fraction
         est_frac <- data.frame(
@@ -1365,13 +1358,18 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       yield1_low <- yield1_est - std_estim[2]
       yield1_upp <- yield1_est + std_estim[2]
+
       yield2_low <- yield2_est - std_estim[3]
       yield2_upp <- yield2_est + std_estim[3]
 
-      # Fix negative yields
-      if (yield2_low <= 0) {
-        yield2_low <- 0
-      }
+      # Correct "unrootable" yields
+      yield1_est <- correct_yield(yield1_est)
+      yield1_low <- correct_yield(yield1_low)
+      yield1_upp <- correct_yield(yield1_upp)
+
+      yield2_est <- correct_yield(yield2_est)
+      yield2_low <- correct_yield(yield2_low)
+      yield2_upp <- correct_yield(yield2_upp)
 
       est_mixing_prop <- data.frame(
         y_estimate = c(estim[2], estim[3]),
@@ -1387,19 +1385,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dose1_low <- project_yield_lower(yield1_low, conf_int_curve)
       dose1_upp <- project_yield_upper(yield1_upp, conf_int_curve)
 
-      if (yield2_est <= 0.01) {
-        dose2_est <- 0
-        dose2_low <- 0
-        dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
-      } else {
-        dose2_est <- project_yield_estimate(yield2_est)
-        if (yield2_low > 0) {
-          dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
-        } else {
-          dose2_low <- 0
-        }
-        dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
-      }
+      dose2_est <- project_yield_estimate(yield2_est)
+      dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
+      dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
 
       est_yields <- data.frame(
         yield1 = c(yield1_low, yield1_est, yield1_upp),
@@ -1431,6 +1419,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Estimated fraction of irradiated blood for dose dose1
       F1_est <- frac(gamma, frac1, yield1_est, yield2_est)
+      F1_est <- F1_est %>% correct_boundary()
       F2_est <- 1 - F1_est
 
       # Approximated standard error
@@ -1484,10 +1473,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Calculations ----
 
     # Calculate whole-body results
-    est_doses_whole <- estimate_whole_body(case_data, y_obs, conf_int_yield, conf_int_curve)
+    est_doses_whole <- estimate_whole_body(case_data, conf_int_yield, conf_int_curve)
     if (assessment == "partial") {
       # Calculate partial results
-      # results_partial <- estimate_partial_legacy(case_data, fraction_coeff, conf_int = 0.95)
       results_partial <- estimate_partial_dolphin(case_data, fit_results, conf_int = 0.95, fraction_coeff)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
@@ -1572,7 +1560,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       results_list <- list(
         assessment = assessment,
         est_doses_whole = est_doses_whole,
-        gg_curve = gg_curve
+        gg_curve = gg_curve,
+        # Required for report
+        case_data = case_data,
+        case_description = input$case_description,
+        results_comments = input$results_comments
       )
     } else if (assessment == "partial") {
       results_list <- list(
@@ -1580,7 +1572,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_doses_whole = est_doses_whole,
         est_doses_partial = est_doses_partial,
         est_frac_partial = est_frac_partial,
-        gg_curve = gg_curve
+        gg_curve = gg_curve,
+        # Required for report
+        case_data = case_data,
+        case_description = input$case_description,
+        results_comments = input$results_comments
       )
     } else if (assessment == "hetero"){
       results_list <- list(
@@ -1713,7 +1709,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   # Export plot ----
   output$save_plot <- downloadHandler(
     filename = function() {
-      paste("fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
+      paste("estimate-curve-", Sys.Date(), input$save_plot_format, sep = "")
     },
     content = function(file) {
       ggsave(
