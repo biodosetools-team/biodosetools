@@ -1244,9 +1244,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
         # Set to zero if F < 0 and to 1 if F > 1
-        F_low <- F_low %>% correct_boundary()
-        F_est <- F_est %>% correct_boundary()
-        F_upp <- F_upp %>% correct_boundary()
+        F_low <- correct_boundary(F_low)
+        F_est <- correct_boundary(F_est)
+        F_upp <- correct_boundary(F_upp)
 
         # Estimated fraction
         est_frac <- data.frame(
@@ -1419,7 +1419,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Estimated fraction of irradiated blood for dose dose1
       F1_est <- frac(gamma, frac1, yield1_est, yield2_est)
-      F1_est <- F1_est %>% correct_boundary()
+      F1_est <- correct_boundary(F1_est)
       F2_est <- 1 - F1_est
 
       # Approximated standard error
