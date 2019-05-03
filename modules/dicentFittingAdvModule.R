@@ -611,6 +611,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Make list of results to return
     results_list <- list(
+      count_data = hot_to_r(input$hotable),
       fit_results = fit_results,
       fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
@@ -638,7 +639,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
   output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_fit <= 0) return(NULL)
-    withMathJax(paste0("$$", data()[["fit_formula_tex"]],"$$"))
+    withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
   output$fit_statistics <- renderRHandsontable({
@@ -746,10 +747,12 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
       # Set up parameters to pass to Rmd document
       params <- list(
+        count_data = data()[["count_data"]],
         fit_result = data()[["fit_results"]],
         fit_coeffs = data()[["fit_coeffs"]],
         var_cov_mat = data()[["var_cov_mat"]],
         cor_mat = data()[["cor_mat"]],
+        fit_formula_tex = data()[["fit_formula_tex"]],
         gg_curve = data()[["gg_curve"]]
       )
 

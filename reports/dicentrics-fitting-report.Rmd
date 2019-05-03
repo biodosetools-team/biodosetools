@@ -9,10 +9,12 @@ output:
     # theme: cosmo
     # css: style.css
 params:
+  count_data: NA
   fit_result: NA
   fit_coeffs: NA
   var_cov_mat: NA
   cor_mat: NA
+  fit_formula_tex: NA
   gg_curve: NA
 ---
 
@@ -30,18 +32,23 @@ embed_var <- function(x, ...) {
 }
 ```
 
-### Result of curve fit
+### Count data used
 ```{r echo=FALSE}
-params$fit_result
+params$count_data %>% 
+  # knitr::kable()
+  rhandsontable(width = "100%", height = "100%")
 ```
 
+### Fit formula
 ```{r echo=FALSE}
-embed_var(params$fit_result)
+withMathJax(paste0("$$", params$fit_formula_tex, "$$"))
 ```
 
 ### Coefficients
 ```{r echo=FALSE}
 params$fit_coeffs %>% 
+  as.matrix() %>% 
+  round(digits = 3) %>% 
   knitr::kable()
 ```
 
@@ -49,23 +56,32 @@ params$fit_coeffs %>%
 ```{r echo=FALSE}
 broom::glance(params$fit_result) %>%
   select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>% 
-  knitr::kable()
-```
-
-### Variance-covariance matrix
-```{r echo=FALSE}
-params$var_cov_mat %>% 
+  as.matrix() %>% 
+  round(digits = 3) %>% 
   knitr::kable()
 ```
 
 ### Correlation matrix
 ```{r echo=FALSE}
 params$cor_mat %>% 
+  round(digits = 3) %>% 
   knitr::kable()
 ```
 
-### Plot
+### Variance-covariance matrix
+```{r echo=FALSE}
+params$var_cov_mat %>% 
+  formatC(format = "e", digits = 3) %>% 
+  knitr::kable()
+```
+
+### Curve plot
 ```{r echo=FALSE}
 params$gg_curve
 ```
 
+
+### Download fit results
+```{r echo=FALSE}
+embed_var(params$fit_result)
+```
