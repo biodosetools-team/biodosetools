@@ -1584,13 +1584,18 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
     } else if (assessment == "hetero"){
       results_list <- list(
+        # Used in app
         assessment = assessment,
         est_doses_whole = est_doses_whole,
         est_mixing_prop_hetero = est_mixing_prop_hetero,
         est_yields_hetero = est_yields_hetero,
         est_doses_hetero = est_doses_hetero,
         est_frac_hetero = est_frac_hetero,
-        gg_curve = gg_curve
+        gg_curve = gg_curve,
+        # Required for report
+        case_data = case_data,
+        case_description = input$case_description,
+        results_comments = input$results_comments
       )
     }
 
@@ -1720,36 +1725,42 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   )
 
   # Export report ----
-  # output$save_report <- downloadHandler(
-  #   # For PDF output, change this to "report.pdf"
-  #   filename = function() {
-  #     paste("report-", Sys.Date(), ".html", sep = "")
-  #   },
-  #   content = function(file) {
-  #     # Copy the report file to a temporary directory before processing it, in
-  #     # case we don't have write permissions to the current working dir (which
-  #     # can happen when deployed).
-  #     tempReport <- file.path(tempdir(), "report.Rmd")
-  #     normReport <- file.path("report.Rmd")
-  #     file.copy("report.Rmd", tempReport, overwrite = TRUE)
-  #
-  #     # Set up parameters to pass to Rmd document
-  #     params <- list(
-  #       fit_result = data()[["fit_results"]],
-  #       fit_coeffs = data()[["fit_coeffs"]],
-  #       var_cov_mat = data()[["var_cov_mat"]],
-  #       cor_mat = data()[["cor_mat"]],
-  #       gg_curve = data()[["gg_curve"]]
-  #     )
-  #
-  #     # Knit the document, passing in the `params` list, and eval it in a
-  #     # child of the global environment (this isolates the code in the document
-  #     # from the code in this app).
-  #     rmarkdown::render(tempReport,
-  #                       output_file = file,
-  #                       params = params,
-  #                       envir = new.env(parent = globalenv())
-  #     )
-  #   }
-  # )
+  output$save_report <- downloadHandler(
+    # For PDF output, change this to "report.pdf"
+    filename = function() {
+      paste("report-", Sys.Date(), ".html", sep = "")
+    },
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      # normReport <- file.path("report.Rmd")
+      file.copy("reports/dicentrics-estimate-report.Rmd", tempReport, overwrite = TRUE)
+
+      # Set up parameters to pass to Rmd document
+      params <- list(
+        # assessment = assessment,
+        # est_doses_whole = est_doses_whole,
+        # est_mixing_prop_hetero = est_mixing_prop_hetero,
+        # est_yields_hetero = est_yields_hetero,
+        # est_doses_hetero = est_doses_hetero,
+        # est_frac_hetero = est_frac_hetero,
+        gg_curve = data()[["gg_curve"]],
+        case_data = data()[["case_data"]],
+        case_description = data()[["case_description"]],
+        results_comments = data()[["results_comments"]]
+      )
+
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      rmarkdown::render(
+        tempReport,
+        output_file = file,
+        params = params,
+        envir = new.env(parent = globalenv())
+      )
+    }
+  )
 }
