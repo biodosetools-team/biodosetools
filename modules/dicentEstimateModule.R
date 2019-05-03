@@ -839,7 +839,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
   output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
-    withMathJax(paste0("$$", data()[["fit_formula_tex"]],"$$"))
+    withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
   output$fit_statistics <- renderRHandsontable({

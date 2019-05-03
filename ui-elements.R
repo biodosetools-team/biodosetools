@@ -2,6 +2,7 @@
 
 source("libs/theming.R", local = T)
 source("libs/widgets_functions.R", local = T)
+# source("libs/withLocalMathJax.R", local = T)
 
 html_tags <- tags$head(
   tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
@@ -185,7 +186,7 @@ sidebar <- bs4DashMySidebar(
 home <- bs4TabItem(
   tabName = "home",
   h2("About this project", style = "margin-left: 10%;"),
-  includeMarkdown("www/body.md"),
+  shiny::includeMarkdown("www/body.md"),
 
   # Buttons
   div(
