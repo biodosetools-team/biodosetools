@@ -611,13 +611,15 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
     # Make list of results to return
     results_list <- list(
-      count_data = hot_to_r(input$hotable),
+      # Used in app
       fit_results = fit_results,
       fit_coeffs = fit_coeffs,
       var_cov_mat = var_cov_mat,
       cor_mat = cor_mat,
       fit_formula_tex = fit_formula_tex,
-      gg_curve = gg_curve
+      gg_curve = gg_curve,
+      # Required for report
+      count_data = hot_to_r(input$hotable)
     )
 
     return(results_list)
@@ -735,7 +737,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste("report-", Sys.Date(), ".html", sep = "")
+      paste("fitting-report-", Sys.Date(), ".html", sep = "")
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
@@ -759,7 +761,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
-      rmarkdown::render(tempReport,
+      rmarkdown::render(
+        tempReport,
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())
