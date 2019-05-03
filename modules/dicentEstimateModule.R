@@ -913,7 +913,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       curve_method <- input$curve_method_select
     } else {
       curve_method <- input$partial_method_select
-      # TODO: This variable is unused
     }
 
 
@@ -1017,7 +1016,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else if (curve_method == "simple") {
       conf_int_curve <- 0 # This makes R_factor = 0
       conf_int_yield <- 0.95
-    } else {
+    } else { # For partial body
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
     }
@@ -1540,8 +1539,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
       mutate(
         yield = yield_fun(dose),
-        yield_low = yield_fun(dose) - R_factor(0.83) * yield_error_fun(dose),
-        yield_upp = yield_fun(dose) + R_factor(0.83) * yield_error_fun(dose)
+        yield_low = yield_fun(dose) - R_factor(conf_int_curve) * yield_error_fun(dose),
+        yield_upp = yield_fun(dose) + R_factor(conf_int_curve) * yield_error_fun(dose)
       )
     # TODO: This should depend on the selected method
 
