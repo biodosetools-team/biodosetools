@@ -206,10 +206,7 @@ dicentFittingAdvUI <- function(id, label) {
             bs4TabPanel(
               tabName = "Result of curve fit",
               active = TRUE,
-              # h6("Fit summary"),
-              # verbatimTextOutput(ns("fit_results")),
               h6("Fit formula"),
-              # verbatimTextOutput(ns("fit_formula")),
               uiOutput(ns("fit_formula_tex")),
 
               # br(),
@@ -631,12 +628,6 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_results"]]
   })
-
-  # output$fit_formula <- renderPrint({
-  #   # Fitting formula
-  #   if (input$button_fit <= 0) return(NULL)
-  #   data()[["fit_results"]]$formula
-  # })
 
   output$fit_formula_tex <- renderUI({
     # Fitting formula
