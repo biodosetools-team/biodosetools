@@ -3,10 +3,10 @@ title: "Curve fitting report"
 author: "Biodose Tools"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
-  prettydoc::html_pretty:
-    theme: cayman
-  # html_document:
-    # theme: cosmo
+  # prettydoc::html_pretty:
+    # theme: cayman
+  html_document:
+    theme: cosmo
     # css: style.css
 params:
   count_data: NA
@@ -47,32 +47,45 @@ withMathJax(paste0("$$", params$fit_formula_tex, "$$"))
 ### Coefficients
 ```{r echo=FALSE}
 params$fit_coeffs %>% 
-  as.matrix() %>% 
-  round(digits = 3) %>% 
-  knitr::kable()
+  # as.matrix() %>% 
+  # round(digits = 3) %>% 
+  # knitr::kable()
+  rhandsontable(width = "100%", height = "100%") %>% 
+  hot_cols(format = "0.000")
 ```
 
 ### Model-level statistics
 ```{r echo=FALSE}
 broom::glance(params$fit_result) %>%
-  select(logLik, df.null, df.residual, null.deviance, deviance, AIC, BIC) %>% 
-  as.matrix() %>% 
-  round(digits = 3) %>% 
-  knitr::kable()
+  dplyr::rename(
+    df.res = df.residual,
+    dev.null = null.deviance,
+    dev.res = deviance
+  ) %>%
+  dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
+  dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
+  # round(digits = 3) %>% 
+  # knitr::kable()
+  rhandsontable(width = "100%", height = "100%") %>% 
+  hot_cols(format = "0.000")
 ```
 
 ### Correlation matrix
 ```{r echo=FALSE}
 params$cor_mat %>% 
-  round(digits = 3) %>% 
-  knitr::kable()
+  # round(digits = 3) %>% 
+  # knitr::kable()
+  rhandsontable(width = "100%", height = "100%") %>% 
+  hot_cols(format = "0.000")
 ```
 
 ### Variance-covariance matrix
 ```{r echo=FALSE}
 params$var_cov_mat %>% 
   formatC(format = "e", digits = 3) %>% 
-  knitr::kable()
+  # knitr::kable()
+  rhandsontable(width = "100%", height = "100%") %>%
+  hot_cols(halign = "htRight")
 ```
 
 ### Curve plot
