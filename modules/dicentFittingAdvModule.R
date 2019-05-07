@@ -458,7 +458,7 @@ dicentFittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
     data.frame(
       Dose = doses,
-      Aberrations = aberr,
+      Dicentrics = aberr,
       Cells = cells
     )
   })
@@ -603,7 +603,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       ) +
       # Confidence bands (Merkle, 1983)
       geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-      labs(x = "Dose (Gy)", y = "Aberrations / Cells") +
+      labs(x = "Dose (Gy)", y = "Dicentrics/cells") +
       theme_bw()
 
     # Make list of results to return

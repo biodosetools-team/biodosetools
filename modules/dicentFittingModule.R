@@ -21,7 +21,7 @@ dicentFittingUI <- function(id, label) {
         ),
         textInput(
           inputId = ns("aberr"),
-          label = "Aberrations",
+          label = "Dicentrics",
           value = "8,14,22,55,100,109,100,103,108,103,107"
         ),
         textInput(
@@ -35,7 +35,7 @@ dicentFittingUI <- function(id, label) {
                   "right",
                   options = list(container = "body")
         ),
-        bsTooltip(ns("aberr"), "Aberrations count",
+        bsTooltip(ns("aberr"), "Dicentrics count",
                   "right",
                   options = list(container = "body")
         ),
