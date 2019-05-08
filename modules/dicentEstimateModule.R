@@ -980,12 +980,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Generalized curves ----
-    yield_fun <- function(x) {
+    yield_fun <- function(d, G) {
       general_fit_coeffs[[1]] +
-        general_fit_coeffs[[2]] * x +
-        general_fit_coeffs[[3]] * x * x * protracted_g_value
+        general_fit_coeffs[[2]] * d +
+        general_fit_coeffs[[3]] * d^2 * G
     }
-
 
     # R factor depeding on selected CI
     chisq_df <- nrow(fit_coeffs)
@@ -993,15 +992,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       sqrt(qchisq(conf_int, df = chisq_df))
     }
 
-    yield_error_fun <- function(x) {
-      # TODO: How does the protracted function affect this function?
+    yield_error_fun <- function(d, G) {
       sqrt(
         general_var_cov_mat[["C", "C"]] +
-          general_var_cov_mat[["α", "α"]] * x * x +
-          general_var_cov_mat[["β", "β"]] * x * x * x * x +
-          2 * general_var_cov_mat[["C", "α"]] * x +
-          2 * general_var_cov_mat[["C", "β"]] * x * x +
-          2 * general_var_cov_mat[["α", "β"]] * x * x * x
+          general_var_cov_mat[["α", "α"]] * d^2 +
+          general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
+          2 * general_var_cov_mat[["C", "α"]] * d +
+          2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
+          2 * general_var_cov_mat[["α", "β"]] * d^3 * G
       )
     }
 
@@ -1018,16 +1016,16 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calculate infimums of the different curves
-    yield_low_inf <- yield_fun(0) - R_factor(conf_int_curve) * yield_error_fun(0)
-    yield_est_inf <- yield_fun(0)
-    yield_upp_inf <- yield_fun(0) + R_factor(conf_int_curve) * yield_error_fun(0)
+    yield_low_inf <- yield_fun(0, 1) - R_factor(conf_int_curve) * yield_error_fun(0, 1)
+    yield_est_inf <- yield_fun(0, 1)
+    yield_upp_inf <- yield_fun(0, 1) + R_factor(conf_int_curve) * yield_error_fun(0, 1)
 
     # Projection functions ----
 
     project_yield_estimate <- function(yield) {
       if (yield >= yield_est_inf) {
         uniroot(function(dose) {
-          yield_fun(dose) - yield
+          yield_fun(dose, protracted_g_value) - yield
         }, c(1e-16, 100))$root
       } else {
         0
@@ -1037,7 +1035,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     project_yield_lower <- function(yield, conf_int) {
       if (yield >= yield_low_inf) {
         uniroot(function(dose) {
-          yield_fun(dose) + R_factor(conf_int) * yield_error_fun(dose) - yield
+          yield_fun(dose, protracted_g_value) + R_factor(conf_int) * yield_error_fun(dose, protracted_g_value) - yield
         }, c(1e-16, 100))$root
       } else {
         0
@@ -1047,7 +1045,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     project_yield_upper <- function(yield, conf_int) {
       if (yield >= yield_upp_inf) {
         uniroot(function(dose) {
-          yield_fun(dose) - R_factor(conf_int) * yield_error_fun(dose) - yield
+          yield_fun(dose, protracted_g_value) - R_factor(conf_int) * yield_error_fun(dose, protracted_g_value) - yield
         }, c(1e-16, 100))$root
       } else {
         0
@@ -1541,9 +1539,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
       mutate(
-        yield = yield_fun(dose),
-        yield_low = yield_fun(dose) - R_factor(conf_int_curve) * yield_error_fun(dose),
-        yield_upp = yield_fun(dose) + R_factor(conf_int_curve) * yield_error_fun(dose)
+        yield = yield_fun(dose, protracted_g_value),
+        yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
+        yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
       )
     # TODO: This should depend on the selected method
 
@@ -1553,7 +1551,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       stat_function(
         data = data.frame(x = c(0, max_dose)),
         mapping = aes(x),
-        fun = function(x) yield_fun(x),
+        fun = function(x) yield_fun(x, protracted_g_value),
         linetype = "dashed"
       ) +
       # Confidence bands (Merkle, 1983)
