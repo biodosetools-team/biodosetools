@@ -1089,7 +1089,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve) {
+    estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
@@ -1128,7 +1128,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_dolphin <- function(case_data, fit_results, conf_int = 0.95, fraction_coeff = "d0", cov = TRUE) {
+    estimate_partial_dolphin <- function(case_data, fit_results, conf_int = 0.95, fraction_coeff = "d0", protracted_g_value, cov = TRUE) {
       # case_data is the data input
       # fit_results is a glm object
       # if cov = TRUE the covariances of the calibration coefficients are used
@@ -1164,6 +1164,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       β <- fit_results$coef[3]
       var_cov_mat <- vcov(fit_results)
 
+      # Update β to take into account protracted exposures
+      β <- β * protracted_g_value
+
       if (cells - cells_0 == 0) {
         # If there are no cells with > 1 dic, the resulting matrix includes only NA's
         # This should be handled somewhere downstream
@@ -1187,7 +1190,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # Derivatives of regression curve coefs:
         deriv_lambda <- (z)^(-0.5)
         deriv_C <- -(z)^(-0.5)
-        deriv_β <- (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+        deriv_β <- protracted_g_value * ((4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2))
         deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
 
         # Get the covariance matrix for the parameters of the ZIP distribution:
@@ -1209,9 +1212,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
             (deriv_α^2) * var_cov_mat[2, 2] +
             (deriv_β^2) * var_cov_mat[3, 3] +
             (deriv_lambda^2) * (lambda_est_sd^2) +
-            2 * (deriv_α * deriv_β) * var_cov_mat[3, 2] +
-            2 * (deriv_C * deriv_α) * var_cov_mat[2, 1] +
-            2 * (deriv_C * deriv_β) * var_cov_mat[3, 1]
+            2 * (deriv_C * deriv_α) * var_cov_mat[1, 2] +
+            2 * (deriv_C * deriv_β) * var_cov_mat[1, 3] +
+            2 * (deriv_α * deriv_β) * var_cov_mat[2, 3]
         } else {
           dose_est_var <-
             (deriv_C^2) * var_cov_mat[1, 1] +
@@ -1279,7 +1282,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: heterogeneous dose estimation
-    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve) {
+    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve, protracted_g_value) {
       # TODO: How does the protracted function affect this whole calculation?
 
       # Get cases data
@@ -1486,16 +1489,16 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Calculations ----
 
     # Calculate whole-body results
-    est_doses_whole <- estimate_whole_body(case_data, conf_int_yield, conf_int_curve)
+    est_doses_whole <- estimate_whole_body(case_data, conf_int_yield, conf_int_curve, protracted_g_value)
     if (assessment == "partial") {
       # Calculate partial results
-      results_partial <- estimate_partial_dolphin(case_data, fit_results, conf_int = 0.95, fraction_coeff)
+      results_partial <- estimate_partial_dolphin(case_data, fit_results, conf_int = 0.95, fraction_coeff, protracted_g_value)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
-      results_hetero <- estimate_hetero(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve)
+      results_hetero <- estimate_hetero(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve, protracted_g_value)
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
       est_yields_hetero <- results_hetero[["est_yields"]]
