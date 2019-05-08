@@ -32,12 +32,14 @@ embed_var <- function(x, ...) {
 }
 ```
 
-### Count data used
+## Count data used
 ```{r echo=FALSE}
 params$count_data %>% 
   # knitr::kable()
   rhandsontable(width = "100%", height = "100%")
 ```
+
+## Results
 
 ### Fit formula
 ```{r echo=FALSE}
