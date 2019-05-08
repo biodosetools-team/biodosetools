@@ -560,23 +560,23 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Generalized curves
-    yield_fun <- function(x) {
+    yield_fun <- function(d) {
       general_fit_coeffs[[1]] +
-        general_fit_coeffs[[2]] * x +
-        general_fit_coeffs[[3]] * x * x
+        general_fit_coeffs[[2]] * d +
+        general_fit_coeffs[[3]] * d^2
     }
 
     chisq_df <- nrow(fit_coeffs)
-    R_factor <- sqrt(qchisq(.95, df = chisq_df))
+    R_factor <- sqrt(qchisq(0.95, df = chisq_df))
 
-    yield_error_fun <- function(x) {
+    yield_error_fun <- function(d) {
       sqrt(
         general_var_cov_mat[["C", "C"]] +
-          general_var_cov_mat[["α", "α"]] * x * x +
-          general_var_cov_mat[["β", "β"]] * x * x * x * x +
-          2 * general_var_cov_mat[["C", "α"]] * x +
-          2 * general_var_cov_mat[["C", "β"]] * x * x +
-          2 * general_var_cov_mat[["α", "β"]] * x * x * x
+          general_var_cov_mat[["α", "α"]] * d^2 +
+          general_var_cov_mat[["β", "β"]] * d^4 +
+          2 * general_var_cov_mat[["C", "α"]] * d +
+          2 * general_var_cov_mat[["C", "β"]] * d^2 +
+          2 * general_var_cov_mat[["α", "β"]] * d^3
       )
     }
 
