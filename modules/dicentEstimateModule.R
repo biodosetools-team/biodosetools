@@ -96,10 +96,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
         bs4TabPanel(
           tabName = "Result of curve fit",
           active = TRUE,
-          # h6("Fit summary"),
-          # verbatimTextOutput(ns("fit_results")),
           h6("Fit formula"),
-          # verbatimTextOutput(ns("fit_formula")),
           uiOutput(ns("fit_formula_tex")),
 
           # br(),
@@ -932,7 +929,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     fit_coeffs <- broom::tidy(fit_results) %>%
       select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
-    # rownames(fit_coeffs) <- fit_coeffs[["term"]]
+
+    # Parse model formula
+    fit_formula <- fit_results$formula
+
+    if (fit_formula == as.formula("aberr ~ -1 + C + α + β")) {
+      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+    } else if (fit_formula == as.formula("aberr ~ -1 + C + α")) {
+      fit_formula_tex <- "Y = C + \\alpha D"
+    }
+    else if (fit_formula == as.formula("aberr ~ -1 + α + β")) {
+      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+    }
+    else if (fit_formula == as.formula("aberr ~ -1 + α")) {
+      fit_formula_tex <- "Y = \\alpha D"
+    }
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L)
@@ -974,7 +985,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         general_fit_coeffs[[2]] * x +
         general_fit_coeffs[[3]] * x * x * protracted_g_value
     }
-
 
 
     # R factor depeding on selected CI
@@ -1567,6 +1577,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_doses_whole = est_doses_whole,
         gg_curve = gg_curve,
         # Required for report
+        fit_coeffs = fit_coeffs,
+        fit_formula_tex = fit_formula_tex,
         case_data = case_data,
         case_description = input$case_description,
         results_comments = input$results_comments
@@ -1579,6 +1591,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_frac_partial = est_frac_partial,
         gg_curve = gg_curve,
         # Required for report
+        fit_coeffs = fit_coeffs,
+        fit_formula_tex = fit_formula_tex,
         case_data = case_data,
         case_description = input$case_description,
         results_comments = input$results_comments
@@ -1594,6 +1608,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_frac_hetero = est_frac_hetero,
         gg_curve = gg_curve,
         # Required for report
+        fit_coeffs = fit_coeffs,
+        fit_formula_tex = fit_formula_tex,
         case_data = case_data,
         case_description = input$case_description,
         results_comments = input$results_comments
@@ -1747,6 +1763,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # est_yields_hetero = est_yields_hetero,
         # est_doses_hetero = est_doses_hetero,
         # est_frac_hetero = est_frac_hetero,
+        fit_coeffs = data()[["fit_coeffs"]],
+        fit_formula_tex = data()[["fit_formula_tex"]],
         gg_curve = data()[["gg_curve"]],
         case_data = data()[["case_data"]],
         case_description = data()[["case_description"]],

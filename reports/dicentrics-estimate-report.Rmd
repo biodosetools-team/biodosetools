@@ -3,12 +3,14 @@ title: "Dose estimation report"
 author: "Biodose Tools"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
-  prettydoc::html_pretty:
-    theme: cayman
-  # html_document:
-    # theme: cosmo
+  # prettydoc::html_pretty:
+    # theme: cayman
+  html_document:
+    theme: cosmo
     # css: style.css
 params:
+  fit_coeffs: NA
+  fit_formula_tex: NA
   case_data: NA
   case_description: NA
   results_comments: NA
@@ -29,22 +31,38 @@ embed_var <- function(x, ...) {
 }
 ```
 
-### Case data analyzed
+## Curve used
+
+### Fit formula
+```{r echo=FALSE}
+withMathJax(paste0("$$", params$fit_formula_tex, "$$"))
+```
+
+### Coefficients
+```{r echo=FALSE}
+params$fit_coeffs %>% 
+  rhandsontable(width = "100%", height = "100%") %>% 
+  hot_cols(format = "0.000")
+```
+
+
+
+## Case data analyzed
 ```{r echo=FALSE}
 params$case_data %>% 
   rhandsontable(width = "100%", height = "100%")
 ```
 
-#### Case description
+### Case description
 `r params$case_description`
 
-### Dose estimation results
+## Dose estimation results
 
 
-#### Curve plot
+### Curve plot
 ```{r echo=FALSE}
 params$gg_curve
 ```
 
-#### Comments
+### Comments
 `r params$results_comments`
