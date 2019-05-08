@@ -826,13 +826,6 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     data()[["fit_results"]]
   })
 
-  output$fit_formula <- renderPrint({
-    # Fitting formula
-    if (input$button_view_fit_data <= 0) return(NULL)
-    data()[["fit_results"]]$formula
-    # TODO: transform this into LaTeX output?
-  })
-
   output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
@@ -1164,7 +1157,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       β <- fit_results$coef[3]
       var_cov_mat <- vcov(fit_results)
 
-      # Update β to take into account protracted exposures
+      # Update β to correct for protracted exposures
       β <- β * protracted_g_value
 
       if (cells - cells_0 == 0) {
@@ -1176,7 +1169,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       } else {
 
         # Get estimates for pi and lambda
-        # Maybe adjust the search interval for uniroot function
         lambda_est <- uniroot(function(yield) {
           yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
         }, c(1e-16, 100))$root
@@ -1283,8 +1275,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: heterogeneous dose estimation
     estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve, protracted_g_value) {
-      # TODO: How does the protracted function affect this whole calculation?
-
       # Get cases data
       # Data test is stored in vector y
       y <- rep(seq(0, length(counts) - 1, 1), counts)
@@ -1546,7 +1536,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
         yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
       )
-    # TODO: This should depend on the selected method
 
     # Make base plot
     gg_curve <- ggplot(plot_data / C) +
