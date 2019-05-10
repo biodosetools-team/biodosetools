@@ -1006,6 +1006,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else { # For partial body
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
+      conf_int_dolphin <- 0.95
     }
 
     # Calculate infimums of the different curves
@@ -1121,7 +1122,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_dolphin <- function(case_data, fit_results, conf_int = 0.95, fraction_coeff = "d0", protracted_g_value, cov = TRUE) {
+    estimate_partial_dolphin <- function(case_data, fit_results, fraction_coeff,
+                                         conf_int, protracted_g_value, cov = TRUE) {
       # case_data is the data input
       # fit_results is a glm object
       # if cov = TRUE the covariances of the calibration coefficients are used
@@ -1130,8 +1132,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Function to get the fisher information matrix
       get_cov_ZIP_ML <- function(lambda, pi, cells) {
-        # For the parameters of a ZIP distribution (lambda and pi)
-        # where 1-p is the fraction of extra zeros
+        # For the parameters of a ZIP distribution (lambda and pi) where 1-p is the fraction of extra zeros
         info_mat <- matrix(NA, nrow = 2, ncol = 2)
         info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
         info_mat[1, 2] <- info_mat[2, 1] <- cells * exp(-lambda) / (1 - pi + pi * exp(-lambda))
@@ -1274,7 +1275,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: heterogeneous dose estimation
-    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve, protracted_g_value) {
+    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff,
+                                conf_int_yield, conf_int_curve, protracted_g_value) {
       # Get cases data
       # Data test is stored in vector y
       y <- rep(seq(0, length(counts) - 1, 1), counts)
@@ -1482,7 +1484,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     est_doses_whole <- estimate_whole_body(case_data, conf_int_yield, conf_int_curve, protracted_g_value)
     if (assessment == "partial") {
       # Calculate partial results
-      results_partial <- estimate_partial_dolphin(case_data, fit_results, conf_int = 0.95, fraction_coeff, protracted_g_value)
+      results_partial <- estimate_partial_dolphin(case_data, fit_results, fraction_coeff, conf_int_dolphin, protracted_g_value)
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
