@@ -1116,7 +1116,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       row.names(est_doses) <- c("lower", "estimate", "upper")
 
-      # Return
+      # Return object
       return(est_doses)
     }
 
@@ -1151,6 +1151,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         d0 <- input$d0_coeff
       }
 
+      # Get fitting model variables
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
       cells_0 <- case_data[["C0"]]
@@ -1280,9 +1281,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
         }
 
-        cat("F_est_sd: ")
-        cat(F_est_sd)
-
         # Get confidence interval of fraction irradiated:
         F_upp <- F_est + qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
         F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
@@ -1299,7 +1297,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
 
-        # Return
+        # Return objects
         results_list <- list(
           est_doses = est_doses,
           est_frac = est_frac
@@ -1317,21 +1315,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: heterogeneous dose estimation
     estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff,
+                                general_fit_coeffs, general_var_cov_mat,
                                 conf_int_yield, conf_int_curve, protracted_g_value) {
-      # Get cases data
-      # Data test is stored in vector y
+      # Get cases data and store in vector y
       y <- rep(seq(0, length(counts) - 1, 1), counts)
       x <- c(rep(1, length(y)))
 
       fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
-      # TODO: review if k needs to be changed
 
-      # Input of the parameters of the dose-effect linear-quadratic model
-      C <- fit_coeffs[1, "estimate"]
-      α <- fit_coeffs[2, "estimate"]
-      β <- fit_coeffs[3, "estimate"]
+      # Get fitting model variables
+      C <- general_fit_coeffs[[1]]
+      α <- general_fit_coeffs[[2]]
+      β <- general_fit_coeffs[[3]]
+      var_cov_mat <- general_var_cov_mat
 
-      # Input of the Variance-covariance matrix of the parameters
+      # Input of the variance-covariance matrix of the parameters
       sigma <- numeric(49)
       dim(sigma) <- c(7, 7)
       sigma[1, 1] <- var_cov_mat[1, 1]
@@ -1353,20 +1351,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         sigma[4, 4] <- 0
       }
 
-      # First parameter is the mixing proportion
-      # the second and third parameters are the yields
-      # TODO: Generalize loglik and MLE to all possible fittings
+      # Likelihood function
       loglik <- function(b) {
         loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
 
         return(-loglik)
       }
 
+      # Calculate Maximum Likielihood Estimation
       MLE <- optim(
-        c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
-        loglik,
+        par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
+        fn = loglik,
         method = c("L-BFGS-B"),
-        lower = c(0.01, 0.01, 0.01), upper = c(0.99, Inf, Inf), hessian = T
+        lower = c(0.01, 0.01, 0.01),
+        upper = c(0.99, Inf, Inf),
+        hessian = TRUE
       )
 
       st <- solve(MLE$hessian)
@@ -1400,8 +1399,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # sigma[7, 6] <- st[2, 3]
 
       # Estimated parameters and its standard errors
-      # First parameter is the mixing proportion
-      # the second and third parameters are the yields
       estim <- c(frac1, yield1_est, yield2_est)
       std_estim <- sqrt(diag(st))
 
@@ -1420,6 +1417,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       yield2_low <- correct_yield(yield2_low)
       yield2_upp <- correct_yield(yield2_upp)
 
+      est_yields <- data.frame(
+        yield1 = c(yield1_low, yield1_est, yield1_upp),
+        yield2 = c(yield2_low, yield2_est, yield2_upp)
+      )
+
+      row.names(est_yields) <- c("lower", "estimate", "upper")
+
+      # Estimated mixing proportion
       est_mixing_prop <- data.frame(
         y_estimate = c(estim[2], estim[3]),
         y_std_err =  c(std_estim[2], std_estim[3]),
@@ -1438,13 +1443,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
       dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
 
-      est_yields <- data.frame(
-        yield1 = c(yield1_low, yield1_est, yield1_upp),
-        yield2 = c(yield2_low, yield2_est, yield2_upp)
-      )
-
-      row.names(est_yields) <- c("lower", "estimate", "upper")
-
       est_doses <- data.frame(
         dose1 = c(dose1_low, dose1_est, dose1_upp),
         dose2 = c(dose2_low, dose2_est, dose2_upp)
@@ -1452,7 +1450,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       row.names(est_doses) <- c("lower", "estimate", "upper")
 
-      frac <- function(g, f, mu1, mu2) {
+      # Function to calculate fractions of irradiated blood
+      get_fraction <- function(g, f, mu1, mu2) {
         dose1_est <- project_yield_estimate(mu1)
 
         if (mu2 <= 0.01) {
@@ -1467,7 +1466,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Estimated fraction of irradiated blood for dose dose1
-      F1_est <- frac(gamma, frac1, yield1_est, yield2_est)
+      F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
       F1_est <- correct_boundary(F1_est)
       F2_est <- 1 - F1_est
 
@@ -1485,30 +1484,29 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Gradient
       # h <- 0.000001
       # if (yield2_est > 0.01) {
-      #   c1 <- (frac(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (frac(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (frac(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (frac(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (frac(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (frac(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-      #   c8 <- (frac(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
+      #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+      #   c8 <- (get_fraction(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
       #   sqrt(t(grad) %*% sigma %*% grad)
       # }
-      #
       # if (yield2_est <= 0.01) {
-      #   c1 <- (frac(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (frac(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (frac(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (frac(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (frac(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (frac(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+      #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+      #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+      #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+      #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
       #   grad <- c(c1, c2, c3, c5, c6, c7)
       #   sigma2 <- sigma[1:6, 1:6]
       #   sqrt(t(grad) %*% sigma2 %*% grad)
       # }
 
-      # Return
+      # Return objects
       results_list <- list(
         est_mixing_prop = est_mixing_prop,
         est_yields      = est_yields,
@@ -1540,6 +1538,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
         counts, fit_coeffs, var_cov_mat, fraction_coeff,
+        general_fit_coeffs, general_var_cov_mat,
         conf_int_yield, conf_int_curve, protracted_g_value
       )
       # Parse results
