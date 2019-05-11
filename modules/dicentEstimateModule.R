@@ -892,10 +892,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Cases data
       case_data <- hot_to_r(input$hotable)
 
-      counts <- case_data[1, ] %>%
-        select(contains("C")) %>%
-        as.numeric()
-
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
     })
@@ -1324,197 +1320,239 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: heterogeneous dose estimation
-    estimate_hetero <- function(counts, fit_coeffs, var_cov_mat, fraction_coeff,
+    estimate_hetero <- function(case_data, fit_coeffs, var_cov_mat, fraction_coeff,
                                 general_fit_coeffs, general_var_cov_mat,
                                 conf_int_yield, conf_int_curve, protracted_g_value) {
-      # Get cases data and store in vector y
-      y <- rep(seq(0, length(counts) - 1, 1), counts)
-      x <- c(rep(1, length(y)))
 
-      fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
+      # Select dicentric counts
+      counts <- case_data[1, ] %>%
+        select(contains("C")) %>%
+        as.numeric()
 
       # Get fitting model variables
-      C <- general_fit_coeffs[[1]]
-      α <- general_fit_coeffs[[2]]
-      β <- general_fit_coeffs[[3]]
-      var_cov_mat <- general_var_cov_mat
+      cells <- case_data[["N"]]
+      cells_0 <- case_data[["C0"]]
+      cells_1 <- case_data[["C1"]]
 
-      # Input of the variance-covariance matrix of the parameters
-      sigma <- numeric(49)
-      dim(sigma) <- c(7, 7)
-      sigma[1, 1] <- var_cov_mat[1, 1]
-      sigma[2, 2] <- var_cov_mat[2, 2]
-      sigma[3, 3] <- var_cov_mat[3, 3]
-      sigma[1, 2] <- var_cov_mat[1, 2]
-      sigma[1, 3] <- var_cov_mat[1, 3]
-      sigma[2, 3] <- var_cov_mat[2, 3]
-      sigma[2, 1] <- sigma[1, 2]
-      sigma[3, 1] <- sigma[1, 3]
-      sigma[3, 2] <- sigma[2, 3]
+      if (cells - (cells_0 + cells_1) != 0) {
+        # Get cases data and store in vector y
+        y <- rep(seq(0, length(counts) - 1, 1), counts)
+        x <- c(rep(1, length(y)))
 
-      # Input of the parameter gamma and its variance
-      if (fraction_coeff == "gamma") {
-        gamma <- input$gamma_coeff
-        sigma[4, 4] <- input$gamma_error
-      } else if (fraction_coeff == "d0"){
-        gamma <- 1 / input$d0_coeff
-        sigma[4, 4] <- 0
-      }
+        fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
 
-      # Likelihood function
-      loglik <- function(b) {
-        loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
+        # Get fitting model variables
+        C <- general_fit_coeffs[[1]]
+        α <- general_fit_coeffs[[2]]
+        β <- general_fit_coeffs[[3]]
+        var_cov_mat <- general_var_cov_mat
 
-        return(-loglik)
-      }
+        # Input of the variance-covariance matrix of the parameters
+        sigma <- numeric(49)
+        dim(sigma) <- c(7, 7)
+        sigma[1, 1] <- var_cov_mat[1, 1]
+        sigma[2, 2] <- var_cov_mat[2, 2]
+        sigma[3, 3] <- var_cov_mat[3, 3]
+        sigma[1, 2] <- var_cov_mat[1, 2]
+        sigma[1, 3] <- var_cov_mat[1, 3]
+        sigma[2, 3] <- var_cov_mat[2, 3]
+        sigma[2, 1] <- sigma[1, 2]
+        sigma[3, 1] <- sigma[1, 3]
+        sigma[3, 2] <- sigma[2, 3]
 
-      # Calculate Maximum Likielihood Estimation
-      MLE <- optim(
-        par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
-        fn = loglik,
-        method = c("L-BFGS-B"),
-        lower = c(0.01, 0.01, 0.01),
-        upper = c(0.99, Inf, Inf),
-        hessian = TRUE
-      )
-
-      st <- solve(MLE$hessian)
-      yield1_est <- MLE$par[2]
-      yield2_est <- MLE$par[3]
-      frac1 <- MLE$par[1]
-
-      if (yield1_est < yield2_est) {
-        yield1_est <- MLE$par[3]
-        yield2_est <- MLE$par[2]
-        frac1 <- 1 - frac1
-        stm <- st
-        stm[2, 2] <- st[3, 3]
-        stm[3, 3] <- st[2, 2]
-        stm[1, 2] <- st[1, 3]
-        stm[1, 3] <- st[1, 2]
-        stm[2, 1] <- stm[1, 2]
-        stm[3, 1] <- stm[1, 3]
-        st <- stm
-      }
-
-      # WIP: This is not requiered yet
-      # sigma[5, 5] <- st[1, 1]
-      # sigma[6, 6] <- st[2, 2]
-      # sigma[7, 7] <- st[3, 3]
-      # sigma[5, 6] <- st[1, 2]
-      # sigma[5, 7] <- st[1, 3]
-      # sigma[6, 7] <- st[2, 3]
-      # sigma[6, 5] <- st[1, 2]
-      # sigma[7, 5] <- st[1, 3]
-      # sigma[7, 6] <- st[2, 3]
-
-      # Estimated parameters and its standard errors
-      estim <- c(frac1, yield1_est, yield2_est)
-      std_estim <- sqrt(diag(st))
-
-      yield1_low <- yield1_est - std_estim[2]
-      yield1_upp <- yield1_est + std_estim[2]
-
-      yield2_low <- yield2_est - std_estim[3]
-      yield2_upp <- yield2_est + std_estim[3]
-
-      # Correct "unrootable" yields
-      yield1_est <- correct_yield(yield1_est)
-      yield1_low <- correct_yield(yield1_low)
-      yield1_upp <- correct_yield(yield1_upp)
-
-      yield2_est <- correct_yield(yield2_est)
-      yield2_low <- correct_yield(yield2_low)
-      yield2_upp <- correct_yield(yield2_upp)
-
-      est_yields <- data.frame(
-        yield1 = c(yield1_low, yield1_est, yield1_upp),
-        yield2 = c(yield2_low, yield2_est, yield2_upp)
-      )
-
-      row.names(est_yields) <- c("lower", "estimate", "upper")
-
-      # Estimated mixing proportion
-      est_mixing_prop <- data.frame(
-        y_estimate = c(estim[2], estim[3]),
-        y_std_err =  c(std_estim[2], std_estim[3]),
-        f_estimate = c(estim[1], 1 - estim[1]),
-        f_std_err =  rep(std_estim[1], 2)
-      )
-
-      row.names(est_mixing_prop) <- c("dose1", "dose2")
-
-      # Estimated received doses
-      dose1_est <- project_yield_estimate(yield1_est)
-      dose1_low <- project_yield_lower(yield1_low, conf_int_curve)
-      dose1_upp <- project_yield_upper(yield1_upp, conf_int_curve)
-
-      dose2_est <- project_yield_estimate(yield2_est)
-      dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
-      dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
-
-      est_doses <- data.frame(
-        dose1 = c(dose1_low, dose1_est, dose1_upp),
-        dose2 = c(dose2_low, dose2_est, dose2_upp)
-      )
-
-      row.names(est_doses) <- c("lower", "estimate", "upper")
-
-      # Function to calculate fractions of irradiated blood
-      get_fraction <- function(g, f, mu1, mu2) {
-        dose1_est <- project_yield_estimate(mu1)
-
-        if (mu2 <= 0.01) {
-          dose2_est <- 0
-        } else {
-          dose2_est <- project_yield_estimate(mu2)
+        # Input of the parameter gamma and its variance
+        if (fraction_coeff == "gamma") {
+          gamma <- input$gamma_coeff
+          sigma[4, 4] <- input$gamma_error
+        } else if (fraction_coeff == "d0"){
+          gamma <- 1 / input$d0_coeff
+          sigma[4, 4] <- 0
         }
 
-        frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
+        # Likelihood function
+        loglik <- function(b) {
+          loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
 
-        return(frac)
+          return(-loglik)
+        }
+
+        # Calculate Maximum Likielihood Estimation
+        MLE <- optim(
+          par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
+          fn = loglik,
+          method = c("L-BFGS-B"),
+          lower = c(0.01, 0.01, 0.01),
+          upper = c(0.99, Inf, Inf),
+          hessian = TRUE
+        )
+
+        st <- solve(MLE$hessian)
+        yield1_est <- MLE$par[2]
+        yield2_est <- MLE$par[3]
+        frac1 <- MLE$par[1]
+
+        if (yield1_est < yield2_est) {
+          yield1_est <- MLE$par[3]
+          yield2_est <- MLE$par[2]
+          frac1 <- 1 - frac1
+          stm <- st
+          stm[2, 2] <- st[3, 3]
+          stm[3, 3] <- st[2, 2]
+          stm[1, 2] <- st[1, 3]
+          stm[1, 3] <- st[1, 2]
+          stm[2, 1] <- stm[1, 2]
+          stm[3, 1] <- stm[1, 3]
+          st <- stm
+        }
+
+        # WIP: This is not requiered yet
+        # sigma[5, 5] <- st[1, 1]
+        # sigma[6, 6] <- st[2, 2]
+        # sigma[7, 7] <- st[3, 3]
+        # sigma[5, 6] <- st[1, 2]
+        # sigma[5, 7] <- st[1, 3]
+        # sigma[6, 7] <- st[2, 3]
+        # sigma[6, 5] <- st[1, 2]
+        # sigma[7, 5] <- st[1, 3]
+        # sigma[7, 6] <- st[2, 3]
+
+        # Estimated parameters and its standard errors
+        estim <- c(frac1, yield1_est, yield2_est)
+        std_estim <- sqrt(diag(st))
+
+        yield1_low <- yield1_est - std_estim[2]
+        yield1_upp <- yield1_est + std_estim[2]
+
+        yield2_low <- yield2_est - std_estim[3]
+        yield2_upp <- yield2_est + std_estim[3]
+
+        # Correct "unrootable" yields
+        yield1_est <- correct_yield(yield1_est)
+        yield1_low <- correct_yield(yield1_low)
+        yield1_upp <- correct_yield(yield1_upp)
+
+        yield2_est <- correct_yield(yield2_est)
+        yield2_low <- correct_yield(yield2_low)
+        yield2_upp <- correct_yield(yield2_upp)
+
+        est_yields <- data.frame(
+          yield1 = c(yield1_low, yield1_est, yield1_upp),
+          yield2 = c(yield2_low, yield2_est, yield2_upp)
+        )
+
+        row.names(est_yields) <- c("lower", "estimate", "upper")
+
+        # Estimated mixing proportion
+        est_mixing_prop <- data.frame(
+          y_estimate = c(estim[2], estim[3]),
+          y_std_err =  c(std_estim[2], std_estim[3]),
+          f_estimate = c(estim[1], 1 - estim[1]),
+          f_std_err =  rep(std_estim[1], 2)
+        )
+
+        row.names(est_mixing_prop) <- c("dose1", "dose2")
+
+        # Estimated received doses
+        dose1_est <- project_yield_estimate(yield1_est)
+        dose1_low <- project_yield_lower(yield1_low, conf_int_curve)
+        dose1_upp <- project_yield_upper(yield1_upp, conf_int_curve)
+
+        dose2_est <- project_yield_estimate(yield2_est)
+        dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
+        dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
+
+        est_doses <- data.frame(
+          dose1 = c(dose1_low, dose1_est, dose1_upp),
+          dose2 = c(dose2_low, dose2_est, dose2_upp)
+        )
+
+        row.names(est_doses) <- c("lower", "estimate", "upper")
+
+        # Function to calculate fractions of irradiated blood
+        get_fraction <- function(g, f, mu1, mu2) {
+          dose1_est <- project_yield_estimate(mu1)
+
+          if (mu2 <= 0.01) {
+            dose2_est <- 0
+          } else {
+            dose2_est <- project_yield_estimate(mu2)
+          }
+
+          frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
+
+          return(frac)
+        }
+
+        # Estimated fraction of irradiated blood for dose dose1
+        F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
+        F1_est <- correct_boundary(F1_est)
+        F2_est <- 1 - F1_est
+
+        # Approximated standard error
+        F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
+
+        est_frac <- data.frame(
+          estimate = c(F1_est, F2_est),
+          std_err = rep(F1_est_sd, 2)
+        )
+
+        row.names(est_frac) <- c("dose1", "dose2")
+
+        # WIP: This is not requiered yet
+        # Gradient
+        # h <- 0.000001
+        # if (yield2_est > 0.01) {
+        #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+        #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+        #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+        #   c8 <- (get_fraction(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
+        #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
+        #   sqrt(t(grad) %*% sigma %*% grad)
+        # }
+        # if (yield2_est <= 0.01) {
+        #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+        #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
+        #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+        #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+        #   grad <- c(c1, c2, c3, c5, c6, c7)
+        #   sigma2 <- sigma[1:6, 1:6]
+        #   sqrt(t(grad) %*% sigma2 %*% grad)
+        # }
+      } else {
+        # If there are no cells with > 1 dic, the results include only NAs
+        # This should be handled somewhere downstream
+
+        # Estimated yields
+        est_yields <- data.frame(
+          yield1 = rep(NA, 3),
+          yield2 = rep(NA, 3)
+        )
+
+        # Estimated mixing proportion
+        est_mixing_prop <- data.frame(
+          y_estimate = rep(NA, 2),
+          y_std_err =  rep(NA, 2),
+          f_estimate = rep(NA, 2),
+          f_std_err =  rep(NA, 2)
+        )
+
+        # Estimated doses
+        est_doses <- data.frame(
+          dose1 = rep(NA, 3),
+          dose2 = rep(NA, 3)
+        )
+
+        # Estimated fraction
+        est_frac <- data.frame(
+          estimate = rep(NA, 2),
+          std_err = rep(NA, 2)
+        )
       }
-
-      # Estimated fraction of irradiated blood for dose dose1
-      F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
-      F1_est <- correct_boundary(F1_est)
-      F2_est <- 1 - F1_est
-
-      # Approximated standard error
-      F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
-
-      est_frac <- data.frame(
-        estimate = c(F1_est, F2_est),
-        std_err = rep(F1_est_sd, 2)
-      )
-
-      row.names(est_frac) <- c("dose1", "dose2")
-
-      # WIP: This is not requiered yet
-      # Gradient
-      # h <- 0.000001
-      # if (yield2_est > 0.01) {
-      #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-      #   c8 <- (get_fraction(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
-      #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
-      #   sqrt(t(grad) %*% sigma %*% grad)
-      # }
-      # if (yield2_est <= 0.01) {
-      #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-      #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-      #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-      #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-      #   grad <- c(c1, c2, c3, c5, c6, c7)
-      #   sigma2 <- sigma[1:6, 1:6]
-      #   sqrt(t(grad) %*% sigma2 %*% grad)
-      # }
 
       # Return objects
       results_list <- list(
@@ -1547,7 +1585,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
-        counts, fit_coeffs, var_cov_mat, fraction_coeff,
+        case_data, fit_coeffs, var_cov_mat, fraction_coeff,
         general_fit_coeffs, general_var_cov_mat,
         conf_int_yield, conf_int_curve, protracted_g_value
       )
