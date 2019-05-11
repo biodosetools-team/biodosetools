@@ -1155,6 +1155,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
       cells_0 <- case_data[["C0"]]
+      cells_1 <- case_data[["C1"]]
 
       C <- general_fit_coeffs[[1]]
       α <- general_fit_coeffs[[2]]
@@ -1164,7 +1165,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Detect fitting model
       fit_is_lq <- isFALSE(β == 0)
 
-      if (cells - cells_0 != 0) {
+      if (cells - (cells_0 + cells_1) != 0) {
         # Get estimates for pi and lambda
         lambda_est <- uniroot(function(yield) {
           yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
@@ -1262,7 +1263,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # Get estimate for fraction irradiated
         F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
-        # Get standard error of fraction irradiated by deltamethod:
+        # Get standard error of fraction irradiated by deltamethod
         if (fit_is_lq) {
           # x5: pi_est, x4: lambda_est, x1: C, x2: alpha, x3: beta
           formula <- paste(
@@ -1281,7 +1282,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
         }
 
-        # Get confidence interval of fraction irradiated:
+        # Get confidence interval of fraction irradiated
         F_upp <- F_est + qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
         F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
@@ -1297,20 +1298,29 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
 
-        # Return objects
-        results_list <- list(
-          est_doses = est_doses,
-          est_frac = est_frac
+      } else {
+        # If there are no cells with > 1 dic, the results include only NAs
+        # This should be handled somewhere downstream
+
+        # Partial estimation results
+        est_doses <- data.frame(
+          yield = rep(NA, 3),
+          dose = rep(NA, 3)
         )
 
-        return(results_list)
-      } else {
-        # If there are no cells with > 1 dic, the resulting matrix includes only NA's
-        # This should be handled somewhere downstream
-        res <- matrix(NA, 2, 3)
-        return(res)
-        # TODO: this needs to be adapted to return the same structure
+        # Estimated fraction
+        est_frac <- data.frame(
+          fraction = rep(NA, 3)
+        )
       }
+
+      # Return objects
+      results_list <- list(
+        est_doses = est_doses,
+        est_frac = est_frac
+      )
+
+      return(results_list)
     }
 
     # Calcs: heterogeneous dose estimation
@@ -1575,7 +1585,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
     }
 
-    max_dose <- 1.05 * max(est_full_doses[["dose"]])
+    max_dose <- 1.05 * est_full_doses[["dose"]] %>%
+      ifelse(is.na(.), 0, .) %>%
+      max()
 
     # Data set from fit
     plot_data <- broom::augment(fit_results)
@@ -1608,7 +1620,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Estimated whole-body doses
       geom_point(data = est_full_doses,
                  aes(x = dose, y = yield, colour = type, shape = level),
-                 size = 2) +
+                 size = 2, na.rm = TRUE) +
       labs(colour = "Assessment", shape = "Confidence interval")
 
     # Return list ----
