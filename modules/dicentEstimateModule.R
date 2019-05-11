@@ -901,13 +901,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     })
 
     # Get error/calculation method
-
     if (assessment != "partial") {
       curve_method <- input$curve_method_select
     } else {
       curve_method <- input$partial_method_select
     }
-
 
     # Get fitting data ----
     if (load_fit_data) {
@@ -1083,7 +1081,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
+    estimate_whole_body <- function(case_data, conf_int_yield,
+                                    conf_int_curve, protracted_g_value) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
@@ -1123,21 +1122,24 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Calcs: partial dose estimation
     estimate_partial_dolphin <- function(case_data, fit_results, fraction_coeff,
+                                         general_fit_coeffs, general_var_cov_mat,
                                          conf_int, protracted_g_value, cov = TRUE) {
       # case_data is the data input
       # fit_results is a glm object
-      # if cov = TRUE the covariances of the calibration coefficients are used
-      # if covariances are not available cov = FALSE should be used
-      # TODO: this should be automatized
+      # cov: TRUE if the covariances of the regression coefficients should be considered,
+      #      otherwise only the diagonal of the covariance matrix is used
 
       # Function to get the fisher information matrix
       get_cov_ZIP_ML <- function(lambda, pi, cells) {
         # For the parameters of a ZIP distribution (lambda and pi) where 1-p is the fraction of extra zeros
         info_mat <- matrix(NA, nrow = 2, ncol = 2)
-        info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
-        info_mat[1, 2] <- info_mat[2, 1] <- cells * exp(-lambda) / (1 - pi + pi * exp(-lambda))
         info_mat[1, 1] <- cells * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
-        cov_est <- solve(info_mat)
+        info_mat[1, 2] <- cells * exp(-lambda) / (1 - pi + pi * exp(-lambda))
+        info_mat[2, 1] <- info_mat[1, 2]
+        info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
+
+        # Solve system
+        cov_est <- base::solve(info_mat)
 
         return(cov_est)
       }
@@ -1153,46 +1155,66 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       cells <- case_data[["N"]]
       cells_0 <- case_data[["C0"]]
 
-      C <- fit_results$coef[1]
-      α <- fit_results$coef[2]
-      β <- fit_results$coef[3]
-      var_cov_mat <- vcov(fit_results)
+      C <- general_fit_coeffs[[1]]
+      α <- general_fit_coeffs[[2]]
+      β <- general_fit_coeffs[[3]]
+      var_cov_mat <- general_var_cov_mat
 
-      # Update β to correct for protracted exposures
-      β <- β * protracted_g_value
+      # Detect fitting model
+      fit_is_lq <- isFALSE(β == 0)
 
-      if (cells - cells_0 == 0) {
-        # If there are no cells with > 1 dic, the resulting matrix includes only NA's
-        # This should be handled somewhere downstream
-        res <- matrix(NA, 2, 3)
-        return(res)
-        # TODO: this needs to be adapted to return the same structure
-      } else {
-
+      if (cells - cells_0 != 0) {
         # Get estimates for pi and lambda
         lambda_est <- uniroot(function(yield) {
           yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
         }, c(1e-16, 100))$root
 
         pi_est <- aberr / (lambda_est * cells)
-        z <- α^2 + 4 * β * (lambda_est - C)
 
-        # Get estimate for dose:
-        dose_est <- (-α + sqrt(z)) / (2 * β)
-
-        # Derivatives of regression curve coefs:
-        deriv_lambda <- (z)^(-0.5)
-        deriv_C <- -(z)^(-0.5)
-        deriv_β <- protracted_g_value * ((4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2))
-        deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
-
-        # Get the covariance matrix for the parameters of the ZIP distribution:
+        # Get the covariance matrix for the parameters of the ZIP distribution
         cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
-        cov_extended <- matrix(0, nr = 5, nc = 5)
-        cov_extended[1:3, 1:3] <- var_cov_mat
-        cov_extended[4:5, 4:5] <- cov_est
 
-        # Get variance of lambda based on delta methods (see Savage et al.):
+        # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
+        if (fit_is_lq) {
+          # Update β to correct for protracted exposures
+          β <- β * protracted_g_value
+
+          # Auxiliary variable
+          z <- α^2 + 4 * β * (lambda_est - C)
+
+          # Get estimate for dose
+          dose_est <- (-α + sqrt(z)) / (2 * β)
+
+          # Derivatives of regression curve coefs
+          deriv_lambda <- (z)^(-0.5)
+          deriv_C <- -(z)^(-0.5)
+          deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
+          deriv_β <- protracted_g_value * (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+        } else {
+          # Get estimate for dose
+          dose_est <- (lambda_est - C) / α
+
+          # Derivatives of regression curve coefs
+          deriv_lambda <- 1 / α
+          deriv_C <- - (1 / α)
+          deriv_α <- (C - lambda_est) / α^2
+          deriv_β <- 0
+        }
+
+        # Get the covariance matrix for the parameters of the ZIP distribution
+        cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
+
+        if (fit_is_lq) {
+          cov_extended <- matrix(0, nrow = 5, ncol = 5)
+          cov_extended[1:3, 1:3] <- var_cov_mat
+          cov_extended[4:5, 4:5] <- cov_est
+        } else {
+          cov_extended <- matrix(0, nrow = 4, ncol = 4)
+          cov_extended[1:3, 1:3] <- var_cov_mat
+          cov_extended[3:4, 3:4] <- cov_est
+        }
+
+        # Get variance of lambda based on delta methods (see Savage et al.)
         lambda_est_sd <- sqrt(cov_est[1, 1])
 
         # Get confidence interval of lambda estimates
@@ -1240,13 +1262,26 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
         # Get standard error of fraction irradiated by deltamethod:
-        # x5=pi_est, x4: lambda_est, x1:C, x2:alpha, x3:beta
-        formula <- paste(
-          "~ x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0,
-          "))/(1-x5+x5*exp((-x2 + sqrt(x2^2 + 4*x3*(x4 - x1)))/(2*x3*", d0, ")))",
-          sep = ""
-        )
-        F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
+        if (fit_is_lq) {
+          # x5: pi_est, x4: lambda_est, x1: C, x2: alpha, x3: beta
+          formula <- paste(
+            "~ x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0,")) /
+            (1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0,")))",
+            sep = ""
+          )
+          F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
+        } else {
+          # x4: pi_est, x3: lambda_est, x1: C, x2: alpha
+          formula <- paste(
+            "~ x4 * exp((x3 - x1) / (x2 *", d0,")) /
+            (1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0,")))",
+            sep = ""
+          )
+          F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
+        }
+
+        cat("F_est_sd: ")
+        cat(F_est_sd)
 
         # Get confidence interval of fraction irradiated:
         F_upp <- F_est + qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
@@ -1271,6 +1306,12 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         )
 
         return(results_list)
+      } else {
+        # If there are no cells with > 1 dic, the resulting matrix includes only NA's
+        # This should be handled somewhere downstream
+        res <- matrix(NA, 2, 3)
+        return(res)
+        # TODO: this needs to be adapted to return the same structure
       }
     }
 
@@ -1481,16 +1522,26 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Calculations ----
 
     # Calculate whole-body results
-    est_doses_whole <- estimate_whole_body(case_data, conf_int_yield, conf_int_curve, protracted_g_value)
+    est_doses_whole <- estimate_whole_body(
+      case_data, conf_int_yield,
+      conf_int_curve, protracted_g_value
+    )
     if (assessment == "partial") {
       # Calculate partial results
-      results_partial <- estimate_partial_dolphin(case_data, fit_results, fraction_coeff, conf_int_dolphin, protracted_g_value)
+      results_partial <- estimate_partial_dolphin(
+        case_data, fit_results, fraction_coeff,
+        general_fit_coeffs, general_var_cov_mat,
+        conf_int_dolphin, protracted_g_value
+      )
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
-      results_hetero <- estimate_hetero(counts, fit_coeffs, var_cov_mat, fraction_coeff, conf_int_yield, conf_int_curve, protracted_g_value)
+      results_hetero <- estimate_hetero(
+        counts, fit_coeffs, var_cov_mat, fraction_coeff,
+        conf_int_yield, conf_int_curve, protracted_g_value
+      )
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
       est_yields_hetero <- results_hetero[["est_yields"]]
