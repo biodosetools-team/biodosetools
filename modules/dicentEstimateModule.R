@@ -1306,7 +1306,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         )
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
-
       }
 
       # Return objects
@@ -1602,25 +1601,26 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]]),
         yield = c(est_doses_whole[["yield"]]),
-        type =  c(rep("whole-body", 3)),
-        level = rep(c("lower", "estimate", "upper"), 1)
+        type =  c(rep("Whole-body", 3)),
+        level = rep(c("Lower", "Estimate", "Upper"), 1)
       )
     } else if (assessment == "partial") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
         yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
-        type =  c(rep("whole-body", 3), rep("partial", 3)),
-        level = rep(c("lower", "estimate", "upper"), 2)
+        type =  c(rep("Whole-body", 3), rep("Partial", 3)),
+        level = rep(c("Lower", "Estimate", "Upper"), 2)
       )
     } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
         yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
-        type =  c(rep("whole-body", 3), rep("heterogeneous X1", 3), rep("heterogeneous X2", 3)),
-        level = rep(c("lower", "estimate", "upper"), 3)
+        type =  c(rep("Whole-body", 3), rep("Heterogeneous X1", 3), rep("Heterogeneous X2", 3)),
+        level = rep(c("Lower", "Estimate", "Upper"), 3)
       )
     }
 
+    # Rightmost limit of the plot
     max_dose <- 1.05 * est_full_doses[["dose"]] %>%
       ifelse(is.na(.), 0, .) %>%
       max()
@@ -1660,9 +1660,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       labs(colour = "Assessment", shape = "Confidence interval")
 
     # Return list ----
+
     # Make list of results to return
     if (assessment == "whole-body") {
       results_list <- list(
+        # Used in app
         assessment = assessment,
         est_doses_whole = est_doses_whole,
         gg_curve = gg_curve,
@@ -1675,6 +1677,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
     } else if (assessment == "partial") {
       results_list <- list(
+        # Used in app
         assessment = assessment,
         est_doses_whole = est_doses_whole,
         est_doses_partial = est_doses_partial,
