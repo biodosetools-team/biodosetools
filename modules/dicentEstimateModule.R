@@ -1161,7 +1161,20 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Detect fitting model
       fit_is_lq <- isFALSE(β == 0)
 
-      if (cells - (cells_0 + cells_1) != 0) {
+      # If there are no cells with > 1 dic, the results include only NAs
+      # This should be handled somewhere downstream
+      if (cells - (cells_0 + cells_1) == 0) {
+        # Partial estimation results
+        est_doses <- data.frame(
+          yield = rep(NA, 3),
+          dose = rep(NA, 3)
+        )
+
+        # Estimated fraction
+        est_frac <- data.frame(
+          fraction = rep(NA, 3)
+        )
+      } else {
         # Get estimates for pi and lambda
         lambda_est <- uniroot(function(yield) {
           yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
@@ -1294,20 +1307,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         row.names(est_frac) <- c("lower", "estimate", "upper")
 
-      } else {
-        # If there are no cells with > 1 dic, the results include only NAs
-        # This should be handled somewhere downstream
-
-        # Partial estimation results
-        est_doses <- data.frame(
-          yield = rep(NA, 3),
-          dose = rep(NA, 3)
-        )
-
-        # Estimated fraction
-        est_frac <- data.frame(
-          fraction = rep(NA, 3)
-        )
       }
 
       # Return objects
@@ -1334,7 +1333,57 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       cells_0 <- case_data[["C0"]]
       cells_1 <- case_data[["C1"]]
 
-      if (cells - (cells_0 + cells_1) != 0) {
+      # Likelihood function
+      loglik <- function(coeffs) {
+        loglik <- sum(log(coeffs[1] * dpois(y, coeffs[2]) + (1 - coeffs[1]) * dpois(y, coeffs[3])))
+
+        return(-loglik)
+      }
+
+      # Function to calculate fractions of irradiated blood
+      get_fraction <- function(g, f, mu1, mu2) {
+        dose1_est <- project_yield_estimate(mu1)
+
+        if (mu2 <= 0.01) {
+          dose2_est <- 0
+        } else {
+          dose2_est <- project_yield_estimate(mu2)
+        }
+
+        frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
+
+        return(frac)
+      }
+
+      # If there are no cells with > 1 dic, the results include only NAs
+      # This should be handled somewhere downstream
+      if (cells - (cells_0 + cells_1) == 0) {
+        # Estimated yields
+        est_yields <- data.frame(
+          yield1 = rep(NA, 3),
+          yield2 = rep(NA, 3)
+        )
+
+        # Estimated mixing proportion
+        est_mixing_prop <- data.frame(
+          y_estimate = rep(NA, 2),
+          y_std_err =  rep(NA, 2),
+          f_estimate = rep(NA, 2),
+          f_std_err =  rep(NA, 2)
+        )
+
+        # Estimated doses
+        est_doses <- data.frame(
+          dose1 = rep(NA, 3),
+          dose2 = rep(NA, 3)
+        )
+
+        # Estimated fraction
+        est_frac <- data.frame(
+          estimate = rep(NA, 2),
+          std_err = rep(NA, 2)
+        )
+      } else {
         # Get cases data and store in vector y
         y <- rep(seq(0, length(counts) - 1, 1), counts)
         x <- c(rep(1, length(y)))
@@ -1367,13 +1416,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         } else if (fraction_coeff == "d0"){
           gamma <- 1 / input$d0_coeff
           sigma[4, 4] <- 0
-        }
-
-        # Likelihood function
-        loglik <- function(b) {
-          loglik <- sum(log(b[1] * dpois(y, b[2]) + (1 - b[1]) * dpois(y, b[3])))
-
-          return(-loglik)
         }
 
         # Calculate Maximum Likielihood Estimation
@@ -1468,21 +1510,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
         row.names(est_doses) <- c("lower", "estimate", "upper")
 
-        # Function to calculate fractions of irradiated blood
-        get_fraction <- function(g, f, mu1, mu2) {
-          dose1_est <- project_yield_estimate(mu1)
-
-          if (mu2 <= 0.01) {
-            dose2_est <- 0
-          } else {
-            dose2_est <- project_yield_estimate(mu2)
-          }
-
-          frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
-
-          return(frac)
-        }
-
         # Estimated fraction of irradiated blood for dose dose1
         F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
         F1_est <- correct_boundary(F1_est)
@@ -1523,35 +1550,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         #   sigma2 <- sigma[1:6, 1:6]
         #   sqrt(t(grad) %*% sigma2 %*% grad)
         # }
-      } else {
-        # If there are no cells with > 1 dic, the results include only NAs
-        # This should be handled somewhere downstream
-
-        # Estimated yields
-        est_yields <- data.frame(
-          yield1 = rep(NA, 3),
-          yield2 = rep(NA, 3)
-        )
-
-        # Estimated mixing proportion
-        est_mixing_prop <- data.frame(
-          y_estimate = rep(NA, 2),
-          y_std_err =  rep(NA, 2),
-          f_estimate = rep(NA, 2),
-          f_std_err =  rep(NA, 2)
-        )
-
-        # Estimated doses
-        est_doses <- data.frame(
-          dose1 = rep(NA, 3),
-          dose2 = rep(NA, 3)
-        )
-
-        # Estimated fraction
-        est_frac <- data.frame(
-          estimate = rep(NA, 2),
-          std_err = rep(NA, 2)
-        )
       }
 
       # Return objects
