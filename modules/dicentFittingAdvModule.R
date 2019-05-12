@@ -355,9 +355,8 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
           nrow = num_doses,
           ncol = num_dicentrics
         )
-      )
-
-      colnames(data_base) <- paste0("C", seq(0, num_dicentrics - 1, 1))
+      ) %>%
+        `colnames<-`(paste0("C", seq(0, num_dicentrics - 1, 1)))
 
       # Full data frame
       full_data <- cbind(data_doses, data_base) %>%
@@ -541,17 +540,17 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
 
     # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("C", "α", "β")
+    general_fit_coeffs <- numeric(length = 3L) %>%
+      `names<-`(c("C", "α", "β"))
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
     }
 
     # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("C", "α", "β")
-    colnames(general_var_cov_mat) <- c("C", "α", "β")
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+      `row.names<-`(c("C", "α", "β")) %>%
+      `colnames<-`(c("C", "α", "β"))
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
