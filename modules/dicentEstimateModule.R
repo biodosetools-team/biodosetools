@@ -652,9 +652,9 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
           nrow = num_cases,
           ncol = num_dicentrics
         )
-      )
+      ) %>%
+        `colnames<-`(paste0("C", seq(0, num_dicentrics - 1, 1)))
 
-      colnames(full_data) <- paste0("C", seq(0, num_dicentrics - 1, 1))
     } else {
       full_data <- read.csv(case_data$datapath, header = TRUE) %>%
         dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
@@ -789,17 +789,17 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     }
 
     # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("C", "α", "β")
+    general_fit_coeffs <- numeric(length = 3L) %>%
+      `names<-`(c("C", "α", "β"))
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
     }
 
     # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("C", "α", "β")
-    colnames(general_var_cov_mat) <- c("C", "α", "β")
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+      `row.names<-`(c("C", "α", "β")) %>%
+      `colnames<-`(c("C", "α", "β"))
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
@@ -843,6 +843,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
       ) %>%
       dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
       dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
+      # Convert to hot and format table
       rhandsontable()
   })
 
@@ -850,6 +851,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     # Coefficients 'fit_coeffs'
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 75) %>%
       hot_cols(format = "0.000")
@@ -860,6 +862,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -869,6 +872,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     # Correlation matrix 'cor_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["cor_mat"]] %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
@@ -933,17 +937,17 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L)
-    names(general_fit_coeffs) <- c("C", "α", "β")
+    general_fit_coeffs <- numeric(length = 3L) %>%
+      `names<-`(c("C", "α", "β"))
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
     }
 
     # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3)
-    rownames(general_var_cov_mat) <- c("C", "α", "β")
-    colnames(general_var_cov_mat) <- c("C", "α", "β")
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+      `row.names<-`(c("C", "α", "β")) %>%
+      `colnames<-`(c("C", "α", "β"))
 
     for (x_var in rownames(var_cov_mat)) {
       for (y_var in colnames(var_cov_mat)) {
@@ -1108,9 +1112,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_doses <- data.frame(
         yield = c(yield_low, yield_est, yield_upp),
         dose  = c(dose_low, dose_est, dose_upp)
-      )
-
-      row.names(est_doses) <- c("lower", "estimate", "upper")
+      ) %>%
+        `row.names<-`(c("lower", "estimate", "upper"))
 
       # Return object
       return(est_doses)
@@ -1265,9 +1268,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_doses <- data.frame(
           yield = c(lambda_low, lambda_est, lambda_upp),
           dose = c(dose_low, dose_est, dose_upp)
-        )
-
-        row.names(est_doses) <- c("lower", "estimate", "upper")
+        ) %>%
+          `row.names<-`(c("lower", "estimate", "upper"))
 
         # Get estimate for fraction irradiated
         F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
@@ -1303,9 +1305,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         # Estimated fraction
         est_frac <- data.frame(
           fraction = c(F_low, F_est, F_upp)
-        )
-
-        row.names(est_frac) <- c("lower", "estimate", "upper")
+        ) %>%
+          `row.names<-`(c("lower", "estimate", "upper"))
       }
 
       # Return objects
@@ -1479,9 +1480,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_yields <- data.frame(
           yield1 = c(yield1_low, yield1_est, yield1_upp),
           yield2 = c(yield2_low, yield2_est, yield2_upp)
-        )
-
-        row.names(est_yields) <- c("lower", "estimate", "upper")
+        ) %>%
+          `row.names<-`(c("lower", "estimate", "upper"))
 
         # Estimated mixing proportion
         est_mixing_prop <- data.frame(
@@ -1489,9 +1489,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           y_std_err =  c(std_estim[2], std_estim[3]),
           f_estimate = c(estim[1], 1 - estim[1]),
           f_std_err =  rep(std_estim[1], 2)
-        )
-
-        row.names(est_mixing_prop) <- c("dose1", "dose2")
+        ) %>%
+          `row.names<-`(c("dose1", "dose2"))
 
         # Estimated received doses
         dose1_est <- project_yield_estimate(yield1_est)
@@ -1505,9 +1504,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_doses <- data.frame(
           dose1 = c(dose1_low, dose1_est, dose1_upp),
           dose2 = c(dose2_low, dose2_est, dose2_upp)
-        )
-
-        row.names(est_doses) <- c("lower", "estimate", "upper")
+        ) %>%
+          `row.names<-`(c("lower", "estimate", "upper"))
 
         # Estimated fraction of irradiated blood for dose dose1
         F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
@@ -1520,9 +1518,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_frac <- data.frame(
           estimate = c(F1_est, F2_est),
           std_err = rep(F1_est_sd, 2)
-        )
-
-        row.names(est_frac) <- c("dose1", "dose2")
+        ) %>%
+          `row.names<-`(c("dose1", "dose2"))
 
         # WIP: This is not requiered yet
         # Gradient
@@ -1720,6 +1717,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dplyr::select(yield) %>%
       t() %>%
       as.data.frame() %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1732,6 +1730,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dplyr::select(dose) %>%
       t() %>%
       as.data.frame() %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1744,6 +1743,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dplyr::select(yield) %>%
       t() %>%
       as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`("yield") %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1756,6 +1760,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       dplyr::select(dose) %>%
       t() %>%
       as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`("dose") %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1767,6 +1776,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     data()[["est_frac_partial"]] %>%
       t() %>%
       as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`("fraction") %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1776,6 +1790,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Estimated yields (heterogeneous)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_mixing_prop_hetero"]] %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1787,6 +1806,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     data()[["est_yields_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`(c("yield1", "yield2")) %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1798,6 +1822,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     data()[["est_doses_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -1807,6 +1836,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_frac_hetero"]] %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("estimate", "std_err")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
       rhandsontable() %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
