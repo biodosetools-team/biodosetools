@@ -9,6 +9,14 @@ output:
     theme: cosmo
     # css: style.css
 params:
+  assessment: NA
+  est_doses_whole: NA
+  est_doses_partial: NA
+  est_frac_partial: NA
+  est_mixing_prop_hetero: NA
+  est_yields_hetero: NA
+  est_doses_hetero: NA
+  est_frac_hetero: NA
   fit_coeffs: NA
   fit_formula_tex: NA
   case_data: NA
@@ -56,7 +64,150 @@ params$case_data %>%
 ### Case description
 `r params$case_description`
 
+
 ## Dose estimation results
+
+`r if (TRUE) {"### Whole-body"}`
+```{r echo=FALSE}
+if (TRUE) {
+  params$est_doses_whole %>%
+    dplyr::select(yield) %>%
+    t() %>%
+    as.data.frame() %>%
+    # Convert to hot and format table
+    rhandsontable(width = "100%", height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
+} 
+```
+
+```{r echo=FALSE}
+if (TRUE) {
+  params$est_doses_whole %>%
+    dplyr::select(dose) %>%
+    t() %>%
+    as.data.frame() %>%
+    # Convert to hot and format table
+    rhandsontable(width = "100%", height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
+} 
+```
+
+`r if (params$assessment == "partial") {"### Partial"}`
+```{r echo=FALSE}
+if (params$assessment == "partial") {
+  params$est_doses_partial %>%
+      dplyr::select(yield) %>%
+      t() %>%
+      as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`("yield") %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+} 
+```
+
+```{r echo=FALSE}
+if (params$assessment == "partial") {
+  params$est_doses_partial %>%
+    dplyr::select(dose) %>%
+    t() %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`("dose") %>%
+    # Convert to hot and format table
+    rhandsontable(width = "100%", height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
+} 
+```
+
+```{r echo=FALSE}
+if (params$assessment == "partial") {
+  params$est_frac_partial %>%
+      t() %>%
+      as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`("fraction") %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+} 
+```
+
+`r if (params$assessment == "hetero") {"### Hetero"}`
+
+```{r echo=FALSE}
+if (params$assessment == "hetero") {
+  params$est_mixing_prop_hetero %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+}
+```
+
+```{r echo=FALSE}
+if (params$assessment == "hetero") {
+  params$est_yields_hetero %>%
+    t() %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`(c("yield1", "yield2")) %>%
+    # Convert to hot and format table
+    rhandsontable(width = "100%", height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
+}
+```
+
+```{r echo=FALSE}
+if (params$assessment == "hetero") {
+  params$est_doses_hetero %>%
+      t() %>%
+      as.data.frame() %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("lower", "estimate", "upper")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+}
+```
+
+```{r echo=FALSE}
+if (params$assessment == "hetero") {
+  params$est_frac_hetero %>%
+      # Fix possible NA values
+      dplyr::mutate_if(is.logical, as.double) %>%
+      `colnames<-`(c("estimate", "std_err")) %>%
+      `row.names<-`(c("dose1", "dose2")) %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+}
+```
+
+
 
 
 ### Curve plot

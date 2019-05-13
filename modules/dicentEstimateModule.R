@@ -1663,7 +1663,17 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       results_list <- list(
         # Used in app
         assessment = assessment,
+        # Whole-body
         est_doses_whole = est_doses_whole,
+        # Partial
+        est_doses_partial = NA,
+        est_frac_partial = NA,
+        # Heterogeneous
+        est_mixing_prop_hetero = NA,
+        est_yields_hetero = NA,
+        est_doses_hetero = NA,
+        est_frac_hetero = NA,
+        # Plot
         gg_curve = gg_curve,
         # Required for report
         fit_coeffs = fit_coeffs,
@@ -1676,9 +1686,17 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       results_list <- list(
         # Used in app
         assessment = assessment,
+        # Whole-body
         est_doses_whole = est_doses_whole,
+        # Partial
         est_doses_partial = est_doses_partial,
         est_frac_partial = est_frac_partial,
+        # Heterogeneous
+        est_mixing_prop_hetero = NA,
+        est_yields_hetero = NA,
+        est_doses_hetero = NA,
+        est_frac_hetero = NA,
+        # Plot
         gg_curve = gg_curve,
         # Required for report
         fit_coeffs = fit_coeffs,
@@ -1691,11 +1709,17 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       results_list <- list(
         # Used in app
         assessment = assessment,
+        # Whole-body
         est_doses_whole = est_doses_whole,
+        # Partial
+        est_doses_partial = NA,
+        est_frac_partial = NA,
+        # Heterogeneous
         est_mixing_prop_hetero = est_mixing_prop_hetero,
         est_yields_hetero = est_yields_hetero,
         est_doses_hetero = est_doses_hetero,
         est_frac_hetero = est_frac_hetero,
+        # Plot
         gg_curve = gg_curve,
         # Required for report
         fit_coeffs = fit_coeffs,
@@ -1884,12 +1908,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Set up parameters to pass to Rmd document
       params <- list(
-        # assessment = assessment,
-        # est_doses_whole = est_doses_whole,
-        # est_mixing_prop_hetero = est_mixing_prop_hetero,
-        # est_yields_hetero = est_yields_hetero,
-        # est_doses_hetero = est_doses_hetero,
-        # est_frac_hetero = est_frac_hetero,
+        assessment = data()[["assessment"]],
+        est_doses_whole = data()[["est_doses_whole"]],
+        est_doses_partial = data()[["est_doses_partial"]],
+        est_frac_partial = data()[["est_frac_partial"]],
+        est_mixing_prop_hetero = data()[["est_mixing_prop_hetero"]],
+        est_yields_hetero = data()[["est_yields_hetero"]],
+        est_doses_hetero = data()[["est_doses_hetero"]],
+        est_frac_hetero = data()[["est_frac_hetero"]],
         fit_coeffs = data()[["fit_coeffs"]],
         fit_formula_tex = data()[["fit_formula_tex"]],
         gg_curve = data()[["gg_curve"]],
