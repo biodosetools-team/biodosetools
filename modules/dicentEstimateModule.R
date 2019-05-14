@@ -728,9 +728,9 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
     # Read number of columns
     num_cols <- ncol(changed_data())
 
-    #
+    # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
       hot_col(ncol(changed_data()), renderer = "
@@ -767,11 +767,9 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     fit_summary <- summary(fit_results, correlation = TRUE)
     cor_mat <- fit_summary$correlation
     var_cov_mat <- vcov(fit_results)
-    # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
       dplyr::select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
-    # rownames(fit_coeffs) <- fit_coeffs[["term"]]
 
     # Parse model formula
     fit_formula <- fit_results$formula
@@ -844,7 +842,8 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
       dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
       dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
       # Convert to hot and format table
-      rhandsontable()
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 60)
   })
 
   output$fit_coeffs <- renderRHandsontable({
@@ -852,7 +851,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 75) %>%
       hot_cols(format = "0.000")
   })
@@ -863,7 +862,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     data()[["var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -873,7 +872,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -881,6 +880,7 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 
 
 dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
+
   data <- reactive({
     # Calcs: get variables ----
     input$button_estimate
@@ -1742,7 +1742,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1755,7 +1755,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1772,7 +1772,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1789,7 +1789,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose") %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1805,7 +1805,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1819,7 +1819,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1835,7 +1835,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1851,7 +1851,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1865,7 +1865,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("estimate", "std_err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
