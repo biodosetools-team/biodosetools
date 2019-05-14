@@ -363,7 +363,7 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
         dplyr::mutate(D = as.numeric(D))
     } else {
       full_data <- read.csv(count_data$datapath, header = TRUE) %>%
-        dplyr::mutate_at(vars(starts_with("C")), funs(as.integer(.)))
+        dplyr::mutate_at(vars(starts_with("C")), list(. ~ as.integer(.)))
     }
 
     return(full_data)
