@@ -786,25 +786,6 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
       fit_formula_tex <- "Y = \\alpha D"
     }
 
-    # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("C", "α", "β"))
-
-    for (var in rownames(fit_coeffs)) {
-      general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
-    }
-
-    # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-      `row.names<-`(c("C", "α", "β")) %>%
-      `colnames<-`(c("C", "α", "β"))
-
-    for (x_var in rownames(var_cov_mat)) {
-      for (y_var in colnames(var_cov_mat)) {
-        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
-      }
-    }
-
     # Make list of results to return
     results_list <- list(
       fit_results     = fit_results,
@@ -818,12 +799,6 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
   })
 
   # Results outputs ----
-  output$fit_results <- renderPrint({
-    # Result of curve fit 'fit_results'
-    if (input$button_view_fit_data <= 0) return(NULL)
-    data()[["fit_results"]]
-  })
-
   output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
@@ -914,9 +889,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Summarise fit
     fit_summary <- summary(fit_results, correlation = TRUE)
-    # cor_mat <- fit_summary$correlation
     var_cov_mat <- vcov(fit_results)
-    # fit_coeffs <- fit_summary$coefficients
     fit_coeffs <- broom::tidy(fit_results) %>%
       select(-statistic) %>%
       tibble::column_to_rownames(var = "term")
