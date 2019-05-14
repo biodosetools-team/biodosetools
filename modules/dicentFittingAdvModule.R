@@ -113,14 +113,12 @@ dicentFittingAdvUI <- function(id, label) {
             selectInput(
               ns("family_select"),
               label = "Fitting model",
-              choices = list("Poisson" = "poisson", "Quasipoisson" = "quasipoisson"),
-              selected = "poisson"
-            ),
-            # Use dispersion factor
-            awesomeCheckbox(
-              inputId = ns("slider_disp_select"),
-              label = "Use σ²/y = 1",
-              value = FALSE, status = "warning"
+              choices = list(
+                "Automatic" = "automatic",
+                "Poisson" = "poisson",
+                "Quasipoisson" = "quasipoisson"
+              ),
+              selected = "automatic"
             )
           )
         ),
@@ -478,32 +476,27 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     isolate({
       count_data <- hot_to_r(input$hotable)
 
-      doses <- count_data[["D"]]
-      aberr <- count_data[["X"]]
-      cells <- count_data[["N"]]
-      disp <- count_data[["DI"]]
-
       model_formula <- input$formula_select
       model_family <- input$family_select
-      disp_select <- input$slider_disp_select
     })
 
 
     # Fitting functions ----
 
-    get_fit_results_glm <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+    get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity") {
+
+      # Parse count data
+      doses <- count_data[["D"]]
+      aberr <- count_data[["X"]]
+      cells <- count_data[["N"]]
+      disp <- count_data[["DI"]]
+
       # Construct predictors and model data
       C <- cells
       α <- cells * doses
       β <- cells * doses * doses
       model_data <- list(C, α, β, aberr)
-
-      # Weight selection
-      if (disp_select) {
-        weights <- rep(1, length(doses))
-      } else {
-        weights <- 1 / disp
-      }
+      weights <- 1 / disp
 
       # Select model formula
       if (model_formula == "lin-quad") {
@@ -522,15 +515,35 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_tex <- "Y = \\alpha D"
       }
 
-      # fit_link <- "identity"
+      # Perform automatic fit calculation
+      if (model_family == "poisson") {
+        fit_results <- glm(
+          formula = fit_formula,
+          family = poisson(link = fit_link),
+          # weights = weights,
+          data = model_data
+        )
+        fit_dispersion <- NULL
+      } else {
+        fit_results <- glm(
+          formula = fit_formula,
+          family = quasipoisson(link = fit_link),
+          weights = weights,
+          data = model_data
+        )
+        fit_dispersion <- summary(fit_results)$dispersion
+        cat(fit_dispersion)
 
-      # Calculate fit
-      fit_results <- glm(
-        formula = fit_formula,
-        family = eval(parse(text = paste(model_family, "(link =", fit_link, ")"))),
-        weights = weights,
-        data = model_data
-      )
+        if (fit_dispersion <= 1) {
+          fit_results <- glm(
+            formula = fit_formula,
+            family = poisson(link = fit_link),
+            # weights = weights,
+            data = model_data
+          )
+          fit_dispersion <- NULL
+        }
+      }
 
       # Summarise fit
       fit_summary <- summary(fit_results, correlation = TRUE)
@@ -550,6 +563,14 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       )
 
       return(fit_results_list)
+    }
+
+    get_fit_maxlik_method <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+
+    }
+
+    get_fit_results <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+
     }
 
     # Curve function ----
@@ -633,8 +654,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       return(gg_curve)
     }
 
-    # Perform calculations
-    fit_results_list <- get_fit_results_glm(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity")
+    # Perform calculations ----
+    fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link = "identity")
     gg_curve <- get_dose_curve(fit_results_list)
 
     # Make list of results to return
