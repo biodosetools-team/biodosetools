@@ -22,6 +22,11 @@ dicentFittingAdvUI <- function(id, label) {
               label = "Load data from file",
               value = FALSE, status = "warning"
             ),
+            awesomeCheckbox(
+              inputId = ns("full_count_data_check"),
+              label = "Use full distribution data",
+              value = TRUE, status = "warning"
+            ),
             # Manual input ----
             conditionalPanel(
               condition = "!input.load_count_data_check",
@@ -335,12 +340,14 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       load_count_data <- input$load_count_data_check
+      full_count_data <- input$full_count_data_check
       count_data <- input$load_count_data
       num_doses <- as.numeric(input$num_doses)
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
     if (!load_count_data) {
+      if (full_count_data) {
       # Doses data frame
       data_doses <- data.frame(
         D = rep(0.0, num_doses)
@@ -359,6 +366,19 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
       # Full data frame
       full_data <- cbind(data_doses, data_base) %>%
         dplyr::mutate(D = as.numeric(D))
+
+      } else {
+        full_data <- data.frame(
+          D = rep(0.0, num_doses),
+          N = rep(0, num_doses),
+          X = rep(0, num_doses)
+        ) %>%
+          dplyr::mutate(
+            D = as.numeric(D),
+            N = as.integer(N),
+            X = as.integer(X)
+          )
+      }
     } else {
       full_data <- read.csv(count_data$datapath, header = TRUE) %>%
         dplyr::mutate_at(vars(starts_with("C")), list(. ~ as.integer(.)))
@@ -372,49 +392,60 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     # Create button dependency for updating dimensions
     input$button_upd_table
 
+    isolate({
+      full_count_data <- input$full_count_data_check
+    })
+
     if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
       return(previous())
     } else if (!identical(previous(), input$hotable)) {
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
-      # Calculated columns
-      mytable <- mytable %>%
-        dplyr::mutate(
-          N = 0,
-          X = 0,
-          DI = 0,
-          u = 0
-        ) %>%
-        dplyr::select(D, N, X, everything())
+      if (full_count_data) {
+        # Calculated columns
+        mytable <- mytable %>%
+          dplyr::mutate(
+            N = 0,
+            X = 0,
+            DI = 0,
+            u = 0
+          ) %>%
+          dplyr::select(D, N, X, everything())
 
-      first_dicent_index <- 4
-      last_dicent_index <- ncol(mytable) - 2
-      num_rows <- nrow(mytable)
+        first_dicent_index <- 4
+        last_dicent_index <- ncol(mytable) - 2
+        num_rows <- nrow(mytable)
 
-      mytable <- mytable %>%
-        dplyr::mutate(
-          D = as.numeric(D),
-          X = as.integer(X),
-          N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
-        )
+        mytable <- mytable %>%
+          dplyr::mutate(
+            D = as.numeric(D),
+            X = as.integer(X),
+            N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
+          )
 
-      # Ugly method to calculate index of dispersion
-      for (row in 1:num_rows) {
-        xf <- 0
-        x2f <- 0
-        # Calculate summatories
-        for (k in seq(0, last_dicent_index - first_dicent_index, 1)) {
-          xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
-          x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
+        # Ugly method to calculate index of dispersion
+        for (row in 1:num_rows) {
+          xf <- 0
+          x2f <- 0
+          # Calculate summatories
+          for (k in seq(0, last_dicent_index - first_dicent_index, 1)) {
+            xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
+            x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
+          }
+          # Calculate variance and mean
+          var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
+          mean <- xf / mytable[row, "N"]
+          # Save values into data frame
+          mytable[row, "X"] <- as.integer(xf)
+          mytable[row, "DI"] <- var / mean
+          mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
         }
-        # Calculate variance and mean
-        var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
-        mean <- xf / mytable[row, "N"]
-        # Save values into data frame
-        mytable[row, "X"] <- as.integer(xf)
-        mytable[row, "DI"] <- var / mean
-        mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
+      } else {
+        mytable <- mytable %>%
+          dplyr::mutate(
+            D = as.numeric(D),
+          )
       }
 
       return(mytable)
@@ -426,7 +457,6 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
     hot <- changed_data() %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
-      hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
       hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
@@ -435,6 +465,11 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
              }
            }") %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
+
+    if (ncol(changed_data()) < 3) {
+      hot <- hot %>%
+        hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE)
+    }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
@@ -517,6 +552,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
       # Perform automatic fit calculation
       if (model_family == "poisson") {
+        # Poisson model
         fit_results <- glm(
           formula = fit_formula,
           family = poisson(link = fit_link),
@@ -525,6 +561,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
         )
         fit_dispersion <- NULL
       } else {
+        # Automatic and Quasi-poisson model
         fit_results <- glm(
           formula = fit_formula,
           family = quasipoisson(link = fit_link),
@@ -532,8 +569,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
           data = model_data
         )
         fit_dispersion <- summary(fit_results)$dispersion
-        cat(fit_dispersion)
-
+        # Check if Poisson model is more suitable
         if (fit_dispersion <= 1) {
           fit_results <- glm(
             formula = fit_formula,
