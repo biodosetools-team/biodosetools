@@ -67,7 +67,7 @@ params$case_data %>%
 
 ## Dose estimation results
 
-`r if (TRUE) {"### Whole-body"}`
+`r if (TRUE) {"### Whole-body estimated dose"}`
 ```{r echo=FALSE}
 if (TRUE) {
   params$est_doses_whole %>%
@@ -94,7 +94,7 @@ if (TRUE) {
 } 
 ```
 
-`r if (params$assessment == "partial") {"### Partial"}`
+`r if (params$assessment == "partial") {"### Dose recieved by the irradiated fraction"}`
 ```{r echo=FALSE}
 if (params$assessment == "partial") {
   params$est_doses_partial %>%
@@ -129,6 +129,7 @@ if (params$assessment == "partial") {
 } 
 ```
 
+`r if (params$assessment == "partial") {"### Initial fraction of irradiated cells"}`
 ```{r echo=FALSE}
 if (params$assessment == "partial") {
   params$est_frac_partial %>%
@@ -145,8 +146,7 @@ if (params$assessment == "partial") {
 } 
 ```
 
-`r if (params$assessment == "hetero") {"### Hetero"}`
-
+`r if (params$assessment == "hetero") {"### Observed fraction of irradiated cells and its yield"}`
 ```{r echo=FALSE}
 if (params$assessment == "hetero") {
   params$est_mixing_prop_hetero %>%
@@ -161,6 +161,7 @@ if (params$assessment == "hetero") {
 }
 ```
 
+`r if (params$assessment == "hetero") {"### Dose recieved by the irradiated fraction"}`
 ```{r echo=FALSE}
 if (params$assessment == "hetero") {
   params$est_yields_hetero %>%
@@ -193,6 +194,7 @@ if (params$assessment == "hetero") {
 }
 ```
 
+`r if (params$assessment == "hetero") {"### Initial fraction of irradiated cells"}`
 ```{r echo=FALSE}
 if (params$assessment == "hetero") {
   params$est_frac_hetero %>%
@@ -206,8 +208,6 @@ if (params$assessment == "hetero") {
       hot_cols(format = "0.000")
 }
 ```
-
-
 
 
 ### Curve plot
