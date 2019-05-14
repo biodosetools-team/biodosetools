@@ -426,7 +426,7 @@ dicentFittingAdvHotTable <- function(input, output, session, stringsAsFactors) {
   # Output ----
   output$hotable <- renderRHandsontable({
     hot <- changed_data() %>%
-      rhandsontable() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
       hot_col(ncol(changed_data()), renderer = "
@@ -471,8 +471,8 @@ dicentFittingAdvTable <- function(input, output, session, stringsAsFactors) {
 
 dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
 
-  # Calculations ----
   data <- reactive({
+  # Calculations ----
     input$button_fit
 
     isolate({
@@ -488,131 +488,163 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       disp_select <- input$slider_disp_select
     })
 
-    # Construct predictors and model data
-    C <- cells
-    α <- cells * doses
-    β <- cells * doses * doses
-    model_data <- list(C, α, β, aberr)
 
-    # Weight selection
-    if (disp_select) {
-      weights <- rep(1, length(doses))
-    } else {
-      weights <- 1 / disp
-    }
+    # Fitting functions ----
 
-    # Select model formula
-    if (model_formula == "lin-quad") {
-      fit_formula <- as.formula("aberr ~ -1 + C + α + β")
-      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-    } else if (model_formula == "lin") {
-      fit_formula <- as.formula("aberr ~ -1 + C + α")
-      fit_formula_tex <- "Y = C + \\alpha D"
-    }
-    else if (model_formula == "lin-quad-no-int") {
-      fit_formula <- as.formula("aberr ~ -1 + α + β")
-      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-    }
-    else if (model_formula == "lin-no-int") {
-      fit_formula <- as.formula("aberr ~ -1 + α")
-      fit_formula_tex <- "Y = \\alpha D"
-    }
+    get_fit_results_glm <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+      # Construct predictors and model data
+      C <- cells
+      α <- cells * doses
+      β <- cells * doses * doses
+      model_data <- list(C, α, β, aberr)
 
-    fit_link <- "identity"
-
-    # Calculate fit
-    fit_results <- glm(
-      formula = fit_formula,
-      family = eval(parse(text = paste(model_family, "(link =", fit_link, ")"))),
-      weights = weights,
-      data = model_data
-    )
-
-    # Summarise fit
-    fit_summary <- summary(fit_results, correlation = TRUE)
-    cor_mat <- fit_summary$correlation
-    var_cov_mat <- vcov(fit_results)
-    # fit_coeffs <- fit_summary$coefficients
-    fit_coeffs <- broom::tidy(fit_results) %>%
-      dplyr::select(-statistic) %>%
-      tibble::column_to_rownames(var = "term")
-    # rownames(fit_coeffs) <- fit_coeffs[["term"]]
-
-
-    # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("C", "α", "β"))
-
-    for (var in rownames(fit_coeffs)) {
-      general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
-    }
-
-    # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-      `row.names<-`(c("C", "α", "β")) %>%
-      `colnames<-`(c("C", "α", "β"))
-
-    for (x_var in rownames(var_cov_mat)) {
-      for (y_var in colnames(var_cov_mat)) {
-        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+      # Weight selection
+      if (disp_select) {
+        weights <- rep(1, length(doses))
+      } else {
+        weights <- 1 / disp
       }
-    }
 
-    # Generalized curves
-    yield_fun <- function(d) {
-      general_fit_coeffs[[1]] +
-        general_fit_coeffs[[2]] * d +
-        general_fit_coeffs[[3]] * d^2
-    }
+      # Select model formula
+      if (model_formula == "lin-quad") {
+        fit_formula <- as.formula("aberr ~ -1 + C + α + β")
+        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+      } else if (model_formula == "lin") {
+        fit_formula <- as.formula("aberr ~ -1 + C + α")
+        fit_formula_tex <- "Y = C + \\alpha D"
+      }
+      else if (model_formula == "lin-quad-no-int") {
+        fit_formula <- as.formula("aberr ~ -1 + α + β")
+        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+      }
+      else if (model_formula == "lin-no-int") {
+        fit_formula <- as.formula("aberr ~ -1 + α")
+        fit_formula_tex <- "Y = \\alpha D"
+      }
 
-    chisq_df <- nrow(fit_coeffs)
-    R_factor <- sqrt(qchisq(0.95, df = chisq_df))
+      # fit_link <- "identity"
 
-    yield_error_fun <- function(d) {
-      sqrt(
-        general_var_cov_mat[["C", "C"]] +
-          general_var_cov_mat[["α", "α"]] * d^2 +
-          general_var_cov_mat[["β", "β"]] * d^4 +
-          2 * general_var_cov_mat[["C", "α"]] * d +
-          2 * general_var_cov_mat[["C", "β"]] * d^2 +
-          2 * general_var_cov_mat[["α", "β"]] * d^3
-      )
-    }
-
-    # Plot data
-    plot_data <- broom::augment(fit_results)
-
-    curves_data <- data.frame(dose = seq(0, max(α / C), length.out = 100)) %>%
-      dplyr::mutate(
-        yield = yield_fun(dose),
-        yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
-        yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+      # Calculate fit
+      fit_results <- glm(
+        formula = fit_formula,
+        family = eval(parse(text = paste(model_family, "(link =", fit_link, ")"))),
+        weights = weights,
+        data = model_data
       )
 
-    # Make plot
-    gg_curve <- ggplot(plot_data / C) +
-      # Observed data
-      geom_point(aes(x = α, y = aberr)) +
-      # Fitted curve
-      stat_function(
-        data = data.frame(x = c(0, max(α / C))),
-        mapping = aes(x),
-        fun = function(x) yield_fun(x),
-        linetype = "dashed"
-      ) +
-      # Confidence bands (Merkle, 1983)
-      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-      labs(x = "Dose (Gy)", y = "Dicentrics/cells") +
-      theme_bw()
+      # Summarise fit
+      fit_summary <- summary(fit_results, correlation = TRUE)
+      cor_mat <- fit_summary$correlation
+      var_cov_mat <- vcov(fit_results)
+      fit_coeffs <- broom::tidy(fit_results) %>%
+        dplyr::select(-statistic) %>%
+        tibble::column_to_rownames(var = "term")
+
+      # Return objects
+      fit_results_list <- list(
+        fit_results = fit_results,
+        fit_formula_tex = fit_formula_tex,
+        fit_coeffs = fit_coeffs,
+        cor_mat = cor_mat,
+        var_cov_mat = var_cov_mat
+      )
+
+      return(fit_results_list)
+    }
+
+    # Curve function ----
+
+    get_dose_curve <- function(fit_results_list) {
+      # Read objects from fit results list
+      fit_results <- fit_results_list[["fit_results"]]
+      fit_coeffs <- fit_results_list[["fit_coeffs"]]
+      var_cov_mat <- fit_results_list[["var_cov_mat"]]
+
+      # Generalized variance-covariance matrix
+      general_fit_coeffs <- numeric(length = 3L) %>%
+        `names<-`(c("C", "α", "β"))
+
+      for (var in rownames(fit_coeffs)) {
+        general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
+      }
+
+      # Generalized fit coefficients
+      general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+        `row.names<-`(c("C", "α", "β")) %>%
+        `colnames<-`(c("C", "α", "β"))
+
+      for (x_var in rownames(var_cov_mat)) {
+        for (y_var in colnames(var_cov_mat)) {
+          general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+        }
+      }
+
+      # Generalized curves
+      yield_fun <- function(d) {
+        general_fit_coeffs[[1]] +
+          general_fit_coeffs[[2]] * d +
+          general_fit_coeffs[[3]] * d^2
+      }
+
+      chisq_df <- nrow(fit_coeffs)
+      R_factor <- sqrt(qchisq(0.95, df = chisq_df))
+
+      yield_error_fun <- function(d) {
+        sqrt(
+          general_var_cov_mat[["C", "C"]] +
+            general_var_cov_mat[["α", "α"]] * d^2 +
+            general_var_cov_mat[["β", "β"]] * d^4 +
+            2 * general_var_cov_mat[["C", "α"]] * d +
+            2 * general_var_cov_mat[["C", "β"]] * d^2 +
+            2 * general_var_cov_mat[["α", "β"]] * d^3
+        )
+      }
+
+      # Plot data
+      plot_data <- broom::augment(fit_results)
+      α <- plot_data[["α"]]
+      C <- plot_data[["C"]]
+      aberr <- plot_data[["aberr"]]
+
+      curves_data <- data.frame(dose = seq(0, max(α / C), length.out = 100)) %>%
+        dplyr::mutate(
+          yield = yield_fun(dose),
+          yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
+          yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+        )
+
+      # Make plot
+      gg_curve <- ggplot(plot_data / C) +
+        # Observed data
+        geom_point(aes(x = α, y = aberr)) +
+        # Fitted curve
+        stat_function(
+          data = data.frame(x = c(0, max(α / C))),
+          mapping = aes(x),
+          fun = function(x) yield_fun(x),
+          linetype = "dashed"
+        ) +
+        # Confidence bands (Merkle, 1983)
+        geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+        labs(x = "Dose (Gy)", y = "Dicentrics/cells") +
+        theme_bw()
+
+      # Return object
+      return(gg_curve)
+    }
+
+    # Perform calculations
+    fit_results_list <- get_fit_results_glm(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity")
+    gg_curve <- get_dose_curve(fit_results_list)
 
     # Make list of results to return
     results_list <- list(
       # Used in app
-      fit_results = fit_results,
-      fit_coeffs = fit_coeffs,
-      var_cov_mat = var_cov_mat,
-      cor_mat = cor_mat,
-      fit_formula_tex = fit_formula_tex,
+      fit_results = fit_results_list[["fit_results"]],
+      fit_coeffs = fit_results_list[["fit_coeffs"]],
+      var_cov_mat = fit_results_list[["var_cov_mat"]],
+      cor_mat = fit_results_list[["cor_mat"]],
+      fit_formula_tex = fit_results_list[["fit_formula_tex"]],
       gg_curve = gg_curve,
       # Required for report
       count_data = hot_to_r(input$hotable)
@@ -622,12 +654,6 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
   })
 
   # Results outputs ----
-  output$fit_results <- renderPrint({
-    # Result of curve fit 'fit_results'
-    if (input$button_fit <= 0) return(NULL)
-    data()[["fit_results"]]
-  })
-
   output$fit_formula_tex <- renderUI({
     # Fitting formula
     if (input$button_fit <= 0) return(NULL)
@@ -645,14 +671,17 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       ) %>%
       dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
       dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
-      rhandsontable()
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 60)
   })
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
-      rhandsontable() %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 75) %>%
       hot_cols(format = "0.000")
   })
@@ -662,7 +691,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
-      rhandsontable() %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -671,7 +701,8 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
     # Correlation matrix 'cor_mat'
     if (input$button_fit <= 0) return(NULL)
     data()[["cor_mat"]] %>%
-      rhandsontable() %>%
+      # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -693,7 +724,7 @@ dicentFittingAdvResults <- function(input, output, session, stringsAsFactors) {
       if (input$save_count_data_format == ".csv") {
         write.csv(hot_to_r(input$hotable), file, row.names = FALSE)
       } else if (input$save_count_data_format == ".tex") {
-        print(xtable::xtable(hot_to_r(input$hotable)), type = "latex", file)
+        print(xtable::xtable(data()[["count_data"]]), type = "latex", file)
       }
     }
   )
