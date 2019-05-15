@@ -77,19 +77,13 @@ sidebar <- bs4DashMySidebar(
     #   condition = "input.experiment_select == 'Dicentrics'",
     #   bs4SidebarMenuItem(
     #     "Fitting",
-    #     tabName = "tab-fitting-adv",
-    #     icon = "cogs"
-    #   ),
-    #
-    #   bs4SidebarMenuItem(
-    #     "Simplified fitting",
-    #     tabName = "tab-fitting-simple",
+    #     tabName = "tab-dicent-fitting",
     #     icon = "cog"
     #   ),
     #
     #   bs4SidebarMenuItem(
     #     "Dose estimation",
-    #     tabName = "tab-estimate",
+    #     tabName = "tab-dicent-estimate",
     #     icon = "calculator"
     #   )
     # ),
@@ -124,19 +118,13 @@ sidebar <- bs4DashMySidebar(
 
     bs4SidebarMenuItem(
       "Fitting",
-      tabName = "tab-fitting-adv",
-      icon = "cogs"
-    ),
-
-    bs4SidebarMenuItem(
-      "Simplified fitting",
-      tabName = "tab-fitting-simple",
+      tabName = "tab-dicent-fitting",
       icon = "cog"
     ),
 
     bs4SidebarMenuItem(
       "Dose estimation",
-      tabName = "tab-estimate",
+      tabName = "tab-dicent-estimate",
       icon = "calculator"
     ),
 
@@ -226,11 +214,9 @@ body <- bs4DashBody(
     # Dicentric Modules ----
 
     # Fitting
-    dicentFittingUI(id = "fitting", label = "tab-fitting-simple"),
-    # Advanced Fitting
-    dicentFittingAdvUI(id = "adv_fitting", label = "tab-fitting-adv"),
+    dicentFittingUI(id = "dicent_fitting", label = "tab-dicent-fitting"),
     # Dose Estimation
-    dicentEstimateUI(id = "estimate", label = "tab-estimate"),# locale = i18n)
+    dicentEstimateUI(id = "dicent_estimate", label = "tab-dicent-estimate"),# locale = i18n)
 
     # Translocations Modules ----
 

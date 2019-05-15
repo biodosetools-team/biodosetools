@@ -13,17 +13,13 @@ server <- function(input, output) {
   # Dicentrics Modules ----
 
   # Fitting
-  callModule(module = dicentFittingTable, id = "fitting", reactive(input$button_fit))
-  callModule(module = dicentFittingResults, id = "fitting", reactive(input$button_fit))
-
-  # Advanced Fitting
-  callModule(module = dicentFittingAdvHotTable, id = "adv_fitting")
-  callModule(module = dicentFittingAdvResults, id = "adv_fitting")
+  callModule(module = dicentFittingHotTable, id = "dicent_fitting")
+  callModule(module = dicentFittingResults, id = "dicent_fitting")
 
   # Dose Estimation
-  callModule(module = dicentEstimateHotTable, id = "estimate")
-  callModule(module = dicentEstimateFittingCurve, id = "estimate")
-  callModule(module = dicentEstimateResults, id = "estimate")
+  callModule(module = dicentEstimateHotTable, id = "dicent_estimate")
+  callModule(module = dicentEstimateFittingCurve, id = "dicent_estimate")
+  callModule(module = dicentEstimateResults, id = "dicent_estimate")
 
   # Translocations Modules ----
 
