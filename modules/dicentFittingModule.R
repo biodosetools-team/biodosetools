@@ -31,7 +31,11 @@ dicentFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_count_data_check",
               ns = ns,
-              numericInput(ns("num_doses"), "Number of doses", value = 11),
+              numericInput(ns("num_doses"), "Number of doses", value = 11)
+            ),
+            conditionalPanel(
+              condition = "!input.load_count_data_check & input.full_count_data_check",
+              ns = ns,
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             # Load from file ----
