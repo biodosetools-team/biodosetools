@@ -216,9 +216,13 @@ dicentFittingUI <- function(id, label) {
               h6("Fit formula"),
               uiOutput(ns("fit_formula_tex")),
 
-              # br(),
+              h6("Model"),
+              uiOutput(ns("fit_model_text")),
+
+              br(),
               h6("Coefficients"),
               rHandsontableOutput(ns("fit_coeffs"))
+
             ),
             bs4TabPanel(
               tabName = "Summary statistics",
@@ -568,8 +572,32 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       cor_mat <- fit_summary$correlation
       var_cov_mat <- vcov(fit_results)
       fit_coeffs <- broom::tidy(fit_results) %>%
-        dplyr::select(-statistic) %>%
         tibble::column_to_rownames(var = "term")
+
+      # Correct p-values depending on model dispersion
+      t_value <- fit_coeffs[["estimate"]] / sqrt(diag(var_cov_mat))
+
+      if (is.null(fit_dispersion)) {
+        # For Poisson model
+        fit_coeffs <- fit_coeffs %>%
+          dplyr::mutate(
+            statistic = t_value,
+            p.value = 2 * pnorm(-abs(statistic))
+          ) %>%
+          dplyr::select(-statistic) %>%
+          `row.names<-`(c("C", "α", "β"))
+        fit_model_text <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
+      } else if (fit_dispersion > 1) {
+        # For Quasi-poisson model
+        fit_coeffs <- fit_coeffs %>%
+          dplyr::mutate(
+            statistic = t_value,
+            p.value = 2 * pt(-abs(statistic), fit_results$df.residual)
+          ) %>%
+          dplyr::select(-statistic) %>%
+          `row.names<-`(c("C", "α", "β"))
+        fit_model_text <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", fit_dispersion, ") > 1.")
+      }
 
       # Return objects
       fit_results_list <- list(
@@ -577,7 +605,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_tex = fit_formula_tex,
         fit_coeffs = fit_coeffs,
         cor_mat = cor_mat,
-        var_cov_mat = var_cov_mat
+        var_cov_mat = var_cov_mat,
+        fit_model_text = fit_model_text
       )
 
       return(fit_results_list)
@@ -603,9 +632,10 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       general_fit_coeffs <- numeric(length = 3L) %>%
         `names<-`(c("C", "α", "β"))
 
-      for (var in rownames(fit_coeffs)) {
-        general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
+      for (var in row.names(fit_coeffs)) {
+        general_fit_coeffs[[var]] <- fit_coeffs[var, "estimate"] %>% as.numeric()
       }
+
 
       # Generalized fit coefficients
       general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
@@ -620,9 +650,9 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Generalized curves
       yield_fun <- function(d) {
-        general_fit_coeffs[[1]] +
-          general_fit_coeffs[[2]] * d +
-          general_fit_coeffs[[3]] * d^2
+        general_fit_coeffs[["C"]] +
+          general_fit_coeffs[["α"]] * d +
+          general_fit_coeffs[["β"]] * d^2
       }
 
       chisq_df <- nrow(fit_coeffs)
@@ -684,6 +714,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       var_cov_mat = fit_results_list[["var_cov_mat"]],
       cor_mat = fit_results_list[["cor_mat"]],
       fit_formula_tex = fit_results_list[["fit_formula_tex"]],
+      fit_model_text = fit_results_list[["fit_model_text"]],
       gg_curve = gg_curve,
       # Required for report
       count_data = hot_to_r(input$hotable)
@@ -697,6 +728,12 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     # Fitting formula
     if (input$button_fit <= 0) return(NULL)
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
+  })
+
+  output$fit_model_text <- renderUI({
+    # Fitting formula
+    if (input$button_fit <= 0) return(NULL)
+    data()[["fit_model_text"]]
   })
 
   output$fit_statistics <- renderRHandsontable({
