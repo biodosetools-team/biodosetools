@@ -542,7 +542,6 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_results <- glm(
           formula = fit_formula,
           family = poisson(link = fit_link),
-          # weights = weights,
           data = model_data
         )
         fit_dispersion <- NULL
@@ -560,7 +559,6 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           fit_results <- glm(
             formula = fit_formula,
             family = poisson(link = fit_link),
-            # weights = weights,
             data = model_data
           )
           fit_dispersion <- NULL
