@@ -500,15 +500,71 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
     # Fitting functions ----
 
+    prepare_maxlik_count_data <- function(count_data) {
+      if (ncol(count_data) > 3) {
+        # Full distribution data
+        dose_vec <- rep(
+          count_data[["D"]],
+          count_data[["N"]]
+        )
+
+        cell_vec <- rep(
+          rep(1, nrow(count_data)),
+          count_data[["N"]]
+        )
+
+        dics_vec <- rep(
+          count_data %>%
+            names() %>%
+            grep("C", ., value = TRUE) %>%
+            gsub("C", "", .) %>%
+            rep(nrow(count_data)) %>%
+            as.numeric()
+          ,
+          count_data %>%
+            .[, grep("C", names(.), value = T)] %>%
+            as.matrix() %>%
+            t() %>%
+            as.numeric()
+        )
+
+        parsed_data <- data.frame(
+          aberr = dics_vec,
+          dose = dose_vec,
+          C = cell_vec) %>%
+          mutate(
+            α = dose * C,
+            β = dose^2 * C) %>%
+          dplyr::select(aberr, C, α, β, dose)
+      } else {
+        # Aggregated data only
+        parsed_data <- count_data %>%
+          dplyr::rename(
+            aberr = X,
+            C = N
+          ) %>%
+          dplyr::mutate(
+            α = D * C,
+            β = D^2 * C
+          ) %>%
+          dplyr::select(aberr, C, α, β)
+      }
+
+      # Return data frame
+      return(parsed_data)
+    }
+
     get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity") {
 
       # Parse count data
       doses <- count_data[["D"]]
       aberr <- count_data[["X"]]
       cells <- count_data[["N"]]
-      if (ncol(count_data) < 3) {
+      if (ncol(count_data) > 3) {
+        # Full distribution data
         disp <- count_data[["DI"]]
       } else {
+        # Aggregated data only
         disp <- rep(1, nrow(count_data))
       }
 
@@ -584,6 +640,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           ) %>%
           dplyr::select(-statistic) %>%
           `row.names<-`(c("C", "α", "β"))
+
         fit_model_text <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
       } else if (fit_dispersion > 1) {
         # For Quasi-poisson model
@@ -594,6 +651,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           ) %>%
           dplyr::select(-statistic) %>%
           `row.names<-`(c("C", "α", "β"))
+
         fit_model_text <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", fit_dispersion, ") > 1.")
       }
 
@@ -610,15 +668,15 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       return(fit_results_list)
     }
 
-    get_fit_maxlik_method <- function(data, aggr = FALSE, model_formula, model_family, fit_link = "identity") {
+    get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link = "identity") {
       # type can be "poisson", "quasipoisson" or "automatic"
       # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
       # start should include starting values for the coefficients of the regression model
       # Please note that most parts of this code are from Oliviera et al. this should be cited somewhere
 
       # Parse full data into aggregated format
-      if (!aggr) {
-        dat_aggr <- data %>%
+      if ("dose" %in% colnames(data)) {
+        data_aggr <- data %>%
           dplyr::group_by(aberr, dose) %>%
           dplyr::summarise(n = n()) %>%
           dplyr::group_by(dose) %>%
@@ -633,7 +691,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           dplyr::rename(aberr = X) %>%
           select(aberr, dose, C, α, β)
       } else {
-        dat_aggr <- data
+        data_aggr <- data
       }
 
       # Select model formula
@@ -803,7 +861,23 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
 
     get_fit_results <- function(data, model_formula, model_family, fit_link = "identity") {
+      # If glm produces an error, constraint ML maximization is performed
+      tryCatch({
+        # Save used algorithm
+        fit_algorithm <- "glm"
+        # Perform fitting
+        fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link)
+      },
+      error = function(error_message) {
+        message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
+        # Save used algorithm
+        fit_algorithm <- "constraint-maxlik-optimization"
+        # Perform fitting
+        prepared_data <- prepare_maxlik_count_data(count_data)
+        fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
+      })
 
+      return(fit_results_list)
     }
 
     # Curve function ----
@@ -889,7 +963,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Perform calculations ----
-    fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link = "identity")
+    # fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link = "identity")
+    fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
     gg_curve <- get_dose_curve(fit_results_list)
 
     # Make list of results to return
