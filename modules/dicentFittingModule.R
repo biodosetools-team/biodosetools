@@ -610,11 +610,199 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       return(fit_results_list)
     }
 
-    get_fit_maxlik_method <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+    get_fit_maxlik_method <- function(data, aggr = FALSE, model_formula, model_family, fit_link = "identity") {
+      # type can be "poisson", "quasipoisson" or "automatic"
+      # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
+      # start should include starting values for the coefficients of the regression model
+      # Please note that most parts of this code are from Oliviera et al. this should be cited somewhere
 
+      # Parse full data into aggregated format
+      if (!aggr) {
+        dat_aggr <- data %>%
+          dplyr::group_by(aberr, dose) %>%
+          dplyr::summarise(n = n()) %>%
+          dplyr::group_by(dose) %>%
+          dplyr::summarise(
+            C = sum(n),
+            X = sum(ifelse(aberr > 0, n * aberr, 0))
+          ) %>%
+          dplyr::mutate(
+            α = dose * C,
+            β = dose^2 * C
+          ) %>%
+          dplyr::rename(aberr = X) %>%
+          select(aberr, dose, C, α, β)
+      } else {
+        dat_aggr <- data
+      }
+
+      # Select model formula
+      if (model_formula == "lin-quad") {
+        fit_formula <- as.formula("aberr ~ -1 + C + α + β")
+        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+      } else if (model_formula == "lin") {
+        fit_formula <- as.formula("aberr ~ -1 + C + α")
+        fit_formula_tex <- "Y = C + \\alpha D"
+      }
+      else if (model_formula == "lin-quad-no-int") {
+        fit_formula <- as.formula("aberr ~ -1 + α + β")
+        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+      }
+      else if (model_formula == "lin-no-int") {
+        fit_formula <- as.formula("aberr ~ -1 + α")
+        fit_formula_tex <- "Y = \\alpha D"
+      }
+
+      # Find starting values for the mean
+      mustart <- lm(fit_formula, data = dat_aggr)$coefficients
+      if (mustart[1] <= 0) {
+        mustart[1] <- 0.001
+      }
+
+      # Black magic
+      mf <- match.call()
+      m <- match(c("formula", "data"), names(mf), 0)
+      mf <- mf[c(1, m)]
+      mf$drop.unused.levels <- TRUE
+
+      if (length(fit_formula[[3]]) > 1 && identical(fit_formula[[3]][[1]], as.name("|"))) {
+        ff <- fit_formula
+        fit_formula[[3]][1] <- call("+")
+        mf$formula <- fit_formula
+        ffc <- . ~ .
+        ffz <- ~.
+        ffc[[2]] <- ff[[2]]
+        ffc[[3]] <- ff[[3]][[2]]
+        ffz[[3]] <- ff[[3]][[3]]
+        ffz[[2]] <- NULL
+      } else {
+        ffz <- ffc <- ff <- fit_formula
+        ffz[[2]] <- NULL
+      }
+
+      if (inherits(try(terms(ffz), silent = TRUE), "try-error")) {
+        ffz <- eval(parse(text = sprintf(paste("%s -", deparse(ffc[[2]])), deparse(ffz))))
+      }
+
+      mf[[1]] <- as.name("model.frame")
+      mf <- eval(mf, parent.frame())
+      mt <- attr(mf, "terms")
+      mtX <- terms(ffc, data = data)
+      X <- model.matrix(mtX, mf)
+      mtZ <- terms(ffz, data = data)
+      mtZ <- terms(update(mtZ, ~.), data = data)
+      Z <- model.matrix(mtZ, mf)
+      Y <- model.response(mf, "numeric")
+
+      if (all(X[, 1] == 1)) {
+        intercept <- TRUE
+      } else {
+        intercept <- FALSE
+      }
+
+      # Summarise black magic
+      ndic <- max(Y)
+      n <- length(Y)
+      linkstr <- "logit"
+      linkobj <- make.link(linkstr)
+      linkinv <- linkobj$linkinv
+      grad <- NULL
+      kx <- NCOL(X)
+      Y0 <- Y <= 0
+      Y1 <- Y > 0
+
+      # Find starting values for the mean
+      if (fit_link == "log") {
+        if (is.null(mustart)) mustart <- as.numeric(glm.fit(X, Y, family = poisson())$coefficients)
+      } else {
+        if (is.null(mustart)) {
+          stop("If link=identity, starting values must be provided")
+        } else {
+          mustart <- mustart
+        }
+      }
+
+      # Model constraints
+      npar <- kx
+      if (intercept) {
+        A <- rbind(X, c(1, rep(0, kx - 1)))
+        B <- rep(0, n + 1)
+      } else {
+        A <- X
+        B <- rep(0, n)
+      }
+
+      # Loglikelihood function
+      loglik <- function(parms) {
+        if (fit_link == "log") {
+          mu <- as.vector(exp(X %*% parms[1:kx]))
+        } else {
+          mu <- as.vector(X %*% parms[1:kx])
+        }
+        loglikh <- sum(-mu + Y * log(mu) - lgamma(Y + 1))
+        loglikh
+      }
+
+      # Perform fitting
+      if (fit_link == "log") {
+        constraints <- NULL
+        fit <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = constraints, iterlim = 1000)
+      } else {
+        fit <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = list(ineqA = A, ineqB = B), iterlim = 1000)
+      }
+      hess <- maxLik::hessian(fit)
+
+      if (fit_link == "log") {
+        mu <- as.vector(exp(X %*% fit$estimate[1:kx]))
+      } else {
+        mu <- as.vector(X %*% fit$estimate[1:kx])
+      }
+
+      output <- list()
+      output$coefficients <- fit$estimate
+      output$loglik <- fit$maximum
+      output$AIC <- -2 * output$loglik + 2 * length(output$coefs)
+      output$BIC <- -2 * output$loglik + log(n) * length(output$coefs)
+      output$vcov <- base::solve(-hess)
+      output$fitted.values <- unique(mu)
+      output$df <- n - kx
+      output$dispersion <- sum(((Y - mu)^2) / (mu * (n - kx)))
+      output$deviance <- sum(poisson(link = "identity")$dev.resids(Y, mu, 1))
+
+      if (type == "poisson" | (type == "automatic" & output$dispersion <= 1)) {
+        tvalue <- fit$estimate / sqrt(diag(output$vcov))
+        output$coef.table <- cbind(fit$estimate, sqrt(diag(output$vcov)), tvalue, 2 * pnorm(-abs(tvalue)))
+        colnames(output$coef.table) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+        cat(
+          "A Poisson model assuming equidispersion was used as dispersion <= 1\n",
+          "AIC=", output$AIC, "   ", "BIC=", output$BIC, "\n",
+          "residual deviance=", output$deviance, "on", output$df, "degrees of freedom\n\n\n"
+        )
+
+        print(output$coef.table)
+      } else if (type == "quasipoisson" | (type == "automatic" & output$dispersion > 1)) {
+        output$vcov <- output$vcov * output$dispersion
+        tvalue <- fit$estimate / sqrt(diag(output$vcov))
+        output$coef.table <- cbind(
+          fit$estimate, sqrt(diag(output$vcov)), tvalue,
+          2 * pt(-abs(tvalue), output$df)
+        )
+
+        colnames(output$coef.table) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+        cat(
+          "AIC=", output$AIC, "   ", "BIC=", output$BIC, "\n",
+          "residual deviance=", output$deviance, "on", output$df, "degrees of freedom",
+          "\n", "Dispersion parameter=", output$dispersion, "\n\n\n"
+        )
+
+        print(output$coef.table)
+      }
+
+      return(output)
     }
 
-    get_fit_results <- function(doses, aberr, cells, disp, model_formula, model_family, fit_link = "identity") {
+
+    get_fit_results <- function(data, model_formula, model_family, fit_link = "identity") {
 
     }
 
