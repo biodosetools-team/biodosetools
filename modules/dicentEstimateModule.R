@@ -1631,76 +1631,48 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Return list ----
 
-    # Make list of results to return
-    if (assessment == "whole-body") {
-      results_list <- list(
-        # Used in app
-        assessment = assessment,
-        # Whole-body
-        est_doses_whole = est_doses_whole,
-        # Partial
-        est_doses_partial = NA,
-        est_frac_partial = NA,
-        # Heterogeneous
-        est_mixing_prop_hetero = NA,
-        est_yields_hetero = NA,
-        est_doses_hetero = NA,
-        est_frac_hetero = NA,
-        # Plot
-        gg_curve = gg_curve,
-        # Required for report
-        fit_coeffs = fit_coeffs,
-        fit_formula_tex = fit_formula_tex,
-        case_data = case_data,
-        case_description = input$case_description,
-        results_comments = input$results_comments
-      )
-    } else if (assessment == "partial") {
-      results_list <- list(
-        # Used in app
-        assessment = assessment,
-        # Whole-body
-        est_doses_whole = est_doses_whole,
-        # Partial
-        est_doses_partial = est_doses_partial,
-        est_frac_partial = est_frac_partial,
-        # Heterogeneous
-        est_mixing_prop_hetero = NA,
-        est_yields_hetero = NA,
-        est_doses_hetero = NA,
-        est_frac_hetero = NA,
-        # Plot
-        gg_curve = gg_curve,
-        # Required for report
-        fit_coeffs = fit_coeffs,
-        fit_formula_tex = fit_formula_tex,
-        case_data = case_data,
-        case_description = input$case_description,
-        results_comments = input$results_comments
-      )
+    # Make basic list of results to return
+    results_list <- list(
+      # Used in app
+      assessment = assessment,
+      # Whole-body
+      est_doses_whole = est_doses_whole,
+      # Partial
+      est_doses_partial = NA,
+      est_frac_partial = NA,
+      # Heterogeneous
+      est_mixing_prop_hetero = NA,
+      est_yields_hetero = NA,
+      est_doses_hetero = NA,
+      est_frac_hetero = NA,
+      # Plot
+      gg_curve = gg_curve,
+      # Required for report
+      fit_coeffs = fit_coeffs,
+      fit_formula_tex = fit_formula_tex,
+      case_data = case_data,
+      case_description = input$case_description,
+      results_comments = input$results_comments
+    )
+    if (assessment == "partial") {
+      # Partial
+      results_list[["est_doses_partial"]] <- est_doses_partial
+      results_list[["est_frac_partial"]] <- est_frac_partial
+      # Reset Heterogeneous
+      results_list[["est_mixing_prop_hetero"]] <- NA
+      results_list[["est_yields_hetero"]] <- NA
+      results_list[["est_doses_hetero"]] <- NA
+      results_list[["est_frac_hetero"]] <- NA
+
     } else if (assessment == "hetero"){
-      results_list <- list(
-        # Used in app
-        assessment = assessment,
-        # Whole-body
-        est_doses_whole = est_doses_whole,
-        # Partial
-        est_doses_partial = NA,
-        est_frac_partial = NA,
-        # Heterogeneous
-        est_mixing_prop_hetero = est_mixing_prop_hetero,
-        est_yields_hetero = est_yields_hetero,
-        est_doses_hetero = est_doses_hetero,
-        est_frac_hetero = est_frac_hetero,
-        # Plot
-        gg_curve = gg_curve,
-        # Required for report
-        fit_coeffs = fit_coeffs,
-        fit_formula_tex = fit_formula_tex,
-        case_data = case_data,
-        case_description = input$case_description,
-        results_comments = input$results_comments
-      )
+      # Heterogeneous
+      results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
+      results_list[["est_yields_hetero"]] <- est_yields_hetero
+      results_list[["est_doses_hetero"]] <- est_doses_hetero
+      results_list[["est_frac_hetero"]] <- est_frac_hetero
+      # Reset Partial
+      results_list[["est_doses_partial"]] <- NA
+      results_list[["est_frac_partial"]] <- NA
     }
 
     return(results_list)
