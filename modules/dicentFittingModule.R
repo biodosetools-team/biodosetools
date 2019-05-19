@@ -629,11 +629,11 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Model-specific statistics
       fit_model_statistics <- cbind(
-        logLik = fit_results %>% stats::logLik() %>% as.numeric(),
+        logLik =   stats::logLik(fit_results) %>% as.numeric(),
         deviance = fit_results[["deviance"]],
-        df = fit_results[["df.residual"]],
-        AIC = fit_results %>% stats::AIC(),
-        BIC = fit_results %>% stats::BIC()
+        df =       fit_results[["df.residual"]],
+        AIC =      stats::AIC(fit_results),
+        BIC =      stats::BIC(fit_results)
       )
 
       # Correct p-values depending on model dispersion
@@ -643,27 +643,29 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       if (is.null(fit_dispersion)) {
         # For Poisson model
         fit_coeffs <- cbind(
-          fit_coeffs_vec,
-          sqrt(diag(fit_var_cov_mat)),
-          t_value,
-          2 * pnorm(-abs(t_value))
+          estimate =  fit_coeffs_vec,
+          std.error = sqrt(diag(fit_var_cov_mat)),
+          statistic = t_value,
+          p.value =   2 * pnorm(-abs(t_value))
         ) %>%
           `row.names<-`(names(fit_coeffs_vec)) %>%
           `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
+        # Summary of model used
         fit_model_summary <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
       } else if (fit_dispersion > 1) {
         # For Quasi-poisson model
         fit_coeffs <- cbind(
-          fit_coeffs_vec,
-          sqrt(diag(fit_var_cov_mat)),
-          t_value,
-          2 * 2 * pt(-abs(t_value), fit_results$df.residual)
+          estimate =  fit_coeffs_vec,
+          std.error = sqrt(diag(fit_var_cov_mat)),
+          statistic = t_value,
+          p.value =   2 * 2 * pt(-abs(t_value), fit_results$df.residual)
         ) %>%
           `row.names<-`(names(fit_coeffs_vec)) %>%
           `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
-        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", fit_dispersion, ") > 1.")
+        # Summary of model used
+        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", round(fit_dispersion, 2), ") > 1.")
       }
 
       # Return objects
@@ -688,7 +690,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       return(fit_results_list)
     }
 
-    get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link = "identity") {
+    get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       # type can be "poisson", "quasipoisson" or "automatic"
       # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
       # start should include starting values for the coefficients of the regression model
@@ -732,7 +734,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       }
 
       # Find starting values for the mean
-      mustart <- lm(fit_formula, data = dat_aggr)$coefficients
+      mustart <- lm(fit_formula, data = data_aggr)$coefficients
       if (mustart[1] <= 0) {
         mustart[1] <- 0.001
       }
@@ -824,59 +826,94 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       # Perform fitting
       if (fit_link == "log") {
         constraints <- NULL
-        fit <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = constraints, iterlim = 1000)
+        fit_results <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = constraints, iterlim = 1000)
       } else {
-        fit <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = list(ineqA = A, ineqB = B), iterlim = 1000)
+        fit_results <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = list(ineqA = A, ineqB = B), iterlim = 1000)
       }
-      hess <- maxLik::hessian(fit)
+      hess <- maxLik::hessian(fit_results)
 
       if (fit_link == "log") {
-        mu <- as.vector(exp(X %*% fit$estimate[1:kx]))
+        mu <- as.vector(exp(X %*% fit_results$estimate[1:kx]))
       } else {
-        mu <- as.vector(X %*% fit$estimate[1:kx])
+        mu <- as.vector(X %*% fit_results$estimate[1:kx])
       }
 
-      output <- list()
-      output$coefficients <- fit$estimate
-      output$loglik <- fit$maximum
-      output$AIC <- -2 * output$loglik + 2 * length(output$coefs)
-      output$BIC <- -2 * output$loglik + log(n) * length(output$coefs)
-      output$vcov <- base::solve(-hess)
-      output$fitted.values <- unique(mu)
-      output$df <- n - kx
-      output$dispersion <- sum(((Y - mu)^2) / (mu * (n - kx)))
-      output$deviance <- sum(poisson(link = "identity")$dev.resids(Y, mu, 1))
+      # Summarise fit
+      fit_summary <- summary(fit_results)
+      # fit_cor_mat <- fit_summary$correlation
+      fit_var_cov_mat <- base::solve(-hess)
+      fit_coeffs_vec <- fit_results$estimate
+      fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - kx)))
 
-      if (type == "poisson" | (type == "automatic" & output$dispersion <= 1)) {
-        tvalue <- fit$estimate / sqrt(diag(output$vcov))
-        output$coef.table <- cbind(fit$estimate, sqrt(diag(output$vcov)), tvalue, 2 * pnorm(-abs(tvalue)))
-        colnames(output$coef.table) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-        cat(
-          "A Poisson model assuming equidispersion was used as dispersion <= 1\n",
-          "AIC=", output$AIC, "   ", "BIC=", output$BIC, "\n",
-          "residual deviance=", output$deviance, "on", output$df, "degrees of freedom\n\n\n"
-        )
+      # Model-specific statistics
+      fit_model_statistics <- cbind(
+        logLik = stats::logLik(fit_results),
+        deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
+        df = n - kx,
+        AIC = -2 * stats::logLik(fit_results) + 2 * length(fit_coeffs_vec),
+        BIC = -2 * stats::logLik(fit_results) + log(n) * length(fit_coeffs_vec)
+      )
 
-        print(output$coef.table)
-      } else if (type == "quasipoisson" | (type == "automatic" & output$dispersion > 1)) {
-        output$vcov <- output$vcov * output$dispersion
-        tvalue <- fit$estimate / sqrt(diag(output$vcov))
-        output$coef.table <- cbind(
-          fit$estimate, sqrt(diag(output$vcov)), tvalue,
-          2 * pt(-abs(tvalue), output$df)
-        )
+      # Correct p-values depending on model dispersion
+      if (model_family == "poisson" | (model_family == "automatic" & fit_dispersion <= 1)) {
+        t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
-        colnames(output$coef.table) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-        cat(
-          "AIC=", output$AIC, "   ", "BIC=", output$BIC, "\n",
-          "residual deviance=", output$deviance, "on", output$df, "degrees of freedom",
-          "\n", "Dispersion parameter=", output$dispersion, "\n\n\n"
-        )
+        # For Poisson model
+        fit_coeffs <- cbind(
+          estimate =  fit_coeffs_vec,
+          std.error = sqrt(diag(fit_var_cov_mat)),
+          statistic = t_value,
+          p.value =   2 * pnorm(-abs(t_value))
+        ) %>%
+          `row.names<-`(names(fit_coeffs_vec))
 
-        print(output$coef.table)
+        # Summary of model used
+        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
+      } else if (model_family == "quasipoisson" | (model_family == "automatic" & fit_dispersion > 1)) {
+        fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
+        t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
+
+        # For Quasi-poisson model
+        fit_coeffs <- cbind(
+          estimate =  fit_coeffs_vec,
+          std.error = sqrt(diag(fit_var_cov_mat)),
+          statistic = t_value,
+          p.value =   2 * 2 * pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+        ) %>%
+          `row.names<-`(names(fit_coeffs_vec))
+
+        # Summary of model used
+        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", round(fit_dispersion, 2), ") > 1.")
       }
 
-      return(output)
+      # Calculate correlation matrix
+      fit_cor_mat <- fit_var_cov_mat
+      for (x_var in rownames(fit_var_cov_mat)) {
+        for (y_var in colnames(fit_var_cov_mat)) {
+          fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] / (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
+        }
+      }
+
+      # Return objects
+      fit_results_list <- list(
+        # Raw data
+        fit_raw_data = data_aggr %>% as.matrix(),
+        # Formulas
+        fit_formula = fit_formula,
+        fit_formula_tex = fit_formula_tex,
+        # Coefficients
+        fit_coeffs = fit_coeffs,
+        fit_cor_mat = fit_cor_mat,
+        fit_var_cov_mat = fit_var_cov_mat,
+        # Model statistics
+        fit_dispersion = fit_dispersion,
+        fit_model_statistics = fit_model_statistics,
+        # Algorithm and model summary
+        fit_algorithm = "constraint-maxlik-optimization",
+        fit_model_summary = fit_model_summary
+      )
+
+      return(fit_results_list)
     }
 
 
@@ -885,15 +922,20 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       tryCatch({
         # Perform fitting
         fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link)
+
+        # Return results
+        return(fit_results_list)
       },
       error = function(error_message) {
         message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
         # Perform fitting
         prepared_data <- prepare_maxlik_count_data(count_data)
         fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
-      })
+        fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
 
-      return(fit_results_list)
+        # Return results
+        return(fit_results_list)
+      })
     }
 
     # Curve function ----
@@ -980,7 +1022,6 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Perform calculations ----
-    # fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link = "identity")
     fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
     gg_curve <- get_dose_curve(fit_results_list)
 
