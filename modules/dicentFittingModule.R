@@ -217,7 +217,7 @@ dicentFittingUI <- function(id, label) {
               uiOutput(ns("fit_formula_tex")),
 
               h6("Model"),
-              uiOutput(ns("fit_model_text")),
+              uiOutput(ns("fit_model_summary")),
 
               br(),
               h6("Coefficients"),
@@ -623,46 +623,66 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Summarise fit
       fit_summary <- summary(fit_results, correlation = TRUE)
-      cor_mat <- fit_summary$correlation
-      var_cov_mat <- vcov(fit_results)
-      fit_coeffs <- broom::tidy(fit_results) %>%
-        tibble::column_to_rownames(var = "term")
+      fit_cor_mat <- fit_summary$correlation
+      fit_var_cov_mat <- vcov(fit_results)
+      fit_coeffs_vec <- stats::coef(fit_results)
+
+      # Model-specific statistics
+      fit_model_statistics <- cbind(
+        logLik = fit_results %>% stats::logLik() %>% as.numeric(),
+        deviance = fit_results[["deviance"]],
+        df = fit_results[["df.residual"]],
+        AIC = fit_results %>% stats::AIC(),
+        BIC = fit_results %>% stats::BIC()
+      )
 
       # Correct p-values depending on model dispersion
-      t_value <- fit_coeffs[["estimate"]] / sqrt(diag(var_cov_mat))
+      t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
+      # Make coefficients table
       if (is.null(fit_dispersion)) {
         # For Poisson model
-        fit_coeffs <- fit_coeffs %>%
-          dplyr::mutate(
-            statistic = t_value,
-            p.value = 2 * pnorm(-abs(statistic))
-          ) %>%
-          dplyr::select(-statistic) %>%
-          `row.names<-`(c("C", "α", "β"))
+        fit_coeffs <- cbind(
+          fit_coeffs_vec,
+          sqrt(diag(fit_var_cov_mat)),
+          t_value,
+          2 * pnorm(-abs(t_value))
+        ) %>%
+          `row.names<-`(names(fit_coeffs_vec)) %>%
+          `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
-        fit_model_text <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
+        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
       } else if (fit_dispersion > 1) {
         # For Quasi-poisson model
-        fit_coeffs <- fit_coeffs %>%
-          dplyr::mutate(
-            statistic = t_value,
-            p.value = 2 * pt(-abs(statistic), fit_results$df.residual)
-          ) %>%
-          dplyr::select(-statistic) %>%
-          `row.names<-`(c("C", "α", "β"))
+        fit_coeffs <- cbind(
+          fit_coeffs_vec,
+          sqrt(diag(fit_var_cov_mat)),
+          t_value,
+          2 * 2 * pt(-abs(t_value), fit_results$df.residual)
+        ) %>%
+          `row.names<-`(names(fit_coeffs_vec)) %>%
+          `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
-        fit_model_text <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", fit_dispersion, ") > 1.")
+        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", fit_dispersion, ") > 1.")
       }
 
       # Return objects
       fit_results_list <- list(
-        fit_results = fit_results,
+        # Raw data
+        fit_raw_data = count_data %>% as.matrix(),
+        # Formulas
+        fit_formula = fit_formula,
         fit_formula_tex = fit_formula_tex,
+        # Coefficients
         fit_coeffs = fit_coeffs,
-        cor_mat = cor_mat,
-        var_cov_mat = var_cov_mat,
-        fit_model_text = fit_model_text
+        fit_cor_mat = fit_cor_mat,
+        fit_var_cov_mat = fit_var_cov_mat,
+        # Model statistics
+        fit_dispersion = fit_dispersion,
+        fit_model_statistics = fit_model_statistics,
+        # Algorithm and model summary
+        fit_algorithm = "glm",
+        fit_model_summary = fit_model_summary
       )
 
       return(fit_results_list)
@@ -863,15 +883,11 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     get_fit_results <- function(data, model_formula, model_family, fit_link = "identity") {
       # If glm produces an error, constraint ML maximization is performed
       tryCatch({
-        # Save used algorithm
-        fit_algorithm <- "glm"
         # Perform fitting
         fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link)
       },
       error = function(error_message) {
         message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
-        # Save used algorithm
-        fit_algorithm <- "constraint-maxlik-optimization"
         # Perform fitting
         prepared_data <- prepare_maxlik_count_data(count_data)
         fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
@@ -884,9 +900,9 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
     get_dose_curve <- function(fit_results_list) {
       # Read objects from fit results list
-      fit_results <- fit_results_list[["fit_results"]]
+      count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
       fit_coeffs <- fit_results_list[["fit_coeffs"]]
-      var_cov_mat <- fit_results_list[["var_cov_mat"]]
+      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
 
       # Generalized variance-covariance matrix
       general_fit_coeffs <- numeric(length = 3L) %>%
@@ -896,15 +912,14 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         general_fit_coeffs[[var]] <- fit_coeffs[var, "estimate"] %>% as.numeric()
       }
 
-
       # Generalized fit coefficients
-      general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+      general_fit_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
         `row.names<-`(c("C", "α", "β")) %>%
         `colnames<-`(c("C", "α", "β"))
 
-      for (x_var in rownames(var_cov_mat)) {
-        for (y_var in colnames(var_cov_mat)) {
-          general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+      for (x_var in rownames(fit_var_cov_mat)) {
+        for (y_var in colnames(fit_var_cov_mat)) {
+          general_fit_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
         }
       }
 
@@ -920,22 +935,24 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       yield_error_fun <- function(d) {
         sqrt(
-          general_var_cov_mat[["C", "C"]] +
-            general_var_cov_mat[["α", "α"]] * d^2 +
-            general_var_cov_mat[["β", "β"]] * d^4 +
-            2 * general_var_cov_mat[["C", "α"]] * d +
-            2 * general_var_cov_mat[["C", "β"]] * d^2 +
-            2 * general_var_cov_mat[["α", "β"]] * d^3
+          general_fit_var_cov_mat[["C", "C"]] +
+            general_fit_var_cov_mat[["α", "α"]] * d^2 +
+            general_fit_var_cov_mat[["β", "β"]] * d^4 +
+            2 * general_fit_var_cov_mat[["C", "α"]] * d +
+            2 * general_fit_var_cov_mat[["C", "β"]] * d^2 +
+            2 * general_fit_var_cov_mat[["α", "β"]] * d^3
         )
       }
 
       # Plot data
-      plot_data <- broom::augment(fit_results)
-      α <- plot_data[["α"]]
-      C <- plot_data[["C"]]
-      aberr <- plot_data[["aberr"]]
+      plot_data <- count_data %>%
+        dplyr::mutate(
+          yield = X / N,
+          dose = D
+        ) %>%
+        dplyr::select(dose, yield)
 
-      curves_data <- data.frame(dose = seq(0, max(α / C), length.out = 100)) %>%
+      curves_data <- data.frame(dose = seq(0, max(plot_data[["dose"]]), length.out = 100)) %>%
         dplyr::mutate(
           yield = yield_fun(dose),
           yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
@@ -943,12 +960,12 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         )
 
       # Make plot
-      gg_curve <- ggplot(plot_data / C) +
+      gg_curve <- ggplot(plot_data) +
         # Observed data
-        geom_point(aes(x = α, y = aberr)) +
+        geom_point(aes(x = dose, y = yield)) +
         # Fitted curve
         stat_function(
-          data = data.frame(x = c(0, max(α / C))),
+          data = data.frame(x = c(0, max(plot_data[["dose"]]))),
           mapping = aes(x),
           fun = function(x) yield_fun(x),
           linetype = "dashed"
@@ -968,18 +985,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     gg_curve <- get_dose_curve(fit_results_list)
 
     # Make list of results to return
-    results_list <- list(
-      # Used in app
-      fit_results = fit_results_list[["fit_results"]],
-      fit_coeffs = fit_results_list[["fit_coeffs"]],
-      var_cov_mat = fit_results_list[["var_cov_mat"]],
-      cor_mat = fit_results_list[["cor_mat"]],
-      fit_formula_tex = fit_results_list[["fit_formula_tex"]],
-      fit_model_text = fit_results_list[["fit_model_text"]],
-      gg_curve = gg_curve,
-      # Required for report
-      count_data = hot_to_r(input$hotable)
-    )
+    results_list <- fit_results_list
+    results_list[["gg_curve"]] <- gg_curve
 
     return(results_list)
   })
@@ -991,23 +998,16 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
-  output$fit_model_text <- renderUI({
+  output$fit_model_summary <- renderUI({
     # Fitting formula
     if (input$button_fit <= 0) return(NULL)
-    data()[["fit_model_text"]]
+    data()[["fit_model_summary"]]
   })
 
   output$fit_statistics <- renderRHandsontable({
     # Model-level statistics using broom::glance
     if (input$button_fit <= 0) return(NULL)
-    broom::glance(data()[["fit_results"]]) %>%
-      dplyr::rename(
-        df.res = df.residual,
-        dev.null = null.deviance,
-        dev.res = deviance
-      ) %>%
-      dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
-      dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
+    data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 60)
@@ -1017,16 +1017,21 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     # Coefficients 'fit_coeffs'
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
+      formatC(format = "e", digits = 3) %>%
+      as.data.frame() %>%
+      dplyr::select(-statistic) %>%
+      as.matrix() %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 75) %>%
-      hot_cols(format = "0.000")
+      hot_cols(colWidths = 100) %>%
+      # hot_cols(format = "0.000")
+      hot_cols(halign = "htRight")
   })
 
   output$var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_fit <= 0) return(NULL)
-    data()[["var_cov_mat"]] %>%
+    data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
@@ -1037,7 +1042,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
   output$cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_fit <= 0) return(NULL)
-    data()[["cor_mat"]] %>%
+    data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
