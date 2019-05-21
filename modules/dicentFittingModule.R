@@ -185,7 +185,7 @@ dicentFittingUI <- function(id, label) {
         width = 12,
         title = "Data input",
         status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-        rHandsontableOutput(ns("hotable")),
+        rHandsontableOutput(ns("count_data_hot")),
         # Button
         br(),
         downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
@@ -417,11 +417,11 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
       use_aggr_count_data <- input$use_aggr_count_data_check
     })
 
-    if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
+    if (is.null(input$count_data_hot) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
       return(previous())
-    } else if (!identical(previous(), input$hotable)) {
-      mytable <- as.data.frame(hot_to_r(input$hotable))
+    } else if (!identical(previous(), input$count_data_hot)) {
+      mytable <- as.data.frame(hot_to_r(input$count_data_hot))
 
       if (!use_aggr_count_data) {
         # Calculated columns
@@ -474,7 +474,7 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
   })
 
   # Output ----
-  output$hotable <- renderRHandsontable({
+  output$count_data_hot <- renderRHandsontable({
     hot <- changed_data() %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
@@ -504,7 +504,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     input$button_fit
 
     isolate({
-      count_data <- hot_to_r(input$hotable)
+      count_data <- hot_to_r(input$count_data_hot)
 
       model_formula <- input$formula_select
       model_family <- input$family_select
@@ -1078,7 +1078,6 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       # Convert to hot and format table
       rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
-      # hot_cols(format = "0.000")
       hot_cols(halign = "htRight")
   })
 
@@ -1118,7 +1117,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       if (input$save_count_data_format == ".csv") {
-        write.csv(hot_to_r(input$hotable), file, row.names = FALSE)
+        write.csv(hot_to_r(input$count_data_hot), file, row.names = FALSE)
       } else if (input$save_count_data_format == ".tex") {
         print(xtable::xtable(data()[["count_data"]]), type = "latex", file)
       }
