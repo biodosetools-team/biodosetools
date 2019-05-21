@@ -11,21 +11,24 @@ dicentFittingUI <- function(id, label) {
     fluidRow(
       # Card: Data input options ----
       bs4MyCard(
-        width = 5,
+        width = 6,
         title = "Data input options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
           column(
             width = 12,
+            # Load file checkbox
             awesomeCheckbox(
               inputId = ns("load_count_data_check"),
               label = "Load data from file",
               value = FALSE, status = "warning"
             ),
+            # Full/aggregated data checkbox
             awesomeCheckbox(
-              inputId = ns("full_count_data_check"),
-              label = "Use full distribution data",
-              value = TRUE, status = "warning"
+              inputId = ns("use_aggr_count_data_check"),
+              width = "100%",
+              label = "Only provide total number of dicentrics",
+              value = FALSE, status = "warning"
             ),
             # Manual input ----
             conditionalPanel(
@@ -34,7 +37,7 @@ dicentFittingUI <- function(id, label) {
               numericInput(ns("num_doses"), "Number of doses", value = 11)
             ),
             conditionalPanel(
-              condition = "!input.load_count_data_check & input.full_count_data_check",
+              condition = "!input.load_count_data_check & !input.use_aggr_count_data_check",
               ns = ns,
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
@@ -42,13 +45,18 @@ dicentFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.load_count_data_check",
               ns = ns,
-              fileInput(ns("load_count_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
+              fileInput(
+                ns("load_count_data"),
+                label = "File input",
+                accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat")
+              )
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
+          # Tooltips
+          bsTooltip(
+            ns("button_upd_table"),
             "Note that previously introduced data will be deleted.",
             "bottom",
             options = list(container = "body")
@@ -96,7 +104,7 @@ dicentFittingUI <- function(id, label) {
 
       # Card: Fitting options ----
       bs4MyCard(
-        width = 5,
+        width = 6,
         title = "Fitting options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         fluidRow(
@@ -348,32 +356,32 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
 
     isolate({
       load_count_data <- input$load_count_data_check
-      full_count_data <- input$full_count_data_check
+      use_aggr_count_data <- input$use_aggr_count_data_check
       count_data <- input$load_count_data
       num_doses <- as.numeric(input$num_doses)
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
     if (!load_count_data) {
-      if (full_count_data) {
-      # Doses data frame
-      data_doses <- data.frame(
-        D = rep(0.0, num_doses)
-      )
-
-      # Base data frame
-      data_base <- data.frame(
-        matrix(
-          0,
-          nrow = num_doses,
-          ncol = num_dicentrics
+      if (!use_aggr_count_data) {
+        # Doses data frame
+        data_doses <- data.frame(
+          D = rep(0.0, num_doses)
         )
-      ) %>%
-        `colnames<-`(paste0("C", seq(0, num_dicentrics - 1, 1)))
 
-      # Full data frame
-      full_data <- cbind(data_doses, data_base) %>%
-        dplyr::mutate(D = as.numeric(D))
+        # Base data frame
+        data_base <- data.frame(
+          matrix(
+            0,
+            nrow = num_doses,
+            ncol = num_dicentrics
+          )
+        ) %>%
+          `colnames<-`(paste0("C", seq(0, num_dicentrics - 1, 1)))
+
+        # Full data frame
+        full_data <- cbind(data_doses, data_base) %>%
+          dplyr::mutate(D = as.numeric(D))
 
       } else {
         full_data <- data.frame(
@@ -388,8 +396,13 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
           )
       }
     } else {
-      full_data <- read.csv(count_data$datapath, header = TRUE) %>%
-        dplyr::mutate_at(vars(starts_with("C")), list(. ~ as.integer(.)))
+      if (!use_aggr_count_data) {
+        full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+          dplyr::mutate_at(vars(starts_with("C")), as.integer)
+      } else {
+        full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+          dplyr::mutate_at(c("N", "X"), as.integer)
+      }
     }
 
     return(full_data)
@@ -401,7 +414,7 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_table
 
     isolate({
-      full_count_data <- input$full_count_data_check
+      use_aggr_count_data <- input$use_aggr_count_data_check
     })
 
     if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
@@ -410,7 +423,7 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
     } else if (!identical(previous(), input$hotable)) {
       mytable <- as.data.frame(hot_to_r(input$hotable))
 
-      if (full_count_data) {
+      if (!use_aggr_count_data) {
         # Calculated columns
         mytable <- mytable %>%
           dplyr::mutate(
@@ -1050,8 +1063,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 60)
+      rhandsontable(width = 375, height = "100%") %>%
+      hot_cols(colWidths = 70)
   })
 
   output$fit_coeffs <- renderRHandsontable({
@@ -1063,7 +1076,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       dplyr::select(-statistic) %>%
       as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       # hot_cols(format = "0.000")
       hot_cols(halign = "htRight")
@@ -1075,7 +1088,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -1085,7 +1098,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -1119,7 +1132,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       if (input$save_fit_data_format == ".rds") {
-        saveRDS(data()[["fit_results"]], file = file)
+        saveRDS(data(), file = file)
       } #else if (input$save_fit_data_format == ".csv") {
       #   write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
       # } else if (input$save_fit_data_format == ".tex") {
