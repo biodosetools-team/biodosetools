@@ -120,5 +120,7 @@ gg_curve
 
 ### Download fit results
 ```{r echo=FALSE}
-embed_var(params$fit_results_list)
+results_list <- params$fit_results_list
+results_list[["gg_curve"]] <- NULL
+embed_var(results_list)
 ```
