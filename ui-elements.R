@@ -38,10 +38,10 @@ navbar <- bs4DashMyNavbar(
   ),
 
   # Bookmarking
-  div(
-    style = "margin-bottom: 3px; margin-left: 10px; ",
-    bookmarkButton()
-  ),
+  # div(
+  #   style = "margin-bottom: 3px; margin-left: 10px; ",
+  #   bookmarkButton()
+  # ),
 
 
   # Right UI

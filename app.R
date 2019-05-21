@@ -14,5 +14,5 @@ options(shiny.sanitize.errors = FALSE)
 source("ui.R", local=F)
 source("server.R", local=F)
 
-sihny::enableBookmarking(store = "url")
+# sihny::enableBookmarking(store = "url")
 shiny::shinyApp(ui, server)
