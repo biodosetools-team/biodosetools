@@ -590,20 +590,21 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Select model formula
       if (model_formula == "lin-quad") {
-        fit_formula <- as.formula("aberr ~ -1 + C + α + β")
+        fit_formula_raw <- "aberr ~ -1 + C + α + β"
         fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
       } else if (model_formula == "lin") {
-        fit_formula <- as.formula("aberr ~ -1 + C + α")
+        fit_formula <- "aberr ~ -1 + C + α"
         fit_formula_tex <- "Y = C + \\alpha D"
       }
       else if (model_formula == "lin-quad-no-int") {
-        fit_formula <- as.formula("aberr ~ -1 + α + β")
+        fit_formula_raw <- "aberr ~ -1 + α + β"
         fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
       }
       else if (model_formula == "lin-no-int") {
-        fit_formula <- as.formula("aberr ~ -1 + α")
+        fit_formula_raw <- "aberr ~ -1 + α"
         fit_formula_tex <- "Y = \\alpha D"
       }
+      fit_formula <- as.formula(fit_formula_raw)
 
       # Perform automatic fit calculation
       if (model_family == "poisson") {
@@ -686,7 +687,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         # Raw data
         fit_raw_data = count_data %>% as.matrix(),
         # Formulas
-        fit_formula = fit_formula,
+        fit_formula_raw = fit_formula_raw,
         fit_formula_tex = fit_formula_tex,
         # Coefficients
         fit_coeffs = fit_coeffs,
@@ -731,20 +732,21 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Select model formula
       if (model_formula == "lin-quad") {
-        fit_formula <- as.formula("aberr ~ -1 + C + α + β")
+        fit_formula_raw <- "aberr ~ -1 + C + α + β"
         fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
       } else if (model_formula == "lin") {
-        fit_formula <- as.formula("aberr ~ -1 + C + α")
+        fit_formula <- "aberr ~ -1 + C + α"
         fit_formula_tex <- "Y = C + \\alpha D"
       }
       else if (model_formula == "lin-quad-no-int") {
-        fit_formula <- as.formula("aberr ~ -1 + α + β")
+        fit_formula_raw <- "aberr ~ -1 + α + β"
         fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
       }
       else if (model_formula == "lin-no-int") {
-        fit_formula <- as.formula("aberr ~ -1 + α")
+        fit_formula_raw <- "aberr ~ -1 + α"
         fit_formula_tex <- "Y = \\alpha D"
       }
+      fit_formula <- as.formula(fit_formula_raw)
 
       # Find starting values for the mean
       mustart <- lm(fit_formula, data = data_aggr)$coefficients
@@ -912,7 +914,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         # Raw data
         fit_raw_data = data_aggr %>% as.matrix(),
         # Formulas
-        fit_formula = fit_formula,
+        fit_formula_raw = fit_formula_raw,
         fit_formula_tex = fit_formula_tex,
         # Coefficients
         fit_coeffs = fit_coeffs,
@@ -1131,7 +1133,9 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     },
     content = function(file) {
       if (input$save_fit_data_format == ".rds") {
-        saveRDS(data(), file = file)
+        results_list <- data()
+        results_list[["gg_curve"]] <- NULL
+        saveRDS(results_list, file = file)
       } #else if (input$save_fit_data_format == ".csv") {
       #   write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
       # } else if (input$save_fit_data_format == ".tex") {
@@ -1170,13 +1174,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Set up parameters to pass to Rmd document
       params <- list(
-        count_data = data()[["count_data"]],
-        fit_result = data()[["fit_results"]],
-        fit_coeffs = data()[["fit_coeffs"]],
-        var_cov_mat = data()[["var_cov_mat"]],
-        cor_mat = data()[["cor_mat"]],
-        fit_formula_tex = data()[["fit_formula_tex"]],
-        gg_curve = data()[["gg_curve"]]
+        fit_results_list = data()
       )
 
       # Knit the document, passing in the `params` list, and eval it in a
