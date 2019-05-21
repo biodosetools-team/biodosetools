@@ -99,10 +99,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          h6("Model"),
-          uiOutput(ns("fit_model_summary")),
-
-          br(),
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
 
@@ -212,7 +208,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           noPadding = TRUE,
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          rHandsontableOutput(ns("hotable"))
+          rHandsontableOutput(ns("case_data_hot"))
         ),
 
         # Card: Estimation options ----
@@ -672,11 +668,11 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
     # Create button dependency for updating dimensions
     input$button_upd_table
 
-    if (is.null(input$hotable) || isolate(table_reset$value == 1)) {
+    if (is.null(input$case_data_hot) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
       return(previous())
-    } else if (!identical(previous(), input$hotable)) {
-      mytable <- as.data.frame(hot_to_r(input$hotable))
+    } else if (!identical(previous(), input$case_data_hot)) {
+      mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
       # Calculated columns
       mytable <- mytable %>%
@@ -728,7 +724,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
   })
 
   # Output ----
-  output$hotable <- renderRHandsontable({
+  output$case_data_hot <- renderRHandsontable({
     # Read number of columns
     num_cols <- ncol(changed_data())
 
@@ -775,12 +771,6 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
-  })
-
-  output$fit_model_summary <- renderUI({
-    # Fitting formula
-    if (input$button_view_fit_data <= 0) return(NULL)
-    data()[["fit_model_summary"]]
   })
 
   output$fit_model_statistics <- renderRHandsontable({
@@ -844,7 +834,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # curve_method <- input$curve_method_select
 
       # Cases data
-      case_data <- hot_to_r(input$hotable)
+      case_data <- hot_to_r(input$case_data_hot)
 
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
@@ -859,29 +849,24 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
     # Get fitting data ----
     if (load_fit_data) {
-      fit_results <- readRDS(fit_data$datapath)
-    }
+      fit_results_list <- readRDS(fit_data$datapath)
 
-    # Summarise fit
-    fit_summary <- summary(fit_results, correlation = TRUE)
-    var_cov_mat <- vcov(fit_results)
-    fit_coeffs <- broom::tidy(fit_results) %>%
-      select(-statistic) %>%
-      tibble::column_to_rownames(var = "term")
+      # Summarise fit
+      fit_coeffs <- fit_results_list[["fit_coeffs"]]
+      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+      fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
+    } else {
 
-    # Parse model formula
-    fit_formula <- fit_results$formula
+      fit_coeffs <- hot_to_r(input$fit_coeffs_hot)
+      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot)
 
-    if (fit_formula == as.formula("aberr ~ -1 + C + α + β")) {
-      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-    } else if (fit_formula == as.formula("aberr ~ -1 + C + α")) {
-      fit_formula_tex <- "Y = C + \\alpha D"
-    }
-    else if (fit_formula == as.formula("aberr ~ -1 + α + β")) {
-      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-    }
-    else if (fit_formula == as.formula("aberr ~ -1 + α")) {
-      fit_formula_tex <- "Y = \\alpha D"
+      fit_cor_mat <- fit_var_cov_mat
+      for (x_var in rownames(fit_var_cov_mat)) {
+        for (y_var in colnames(fit_var_cov_mat)) {
+          fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] / (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
+        }
+      }
+
     }
 
     # Generalized variance-covariance matrix
@@ -897,9 +882,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `row.names<-`(c("C", "α", "β")) %>%
       `colnames<-`(c("C", "α", "β"))
 
-    for (x_var in rownames(var_cov_mat)) {
-      for (y_var in colnames(var_cov_mat)) {
-        general_var_cov_mat[x_var, y_var] <- var_cov_mat[x_var, y_var]
+    for (x_var in rownames(fit_var_cov_mat)) {
+      for (y_var in colnames(fit_var_cov_mat)) {
+        general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
       }
     }
 
@@ -1029,8 +1014,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Dose estimation functions ----
 
     # Calcs: whole-body estimation
-    estimate_whole_body <- function(case_data, conf_int_yield,
-                                    conf_int_curve, protracted_g_value) {
+    estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
@@ -1068,11 +1052,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: partial dose estimation
-    estimate_partial_dolphin <- function(case_data, fit_results, fraction_coeff,
-                                         general_fit_coeffs, general_var_cov_mat,
+    estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                          conf_int, protracted_g_value, cov = TRUE) {
-      # case_data is the data input
-      # fit_results is a glm object
       # cov: TRUE if the covariances of the regression coefficients should be considered,
       #      otherwise only the diagonal of the covariance matrix is used
 
@@ -1267,8 +1248,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # Calcs: heterogeneous dose estimation
-    estimate_hetero <- function(case_data, fit_coeffs, var_cov_mat, fraction_coeff,
-                                general_fit_coeffs, general_var_cov_mat,
+    estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                 conf_int_yield, conf_int_curve, protracted_g_value) {
 
       # Select dicentric counts
@@ -1517,8 +1497,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     if (assessment == "partial") {
       # Calculate partial results
       results_partial <- estimate_partial_dolphin(
-        case_data, fit_results, fraction_coeff,
-        general_fit_coeffs, general_var_cov_mat,
+        case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_dolphin, protracted_g_value
       )
       # Parse results
@@ -1527,8 +1506,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
-        case_data, fit_coeffs, var_cov_mat, fraction_coeff,
-        general_fit_coeffs, general_var_cov_mat,
+        case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_yield, conf_int_curve, protracted_g_value
       )
       # Parse results
@@ -1541,7 +1519,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Update plot ----
 
     # Data set for dose plotting
-
     if (assessment == "whole-body") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]]),
@@ -1570,20 +1547,24 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ifelse(is.na(.), 0, .) %>%
       max()
 
-    # Data set from fit
-    plot_data <- broom::augment(fit_results)
-    C <- fit_results$data[[1]]
-    α <- fit_results$data[[2]]
+    # Plot data from fit
+    plot_data <- fit_results_list[["fit_raw_data"]] %>%
+      as.data.frame() %>%
+      dplyr::mutate(
+        yield = X / N,
+        dose = D
+      ) %>%
+      dplyr::select(dose, yield)
 
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
-      mutate(
+      dplyr::mutate(
         yield = yield_fun(dose, protracted_g_value),
         yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
         yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
       )
 
     # Make base plot
-    gg_curve <- ggplot(plot_data / C) +
+    gg_curve <- ggplot(plot_data) +
       # Fitted curve
       stat_function(
         data = data.frame(x = c(0, max_dose)),
@@ -1723,7 +1704,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`("fraction") %>%
+      `row.names<-`("frac") %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
