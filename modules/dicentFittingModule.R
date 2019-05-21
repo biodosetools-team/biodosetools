@@ -235,15 +235,15 @@ dicentFittingUI <- function(id, label) {
             bs4TabPanel(
               tabName = "Summary statistics",
               h6("Model-level statistics"),
-              rHandsontableOutput(ns("fit_statistics")),
+              rHandsontableOutput(ns("fit_model_statistics")),
 
               br(),
               h6("Correlation matrix"),
-              rHandsontableOutput(ns("cor_mat")),
+              rHandsontableOutput(ns("fit_cor_mat")),
 
               br(),
               h6("Variance-covariance matrix"),
-              rHandsontableOutput(ns("var_cov_mat"))
+              rHandsontableOutput(ns("fit_var_cov_mat"))
             )
           )
         ),
@@ -1058,8 +1058,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
     data()[["fit_model_summary"]]
   })
 
-  output$fit_statistics <- renderRHandsontable({
-    # Model-level statistics using broom::glance
+  output$fit_model_statistics <- renderRHandsontable({
+    # Model-level statistics
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
@@ -1082,7 +1082,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(halign = "htRight")
   })
 
-  output$var_cov_mat <- renderRHandsontable({
+  output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_var_cov_mat"]] %>%
@@ -1093,7 +1093,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       hot_cols(halign = "htRight")
   })
 
-  output$cor_mat <- renderRHandsontable({
+  output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_fit <= 0) return(NULL)
     data()[["fit_cor_mat"]] %>%

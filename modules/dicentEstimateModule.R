@@ -657,7 +657,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
     } else {
       full_data <- read.csv(case_data$datapath, header = TRUE) %>%
-        dplyr::mutate_at(vars(starts_with("C")), list(. ~ as.integer(.)))
+        dplyr::mutate_at(vars(starts_with("C")), as.integer)
     }
 
     return(full_data)
