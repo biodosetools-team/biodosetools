@@ -99,22 +99,26 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          # br(),
+          h6("Model"),
+          uiOutput(ns("fit_model_summary")),
+
+          br(),
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
+
         ),
         bs4TabPanel(
           tabName = "Summary statistics",
           h6("Model-level statistics"),
-          rHandsontableOutput(ns("fit_statistics")),
+          rHandsontableOutput(ns("fit_model_statistics")),
 
           br(),
           h6("Correlation matrix"),
-          rHandsontableOutput(ns("cor_mat")),
+          rHandsontableOutput(ns("fit_cor_mat")),
 
           br(),
           h6("Variance-covariance matrix"),
-          rHandsontableOutput(ns("var_cov_mat"))
+          rHandsontableOutput(ns("fit_var_cov_mat"))
         )
       )
     ),
@@ -760,42 +764,10 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     })
 
     if (load_fit_data) {
-      fit_results <- readRDS(fit_data$datapath)
+      fit_results_list <- readRDS(fit_data$datapath)
     }
 
-    # Summarise fit
-    fit_summary <- summary(fit_results, correlation = TRUE)
-    cor_mat <- fit_summary$correlation
-    var_cov_mat <- vcov(fit_results)
-    fit_coeffs <- broom::tidy(fit_results) %>%
-      dplyr::select(-statistic) %>%
-      tibble::column_to_rownames(var = "term")
-
-    # Parse model formula
-    fit_formula <- fit_results$formula
-
-    if (fit_formula == as.formula("aberr ~ -1 + C + α + β")) {
-      fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-    } else if (fit_formula == as.formula("aberr ~ -1 + C + α")) {
-      fit_formula_tex <- "Y = C + \\alpha D"
-    }
-    else if (fit_formula == as.formula("aberr ~ -1 + α + β")) {
-      fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-    }
-    else if (fit_formula == as.formula("aberr ~ -1 + α")) {
-      fit_formula_tex <- "Y = \\alpha D"
-    }
-
-    # Make list of results to return
-    results_list <- list(
-      fit_results     = fit_results,
-      fit_coeffs      = fit_coeffs,
-      var_cov_mat     = var_cov_mat,
-      cor_mat         = cor_mat,
-      fit_formula_tex = fit_formula_tex
-    )
-
-    return(results_list)
+    return(fit_results_list)
   })
 
   # Results outputs ----
@@ -805,49 +777,52 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
-  output$fit_statistics <- renderRHandsontable({
-    # Model-level statistics using broom::glance
+  output$fit_model_summary <- renderUI({
+    # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
-    broom::glance(data()[["fit_results"]]) %>%
-      dplyr::rename(
-        df.res = df.residual,
-        dev.null = null.deviance,
-        dev.res = deviance
-      ) %>%
-      dplyr::select(logLik, dev.null, df.null, dev.res, df.res, AIC, BIC) %>%
-      dplyr::mutate(dev.null = ifelse(dev.null == Inf, as.character(dev.null), dev.null)) %>%
+    data()[["fit_model_summary"]]
+  })
+
+  output$fit_model_statistics <- renderRHandsontable({
+    # Model-level statistics
+    if (input$button_view_fit_data <= 0) return(NULL)
+    data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 60)
+      rhandsontable(width = 375, height = "100%") %>%
+      hot_cols(colWidths = 70)
   })
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_view_fit_data <= 0) return(NULL)
     data()[["fit_coeffs"]] %>%
-      # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 75) %>%
-      hot_cols(format = "0.000")
-  })
-
-  output$var_cov_mat <- renderRHandsontable({
-    # Variance-covariance matrix 'var_cov_mat'
-    if (input$button_view_fit_data <= 0) return(NULL)
-    data()[["var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
+      as.data.frame() %>%
+      dplyr::select(-statistic) %>%
+      as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
 
-  output$cor_mat <- renderRHandsontable({
+  output$fit_var_cov_mat <- renderRHandsontable({
+    # Variance-covariance matrix 'var_cov_mat'
+    if (input$button_view_fit_data <= 0) return(NULL)
+    data()[["fit_var_cov_mat"]] %>%
+      formatC(format = "e", digits = 3) %>%
+      # Convert to hot and format table
+      rhandsontable(width = 375, height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(halign = "htRight")
+  })
+
+  output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
-    data()[["cor_mat"]] %>%
+    data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
