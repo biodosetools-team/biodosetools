@@ -218,6 +218,7 @@ dicentFittingUI <- function(id, label) {
             side = "left",
             solidHeader = TRUE,
             closable = FALSE,
+
             bs4TabPanel(
               tabName = "Result of curve fit",
               active = TRUE,
@@ -230,7 +231,6 @@ dicentFittingUI <- function(id, label) {
               br(),
               h6("Coefficients"),
               rHandsontableOutput(ns("fit_coeffs"))
-
             ),
             bs4TabPanel(
               tabName = "Summary statistics",
@@ -465,7 +465,7 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
       } else {
         mytable <- mytable %>%
           dplyr::mutate(
-            D = as.numeric(D),
+            D = as.numeric(D)
           )
       }
 
