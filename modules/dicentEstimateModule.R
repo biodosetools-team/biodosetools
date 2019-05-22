@@ -28,8 +28,37 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-              p("This part has not been implemented yet.")
-              # TODO: add fit data input widgets
+              div(
+                class = "side-widget-tall",
+                selectInput(
+                  ns("formula_select"),
+                  width = 165,
+                  label = "Fitting formula",
+                  choices = list(
+                    "Linear quadratic" = c(
+                      "Y = C + αD + βD²" = "lin-quad",
+                      "Y = αD + βD²" = "lin-quad-no-int"
+                    ),
+                    "Linear" = c(
+                      "Y = C + αD" = "lin",
+                      "Y = αD" = "lin-no-int"
+                    )
+                  ),
+                  selected = "lin-quad"
+                )
+              ),
+              div(class = "widget-sep", br()),
+              actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
+
+              br(),
+              h6("Coefficients"),
+              rHandsontableOutput(ns("fit_coeffs_hot")),
+
+              br(),
+              h6("Variance-covariance matrix"),
+              rHandsontableOutput(ns("fit_var_cov_mat_hot")),
+
+              br()
             ),
             # Load from file ----
             conditionalPanel(
@@ -37,6 +66,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
               fileInput(ns("load_fit_data"), label = "File input", accept = c(".rds"))
             ),
+
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
           ),
@@ -87,12 +117,14 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
         )
       ),
       # tabBox: Curve fitting overview ----
+
       bs4TabCard(
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
         solidHeader = TRUE,
         closable = FALSE,
+
         bs4TabPanel(
           tabName = "Result of curve fit",
           active = TRUE,
@@ -101,14 +133,17 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
-
         ),
         bs4TabPanel(
           tabName = "Summary statistics",
-          h6("Model-level statistics"),
-          rHandsontableOutput(ns("fit_model_statistics")),
+          conditionalPanel(
+            condition = "input.load_fit_data_check",
+            ns = ns,
+            h6("Model-level statistics"),
+            rHandsontableOutput(ns("fit_model_statistics")),
+            br()
+          ),
 
-          br(),
           h6("Correlation matrix"),
           rHandsontableOutput(ns("fit_cor_mat")),
 
@@ -747,6 +782,139 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
+dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAsFactors) {
+
+  # Reset tables ----
+  table_reset <- reactiveValues(value = 0)
+  table_var_reset <- reactiveValues(value = 0)
+
+  observeEvent(input$button_gen_table, {
+    table_reset$value <- 1
+    table_var_reset$value <- 1
+  })
+
+  # Initialize data frames ----
+  previous <- reactive({
+
+    # Create button dependency for updating dimensions
+    input$button_gen_table
+
+    isolate({
+      formula_select <- input$formula_select
+    })
+
+    if (formula_select == "lin-quad") {
+      fit_coeff_names <- c("C", "α", "β")
+    } else if (formula_select == "lin-quad-no-int") {
+      fit_coeff_names <- c("α", "β")
+    } else if (formula_select == "lin") {
+      fit_coeff_names <- c("C", "α")
+    } else if (formula_select == "lin-no-int") {
+      fit_coeff_names <- c("α")
+    }
+
+    full_data <- matrix(
+      0,
+      nrow = length(fit_coeff_names),
+      ncol = 2
+    ) %>%
+      `row.names<-`(fit_coeff_names) %>%
+      `colnames<-`(c("estimate", "std.error")) %>%
+      as.data.frame()
+
+    return(full_data)
+  })
+
+  previous_var <- reactive({
+
+    # Create button dependency for updating dimensions
+    input$button_gen_table
+
+    isolate({
+      model_formula <- input$formula_select
+    })
+
+    if (model_formula == "lin-quad") {
+      fit_coeff_names <- c("C", "α", "β")
+    } else if (model_formula == "lin-quad-no-int") {
+      fit_coeff_names <- c("α", "β")
+    } else if (model_formula == "lin") {
+      fit_coeff_names <- c("C", "α")
+    } else if (model_formula == "lin-no-int") {
+      fit_coeff_names <- c("α")
+    }
+
+    full_data <- matrix(
+      0,
+      nrow = length(fit_coeff_names),
+      ncol = length(fit_coeff_names)
+    ) %>%
+      `row.names<-`(fit_coeff_names) %>%
+      `colnames<-`(fit_coeff_names) %>%
+      as.data.frame()
+
+    return(full_data)
+  })
+
+  # Reactive data frames ----
+  changed_data <- reactive({
+    # Create button dependency for updating dimensions
+    input$button_gen_table
+
+    if (is.null(input$fit_coeffs_hot) || isolate(table_reset$value == 1)) {
+      table_reset$value <- 0
+      return(previous())
+    } else if (!identical(previous(), input$fit_coeffs_hot)) {
+      mytable <- as.data.frame(hot_to_r(input$fit_coeffs_hot))
+
+      return(mytable)
+    }
+  })
+
+  changed_data_var <- reactive({
+    # Create button dependency for updating dimensions
+    input$button_gen_table
+
+    if (is.null(input$fit_var_cov_mat_hot) || isolate(table_var_reset$value == 1)) {
+      table_var_reset$value <- 0
+      return(previous_var())
+    } else if (!identical(previous_var(), input$fit_var_cov_mat_hot)) {
+      mytable <- as.data.frame(hot_to_r(input$fit_var_cov_mat_hot))
+
+      return(mytable)
+    }
+  })
+
+  # Output ----
+  output$fit_coeffs_hot <- renderRHandsontable({
+    # Read number of columns
+    num_cols <- ncol(changed_data())
+
+    # Convert to hot and format table
+    hot <- changed_data() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(format = "0.000")
+
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
+  })
+
+  output$fit_var_cov_mat_hot <- renderRHandsontable({
+    # Read number of columns
+    num_cols <- ncol(changed_data_var())
+
+    # Convert to hot and format table
+    hot <- changed_data_var() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(format = "0.000")
+
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
+  })
+}
+
 
 dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors) {
 
@@ -761,6 +929,42 @@ dicentEstimateFittingCurve <- function(input, output, session, stringsAsFactors)
 
     if (load_fit_data) {
       fit_results_list <- readRDS(fit_data$datapath)
+    } else {
+      model_formula <- input$formula_select
+      # Parse formula
+      if (model_formula == "lin-quad") {
+        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+      } else if (model_formula == "lin") {
+        fit_formula_tex <- "Y = C + \\alpha D"
+      }
+      else if (model_formula == "lin-quad-no-int") {
+        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+      }
+      else if (model_formula == "lin-no-int") {
+        fit_formula_tex <- "Y = \\alpha D"
+      }
+
+      fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
+      fit_coeffs <- fit_coeffs_raw %>%
+        cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
+        as.matrix()
+
+      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
+        as.matrix()
+
+      fit_cor_mat <- fit_var_cov_mat
+      for (x_var in rownames(fit_var_cov_mat)) {
+        for (y_var in colnames(fit_var_cov_mat)) {
+          fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] / (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
+        }
+      }
+
+      fit_results_list <- list(
+        fit_formula_tex = fit_formula_tex,
+        fit_coeffs = fit_coeffs,
+        fit_var_cov_mat = fit_var_cov_mat,
+        fit_cor_mat = fit_cor_mat
+      )
     }
 
     return(fit_results_list)
@@ -856,17 +1060,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
       fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
     } else {
-
       fit_coeffs <- hot_to_r(input$fit_coeffs_hot)
       fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot)
-
-      fit_cor_mat <- fit_var_cov_mat
-      for (x_var in rownames(fit_var_cov_mat)) {
-        for (y_var in colnames(fit_var_cov_mat)) {
-          fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] / (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
-        }
-      }
-
     }
 
     # Generalized variance-covariance matrix

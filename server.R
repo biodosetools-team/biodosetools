@@ -18,6 +18,7 @@ server <- function(input, output) {
 
   # Dose Estimation
   callModule(module = dicentEstimateHotTable, id = "dicent_estimate")
+  callModule(module = dicentEstimateFittingCurveHotTable, id = "dicent_estimate")
   callModule(module = dicentEstimateFittingCurve, id = "dicent_estimate")
   callModule(module = dicentEstimateResults, id = "dicent_estimate")
 
