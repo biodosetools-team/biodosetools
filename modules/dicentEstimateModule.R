@@ -794,7 +794,7 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
   })
 
   # Initialize data frames ----
-  previous <- reactive({
+  previous_coeffs <- reactive({
 
     # Create button dependency for updating dimensions
     input$button_gen_table
@@ -804,23 +804,23 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
     })
 
     if (formula_select == "lin-quad") {
-      fit_coeff_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("C", "α", "β")
     } else if (formula_select == "lin-quad-no-int") {
-      fit_coeff_names <- c("α", "β")
+      fit_coeffs_names <- c("α", "β")
     } else if (formula_select == "lin") {
-      fit_coeff_names <- c("C", "α")
+      fit_coeffs_names <- c("C", "α")
     } else if (formula_select == "lin-no-int") {
-      fit_coeff_names <- c("α")
+      fit_coeffs_names <- c("α")
     }
 
     full_data <- data.frame(
       matrix(
         0.0,
-        nrow = length(fit_coeff_names),
+        nrow = length(fit_coeffs_names),
         ncol = 2
       )
     ) %>%
-      `row.names<-`(fit_coeff_names) %>%
+      `row.names<-`(fit_coeffs_names) %>%
       `colnames<-`(c("estimate", "std.error"))
 
     return(full_data)
@@ -836,47 +836,47 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
     })
 
     if (model_formula == "lin-quad") {
-      fit_coeff_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("C", "α", "β")
     } else if (model_formula == "lin-quad-no-int") {
-      fit_coeff_names <- c("α", "β")
+      fit_coeffs_names <- c("α", "β")
     } else if (model_formula == "lin") {
-      fit_coeff_names <- c("C", "α")
+      fit_coeffs_names <- c("C", "α")
     } else if (model_formula == "lin-no-int") {
-      fit_coeff_names <- c("α")
+      fit_coeffs_names <- c("α")
     }
 
     full_data <- matrix(
       0.0,
-      nrow = length(fit_coeff_names),
-      ncol = length(fit_coeff_names)
+      nrow = length(fit_coeffs_names),
+      ncol = length(fit_coeffs_names)
     ) %>%
-      `row.names<-`(fit_coeff_names) %>%
-      `colnames<-`(fit_coeff_names) %>%
+      `row.names<-`(fit_coeffs_names) %>%
+      `colnames<-`(fit_coeffs_names) %>%
       as.data.frame()
 
     return(full_data)
   })
 
   # Reactive data frames ----
-  changed_data <- reactive({
+  changed_coeffs_data <- reactive({
     # Create button dependency for updating dimensions
     input$button_gen_table
 
     if (is.null(input$fit_coeffs_hot) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
-      return(previous())
-    } else if (!identical(previous(), input$fit_coeffs_hot)) {
-      fit_coeff_names <- row.names(hot_to_r(input$fit_coeffs_hot))
+      return(previous_coeffs())
+    } else if (!identical(previous_coeffs(), input$fit_coeffs_hot)) {
+      fit_coeffs_names <- row.names(hot_to_r(input$fit_coeffs_hot))
 
       mytable <- as.data.frame(hot_to_r(input$fit_coeffs_hot)) %>%
         dplyr::mutate_all(as.numeric) %>%
-        `row.names<-`(fit_coeff_names)
+        `row.names<-`(fit_coeffs_names)
 
       return(mytable)
     }
   })
 
-  changed_data_var <- reactive({
+  changed_var_data <- reactive({
     # Create button dependency for updating dimensions
     input$button_gen_table
 
@@ -884,11 +884,11 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
       table_var_reset$value <- 0
       return(previous_var())
     } else if (!identical(previous_var(), input$fit_var_cov_mat_hot)) {
-      fit_coeff_names <- row.names(hot_to_r(input$fit_var_cov_mat_hot))
+      fit_coeffs_names <- row.names(hot_to_r(input$fit_var_cov_mat_hot))
 
       mytable <- as.data.frame(hot_to_r(input$fit_var_cov_mat_hot)) %>%
         dplyr::mutate_all(as.numeric) %>%
-        `row.names<-`(fit_coeff_names)
+        `row.names<-`(fit_coeffs_names)
 
       return(mytable)
     }
@@ -897,11 +897,11 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
   # Output ----
   output$fit_coeffs_hot <- renderRHandsontable({
     # Read number of columns
-    num_cols <- ncol(changed_data())
+    num_cols <- ncol(changed_coeffs_data())
 
     # Convert to hot and format table
-    hot <- changed_data() %>%
-      rhandsontable(width = 375, height = "100%") %>%
+    hot <- changed_coeffs_data() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000000")
 
@@ -911,11 +911,11 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
 
   output$fit_var_cov_mat_hot <- renderRHandsontable({
     # Read number of columns
-    num_cols <- ncol(changed_data_var())
+    num_cols <- ncol(changed_var_data())
 
     # Convert to hot and format table
-    hot <- changed_data_var() %>%
-      rhandsontable(width = 375, height = "100%") %>%
+    hot <- changed_var_data() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.00000000")
 
@@ -1141,7 +1141,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         2 * general_var_cov_mat[["C", "α"]] * d +
         2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
         2 * general_var_cov_mat[["α", "β"]] * d^3 * G
-      if(sum(res < 0) > 0) {
+      if (sum(res < 0) > 0) {
         rep(0, length(res))
       } else {
         return(sqrt(res))
@@ -1152,14 +1152,36 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     if (grepl("merkle", curve_method, fixed = TRUE)) {
       conf_int_curve <- paste0("0.", gsub("\\D", "", curve_method)) %>% as.numeric()
       conf_int_yield <- conf_int_curve
-    } else if (curve_method == "simple") { # This is no longer used
-      conf_int_curve <- 0 # This makes R_factor = 0
-      conf_int_yield <- 0.95
+    # } else if (curve_method == "simple") {
+    #   conf_int_curve <- 0 # This makes R_factor = 0
+    #   conf_int_yield <- 0.95
     } else { # For partial body
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
       conf_int_dolphin <- 0.95
     }
+
+    # Correct conf_int_yield if simple method is required
+    correct_conf_int <- function(conf_int, d, G, type) {
+      res <- general_var_cov_mat[["C", "C"]] +
+        general_var_cov_mat[["α", "α"]] * d^2 +
+        general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
+        2 * general_var_cov_mat[["C", "α"]] * d +
+        2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
+        2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+      if (sum(res <= 0) > 1) {
+        if (type == "curve") {
+          conf_int <- 0
+        } else if (type == "yield") {
+          conf_int <- 0.95
+        }
+      }
+
+      return(conf_int)
+    }
+
+    conf_int_curve <- conf_int_curve %>% correct_conf_int(seq(0, 10, 0.2), protracted_g_value, type = "curve")
+    conf_int_yield <- conf_int_yield %>% correct_conf_int(seq(0, 10, 0.2), protracted_g_value, type = "yield")
 
     # Calculate infimums of the different curves
     yield_low_inf <- yield_fun(0, 1) - R_factor(conf_int_curve) * yield_error_fun(0, 1)
@@ -1737,7 +1759,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_frac_hetero <- results_hetero[["est_frac"]]
     }
 
-    # Update plot ----
+    # Make plot ----
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
