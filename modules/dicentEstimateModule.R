@@ -301,8 +301,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   width = "250px",
                   choices = list(
                     "Merkle's method (83%-83%)" = "merkle-83",
-                    "Merkle's method (95%-95%)" = "merkle-95",
-                    "Simple method"             = "simple"
+                    "Merkle's method (95%-95%)" = "merkle-95"
+                    # "Simple method"             = "simple"
                   ),
                   selected = "merkle-83"
                 )
@@ -813,14 +813,15 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
       fit_coeff_names <- c("α")
     }
 
-    full_data <- matrix(
-      0,
-      nrow = length(fit_coeff_names),
-      ncol = 2
+    full_data <- data.frame(
+      matrix(
+        0.0,
+        nrow = length(fit_coeff_names),
+        ncol = 2
+      )
     ) %>%
       `row.names<-`(fit_coeff_names) %>%
-      `colnames<-`(c("estimate", "std.error")) %>%
-      as.data.frame()
+      `colnames<-`(c("estimate", "std.error"))
 
     return(full_data)
   })
@@ -845,7 +846,7 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
     }
 
     full_data <- matrix(
-      0,
+      0.0,
       nrow = length(fit_coeff_names),
       ncol = length(fit_coeff_names)
     ) %>%
@@ -865,7 +866,11 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
       table_reset$value <- 0
       return(previous())
     } else if (!identical(previous(), input$fit_coeffs_hot)) {
-      mytable <- as.data.frame(hot_to_r(input$fit_coeffs_hot))
+      fit_coeff_names <- row.names(hot_to_r(input$fit_coeffs_hot))
+
+      mytable <- as.data.frame(hot_to_r(input$fit_coeffs_hot)) %>%
+        dplyr::mutate_all(as.numeric) %>%
+        `row.names<-`(fit_coeff_names)
 
       return(mytable)
     }
@@ -879,7 +884,11 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
       table_var_reset$value <- 0
       return(previous_var())
     } else if (!identical(previous_var(), input$fit_var_cov_mat_hot)) {
-      mytable <- as.data.frame(hot_to_r(input$fit_var_cov_mat_hot))
+      fit_coeff_names <- row.names(hot_to_r(input$fit_var_cov_mat_hot))
+
+      mytable <- as.data.frame(hot_to_r(input$fit_var_cov_mat_hot)) %>%
+        dplyr::mutate_all(as.numeric) %>%
+        `row.names<-`(fit_coeff_names)
 
       return(mytable)
     }
@@ -892,9 +901,9 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
 
     # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
-      hot_cols(format = "0.000")
+      hot_cols(format = "0.000000")
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
@@ -906,9 +915,9 @@ dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAs
 
     # Convert to hot and format table
     hot <- changed_data_var() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 375, height = "100%") %>%
       hot_cols(colWidths = 100) %>%
-      hot_cols(format = "0.000")
+      hot_cols(format = "0.00000000")
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
@@ -1062,6 +1071,20 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     } else {
       fit_coeffs <- hot_to_r(input$fit_coeffs_hot)
       fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot)
+
+      model_formula <- input$formula_select
+      # Parse formula
+      if (model_formula == "lin-quad") {
+        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+      } else if (model_formula == "lin") {
+        fit_formula_tex <- "Y = C + \\alpha D"
+      }
+      else if (model_formula == "lin-quad-no-int") {
+        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+      }
+      else if (model_formula == "lin-no-int") {
+        fit_formula_tex <- "Y = \\alpha D"
+      }
     }
 
     # Generalized variance-covariance matrix
@@ -1112,21 +1135,24 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     yield_error_fun <- function(d, G) {
-      sqrt(
-        general_var_cov_mat[["C", "C"]] +
-          general_var_cov_mat[["α", "α"]] * d^2 +
-          general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
-          2 * general_var_cov_mat[["C", "α"]] * d +
-          2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
-          2 * general_var_cov_mat[["α", "β"]] * d^3 * G
-      )
+      res <- general_var_cov_mat[["C", "C"]] +
+        general_var_cov_mat[["α", "α"]] * d^2 +
+        general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
+        2 * general_var_cov_mat[["C", "α"]] * d +
+        2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
+        2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+      if(sum(res < 0) > 0) {
+        rep(0, length(res))
+      } else {
+        return(sqrt(res))
+      }
     }
 
     # Select CI depending on selected method
     if (grepl("merkle", curve_method, fixed = TRUE)) {
       conf_int_curve <- paste0("0.", gsub("\\D", "", curve_method)) %>% as.numeric()
       conf_int_yield <- conf_int_curve
-    } else if (curve_method == "simple") {
+    } else if (curve_method == "simple") { # This is no longer used
       conf_int_curve <- 0 # This makes R_factor = 0
       conf_int_yield <- 0.95
     } else { # For partial body
@@ -1742,15 +1768,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ifelse(is.na(.), 0, .) %>%
       max()
 
-    # Plot data from fit
-    plot_data <- fit_results_list[["fit_raw_data"]] %>%
-      as.data.frame() %>%
-      dplyr::mutate(
-        yield = X / N,
-        dose = D
-      ) %>%
-      dplyr::select(dose, yield)
-
+    # Plot data from curves
     curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
       dplyr::mutate(
         yield = yield_fun(dose, protracted_g_value),
@@ -1759,7 +1777,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
 
     # Make base plot
-    gg_curve <- ggplot(plot_data) +
+    gg_curve <- ggplot(curves_data) +
       # Fitted curve
       stat_function(
         data = data.frame(x = c(0, max_dose)),
