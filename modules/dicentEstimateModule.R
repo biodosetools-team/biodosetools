@@ -1816,9 +1816,22 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     gg_curve <- gg_curve +
       # Estimated whole-body doses
       geom_point(data = est_full_doses,
-                 aes(x = dose, y = yield, colour = type, shape = level),
+                 aes(x = dose, y = yield, color = type, shape = level),
                  size = 2, na.rm = TRUE) +
-      labs(colour = "Assessment", shape = "Confidence interval")
+      # Confidence intervals
+      geom_point(data = data.frame(x = c(0,0), y = c(0,0), z = c("curve", "yield")),
+                 aes(x = x, y = y, fill = z),
+                 alpha = 0) +
+      scale_fill_manual("Confidence interval",
+                        values = c("curve" = "red", "yield" = "green"),
+                        labels = c(
+                          paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
+                          paste0("Yield: ", round(100 * conf_int_yield, 0), "%")
+                        )) +
+      guides(color = guide_legend(order = 1),
+             shape = guide_legend(order = 2),
+             fill = guide_legend(order = 3)) +
+      labs(color = "Assessment", shape = "Estimation", fill = "Confidence interval")
 
     # Return list ----
 
