@@ -1119,6 +1119,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
     } else {
       protracted_g_value <- 1
+      # Used in report (dummy values)
+      protracted_time <- NA
+      protracted_life_time <- NA
     }
 
     # Generalized curves ----
@@ -1836,7 +1839,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Return list ----
 
     # Make basic list of results to return
-    results_list <- list(
+    est_results_list <- list(
       # Used in app
       assessment = assessment,
       # Whole-body
@@ -1853,6 +1856,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       gg_curve = gg_curve,
       # Required for report
       fit_coeffs = fit_coeffs,
+      protraction = c(0, 0, 0),
       fit_formula_tex = fit_formula_tex,
       case_data = case_data,
       case_description = input$case_description,
@@ -1860,26 +1864,30 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     )
     if (assessment == "partial") {
       # Partial
-      results_list[["est_doses_partial"]] <- est_doses_partial
-      results_list[["est_frac_partial"]] <- est_frac_partial
+      est_results_list[["est_doses_partial"]] <- est_doses_partial
+      est_results_list[["est_frac_partial"]] <- est_frac_partial
       # Reset Heterogeneous
-      results_list[["est_mixing_prop_hetero"]] <- NA
-      results_list[["est_yields_hetero"]] <- NA
-      results_list[["est_doses_hetero"]] <- NA
-      results_list[["est_frac_hetero"]] <- NA
+      est_results_list[["est_mixing_prop_hetero"]] <- NA
+      est_results_list[["est_yields_hetero"]] <- NA
+      est_results_list[["est_doses_hetero"]] <- NA
+      est_results_list[["est_frac_hetero"]] <- NA
 
     } else if (assessment == "hetero"){
       # Heterogeneous
-      results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
-      results_list[["est_yields_hetero"]] <- est_yields_hetero
-      results_list[["est_doses_hetero"]] <- est_doses_hetero
-      results_list[["est_frac_hetero"]] <- est_frac_hetero
+      est_results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
+      est_results_list[["est_yields_hetero"]] <- est_yields_hetero
+      est_results_list[["est_doses_hetero"]] <- est_doses_hetero
+      est_results_list[["est_frac_hetero"]] <- est_frac_hetero
       # Reset Partial
-      results_list[["est_doses_partial"]] <- NA
-      results_list[["est_frac_partial"]] <- NA
+      est_results_list[["est_doses_partial"]] <- NA
+      est_results_list[["est_frac_partial"]] <- NA
+    }
+    # Check if protracted correction was applied
+    if (exposure == "protracted" & stringr::str_detect(fit_formula_tex, "beta")) {
+      est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
     }
 
-    return(results_list)
+    return(est_results_list)
   })
 
   # Results outputs ----
@@ -2057,20 +2065,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
       # Set up parameters to pass to Rmd document
       params <- list(
-        assessment = data()[["assessment"]],
-        est_doses_whole = data()[["est_doses_whole"]],
-        est_doses_partial = data()[["est_doses_partial"]],
-        est_frac_partial = data()[["est_frac_partial"]],
-        est_mixing_prop_hetero = data()[["est_mixing_prop_hetero"]],
-        est_yields_hetero = data()[["est_yields_hetero"]],
-        est_doses_hetero = data()[["est_doses_hetero"]],
-        est_frac_hetero = data()[["est_frac_hetero"]],
-        fit_coeffs = data()[["fit_coeffs"]],
-        fit_formula_tex = data()[["fit_formula_tex"]],
-        gg_curve = data()[["gg_curve"]],
-        case_data = data()[["case_data"]],
-        case_description = data()[["case_description"]],
-        results_comments = data()[["results_comments"]]
+        est_results_list = data()
       )
 
       # Knit the document, passing in the `params` list, and eval it in a
