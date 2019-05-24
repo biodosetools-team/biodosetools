@@ -478,6 +478,7 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
     hot <- changed_data() %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
+      hot_col(c(1), format = "0.000", colWidths = 60) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (ncol(changed_data()) > 3) {
