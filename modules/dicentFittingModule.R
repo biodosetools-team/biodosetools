@@ -84,8 +84,9 @@ dicentFittingUI <- function(id, label) {
             inputId = ns("help_count_data_option"),
             label = NULL,
             choices = c(
-              "Manual input" = "manual",
-              "Load data"    = "load"
+              "Manual input"    = "manual",
+              "Load data"       = "load",
+              "Aggregated data" = "aggr"
             )
           ),
           # Contents
@@ -98,6 +99,11 @@ dicentFittingUI <- function(id, label) {
             condition = "input.help_count_data_option == 'load'",
             ns = ns,
             withMathJax(includeMarkdown("help/help_count_data_load.md"))
+          ),
+          conditionalPanel(
+            condition = "input.help_count_data_option == 'aggr'",
+            ns = ns,
+            withMathJax(includeMarkdown("help/help_count_data_aggregated.md"))
           )
         )
       ),
