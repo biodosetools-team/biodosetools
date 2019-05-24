@@ -9,10 +9,7 @@ An example of how the data should be formatted can be seen below.
 
 ```
 C0 ,C1,C2,C3,C4,C5
-251,63,17,2 ,0 ,0
 104,72,15,2 ,0 ,0
-35 ,41,21,4 ,2 ,0
-11 ,19,11,9 ,6 ,3
 ```
 
 The rest of columns will be calculated automatically:

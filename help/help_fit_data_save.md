@@ -7,3 +7,5 @@ The `RDS` format creates a serialized version of any R object and then saves it 
 - Calculated coefficients.
 - Model-level statistics.
 - Etc.
+
+In essence, this is the preferred file format to save dose-effect fitting curves, and can be used in the "Dose estimation" module.

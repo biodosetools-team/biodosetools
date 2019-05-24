@@ -1,3 +1,6 @@
 ##### Fitting model
 
-Normally the Poisson function should be used. However, if there is constant overdispersion, the quasi-Poission is recommended.
+Normally the Automatic option should be used. 
+
+- If there is overdispersion on the fitting, the quasi-Poission model will be used.
+- Otherwise a Poisson model assuming equidispersion will be used.

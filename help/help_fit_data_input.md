@@ -1,8 +1,10 @@
 #### Data format
 
-*Disclaimer:* This part has not been implemented yet.
-
 The following parameters need to be input:
-- Formula.
-- Coeffiecients.
-- Correlation matrix.
+
+- Fitting formula.
+- Coefficients.
+- Standard error of the coefficients (optional).
+- Variance-covariance matrix (optional).
+
+To update the tables accordingly to the selected fitting formula, it's necessary to click on "Generate tables".

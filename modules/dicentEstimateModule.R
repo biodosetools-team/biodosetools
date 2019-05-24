@@ -464,6 +464,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               inputId = ns("help_estimate_options_option"),
               label = NULL,
               choices = c(
+                "Exposure"             = "exposure",
                 "Assessment"           = "assess",
                 "Error calculation"    = "error",
                 "Survival coefficient" = "surv_coeff"
@@ -471,6 +472,11 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
             ),
             # Contents
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'exposure'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_exposure.md"))
+            ),
             conditionalPanel(
               condition = "input.help_estimate_options_option == 'assess'",
               ns = ns,
