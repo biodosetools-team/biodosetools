@@ -19,23 +19,24 @@ navbar <- bs4DashMyNavbar(
   skin = "dark",
   status = "white",
 
-  div(
-    style = "margin-bottom: -20px;",
-    selectInput(
-      "experiment_select",
-      label = NULL,
-      choices = c(
-        "Dicentrics",
-        "Micronuclei",
-        "Translocations"#,
-        # "H2AX",
-        # "Intercomparison Tests"
-      ),
-      selected = "Dicentrics",
-      multiple = FALSE,
-      selectize = TRUE
-    )
-  ),
+  # TODO: Fix sidebar when using this
+  # div(
+  #   style = "margin-bottom: -20px;",
+  #   selectInput(
+  #     "experiment_select",
+  #     label = NULL,
+  #     choices = c(
+  #       "Dicentrics",
+  #       "Micronuclei",
+  #       "Translocations"#,
+  #       # "H2AX",
+  #       # "Intercomparison Tests"
+  #     ),
+  #     selected = "Dicentrics",
+  #     multiple = FALSE,
+  #     selectize = TRUE
+  #   )
+  # ),
 
   # Bookmarking
   # div(
