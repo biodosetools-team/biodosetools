@@ -1122,7 +1122,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       if (input$save_count_data_format == ".csv") {
         write.csv(hot_to_r(input$count_data_hot), file, row.names = FALSE)
       } else if (input$save_count_data_format == ".tex") {
-        print(xtable::xtable(data()[["count_data"]]), type = "latex", file)
+        print(xtable::xtable(hot_to_r(input$count_data_hot)), type = "latex", file)
       }
     }
   )
