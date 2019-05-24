@@ -1,6 +1,6 @@
 ---
 title: "Dose estimation report"
-author: "Biodose Tools"
+author: "`r paste('Biodose Tools', '-', app_version)`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
   # prettydoc::html_pretty:

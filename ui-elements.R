@@ -243,6 +243,6 @@ body <- bs4DashBody(
 # Footer ---------------------------------------------------
 
 footer <- bs4DashFooter(
-  copyrights = a("Version 2019.05.25-beta", href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/NEWS.md"),
+  copyrights = a(paste("Version", app_version), href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/NEWS.md"),
   right_text = format(Sys.time(), '%Y')
 )

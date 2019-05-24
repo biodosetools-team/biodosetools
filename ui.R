@@ -8,8 +8,9 @@ library(shinyBS)
 library(bs4Dash)
 
 
-# Translations ---------------------------------------------
+# Misc -----------------------------------------------------
 
+source("libs/app_version.R")
 source("translations/translations.R")
 
 
