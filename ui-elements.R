@@ -43,6 +43,17 @@ navbar <- bs4DashMyNavbar(
   #   bookmarkButton()
   # ),
 
+  div(
+    style = "margin-bottom: 2px; margin-left: 10px; ",
+    actionButton(
+      inputId = "github_link", label = "Give feedback",
+      icon = icon("comment"),
+      class = "results-button",
+      onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools/issues/new', '_blank')"
+    )
+  ),
+
+
 
   # Right UI
   rightUi = NULL
@@ -100,21 +111,21 @@ sidebar <- bs4DashMySidebar(
 
     bs4SidebarHeader("Dicentrics"),
 
-
-    bs4SidebarMenuItem(
-      HTML(
-        paste(
-          "Characteristic limits",
-          bs4Badge(
-            "in progress",
-            position = "right",
-            status = "danger"
-          )
-        )
-      ),
-      tabName = "tab-char-limits",
-      icon = "chart-area"
-    ),
+    # TODO: implement this
+    # bs4SidebarMenuItem(
+    #   HTML(
+    #     paste(
+    #       "Characteristic limits",
+    #       bs4Badge(
+    #         "in progress",
+    #         position = "right",
+    #         status = "danger"
+    #       )
+    #     )
+    #   ),
+    #   tabName = "tab-char-limits",
+    #   icon = "chart-area"
+    # ),
 
     bs4SidebarMenuItem(
       "Fitting",
