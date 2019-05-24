@@ -539,24 +539,26 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               rHandsontableOutput(ns("est_doses_hetero")),
               br()
             ),
+
+            h6("Initial fraction of irradiated cells"),
+            rHandsontableOutput(ns("est_frac_hetero"))
+          ),
+
+          # Help button
+          topButton =
             bsButton(
               ns("help_dose_mixed_yields"),
-              # class = "rightAlign",
               label = "",
               icon = icon("question"),
               style = "default", size = "default"
             ),
-            bsModal(
-              id = ns("help_dose_mixed_yields_dialog"),
-              title = "Help: Partial and heterogeneous exposures",
-              trigger = ns("help_dose_mixed_yields"),
-              size = "large",
-              withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
-            ),
-            # TODO: Move this to the card help button
-
-            h6("Initial fraction of irradiated cells"),
-            rHandsontableOutput(ns("est_frac_hetero"))
+          # Help modal
+          bs4MyModal(
+            id = ns("help_dose_mixed_yields_dialog"),
+            title = "Help: Partial and heterogeneous exposures",
+            trigger = ns("help_dose_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
           )
         ),
 
