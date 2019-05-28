@@ -24,14 +24,14 @@ server <- function(input, output) {
 
   # Translocations Modules ----
 
-  # Advanced Fitting
+  # Fitting
   transFraction <-
-    callModule(module = transFractionToFullGenomeCalc, id = "trans_adv_fitting")
-  callModule(module = transFractionToFullGenome, id = "trans_adv_fitting", fraction_value = transFraction)
+    callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
+  callModule(module = transFractionToFullGenome, id = "trans_fitting", fraction_value = transFraction)
 
-  callModule(module = transFittingAdvHotTable, id = "trans_adv_fitting", fraction_value = transFraction)
-  callModule(module = transChromosomeTable, id = "trans_adv_fitting")
-  callModule(module = transFittingAdvResults, id = "trans_adv_fitting")
+  callModule(module = transFittingHotTable, id = "trans_fitting", fraction_value = transFraction)
+  callModule(module = transChromosomeTable, id = "trans_fitting")
+  callModule(module = transFittingResults, id = "trans_fitting")
 
   # Micronuclei Modules ----
 

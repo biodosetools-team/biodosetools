@@ -21,7 +21,7 @@ source("modules/dicentFittingModule.R")
 source("modules/dicentEstimateModule.R")
 
 # Translocations
-source("modules/transFittingAdvModule.R")
+source("modules/transFittingModule.R")
 
 # Build UI -------------------------------------------------
 

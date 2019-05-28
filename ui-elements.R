@@ -153,7 +153,7 @@ sidebar <- bs4DashMySidebar(
           )
         )
       ),
-      tabName = "tab-trans-fitting-adv",
+      tabName = "tab-trans-fitting",
       icon = "paint-brush"
     ),
 
@@ -232,8 +232,8 @@ body <- bs4DashBody(
 
     # Translocations Modules ----
 
-    # Advanced Fitting
-    transFittingAdvUI(id = "trans_adv_fitting", label = "tab-trans-fitting-adv")
+    # Fitting
+    transFittingUI(id = "trans_fitting", label = "tab-trans-fitting")
 
     # Micronuclei Modules ----
   )
