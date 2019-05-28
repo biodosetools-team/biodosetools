@@ -122,12 +122,12 @@ dicentFittingUI <- function(id, label) {
               label = "Fitting formula",
               choices = list(
                 "Linear quadratic" = c(
-                  "Y = C + αD + βD²" = "lin-quad",
-                  "Y = αD + βD²" = "lin-quad-no-int"
+                  "Y = C + αD + βD²" = "lin-quad"
+                  # "Y = αD + βD²" = "lin-quad-no-int"
                 ),
                 "Linear" = c(
-                  "Y = C + αD" = "lin",
-                  "Y = αD" = "lin-no-int"
+                  "Y = C + αD" = "lin"
+                  # "Y = αD" = "lin-no-int"
                 )
               ),
               selected = "lin-quad"
@@ -520,7 +520,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
     # Fitting functions ----
 
-    prepare_maxlik_count_data <- function(count_data) {
+    prepare_maxlik_count_data <- function(count_data, model_formula) {
       if (ncol(count_data) > 3) {
         # Full distribution data
         dose_vec <- rep(
@@ -570,6 +570,13 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           dplyr::select(aberr, C, α, β)
       }
 
+      # Delete C column for models with no intercept
+
+      if (stringr::str_detect(model_formula, "no-int")) {
+        parsed_data <- parsed_data %>%
+          dplyr::select(-C)
+      }
+
       # Return data frame
       return(parsed_data)
     }
@@ -600,7 +607,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_raw <- "aberr ~ -1 + C + α + β"
         fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
       } else if (model_formula == "lin") {
-        fit_formula <- "aberr ~ -1 + C + α"
+        fit_formula_raw <- "aberr ~ -1 + C + α"
         fit_formula_tex <- "Y = C + \\alpha D"
       }
       else if (model_formula == "lin-quad-no-int") {
@@ -612,6 +619,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_tex <- "Y = \\alpha D"
       }
       fit_formula <- as.formula(fit_formula_raw)
+
 
       # Perform automatic fit calculation
       if (model_family == "poisson") {
@@ -742,7 +750,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_raw <- "aberr ~ -1 + C + α + β"
         fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
       } else if (model_formula == "lin") {
-        fit_formula <- "aberr ~ -1 + C + α"
+        fit_formula_raw <- "aberr ~ -1 + C + α"
         fit_formula_tex <- "Y = C + \\alpha D"
       }
       else if (model_formula == "lin-quad-no-int") {
@@ -754,6 +762,11 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         fit_formula_tex <- "Y = \\alpha D"
       }
       fit_formula <- as.formula(fit_formula_raw)
+
+      if (stringr::str_detect(model_formula, "no-int")) {
+        data_aggr <- data_aggr %>%
+          dplyr::select(-C)
+      }
 
       # Find starting values for the mean
       mustart <- lm(fit_formula, data = data_aggr)$coefficients
@@ -827,7 +840,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       # Model constraints
       npar <- kx
       if (intercept) {
-        A <- rbind(X, c(1, rep(0, kx - 1)))
+        A <- rbind(X, c(1, rep(0, npar - 1)))
         B <- rep(0, n + 1)
       } else {
         A <- X
@@ -837,9 +850,9 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       # Loglikelihood function
       loglik <- function(parms) {
         if (fit_link == "log") {
-          mu <- as.vector(exp(X %*% parms[1:kx]))
+          mu <- as.vector(exp(X %*% parms[1:npar]))
         } else {
-          mu <- as.vector(X %*% parms[1:kx])
+          mu <- as.vector(X %*% parms[1:npar])
         }
         loglikh <- sum(-mu + Y * log(mu) - lgamma(Y + 1))
         loglikh
@@ -855,9 +868,9 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       hess <- maxLik::hessian(fit_results)
 
       if (fit_link == "log") {
-        mu <- as.vector(exp(X %*% fit_results$estimate[1:kx]))
+        mu <- as.vector(exp(X %*% fit_results$estimate[1:npar]))
       } else {
-        mu <- as.vector(X %*% fit_results$estimate[1:kx])
+        mu <- as.vector(X %*% fit_results$estimate[1:npar])
       }
 
       # Summarise fit
@@ -865,13 +878,13 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       # fit_cor_mat <- fit_summary$correlation
       fit_var_cov_mat <- base::solve(-hess)
       fit_coeffs_vec <- fit_results$estimate
-      fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - kx)))
+      fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
       # Model-specific statistics
       fit_model_statistics <- cbind(
         logLik = stats::logLik(fit_results),
         deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
-        df = n - kx,
+        df = n - npar,
         AIC = -2 * stats::logLik(fit_results) + 2 * length(fit_coeffs_vec),
         BIC = -2 * stats::logLik(fit_results) + log(n) * length(fit_coeffs_vec)
       )
@@ -951,7 +964,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       error = function(error_message) {
         message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
         # Perform fitting
-        prepared_data <- prepare_maxlik_count_data(count_data)
+        prepared_data <- prepare_maxlik_count_data(count_data, model_formula)
         fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
         fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
 

@@ -36,12 +36,12 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   label = "Fitting formula",
                   choices = list(
                     "Linear quadratic" = c(
-                      "Y = C + αD + βD²" = "lin-quad",
-                      "Y = αD + βD²" = "lin-quad-no-int"
+                      "Y = C + αD + βD²" = "lin-quad"
+                      # "Y = αD + βD²" = "lin-quad-no-int"
                     ),
                     "Linear" = c(
-                      "Y = C + αD" = "lin",
-                      "Y = αD" = "lin-no-int"
+                      "Y = C + αD" = "lin"
+                      # "Y = αD" = "lin-no-int"
                     )
                   ),
                   selected = "lin-quad"
