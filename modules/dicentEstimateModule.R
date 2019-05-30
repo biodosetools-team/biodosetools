@@ -173,7 +173,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "!input.load_case_data_check",
               ns = ns,
-              numericInput(ns("num_cases"), "Number of cases", value = 1),
+              # numericInput(ns("num_cases"), "Number of cases", value = 1),
               numericInput(ns("num_dicentrics"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
@@ -683,7 +683,8 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
     isolate({
       load_case_data <- input$load_case_data_check
       case_data <- input$load_case_data
-      num_cases <- as.numeric(input$num_cases)
+      # num_cases <- as.numeric(input$num_cases)
+      num_cases <-
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
