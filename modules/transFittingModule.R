@@ -171,15 +171,13 @@ transFittingUI <- function(id, label) {
             column(
               width = 12,
 
-              textOutput(ns("fraction"))
+              uiOutput(ns("fraction"))
 
             )
           )
         )
 
       )
-
-
     ),
 
     fluidRow(
@@ -634,9 +632,10 @@ transFractionToFullGenome <- function(input, output, session, stringsAsFactors, 
   fraction <- reactive(fraction_value$frac())
 
   # Output ----
-  output$fraction <- renderPrint({
+  output$fraction <- renderUI({
     if (input$button_calc_fraction <= 0) return(NULL)
-    return(fraction())
+    frac_text <- paste0("The genomic conversion factor to full genome is ", fraction() %>% round(3) %>%  as.character(), ".")
+    return(frac_text)
   })
 }
 
