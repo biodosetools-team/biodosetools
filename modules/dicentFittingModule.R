@@ -1182,7 +1182,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste("fitting-report-", Sys.Date(), ".html", sep = "")
+      paste("dicentrics-fitting-report-", Sys.Date(), ".html", sep = "")
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
