@@ -1,0 +1,135 @@
+---
+title: "Curve fitting report"
+author: "`r paste('Biodose Tools', '-', app_version)`"
+date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
+output: 
+  # prettydoc::html_pretty:
+    # theme: cayman
+  html_document:
+    theme: cosmo
+    # css: style.css
+params:
+  fit_results_list: NA
+---
+
+```{r include=FALSE}
+library(xfun)
+xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+```
+
+```{r include=FALSE}
+embed_var <- function(x, ...) {
+  # f = tempfile(fileext = '.rds')
+  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  saveRDS(x, f)
+  xfun::embed_file(f, ...)
+}
+```
+
+```{r load-data, echo=FALSE}
+count_data <- params$fit_results_list[["fit_raw_data"]]
+fit_model_statistics <- params$fit_results_list[["fit_model_statistics"]]
+fit_model_summary <- params$fit_results_list[["fit_model_summary"]]
+fit_coeffs <- params$fit_results_list[["fit_coeffs"]]
+fit_var_cov_mat <- params$fit_results_list[["fit_var_cov_mat"]]
+fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
+fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
+gg_curve <- params$fit_results_list[["gg_curve"]]
+genome_frac <- params$fit_results_list[["genome_frac"]]
+frequency_select <- params$fit_results_list[["frequency_select"]]
+```
+
+## Count data used
+```{r echo=FALSE}
+count_data <- count_data %>% 
+  as.data.frame() %>% 
+  dplyr::mutate_at(c("N", "X"), as.integer)
+
+count_data_cols <- ncol(count_data)
+
+if (count_data_cols > 3) {
+  count_data %>% 
+    dplyr::mutate_at(vars(starts_with("C")), as.integer) %>% 
+    rhandsontable(width = "100%", height = "100%") %>% 
+    hot_cols(colWidths = 50) %>% 
+    hot_col(count_data_cols, renderer = "
+       function (instance, td, row, col, prop, value, cellProperties) {
+         Handsontable.renderers.NumericRenderer.apply(this, arguments);
+         if (value > 1.96) {
+          td.style.background = 'pink';
+         }
+       }")
+} else {
+  count_data %>% 
+    dplyr::mutate_at(vars(starts_with("C")), as.integer) %>% 
+    rhandsontable(width = 225, height = "100%") %>% 
+    hot_cols(colWidths = 50)
+}
+```
+
+## Results
+
+### Fit formula
+```{r echo=FALSE}
+withMathJax(paste0("$$", fit_formula_tex, "$$"))
+```
+
+### Model
+`r fit_model_summary`
+
+
+### Translocation frequency
+`r paste("The fitting was performed using the ")`
+`r if (frequency_select == "full_gen_freq") paste("full genome translocation frequency.") else if (frequency_select == "measured_freq") paste("translocation frequency measured by FISH.")`
+
+### Genomic conversion factor
+`r paste0("The genomic conversion factor to full genome is ", genome_frac %>% round(3) %>%  as.character(), ".")`
+
+### Coefficients
+```{r echo=FALSE}
+fit_coeffs %>% 
+  formatC(format = "e", digits = 3) %>%
+  as.data.frame() %>%
+  dplyr::select(-statistic) %>%
+  as.matrix() %>%
+  rhandsontable(width = 375, height = "100%") %>%
+  hot_cols(colWidths = 100) %>%
+  hot_cols(halign = "htRight")
+```
+
+### Model-level statistics
+```{r echo=FALSE}
+fit_model_statistics %>% 
+  rhandsontable(width = 375, height = "100%") %>%
+  hot_cols(colWidths = 70)
+```
+
+### Correlation matrix
+```{r echo=FALSE}
+fit_cor_mat %>% 
+  rhandsontable(width = 375, height = "100%") %>%
+  hot_cols(colWidths = 100) %>%
+  hot_cols(format = "0.000")
+```
+
+### Variance-covariance matrix
+```{r echo=FALSE}
+fit_var_cov_mat %>% 
+  formatC(format = "e", digits = 3) %>% 
+  rhandsontable(width = 375, height = "100%") %>%
+  hot_cols(colWidths = 100) %>%
+  hot_cols(halign = "htRight")
+```
+
+### Curve plot
+```{r echo=FALSE}
+gg_curve
+```
+
+
+### Download fit results
+```{r echo=FALSE}
+results_list <- params$fit_results_list
+results_list[["gg_curve"]] <- NULL
+embed_var(results_list)
+```

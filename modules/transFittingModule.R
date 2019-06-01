@@ -1366,8 +1366,10 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
 
     # Make list of results to return
     results_list <- fit_results_list
+    results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
     results_list[["gg_curve"]] <- gg_curve
     results_list[["genome_frac"]] <- fraction
+    results_list[["frequency_select"]] <- frequency_select
 
     return(results_list)
   })
