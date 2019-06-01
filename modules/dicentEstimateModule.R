@@ -684,7 +684,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
       load_case_data <- input$load_case_data_check
       case_data <- input$load_case_data
       # num_cases <- as.numeric(input$num_cases)
-      num_cases <-
+      num_cases <- 1
       num_dicentrics <- as.numeric(input$num_dicentrics) + 1
     })
 
@@ -1792,7 +1792,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
         yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
-        type =  c(rep("Whole-body", 3), rep("Heterogeneous X1", 3), rep("Heterogeneous X2", 3)),
+        type =  c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 3)
       )
     }
@@ -1834,12 +1834,23 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       geom_point(data = data.frame(x = c(0,0), y = c(0,0), z = c("curve", "yield")),
                  aes(x = x, y = y, fill = z),
                  alpha = 0) +
-      scale_fill_manual("Confidence interval",
-                        values = c("curve" = "red", "yield" = "green"),
-                        labels = c(
-                          paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
-                          paste0("Yield: ", round(100 * conf_int_yield, 0), "%")
-                        )) +
+      scale_color_manual(
+        "Assessment",
+        values = c(
+          "Whole-body"      = "#411056",
+          "Partial"         = "#3B548B",
+          "Heterogeneous 1" = "#398E8C",
+          "Heterogeneous 2" = "#71C562"
+        )
+      ) +
+      scale_fill_manual(
+        "Confidence interval",
+        values = c("curve" = "red", "yield" = "green"),
+        labels = c(
+          paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
+          paste0("Yield: ", round(100 * conf_int_yield, 0), "%")
+        )
+      ) +
       guides(color = guide_legend(order = 1),
              shape = guide_legend(order = 2),
              fill = guide_legend(order = 3)) +
