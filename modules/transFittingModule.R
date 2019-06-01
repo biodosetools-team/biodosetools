@@ -561,7 +561,7 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
 
 transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFactors) {
 
-  # Calculate fraction ---------------------------------------
+  # Calculate fraction ----
 
   fraction <- reactive({
 
@@ -628,7 +628,6 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
 
 transFractionToFullGenome <- function(input, output, session, stringsAsFactors, fraction_value) {
   # Retrieve fraction of translocations ----
-
   fraction <- reactive(fraction_value$frac())
 
   # Output ----
@@ -639,7 +638,7 @@ transFractionToFullGenome <- function(input, output, session, stringsAsFactors, 
   })
 }
 
-transFittingHotTable <- function(input, output, session, stringsAsFactors, fraction_value) {
+transFittingHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -715,7 +714,6 @@ transFittingHotTable <- function(input, output, session, stringsAsFactors, fract
 
     isolate({
       use_aggr_count_data <- input$use_aggr_count_data_check
-      frequency_select <- input$frequency_select
     })
 
     if (is.null(input$count_data_hot) || isolate(table_reset$value == 1)) {
@@ -770,16 +768,6 @@ transFittingHotTable <- function(input, output, session, stringsAsFactors, fract
           )
       }
 
-      if (frequency_select == "full_gen_freq") {
-        # Get fraction of translocations from transFractionToFullGenomeCalc() module
-        fraction <- fraction_value$frac()
-
-        mytable <- mytable %>%
-          dplyr::mutate(
-            N = N * fraction
-          )
-      }
-
       return(mytable)
     }
   })
@@ -790,7 +778,6 @@ transFittingHotTable <- function(input, output, session, stringsAsFactors, fract
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
-      hot_col(c(2), format = "0.00", colWidths = 70) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (ncol(changed_data()) > 3) {
@@ -810,7 +797,7 @@ transFittingHotTable <- function(input, output, session, stringsAsFactors, fract
   })
 }
 
-transFittingResults <- function(input, output, session, stringsAsFactors) {
+transFittingResults <- function(input, output, session, stringsAsFactors, fraction_value) {
 
   data <- reactive({
   # Calculations ----
@@ -821,8 +808,19 @@ transFittingResults <- function(input, output, session, stringsAsFactors) {
 
       model_formula <- input$formula_select
       model_family <- input$family_select
+      frequency_select <- input$frequency_select
+      fraction <- fraction_value$frac()
     })
 
+    if (frequency_select == "full_gen_freq") {
+      # Get fraction of translocations from transFractionToFullGenomeCalc() module
+      fraction <- fraction_value$frac()
+
+      count_data <- count_data %>%
+        dplyr::mutate(
+          N = N * fraction
+        )
+    }
 
     # Fitting functions ----
 
@@ -1369,6 +1367,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors) {
     # Make list of results to return
     results_list <- fit_results_list
     results_list[["gg_curve"]] <- gg_curve
+    results_list[["genome_frac"]] <- fraction
 
     return(results_list)
   })
@@ -1488,7 +1487,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors) {
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste("fitting-report-", Sys.Date(), ".html", sep = "")
+      paste("translocations-fitting-report-", Sys.Date(), ".html", sep = "")
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
@@ -1496,7 +1495,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors) {
       # can happen when deployed).
       tempReport <- file.path(tempdir(), "report.Rmd")
       # normReport <- file.path("report.Rmd")
-      file.copy("reports/dicentrics-fitting-report.Rmd", tempReport, overwrite = TRUE)
+      file.copy("reports/translocations-fitting-report.Rmd", tempReport, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
