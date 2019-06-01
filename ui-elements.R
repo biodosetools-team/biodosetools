@@ -206,7 +206,7 @@ home <- bs4TabItem(
       inputId = "wiki_link", label = "Documentation",
       icon = icon("book"),
       class = "home-button",
-      onclick = "window.open('https://biodosimetry-uab.gitbook.io/wiki/', '_blank')"
+      onclick = "window.open('https://biodosimetry-uab.github.io/', '_blank')"
     )
   )
 )
