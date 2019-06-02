@@ -621,21 +621,17 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
     return(get_fraction(dna_table, chromosome, color, sex))
   })
 
-  return(
-    list(frac = reactive(fraction()))
-  )
-}
-
-transFractionToFullGenome <- function(input, output, session, stringsAsFactors, fraction_value) {
-  # Retrieve fraction of translocations ----
-  fraction <- reactive(fraction_value$frac())
-
   # Output ----
   output$fraction <- renderUI({
     if (input$button_calc_fraction <= 0) return(NULL)
-    frac_text <- paste0("The genomic conversion factor to full genome is ", fraction() %>% round(3) %>%  as.character(), ".")
+    frac_value <- fraction()
+    frac_text <- paste0("The genomic conversion factor to full genome is ", frac_value %>% round(3) %>%  as.character(), ".")
     return(frac_text)
   })
+
+  return(
+    list(frac = reactive(fraction()))
+  )
 }
 
 transFittingHotTable <- function(input, output, session, stringsAsFactors) {
@@ -810,6 +806,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
       model_family <- input$family_select
       frequency_select <- input$frequency_select
       fraction <- fraction_value$frac()
+      chromosome_table <- hot_to_r(input$chromosome_table)
     })
 
     if (frequency_select == "full_gen_freq") {
@@ -1179,7 +1176,6 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
 
       # Summarise fit
       fit_summary <- summary(fit_results)
-      # fit_cor_mat <- fit_summary$correlation
       fit_var_cov_mat <- base::solve(-hess)
       fit_coeffs_vec <- fit_results$estimate
       fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
@@ -1369,6 +1365,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
     results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
     results_list[["gg_curve"]] <- gg_curve
     results_list[["genome_frac"]] <- fraction
+    results_list[["chromosome_table"]]<- chromosome_table
     results_list[["frequency_select"]] <- frequency_select
 
     return(results_list)
