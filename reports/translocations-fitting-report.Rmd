@@ -36,7 +36,17 @@ fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
 genome_frac <- params$fit_results_list[["genome_frac"]]
+chromosome_table <- params$fit_results_list[["chromosome_table"]]
 frequency_select <- params$fit_results_list[["frequency_select"]]
+```
+
+## Chromosome data
+
+```{r echo=FALSE}
+chromosome_table %>% 
+  rhandsontable(width = "100%", height = "100%") %>% 
+  hot_cols(colWidths = 115) %>%
+  hot_col(col = 2, allowInvalid = TRUE)
 ```
 
 ## Count data used
