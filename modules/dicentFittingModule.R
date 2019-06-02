@@ -855,7 +855,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           mu <- as.vector(X %*% parms[1:npar])
         }
         loglikh <- sum(-mu + Y * log(mu) - lgamma(Y + 1))
-        loglikh
+        return(loglikh)
       }
 
       # Perform fitting
@@ -875,7 +875,6 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Summarise fit
       fit_summary <- summary(fit_results)
-      # fit_cor_mat <- fit_summary$correlation
       fit_var_cov_mat <- base::solve(-hess)
       fit_coeffs_vec <- fit_results$estimate
       fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
