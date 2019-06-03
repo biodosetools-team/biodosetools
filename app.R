@@ -1,7 +1,6 @@
 # Libraries ------------------------------------------------
 
 library(shiny)
-library(fontawesome)
 library(shinydashboard)
 library(shinyWidgets)
 library(shinyBS)
