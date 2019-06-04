@@ -230,8 +230,8 @@ bs4MyModal <- function(id, title, trigger, ..., size) {
 }
 
 
-# ----
-bs4MyConditionalSidebarMenuItem <- function(..., condition = NULL, tabName = NULL, icon = NULL) {
+# Function: bs4MySidebarMenuItem ----
+bs4MySidebarMenuItem <- function(..., condition = NULL, tabName = NULL, icon = NULL) {
   shiny::tags$li(class = "nav-item", shiny::tags$a(
     `data-display-if` = condition,
     class = "nav-link",

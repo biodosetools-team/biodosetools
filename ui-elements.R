@@ -76,7 +76,7 @@ sidebar <- bs4DashMySidebar(
 
   bs4SidebarMenu(
 
-    bs4MyConditionalSidebarMenuItem(
+    bs4MySidebarMenuItem(
       "About this App",
       tabName = "home",
       icon = "home"
@@ -86,13 +86,13 @@ sidebar <- bs4DashMySidebar(
     bs4SidebarHeader("Modules"),
 
     # Dicentrics
-    bs4MyConditionalSidebarMenuItem(
+    bs4MySidebarMenuItem(
       "Fitting",
       condition = "input.experiment_select == 'dicent'",
       tabName = "tab-dicent-fitting",
       icon = "cog"
     ),
-    bs4MyConditionalSidebarMenuItem(
+    bs4MySidebarMenuItem(
       "Dose estimation",
       condition = "input.experiment_select == 'dicent'",
       tabName = "tab-dicent-estimate",
@@ -101,7 +101,7 @@ sidebar <- bs4DashMySidebar(
     ),
 
     # Translocations
-    bs4MyConditionalSidebarMenuItem(
+    bs4MySidebarMenuItem(
       condition = "input.experiment_select == 'trans'",
       HTML(
         paste(
