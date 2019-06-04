@@ -198,12 +198,21 @@ dicentFittingUI <- function(id, label) {
         br(),
         div(
           style = "display: inline-block;",
+<<<<<<< HEAD
           conditionalPanel(
             condition = "!input.use_aggr_count_data_check",
             ns = ns,
             actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
             div(class = "widget-sep", br())
           )
+=======
+        conditionalPanel(
+          condition = "!input.use_aggr_count_data_check",
+          ns = ns,
+          actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
+          div(class = "widget-sep", br())
+        )
+>>>>>>> ef0486fda5899293f3409d4e7dbe79832fbb2b03
         ),
         downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
         div(
