@@ -228,3 +228,18 @@ bs4MyModal <- function(id, title, trigger, ..., size) {
   )
   # htmltools::attachDependencies(bsTag, shinyBSDep)
 }
+
+
+# ----
+bs4MyConditionalSidebarMenuItem <- function(..., condition = NULL, tabName = NULL, icon = NULL) {
+  shiny::tags$li(class = "nav-item", shiny::tags$a(
+    `data-display-if` = condition,
+    class = "nav-link",
+    id = paste0("tab-", tabName), href = paste0(
+      "#shiny-tab-",
+      tabName
+    ), `data-toggle` = "tab", `data-value` = tabName,
+    shiny::tags$i(class = paste0("nav-icon fa fa-", icon)),
+    shiny::tags$p(...)
+  ))
+}

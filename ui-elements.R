@@ -20,23 +20,24 @@ navbar <- bs4DashMyNavbar(
   status = "white",
 
   # TODO: Fix sidebar when using this
-  # div(
-  #   style = "margin-bottom: -20px;",
-  #   selectInput(
-  #     "experiment_select",
-  #     label = NULL,
-  #     choices = c(
-  #       "Dicentrics",
-  #       "Micronuclei",
-  #       "Translocations"#,
-  #       # "H2AX",
-  #       # "Intercomparison Tests"
-  #     ),
-  #     selected = "Dicentrics",
-  #     multiple = FALSE,
-  #     selectize = TRUE
-  #   )
-  # ),
+  div(
+    style = "margin-bottom: -20px;",
+    selectInput(
+      "experiment_select",
+      label = NULL,
+      width = 175,
+      choices = c(
+        "Dicentrics",
+        "Translocations"#,
+        # "Micronuclei",
+        # "H2AX",
+        # "Intercomparison Tests"
+      ),
+      selected = "Dicentrics",
+      multiple = FALSE,
+      selectize = TRUE
+    )
+  ),
 
   # Bookmarking
   # div(
@@ -75,74 +76,33 @@ sidebar <- bs4DashMySidebar(
 
   bs4SidebarMenu(
 
-    bs4SidebarMenuItem(
+    bs4MyConditionalSidebarMenuItem(
       "About this App",
       tabName = "home",
       icon = "home"
     ),
 
     # Modules
-    # bs4SidebarHeader("Modules"),
-    #
+    bs4SidebarHeader("Modules"),
+
     # Dicentrics
-    # conditionalPanel(
-    #   condition = "input.experiment_select == 'Dicentrics'",
-    #   bs4SidebarMenuItem(
-    #     "Fitting",
-    #     tabName = "tab-dicent-fitting",
-    #     icon = "cog"
-    #   ),
-    #
-    #   bs4SidebarMenuItem(
-    #     "Dose estimation",
-    #     tabName = "tab-dicent-estimate",
-    #     icon = "calculator"
-    #   )
-    # ),
-    #
-    # Translocations
-    # conditionalPanel(
-    #   condition = "input.experiment_select == 'Translocations'",
-    #   bs4SidebarMenuItem(
-    #     "Fitting",
-    #     tabName = "tab-trans-fitting-adv",
-    #     icon = "cogs"
-    #   )
-    # ),
-
-    bs4SidebarHeader("Dicentrics"),
-
-    # TODO: implement this
-    # bs4SidebarMenuItem(
-    #   HTML(
-    #     paste(
-    #       "Characteristic limits",
-    #       bs4Badge(
-    #         "in progress",
-    #         position = "right",
-    #         status = "danger"
-    #       )
-    #     )
-    #   ),
-    #   tabName = "tab-char-limits",
-    #   icon = "chart-area"
-    # ),
-
-    bs4SidebarMenuItem(
+    bs4MyConditionalSidebarMenuItem(
       "Fitting",
+      condition = "input.experiment_select == 'Dicentrics'",
       tabName = "tab-dicent-fitting",
       icon = "cog"
     ),
-
-    bs4SidebarMenuItem(
+    bs4MyConditionalSidebarMenuItem(
       "Dose estimation",
+      condition = "input.experiment_select == 'Dicentrics'",
       tabName = "tab-dicent-estimate",
       icon = "calculator"
+      # )
     ),
 
-    bs4SidebarHeader("Translocations"),
-
-    bs4SidebarMenuItem(
+    # Translocations
+    bs4MyConditionalSidebarMenuItem(
+      condition = "input.experiment_select == 'Translocations'",
       HTML(
         paste(
           "Fitting",
