@@ -194,8 +194,17 @@ dicentFittingUI <- function(id, label) {
         div(style="height = auto;",
           rHandsontableOutput(ns("count_data_hot"))
         ),
-        # Button
+        # Buttons
         br(),
+        div(
+          style = "display: inline-block;",
+          conditionalPanel(
+            condition = "!input.use_aggr_count_data_check",
+            ns = ns,
+            actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
+            div(class = "widget-sep", br())
+          )
+        ),
         downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
         div(
           class = "side-widget-tall",
@@ -425,60 +434,89 @@ dicentFittingHotTable <- function(input, output, session, stringsAsFactors) {
       use_aggr_count_data <- input$use_aggr_count_data_check
     })
 
-    if (is.null(input$count_data_hot) || isolate(table_reset$value == 1)) {
-      table_reset$value <- 0
-      return(previous())
-    } else if (!identical(previous(), input$count_data_hot)) {
-      mytable <- as.data.frame(hot_to_r(input$count_data_hot))
-
-      if (!use_aggr_count_data) {
-        # Calculated columns
-        mytable <- mytable %>%
-          dplyr::mutate(
-            N = 0,
-            X = 0,
-            DI = 0,
-            u = 0
-          ) %>%
-          dplyr::select(D, N, X, everything())
-
-        first_dicent_index <- 4
-        last_dicent_index <- ncol(mytable) - 2
-        num_rows <- nrow(mytable)
-
-        mytable <- mytable %>%
-          dplyr::mutate(
-            D = as.numeric(D),
-            X = as.integer(X),
-            N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
-          )
-
-        # Ugly method to calculate index of dispersion
-        for (row in 1:num_rows) {
-          xf <- 0
-          x2f <- 0
-          # Calculate summatories
-          for (k in seq(0, last_dicent_index - first_dicent_index, 1)) {
-            xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
-            x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
-          }
-          # Calculate variance and mean
-          var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
-          mean <- xf / mytable[row, "N"]
-          # Save values into data frame
-          mytable[row, "X"] <- as.integer(xf)
-          mytable[row, "DI"] <- var / mean
-          mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
-        }
-      } else {
-        mytable <- mytable %>%
-          dplyr::mutate(
-            D = as.numeric(D)
-          )
-      }
-
-      return(mytable)
+    # Create button dependency for updating N, X, DI, u values
+    if (!use_aggr_count_data) {
+      input$button_upd_params
     }
+
+    isolate({
+      if (is.null(input$count_data_hot) || isolate(table_reset$value == 1)) {
+
+        table_reset$value <- 0
+        mytable <- previous()
+
+        # Initial renderization of the table
+        if (!use_aggr_count_data) {
+          # Calculated columns
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(D, N, X, everything()) %>%
+            dplyr::mutate(
+              D = as.numeric(D)
+            ) %>%
+            dplyr::mutate_at(
+              c("X", "N", grep("C", names(.), value = TRUE)),
+              as.integer
+            )
+        }
+        return(mytable)
+      } else if (!identical(previous(), input$count_data_hot)) {
+        mytable <- as.data.frame(hot_to_r(input$count_data_hot))
+
+        if (!use_aggr_count_data) {
+          # Calculated columns
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(D, N, X, everything())
+
+          first_dicent_index <- 4
+          last_dicent_index <- ncol(mytable) - 2
+          num_rows <- nrow(mytable)
+
+          mytable <- mytable %>%
+            dplyr::mutate(
+              D = as.numeric(D),
+              X = as.integer(X),
+              N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
+            )
+
+          # Ugly method to calculate index of dispersion
+          for (row in 1:num_rows) {
+            xf <- 0
+            x2f <- 0
+            # Calculate summatories
+            for (k in seq(0, last_dicent_index - first_dicent_index, 1)) {
+              xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
+              x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
+            }
+            # Calculate variance and mean
+            var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
+            mean <- xf / mytable[row, "N"]
+            # Save values into data frame
+            mytable[row, "X"] <- as.integer(xf)
+            mytable[row, "DI"] <- var / mean
+            mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
+          }
+        } else {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              D = as.numeric(D)
+            )
+        }
+
+        return(mytable)
+      }
+    })
   })
 
   # Output ----
