@@ -27,11 +27,11 @@ navbar <- bs4DashMyNavbar(
       label = NULL,
       width = 175,
       choices = c(
-        "Dicentrics",
-        "Translocations"#,
-        # "Micronuclei",
-        # "H2AX",
-        # "Intercomparison Tests"
+        "Dicentrics"            = "dicent",
+        "Translocations"        = "trans"#,
+        # "Micronuclei"           = "micro",
+        # "H2AX"                  = "h2ax",
+        # "Intercomparison Tests" = "intercomp"
       ),
       selected = "Dicentrics",
       multiple = FALSE,
@@ -88,13 +88,13 @@ sidebar <- bs4DashMySidebar(
     # Dicentrics
     bs4MyConditionalSidebarMenuItem(
       "Fitting",
-      condition = "input.experiment_select == 'Dicentrics'",
+      condition = "input.experiment_select == 'dicent'",
       tabName = "tab-dicent-fitting",
       icon = "cog"
     ),
     bs4MyConditionalSidebarMenuItem(
       "Dose estimation",
-      condition = "input.experiment_select == 'Dicentrics'",
+      condition = "input.experiment_select == 'dicent'",
       tabName = "tab-dicent-estimate",
       icon = "calculator"
       # )
@@ -102,7 +102,7 @@ sidebar <- bs4DashMySidebar(
 
     # Translocations
     bs4MyConditionalSidebarMenuItem(
-      condition = "input.experiment_select == 'Translocations'",
+      condition = "input.experiment_select == 'trans'",
       HTML(
         paste(
           "Fitting",
