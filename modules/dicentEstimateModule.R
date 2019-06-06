@@ -1265,6 +1265,30 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       }
     }
 
+    # AIC and logLik from data ----
+    AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", link = identity) {
+      loglik_from_data <- function(data, link) {
+        if (link == "identity") {
+          loglik <- - yield(data[[dose_var]]) +
+            log(yield(data[[dose_var]])) * data[[yield_var]] -
+            log(factorial(data[[yield_var]]))
+        } else if (link == "log") {
+          loglik <- - exp(yield(data[[dose_var]])) +
+            yield(data[[dose_var]]) * data[[yield_var]] -
+            log(factorial(data[[yield_var]]))
+        }
+
+        return(sum(loglik))
+      }
+
+      logLik <- loglik_from_data(data, link)
+
+      num_params <- sum(general_fit_coeffs != 0)
+      AIC <- 2 * num_params - 2 * logLik
+
+      return(AIC)
+    }
+
 
     # Dose estimation functions ----
 
@@ -1796,6 +1820,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         level = rep(c("Lower", "Estimate", "Upper"), 3)
       )
     }
+    # AIC_from_data(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield")
 
     # Rightmost limit of the plot
     max_dose <- 1.05 * est_full_doses[["dose"]] %>%
