@@ -509,9 +509,15 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           h6("Whole-body estimated dose"),
-          rHandsontableOutput(ns("est_yields_whole")),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(ns("est_yields_whole"))
+          ),
           br(),
-          rHandsontableOutput(ns("est_doses_whole")),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(ns("est_doses_whole"))
+          ),
 
           conditionalPanel(
             condition = "input.assessment_select == 'partial'",
@@ -519,13 +525,22 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
             br(),
             h6("Dose recieved by the irradiated fraction"),
-            rHandsontableOutput(ns("est_yields_partial")),
+            div(
+              style="height = auto;",
+              rHandsontableOutput(ns("est_yields_partial"))
+            ),
             br(),
-            rHandsontableOutput(ns("est_doses_partial")),
+            div(
+              style="height = auto;",
+              rHandsontableOutput(ns("est_doses_partial"))
+            ),
 
             br(),
             h6("Initial fraction of irradiated cells"),
-            rHandsontableOutput(ns("est_frac_partial"))
+            div(
+              style="height = auto;",
+              rHandsontableOutput(ns("est_frac_partial"))
+            )
           ),
 
           conditionalPanel(
@@ -534,20 +549,32 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
             br(),
             h6("Observed fraction of irradiated cells and its yield"),
-            rHandsontableOutput(ns("est_mixing_prop_hetero")),
+            div(
+              style="height = auto;",
+              rHandsontableOutput(ns("est_mixing_prop_hetero"))
+            ),
 
             br(),
             h6("Dose recieved by the irradiated fraction"),
             div(
               class = "side-widget",
-              rHandsontableOutput(ns("est_yields_hetero")),
+              div(
+                style="height = auto;",
+                rHandsontableOutput(ns("est_yields_hetero"))
+              ),
               br(),
-              rHandsontableOutput(ns("est_doses_hetero")),
+              div(
+                style="height = auto;",
+                rHandsontableOutput(ns("est_doses_hetero"))
+              ),
               br()
             ),
 
             h6("Initial fraction of irradiated cells"),
-            rHandsontableOutput(ns("est_frac_hetero"))
+            div(
+              style="height = auto;",
+              rHandsontableOutput(ns("est_frac_hetero"))
+            )
           ),
 
           # Help button

@@ -191,7 +191,8 @@ dicentFittingUI <- function(id, label) {
         width = 12,
         title = "Data input",
         status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-        div(style="height = auto;",
+        div(
+          style="height = auto;",
           rHandsontableOutput(ns("count_data_hot"))
         ),
         # Buttons
