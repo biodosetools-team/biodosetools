@@ -704,9 +704,13 @@ transFittingHotTable <- function(input, output, session, stringsAsFactors) {
     } else {
       if (!use_aggr_count_data) {
         full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+          # Force column naming
+          `colnames<-`(c("D", paste0("C", seq(0, ncol(.) - 2, 1)))) %>%
           dplyr::mutate_at(vars(starts_with("C")), as.integer)
       } else {
         full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+          # Force column naming
+          `colnames<-`(c("D", "N", "X")) %>%
           dplyr::mutate_at(c("N", "X"), as.integer)
       }
     }
