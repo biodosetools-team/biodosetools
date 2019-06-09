@@ -1872,41 +1872,65 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         linetype = "dashed"
       ) +
       # Confidence bands (Merkle, 1983)
-      geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+      geom_ribbon(
+        data = curves_data,
+        aes(x = dose, ymin = yield_low, ymax = yield_upp),
+        alpha = 0.25
+      ) +
       labs(x = "Dose (Gy)", y = "Dicentrics/cells") +
       theme_bw()
 
     # Add doses to plot
     gg_curve <- gg_curve +
       # Estimated whole-body doses
-      geom_point(data = est_full_doses,
-                 aes(x = dose, y = yield, color = type, shape = level),
-                 size = 2, na.rm = TRUE) +
-      # Confidence intervals
-      geom_point(data = data.frame(x = c(0,0), y = c(0,0), z = c("curve", "yield")),
-                 aes(x = x, y = y, fill = z),
-                 alpha = 0) +
-      scale_color_manual(
-        "Assessment",
-        values = c(
-          "Whole-body"      = "#411056",
-          "Partial"         = "#3B548B",
-          "Heterogeneous 1" = "#398E8C",
-          "Heterogeneous 2" = "#71C562"
-        )
+      geom_point(
+        data = est_full_doses,
+        aes(x = dose, y = yield, color = type, shape = level),
+        size = 2, na.rm = TRUE
       ) +
+      # Confidence intervals
+      geom_point(
+        data = data.frame(x = c(0, 0), y = c(0, 0), z = c("curve", "yield")),
+        aes(x = x, y = y, fill = z),
+        alpha = 0
+      ) +
+      # Assessment
+      scale_color_manual(
+        values = hcl(
+          h = seq(15, 375, length = 4 + 1),
+          l = 65,
+          c = 100
+        ) %>%
+          .[1:4] %>%
+          `names<-`(c("Partial", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
+        breaks = c("Whole-body", "Partial", "Heterogeneous 1", "Heterogeneous 2")
+      ) +
+      # Estimation level
+      scale_shape_manual(
+        values = c("Lower" = 15, "Estimate" = 16, "Upper" = 17),
+        breaks = c("Lower", "Estimate", "Upper")
+      ) +
+      # Confidence interval
       scale_fill_manual(
-        "Confidence interval",
         values = c("curve" = "red", "yield" = "green"),
         labels = c(
           paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
           paste0("Yield: ", round(100 * conf_int_yield, 0), "%")
         )
       ) +
-      guides(color = guide_legend(order = 1),
-             shape = guide_legend(order = 2),
-             fill = guide_legend(order = 3)) +
-      labs(color = "Assessment", shape = "Estimation", fill = "Confidence interval")
+      guides(
+        color = guide_legend(order = 1),
+        shape = guide_legend(order = 2),
+        fill = guide_legend(order = 3)
+      ) +
+      labs(color = "Assessment", shape = "Estimation", fill = "Confidence interval") +
+      # Tweak legend
+      theme(
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.spacing.y = unit(5, "points"),
+        legend.key.height = unit(12, "points")
+        )
 
     # Return list ----
 
