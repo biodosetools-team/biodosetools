@@ -1862,6 +1862,23 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
       )
 
+    # Confidence interval auxiliary data frame
+    if (assessment != "partial") {
+      conf_int_aux_df <- data.frame(
+        x = c(0, 0),
+        y = c(0, 0),
+        z = c("curve", "yield"),
+        stringsAsFactors = FALSE
+      )
+    } else {
+      conf_int_aux_df <- data.frame(
+        x = c(0, 0, 0),
+        y = c(0, 0, 0),
+        z = c("curve", "yield", "dolphin"),
+        stringsAsFactors = FALSE
+      )
+    }
+
     # Make base plot
     gg_curve <- ggplot(curves_data) +
       # Fitted curve
@@ -1890,7 +1907,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ) +
       # Confidence intervals
       geom_point(
-        data = data.frame(x = c(0, 0), y = c(0, 0), z = c("curve", "yield")),
+        data = conf_int_aux_df,
         aes(x = x, y = y, fill = z),
         alpha = 0
       ) +
@@ -1912,10 +1929,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ) +
       # Confidence interval
       scale_fill_manual(
-        values = c("curve" = "red", "yield" = "green"),
+        values = c("curve" = "red", "yield" = "green", "dolphin" = "blue"),
         labels = c(
           paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
-          paste0("Yield: ", round(100 * conf_int_yield, 0), "%")
+          paste0("Yield: ", round(100 * conf_int_yield, 0), "%"),
+          paste0("Dolphin: ", round(100 * 0.95, 0), "%")
         )
       ) +
       guides(
