@@ -702,15 +702,24 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       fit_coeffs_vec <- stats::coef(fit_results)
 
       # Model-specific statistics
-      get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, link = "identity", type = "theory") {
+      get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results,
+                                       response = "yield", link = "identity", type = "theory") {
+        # Calculate from theory or use statistics calculated by glm
         if (type == "theory") {
+          # Renormalize data if necessary
+          if (response == "yield") {
+            model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["C"]]
+            model_data[["α"]] <- model_data[["α"]] / model_data[["C"]]
+            model_data[["β"]] <- model_data[["β"]] / model_data[["C"]]
+            model_data[["C"]] <- model_data[["C"]] / model_data[["C"]]
+          }
 
           # Generalized variance-covariance matrix
           general_fit_coeffs <- numeric(length = 3L) %>%
             `names<-`(c("C", "α", "β"))
 
           for (var in names(fit_coeffs_vec)) {
-            general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]# %>% as.numeric()
+            general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
           }
 
           # Predict yield / aberrations
@@ -756,7 +765,8 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
         return(fit_model_statistics)
       }
 
-      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, link = "identity", type = "theory")
+      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results,
+                                                   response = "yield", link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion
       t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
