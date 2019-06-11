@@ -777,7 +777,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       fit_coeffs_vec <- stats::coef(fit_results)
 
       # Model-specific statistics
-      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results,
+      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
                                                    response = "yield", link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion
@@ -998,7 +998,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
       # Model-specific statistics
-      fit_model_statistics <- get_model_statistics(data_aggr, fit_coeffs_vec, fit_results,
+      fit_model_statistics <- get_model_statistics(data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
                                                    response = "yield", link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion

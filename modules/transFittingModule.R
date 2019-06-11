@@ -865,6 +865,78 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
 
     # Fitting functions ----
 
+    get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_algorithm,
+                                     response = "yield", link = "identity", type = "theory") {
+      # Calculate from theory or use statistics calculated by glm
+      if (type == "theory") {
+        # Renormalize data if necessary
+        if (response == "yield") {
+          model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["C"]]
+          model_data[["α"]] <- model_data[["α"]] / model_data[["C"]]
+          model_data[["β"]] <- model_data[["β"]] / model_data[["C"]]
+          model_data[["C"]] <- model_data[["C"]] / model_data[["C"]]
+        }
+
+        # Generalized variance-covariance matrix
+        general_fit_coeffs <- numeric(length = 3L) %>%
+          `names<-`(c("C", "α", "β"))
+
+        for (var in names(fit_coeffs_vec)) {
+          general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
+        }
+
+        # Predict yield / aberrations
+        predict_eta <- function(data, coeffs) {
+          coeffs[["C"]] * data[["C"]] +
+            coeffs[["α"]] * data[["α"]] +
+            coeffs[["β"]] * data[["β"]]
+        }
+
+        eta_sat <- model_data[["aberr"]]
+        eta <- predict_eta(model_data, general_fit_coeffs)
+
+        num_data <- length(eta_sat)
+        num_params <- sum(fit_coeffs_vec != 0)
+
+        # Calculate logLik depending on fitting link
+        if (link == "identity") {
+          logLik <- sum(log(eta) * eta_sat - eta - log(factorial(eta_sat)))
+        } else if (link == "log") {
+          logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
+        }
+
+        # Calculate model-specific statistics
+        fit_model_statistics <- cbind(
+          logLik =   logLik,
+          deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
+          df =       num_data - num_params,
+          AIC =      2 * num_params - 2 * logLik,
+          BIC =      log(num_data) * num_params - 2 * logLik
+        )
+
+      } else if (type == "raw" & fit_algorithm == "glm") {
+        # Get model-specific statistics
+        fit_model_statistics <- cbind(
+          logLik =   stats::logLik(fit_results) %>% as.numeric(),
+          deviance = stats::deviance(fit_results),
+          df =       stats::df.residual(fit_results),
+          AIC =      stats::AIC(fit_results),
+          BIC =      stats::BIC(fit_results)
+        )
+      } else if (type == "raw" & fit_algorithm == "constraint-maxlik-optimization") {
+        # Get model-specific statistics
+        fit_model_statistics <- cbind(
+          logLik =   stats::logLik(fit_results),
+          deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
+          df =       n - npar,
+          AIC =      2 * length(fit_coeffs_vec) - 2 * stats::logLik(fit_results),
+          BIC =      log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(fit_results)
+        )
+      }
+
+      return(fit_model_statistics)
+    }
+
     prepare_maxlik_count_data <- function(count_data, model_formula) {
       if (ncol(count_data) > 3) {
         # Full distribution data
@@ -1002,61 +1074,8 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
       fit_coeffs_vec <- stats::coef(fit_results)
 
       # Model-specific statistics
-      get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, link = "identity", type = "theory") {
-        if (type == "theory") {
-
-          # Generalized variance-covariance matrix
-          general_fit_coeffs <- numeric(length = 3L) %>%
-            `names<-`(c("C", "α", "β"))
-
-          for (var in names(fit_coeffs_vec)) {
-            general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]# %>% as.numeric()
-          }
-
-          # Predict yield / aberrations
-          predict_eta <- function(data, coeffs) {
-            coeffs[["C"]] * data[["C"]] +
-              coeffs[["α"]] * data[["α"]] +
-              coeffs[["β"]] * data[["β"]]
-          }
-
-          eta_sat <- model_data[["aberr"]]
-          eta <- predict_eta(model_data, general_fit_coeffs)
-
-          num_data <- length(eta_sat)
-          num_params <- sum(fit_coeffs_vec != 0)
-
-          # Calculate logLik depending on fitting link
-          if (link == "identity") {
-            logLik <- sum(log(eta) * eta_sat - eta - log(factorial(eta_sat)))
-          } else if (link == "log") {
-            logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
-          }
-
-          # Calculate model-specific statistics
-          fit_model_statistics <- cbind(
-            logLik =   logLik,
-            deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-            df =       num_data - num_params,
-            AIC =      2 * num_params - 2 * logLik,
-            BIC =      log(num_data) * num_params - 2 * logLik
-          )
-
-        } else if (type == "raw") {
-          # Get model-specific statistics
-          fit_model_statistics <- cbind(
-            logLik =   stats::logLik(fit_results) %>% as.numeric(),
-            deviance = stats::deviance(fit_results),
-            df =       stats::df.residual(fit_results),
-            AIC =      stats::AIC(fit_results),
-            BIC =      stats::BIC(fit_results)
-          )
-        }
-
-        return(fit_model_statistics)
-      }
-
-      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, link = "identity", type = "theory")
+      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
+                                                   response = "yield", link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion
       t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
@@ -1273,13 +1292,8 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
       fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
       # Model-specific statistics
-      fit_model_statistics <- cbind(
-        logLik = stats::logLik(fit_results),
-        deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
-        df = n - npar,
-        AIC = -2 * stats::logLik(fit_results) + 2 * length(fit_coeffs_vec),
-        BIC = -2 * stats::logLik(fit_results) + log(n) * length(fit_coeffs_vec)
-      )
+      fit_model_statistics <- get_model_statistics(data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
+                                                   response = "yield", link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion
       if (model_family == "poisson" | (model_family == "automatic" & fit_dispersion <= 1)) {
