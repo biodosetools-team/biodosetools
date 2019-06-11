@@ -944,7 +944,7 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
       C <- cells
       α <- cells * doses
       β <- cells * doses * doses
-      model_data <- list(C, α, β, aberr)
+      model_data <- list(C = C, α = α, β = β, aberr = aberr)
       weights <- 1 / disp
 
       # Select model formula
@@ -998,17 +998,65 @@ transFittingResults <- function(input, output, session, stringsAsFactors, fracti
       # Summarise fit
       fit_summary <- summary(fit_results, correlation = TRUE)
       fit_cor_mat <- fit_summary$correlation
-      fit_var_cov_mat <- vcov(fit_results)
+      fit_var_cov_mat <- stats::vcov(fit_results)
       fit_coeffs_vec <- stats::coef(fit_results)
 
       # Model-specific statistics
-      fit_model_statistics <- cbind(
-        logLik =   stats::logLik(fit_results) %>% as.numeric(),
-        deviance = fit_results[["deviance"]],
-        df =       fit_results[["df.residual"]],
-        AIC =      stats::AIC(fit_results),
-        BIC =      stats::BIC(fit_results)
-      )
+      get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, link = "identity", type = "theory") {
+        if (type == "theory") {
+
+          # Generalized variance-covariance matrix
+          general_fit_coeffs <- numeric(length = 3L) %>%
+            `names<-`(c("C", "α", "β"))
+
+          for (var in names(fit_coeffs_vec)) {
+            general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]# %>% as.numeric()
+          }
+
+          # Predict yield / aberrations
+          predict_eta <- function(data, coeffs) {
+            coeffs[["C"]] * data[["C"]] +
+              coeffs[["α"]] * data[["α"]] +
+              coeffs[["β"]] * data[["β"]]
+          }
+
+          eta_sat <- model_data[["aberr"]]
+          eta <- predict_eta(model_data, general_fit_coeffs)
+
+          num_data <- length(eta_sat)
+          num_params <- sum(fit_coeffs_vec != 0)
+
+          # Calculate logLik depending on fitting link
+          if (link == "identity") {
+            logLik <- sum(log(eta) * eta_sat - eta - log(factorial(eta_sat)))
+          } else if (link == "log") {
+            logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
+          }
+
+          # Calculate model-specific statistics
+          fit_model_statistics <- cbind(
+            logLik =   logLik,
+            deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
+            df =       num_data - num_params,
+            AIC =      2 * num_params - 2 * logLik,
+            BIC =      log(num_data) * num_params - 2 * logLik
+          )
+
+        } else if (type == "raw") {
+          # Get model-specific statistics
+          fit_model_statistics <- cbind(
+            logLik =   stats::logLik(fit_results) %>% as.numeric(),
+            deviance = stats::deviance(fit_results),
+            df =       stats::df.residual(fit_results),
+            AIC =      stats::AIC(fit_results),
+            BIC =      stats::BIC(fit_results)
+          )
+        }
+
+        return(fit_model_statistics)
+      }
+
+      fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, link = "identity", type = "theory")
 
       # Correct p-values depending on model dispersion
       t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
