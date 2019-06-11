@@ -243,7 +243,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           noPadding = TRUE,
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          rHandsontableOutput(ns("case_data_hot"))
+          rHandsontableOutput(ns("case_data_hot")),
+          # Button
+          br(),
+          actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
         ),
 
         # Card: Estimation options ----
@@ -738,10 +741,30 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
   changed_data <- reactive({
     # Create button dependency for updating dimensions
     input$button_upd_table
+    input$button_upd_params
 
+    isolate({
     if (is.null(input$case_data_hot) || isolate(table_reset$value == 1)) {
       table_reset$value <- 0
-      return(previous())
+      # return(previous())
+      mytable <- previous()
+
+      # Initial renderization of the table
+      mytable <- mytable %>%
+        dplyr::mutate(
+          N = 0,
+          X = 0,
+          y = 0,
+          y_err = 0,
+          DI = 0,
+          u = 0
+        ) %>%
+        dplyr::select(N, X, everything()) %>%
+        dplyr::mutate_at(
+          c("X", "N", grep("C", names(.), value = TRUE)),
+          as.integer
+        )
+
     } else if (!identical(previous(), input$case_data_hot)) {
       mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
@@ -755,7 +778,6 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
           DI = 0,
           u = 0
         ) %>%
-        # select(D, N, X, everything())
         dplyr::select(N, X, everything())
 
       first_dicent_index <- 3
@@ -765,7 +787,6 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
       mytable <- mytable %>%
         dplyr::mutate(
-          # D = as.numeric(D),
           X = as.integer(X),
           N = as.integer(rowSums(.[first_dicent_index:last_dicent_index]))
         )
@@ -792,6 +813,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
 
       return(mytable)
     }
+    })
   })
 
   # Output ----
@@ -1293,22 +1315,23 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     }
 
     # AIC and logLik from data ----
-    AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", link = identity) {
-      loglik_from_data <- function(data, link) {
-        if (link == "identity") {
+    AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
+
+      # Manual log-likelihood function
+      loglik_from_data <- function(data, fit_link) {
+        if (fit_link == "identity") {
           loglik <- - yield(data[[dose_var]]) +
             log(yield(data[[dose_var]])) * data[[yield_var]] -
             log(factorial(data[[yield_var]]))
-        } else if (link == "log") {
+        } else if (fit_link == "log") {
           loglik <- - exp(yield(data[[dose_var]])) +
             yield(data[[dose_var]]) * data[[yield_var]] -
             log(factorial(data[[yield_var]]))
         }
-
         return(sum(loglik))
       }
 
-      logLik <- loglik_from_data(data, link)
+      logLik <- loglik_from_data(data, fit_link)
 
       num_params <- sum(general_fit_coeffs != 0)
       AIC <- 2 * num_params - 2 * logLik
