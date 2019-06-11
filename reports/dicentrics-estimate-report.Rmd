@@ -92,7 +92,7 @@ case_data %>%
 
 ## Dose estimation results
 
-`r if (TRUE) {"### Whole-body estimated dose"}`
+`r if (TRUE) {"### Whole-body exposure estimation"}`
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
@@ -119,9 +119,9 @@ if (TRUE) {
 } 
 ```
 
-`r if (assessment == "partial") {"### Dose recieved by the irradiated fraction"}`
+`r if (assessment == "partial-body") {"### Partial-body exposure estimation"}`
 ```{r echo=FALSE}
-if (assessment == "partial") {
+if (assessment == "partial-body") {
   est_doses_partial %>%
       dplyr::select(yield) %>%
       t() %>%
@@ -138,7 +138,7 @@ if (assessment == "partial") {
 ```
 
 ```{r echo=FALSE}
-if (assessment == "partial") {
+if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
@@ -154,9 +154,9 @@ if (assessment == "partial") {
 } 
 ```
 
-`r if (assessment == "partial") {"### Initial fraction of irradiated cells"}`
+`r if (assessment == "partial-body") {"### Initial fraction of irradiated cells"}`
 ```{r echo=FALSE}
-if (assessment == "partial") {
+if (assessment == "partial-body") {
   est_frac_partial %>%
       t() %>%
       as.data.frame() %>%
@@ -186,7 +186,7 @@ if (assessment == "hetero") {
 }
 ```
 
-`r if (assessment == "hetero") {"### Dose recieved by the irradiated fraction"}`
+`r if (assessment == "hetero") {"### Heterogeneous exposure estimation"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_yields_hetero %>%
