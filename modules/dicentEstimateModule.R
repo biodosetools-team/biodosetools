@@ -280,8 +280,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               label = "Assessment",
               width = "175px",
               choices = list(
-                "Whole body"    = "whole-body",
-                "Partial"       = "partial",
+                "Whole-body"    = "whole-body",
+                "Partial-body"  = "partial-body",
                 "Heterogeneous" = "hetero"
               ),
               selected = "whole-body"
@@ -293,7 +293,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           div(
             style = "display: inline-block;",
             conditionalPanel(
-              condition = "input.assessment_select != 'partial'",
+              condition = "input.assessment_select != 'partial-body'",
               ns = ns,
 
               div(
@@ -314,7 +314,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
             # Partial method selection
             conditionalPanel(
-              condition = "input.assessment_select == 'partial'",
+              condition = "input.assessment_select == 'partial-body'",
               ns = ns,
 
               div(
@@ -511,7 +511,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           title = "Results",
           status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          h6("Whole-body estimated dose"),
+          h6("Whole-body exposure estimation"),
           div(
             style="height = auto;",
             rHandsontableOutput(ns("est_yields_whole"))
@@ -523,11 +523,11 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           ),
 
           conditionalPanel(
-            condition = "input.assessment_select == 'partial'",
+            condition = "input.assessment_select == 'partial-body'",
             ns = ns,
 
             br(),
-            h6("Dose recieved by the irradiated fraction"),
+            h6("Partial-body exposure estimation"),
             div(
               style="height = auto;",
               rHandsontableOutput(ns("est_yields_partial"))
@@ -558,7 +558,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
 
             br(),
-            h6("Dose recieved by the irradiated fraction"),
+            h6("Heterogeneous exposure estimation"),
             div(
               class = "side-widget",
               div(
@@ -1112,7 +1112,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     })
 
     # Get error/calculation method
-    if (assessment != "partial") {
+    if (assessment != "partial-body") {
       curve_method <- input$curve_method_select
     } else {
       curve_method <- input$partial_method_select
@@ -1823,7 +1823,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       case_data, conf_int_yield,
       conf_int_curve, protracted_g_value
     )
-    if (assessment == "partial") {
+    if (assessment == "partial-body") {
       # Calculate partial results
       results_partial <- estimate_partial_dolphin(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
@@ -1855,11 +1855,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         type =  c(rep("Whole-body", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 1)
       )
-    } else if (assessment == "partial") {
+    } else if (assessment == "partial-body") {
       est_full_doses <- data.frame(
         dose =  c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
         yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
-        type =  c(rep("Whole-body", 3), rep("Partial", 3)),
+        type =  c(rep("Whole-body", 3), rep("Partial-body", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 2)
       )
     } else if (assessment == "hetero") {
@@ -1886,7 +1886,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
 
     # Confidence interval auxiliary data frame
-    if (assessment != "partial") {
+    if (assessment != "partial-body") {
       conf_int_aux_df <- data.frame(
         x = c(0, 0),
         y = c(0, 0),
@@ -1942,8 +1942,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           c = 100
         ) %>%
           .[1:4] %>%
-          `names<-`(c("Partial", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
-        breaks = c("Whole-body", "Partial", "Heterogeneous 1", "Heterogeneous 2")
+          `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
+        breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2")
       ) +
       # Estimation level
       scale_shape_manual(
@@ -1999,7 +1999,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       case_description = input$case_description,
       results_comments = input$results_comments
     )
-    if (assessment == "partial") {
+    if (assessment == "partial-body") {
       # Partial
       est_results_list[["est_doses_partial"]] <- est_doses_partial
       est_results_list[["est_frac_partial"]] <- est_frac_partial
@@ -2056,7 +2056,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_yields_partial <- renderRHandsontable({
     # Estimated recieved doses (partial)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(yield) %>%
       t() %>%
@@ -2073,7 +2073,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_doses_partial <- renderRHandsontable({
     # Estimated recieved doses (partial)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(dose) %>%
       t() %>%
@@ -2090,7 +2090,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
 
   output$est_frac_partial <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose dose1 (partial)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial") return(NULL)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_frac_partial"]] %>%
       t() %>%
       as.data.frame() %>%
