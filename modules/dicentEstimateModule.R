@@ -118,7 +118,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
       ),
       # tabCard: Curve fitting overview ----
 
-      bs4TabCard(
+      bs4MyTabCard(
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
@@ -2034,12 +2034,31 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     assessment <- input$assessment_select
 
     if (assessment == "whole-body") {
-      bs4TabCard(
+      bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
         solidHeader = TRUE,
         closable = FALSE,
+        noPadding = TRUE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            session$ns("help_dose_mixed_yields"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+          # Help modal
+          bs4MyModal(
+            id = session$ns("help_dose_mixed_yields_dialog"),
+            title = "Help: Partial and heterogeneous exposures",
+            trigger = session$ns("help_dose_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          )
+        ),
 
         bs4TabPanel(
           tabName = "Whole-body",
@@ -2057,12 +2076,31 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         )
       )
     } else if (assessment == "partial-body") {
-      bs4TabCard(
+      bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
         solidHeader = TRUE,
         closable = FALSE,
+        noPadding = TRUE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            session$ns("help_dose_mixed_yields"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+          # Help modal
+          bs4MyModal(
+            id = session$ns("help_dose_mixed_yields_dialog"),
+            title = "Help: Partial and heterogeneous exposures",
+            trigger = session$ns("help_dose_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          )
+        ),
 
         bs4TabPanel(
           tabName = "Whole-body",
@@ -2100,12 +2138,31 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         )
       )
     } else if (assessment == "hetero") {
-      bs4TabCard(
+      bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
         solidHeader = TRUE,
         closable = FALSE,
+        noPadding = TRUE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            session$ns("help_dose_mixed_yields"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+          # Help modal
+          bs4MyModal(
+            id = session$ns("help_dose_mixed_yields_dialog"),
+            title = "Help: Partial and heterogeneous exposures",
+            trigger = session$ns("help_dose_mixed_yields"),
+            size = "large",
+            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          )
+        ),
 
         bs4TabPanel(
           tabName = "Whole-body",

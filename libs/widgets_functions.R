@@ -59,7 +59,7 @@ bs4DashMyNavbar <- function(..., skin = "light", status = "white", border = TRUE
         href = "#", shiny::icon(sidebarIcon)
       )
     ), leftUi),
-    ...#,
+    ... # ,
     # shiny::tags$ul(
     #   class = "navbar-nav ml-auto", rightUi,
     #   shiny::tags$li(class = "nav-item", shiny::tags$a(
@@ -82,11 +82,11 @@ bs4DashMyNavbar <- function(..., skin = "light", status = "white", border = TRUE
 # Function: bs4MyCard----
 
 bs4MyCard <- function(..., title = NULL, footer = NULL, status = NULL, elevation = NULL,
-         solidHeader = FALSE, headerBorder = TRUE, gradientColor = NULL,
-         width = 6, height = NULL, collapsible = TRUE, collapsed = FALSE,
-         closable = TRUE, labelStatus = NULL, labelText = NULL, labelTooltip = NULL,
-         dropdownMenu = NULL, dropdownIcon = "wrench", overflow = FALSE,
-         topButton = NULL, noPadding = FALSE) {
+                      solidHeader = FALSE, headerBorder = TRUE, gradientColor = NULL,
+                      width = 6, height = NULL, collapsible = TRUE, collapsed = FALSE,
+                      closable = TRUE, labelStatus = NULL, labelText = NULL, labelTooltip = NULL,
+                      dropdownMenu = NULL, dropdownIcon = "wrench", overflow = FALSE,
+                      topButton = NULL, noPadding = FALSE) {
   cardCl <- if (!is.null(gradientColor)) {
     paste0("card bg-", gradientColor, "-gradient")
   }
@@ -184,12 +184,127 @@ bs4MyCard <- function(..., title = NULL, footer = NULL, status = NULL, elevation
     bodyTag, footerTag
   )
   shiny::tags$div(class = if (!is.null(width)) {
-      paste0("col-sm-", width)
-    }, style = if (noPadding) {
-      "padding: 0!important"
-    },  cardTag
-  )
+    paste0("col-sm-", width)
+  }, style = if (noPadding) {
+    "padding: 0!important"
+  }, cardTag)
 }
+
+# Function: bs4MytabCard ----
+bs4MyTabCard <- function(..., id, title = NULL, status = NULL, elevation = NULL,
+                         solidHeader = FALSE, headerBorder = TRUE, gradientColor = NULL,
+                         tabStatus = NULL, width = 6, height = NULL, collapsible = TRUE,
+                         collapsed = FALSE, closable = TRUE, side = c("left", "right"),
+                         topButton = NULL, noPadding = FALSE) {
+  found_active <- FALSE
+  side <- match.arg(side)
+  tabCardCl <- if (!is.null(gradientColor)) {
+    paste0("card bg-", gradientColor, "-gradient")
+  }
+  else {
+    if (is.null(status)) {
+      "card card-default"
+    }
+    else {
+      if (isTRUE(solidHeader)) {
+        paste0("card card-outline card-", status)
+      }
+      else {
+        paste0("card card-", status)
+      }
+    }
+  }
+  if (isTRUE(collapsible) & isTRUE(collapsed)) {
+    tabCardCl <- paste0(tabCardCl, " collapsed-card")
+  }
+  if (!is.null(elevation)) {
+    tabCardCl <- paste0(tabCardCl, " elevation-", elevation)
+  }
+  if (isTRUE(closable) | isTRUE(collapsible)) {
+    cardToolTag <- shiny::tags$div(
+      class = "tools pt-3 pb-3 pr-2 mr-2",
+      if (!is.null(topButton)) {
+        shiny::tags$div(
+          class = "btn-group",
+          style = "margin-top: -3px;",
+          topButton
+        )
+      }, if (isTRUE(collapsible)) {
+        collapseIcon <- if (collapsed) {
+          "plus"
+        } else {
+          "minus"
+        }
+        shiny::tags$button(
+          type = "button", class = "btn btn-tool pb-0 pt-0",
+          `data-widget` = "collapse", shiny::icon(collapseIcon)
+        )
+      }, if (isTRUE(closable)) {
+        shiny::tags$button(
+          type = "button", class = "btn btn-tool pb-0 pt-0",
+          `data-widget` = "remove", shiny::tags$i(class = "fa fa-times")
+        )
+      }
+    )
+  }
+  else {
+    cardToolTag <- shiny::tags$div()
+  }
+  tabMenu <- bs4TabSetPanel(..., id = id, side = side, tabStatus = tabStatus)[[2]]
+  if (is.null(title) & (isTRUE(closable) | isTRUE(collapsible))) {
+    title <- ""
+  }
+  headerTag <- shiny::tags$div(class = if (isTRUE(headerBorder)) {
+    "card-header d-flex p-0"
+  } else {
+    "card-header d-flex p-0 no-border"
+  }, if (side == "right") {
+    shiny::tagList(if (!is.null(title)) {
+      shiny::tags$h3(class = "card-title p-3", title)
+    } else {
+      NULL
+    }, tabMenu)
+  }
+  else {
+    shiny::tagList(tabMenu, if (!is.null(title)) {
+      shiny::tags$h3(
+        class = "card-title p-3 ml-auto",
+        title
+      )
+    } else {
+      NULL
+    })
+  })
+  headerTag <- if (!is.null(title)) {
+    shiny::tagAppendChild(headerTag, cardToolTag)
+  }
+  panelContent <- bs4TabSetPanel(...,
+    id = id, side = side,
+    tabStatus = tabStatus
+  )[c(1, 3)]
+  bodyTag <- shiny::tags$div(
+    class = "card-body", style = "overflow-y: auto;",
+    panelContent
+  )
+  style <- NULL
+  if (!is.null(height)) {
+    style <- paste0("height: ", shiny::validateCssUnit(height))
+  }
+  tabCardTag <- shiny::tags$div(class = tabCardCl, style = if (!is.null(style)) {
+    style
+  })
+  tabCardTag <- shiny::tagAppendChildren(
+    tabCardTag, headerTag,
+    bodyTag
+  )
+  # shiny::tags$div(class = paste0("col-sm-", width), tabCardTag)
+  shiny::tags$div(class = if (!is.null(width)) {
+    paste0("col-sm-", width)
+  }, style = if (noPadding) {
+    "padding: 0!important"
+  }, tabCardTag)
+}
+
 
 
 # Function: bs4MyModal ----
@@ -218,7 +333,7 @@ bs4MyModal <- function(id, title, trigger, ..., size) {
         ),
         shiny::tags$h4(class = "modal-title", title)
       ),
-      shiny::tags$div(class = "modal-body", list(...))#,
+      shiny::tags$div(class = "modal-body", list(...)) # ,
       # shiny::tags$div(class = "modal-footer", shiny::tags$button(
       #   type = "button",
       #   class = "btn btn-default", `data-dismiss` = "modal",
