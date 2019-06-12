@@ -624,20 +624,20 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
       } else if (type == "raw" & fit_algorithm == "glm") {
         # Get model-specific statistics
         fit_model_statistics <- cbind(
-          logLik =   stats::logLik(fit_results) %>% as.numeric(),
-          deviance = stats::deviance(fit_results),
-          df =       stats::df.residual(fit_results),
-          AIC =      stats::AIC(fit_results),
-          BIC =      stats::BIC(fit_results)
+          logLik =   stats::logLik(glm_results) %>% as.numeric(),
+          deviance = stats::deviance(glm_results),
+          df =       stats::df.residual(glm_results),
+          AIC =      stats::AIC(glm_results),
+          BIC =      stats::BIC(glm_results)
         )
       } else if (type == "raw" & fit_algorithm == "constraint-maxlik-optimization") {
         # Get model-specific statistics
         fit_model_statistics <- cbind(
-          logLik =   stats::logLik(fit_results),
+          logLik =   stats::logLik(glm_results),
           deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
           df =       n - npar,
-          AIC =      2 * length(fit_coeffs_vec) - 2 * stats::logLik(fit_results),
-          BIC =      log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(fit_results)
+          AIC =      2 * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results),
+          BIC =      log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results)
         )
       }
 
@@ -785,7 +785,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
 
       # Model-specific statistics
       fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
-                                                   response = "yield", link = "identity", type = "theory")
+                                                   response = "yield", link = "identity", type = "raw")
 
       # Correct p-values depending on model dispersion
       t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
