@@ -116,7 +116,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # tabBox: Curve fitting overview ----
+      # tabCard: Curve fitting overview ----
 
       bs4TabCard(
         id = ns("fit_results_tabs"),
@@ -502,101 +502,103 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # Card: Estimation results ----
+      # tabCard: Estimation results ----
       column(
         width = 6,
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Results",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        uiOutput(ns("estimate_results_ui")),
+        # bs4MyCard(
+        #   width = 12,
+        #   noPadding = TRUE,
+        #   title = "Results",
+        #   status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        #
+        #   # h6("Whole-body exposure estimation"),
+        #   # div(
+        #   #   style="height = auto;",
+        #   #   rHandsontableOutput(ns("est_yields_whole"))
+        #   # ),
+        #   # br(),
+        #   # div(
+        #   #   style="height = auto;",
+        #   #   rHandsontableOutput(ns("est_doses_whole"))
+        #   # ),
+        #
+        #   # conditionalPanel(
+        #   #   condition = "input.assessment_select == 'partial-body'",
+        #   #   ns = ns,
+        #   #
+        #   #   br(),
+        #   #   h6("Partial-body exposure estimation"),
+        #   #   div(
+        #   #     style="height = auto;",
+        #   #     rHandsontableOutput(ns("est_yields_partial"))
+        #   #   ),
+        #   #   br(),
+        #   #   div(
+        #   #     style="height = auto;",
+        #   #     rHandsontableOutput(ns("est_doses_partial"))
+        #   #   ),
+        #   #
+        #   #   br(),
+        #   #   h6("Initial fraction of irradiated cells"),
+        #   #   div(
+        #   #     style="height = auto;",
+        #   #     rHandsontableOutput(ns("est_frac_partial"))
+        #   #   )
+        #   # ),
+        #   #
+        #   # conditionalPanel(
+        #   #   condition = "input.assessment_select == 'hetero'",
+        #   #   ns = ns,
+        #   #
+        #   #   br(),
+        #   #   h6("Observed fraction of irradiated cells and its yield"),
+        #   #   div(
+        #   #     style="height = auto;",
+        #   #     rHandsontableOutput(ns("est_mixing_prop_hetero"))
+        #   #   ),
+        #   #
+        #   #   br(),
+        #   #   h6("Heterogeneous exposure estimation"),
+        #   #   div(
+        #   #     class = "side-widget",
+        #   #     div(
+        #   #       style="height = auto;",
+        #   #       rHandsontableOutput(ns("est_yields_hetero"))
+        #   #     ),
+        #   #     br(),
+        #   #     div(
+        #   #       style="height = auto;",
+        #   #       rHandsontableOutput(ns("est_doses_hetero"))
+        #   #     ),
+        #   #     br()
+        #   #   ),
+        #   #
+        #   #   h6("Initial fraction of irradiated cells"),
+        #   #   div(
+        #   #     style="height = auto;",
+        #   #     rHandsontableOutput(ns("est_frac_hetero"))
+        #   #   )
+        #   # ),
+        #
+        #   # Help button
+        #   topButton =
+        #     bsButton(
+        #       ns("help_dose_mixed_yields"),
+        #       label = "",
+        #       icon = icon("question"),
+        #       style = "default", size = "default"
+        #     ),
+        #   # Help modal
+        #   bs4MyModal(
+        #     id = ns("help_dose_mixed_yields_dialog"),
+        #     title = "Help: Partial and heterogeneous exposures",
+        #     trigger = ns("help_dose_mixed_yields"),
+        #     size = "large",
+        #     withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+        #   )
+        # ),
 
-          h6("Whole-body exposure estimation"),
-          div(
-            style="height = auto;",
-            rHandsontableOutput(ns("est_yields_whole"))
-          ),
-          br(),
-          div(
-            style="height = auto;",
-            rHandsontableOutput(ns("est_doses_whole"))
-          ),
-
-          conditionalPanel(
-            condition = "input.assessment_select == 'partial-body'",
-            ns = ns,
-
-            br(),
-            h6("Partial-body exposure estimation"),
-            div(
-              style="height = auto;",
-              rHandsontableOutput(ns("est_yields_partial"))
-            ),
-            br(),
-            div(
-              style="height = auto;",
-              rHandsontableOutput(ns("est_doses_partial"))
-            ),
-
-            br(),
-            h6("Initial fraction of irradiated cells"),
-            div(
-              style="height = auto;",
-              rHandsontableOutput(ns("est_frac_partial"))
-            )
-          ),
-
-          conditionalPanel(
-            condition = "input.assessment_select == 'hetero'",
-            ns = ns,
-
-            br(),
-            h6("Observed fraction of irradiated cells and its yield"),
-            div(
-              style="height = auto;",
-              rHandsontableOutput(ns("est_mixing_prop_hetero"))
-            ),
-
-            br(),
-            h6("Heterogeneous exposure estimation"),
-            div(
-              class = "side-widget",
-              div(
-                style="height = auto;",
-                rHandsontableOutput(ns("est_yields_hetero"))
-              ),
-              br(),
-              div(
-                style="height = auto;",
-                rHandsontableOutput(ns("est_doses_hetero"))
-              ),
-              br()
-            ),
-
-            h6("Initial fraction of irradiated cells"),
-            div(
-              style="height = auto;",
-              rHandsontableOutput(ns("est_frac_hetero"))
-            )
-          ),
-
-          # Help button
-          topButton =
-            bsButton(
-              ns("help_dose_mixed_yields"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-          # Help modal
-          bs4MyModal(
-            id = ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial and heterogeneous exposures",
-            trigger = ns("help_dose_mixed_yields"),
-            size = "large",
-            withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
-          )
-        ),
 
         # Card: Export data and results ----
         bs4MyCard(
@@ -2027,7 +2029,137 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     return(est_results_list)
   })
 
+  # renderUI: Estimare results tabCard ----
+  output$estimate_results_ui <- renderUI({
+    assessment <- input$assessment_select
+
+    if (assessment == "whole-body") {
+      bs4TabCard(
+        id = "estimate_results_tabs",
+        width = 12,
+        side = "left",
+        solidHeader = TRUE,
+        closable = FALSE,
+
+        bs4TabPanel(
+          tabName = "Whole-body",
+          active = TRUE,
+          h6("Whole-body exposure estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_yields_whole"))
+          ),
+          br(),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_doses_whole"))
+          )
+        )
+      )
+    } else if (assessment == "partial-body") {
+      bs4TabCard(
+        id = "estimate_results_tabs",
+        width = 12,
+        side = "left",
+        solidHeader = TRUE,
+        closable = FALSE,
+
+        bs4TabPanel(
+          tabName = "Whole-body",
+          active = TRUE,
+          h6("Whole-body exposure estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_yields_whole"))
+          ),
+          br(),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_doses_whole"))
+          )
+        ),
+        bs4TabPanel(
+          tabName = "Partial-body",
+          h6("Partial-body exposure estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_yields_partial"))
+          ),
+          br(),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_doses_partial"))
+          ),
+
+          br(),
+          h6("Initial fraction of irradiated cells"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_frac_partial"))
+          )
+        )
+      )
+    } else if (assessment == "hetero") {
+      bs4TabCard(
+        id = "estimate_results_tabs",
+        width = 12,
+        side = "left",
+        solidHeader = TRUE,
+        closable = FALSE,
+
+        bs4TabPanel(
+          tabName = "Whole-body",
+          active = TRUE,
+          h6("Whole-body exposure estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_yields_whole"))
+          ),
+          br(),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_doses_whole"))
+          )
+        ),
+        bs4TabPanel(
+          tabName = "Heterogeneous",
+          h6("Observed fraction of irradiated cells and its yield"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
+          ),
+
+          br(),
+          h6("Heterogeneous exposure estimation"),
+          div(
+            class = "side-widget",
+            div(
+              style="height = auto;",
+              rHandsontableOutput(session$ns("est_yields_hetero"))
+            ),
+            br(),
+            div(
+              style="height = auto;",
+              rHandsontableOutput(session$ns("est_doses_hetero"))
+            ),
+            br()
+          ),
+
+          h6("Initial fraction of irradiated cells"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("est_frac_hetero"))
+          )
+        )
+      )
+    } else {
+      return(NULL)
+    }
+  })
+
+
   # Results outputs ----
+
   output$est_yields_whole <- renderRHandsontable({
     # Estimated recieved doses (whole-body)
     if (input$button_estimate <= 0) return(NULL)
@@ -2171,6 +2303,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       data()[["gg_curve"]]
     }
   )
+
 
   # Export plot ----
   output$save_plot <- downloadHandler(
