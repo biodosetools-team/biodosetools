@@ -14,6 +14,52 @@ dicentFittingUI <- function(id, label) {
         width = 6,
         title = "Data input options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_count_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_count_data_dialog"),
+            title = "Help: Count data input",
+            trigger = ns("help_count_data"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_count_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input"    = "manual",
+                "Load data"       = "load",
+                "Aggregated data" = "aggr"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'manual'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_count_data_input.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'load'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_count_data_load.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'aggr'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_count_data_aggregated.md"))
+            )
+          )
+        ),
+
         fluidRow(
           column(
             width = 12,
@@ -61,50 +107,6 @@ dicentFittingUI <- function(id, label) {
             "bottom",
             options = list(container = "body")
           )
-        ),
-
-        # Help button
-        topButton =
-          bsButton(
-            ns("help_count_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-        # Help modal
-        bs4MyModal(
-          id = ns("help_count_data_dialog"),
-          title = "Help: Count data input",
-          trigger = ns("help_count_data"),
-          size = "large",
-
-          # Option selection
-          radioGroupButtons(
-            inputId = ns("help_count_data_option"),
-            label = NULL,
-            choices = c(
-              "Manual input"    = "manual",
-              "Load data"       = "load",
-              "Aggregated data" = "aggr"
-            )
-          ),
-          # Contents
-          conditionalPanel(
-            condition = "input.help_count_data_option == 'manual'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_count_data_input.md"))
-          ),
-          conditionalPanel(
-            condition = "input.help_count_data_option == 'load'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_count_data_load.md"))
-          ),
-          conditionalPanel(
-            condition = "input.help_count_data_option == 'aggr'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_count_data_aggregated.md"))
-          )
         )
       ),
 
@@ -113,6 +115,46 @@ dicentFittingUI <- function(id, label) {
         width = 6,
         title = "Fitting options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_fitting_options"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help Modal
+          bs4MyModal(
+            id = ns("help_fitting_options_dialog"),
+            title = "Help: Fitting options",
+            trigger = ns("help_fitting_options"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_fitting_options_option"),
+              label = NULL,
+              choices = c(
+                "Fitting formula" = "formula",
+                "Fitting model"   = "model"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'formula'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fitting_options_formula.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'model'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fitting_options_model.md"))
+            )
+          )
+        ),
+
         fluidRow(
           column(
             width = 12,
@@ -143,43 +185,6 @@ dicentFittingUI <- function(id, label) {
               ),
               selected = "automatic"
             )
-          )
-        ),
-        # Help button
-        topButton =
-          bsButton(
-            ns("help_fitting_options"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-        # Help Modal
-        bs4MyModal(
-          id = ns("help_fitting_options_dialog"),
-          title = "Help: Fitting options",
-          trigger = ns("help_fitting_options"),
-          size = "large",
-
-          # Option selection
-          radioGroupButtons(
-            inputId = ns("help_fitting_options_option"),
-            label = NULL,
-            choices = c(
-              "Fitting formula" = "formula",
-              "Fitting model"   = "model"
-            )
-          ),
-          # Contents
-          conditionalPanel(
-            condition = "input.help_fitting_options_option == 'formula'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_fitting_options_formula.md"))
-          ),
-          conditionalPanel(
-            condition = "input.help_fitting_options_option == 'model'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_fitting_options_model.md"))
           )
         )
       )
@@ -226,7 +231,7 @@ dicentFittingUI <- function(id, label) {
     fluidRow(
       column(
         width = 6,
-        # tabBox: Fit results ----
+        # tabCard: Fit results ----
         div(
           # Ugly fix for inner fluidRow() padding
           style = "margin-left: -7.5px; margin-right: -7.5px",
@@ -272,6 +277,46 @@ dicentFittingUI <- function(id, label) {
           noPadding = TRUE,
           title = "Export results",
           status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          topButton = div(
+            # Help button
+            bsButton(
+              ns("help_fit_data_save"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+            # Help Modal
+            bs4MyModal(
+              id = ns("help_fit_data_save_dialog"),
+              title = "Help: Export results",
+              trigger = ns("help_fit_data_save"),
+              size = "large",
+
+              # Option selection
+              radioGroupButtons(
+                inputId = ns("help_fit_data_save_option"),
+                label = NULL,
+                choices = c(
+                  "Fitting results" = "data",
+                  "Report"          = "report"
+                )
+              ),
+              # Contents
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'data'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+              ),
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'report'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+              )
+            )
+          ),
+
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
           div(
@@ -286,45 +331,7 @@ dicentFittingUI <- function(id, label) {
           ),
           # Download report
           div(class = "widget-sep", br()),
-          downloadButton(ns("save_report"), class = "export-button", "Download report"),
-
-          # Help button
-          topButton =
-            bsButton(
-              ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-          # Help Modal
-          bs4MyModal(
-            id = ns("help_fit_data_save_dialog"),
-            title = "Help: Export results",
-            trigger = ns("help_fit_data_save"),
-            size = "large",
-
-            # Option selection
-            radioGroupButtons(
-              inputId = ns("help_fit_data_save_option"),
-              label = NULL,
-              choices = c(
-                "Fitting results" = "data",
-                "Report"          = "report"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_fit_data_save_option == 'data'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_fit_data_save.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_fit_data_save_option == 'report'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
-            )
-          )
+          downloadButton(ns("save_report"), class = "export-button", "Download report")
 
         )
       ),

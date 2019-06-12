@@ -1951,10 +1951,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
-        side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
         noPadding = TRUE,
+        side = "left",
+        solidHeader = TRUE, closable = FALSE,
 
         topButton = div(
           # Help button
@@ -1993,10 +1992,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
-        side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
         noPadding = TRUE,
+        side = "left",
+        solidHeader = TRUE, closable = FALSE,
 
         topButton = div(
           # Help button
@@ -2055,10 +2053,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       bs4MyTabCard(
         id = "estimate_results_tabs",
         width = 12,
-        side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
         noPadding = TRUE,
+        side = "left",
+        solidHeader = TRUE, closable = FALSE,
 
         topButton = div(
           # Help button
