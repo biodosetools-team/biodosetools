@@ -15,6 +15,46 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
         width = 5,
         title = "Curve fitting data options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_fit_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_fit_data_dialog"),
+            title = "Help: Fitting data input",
+            trigger = ns("help_fit_data"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_fit_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input" = "manual",
+                "Load data"    = "load"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fit_data_option == 'manual'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_input.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_fit_data_option == 'load'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_load.md"))
+            )
+          )
+        ),
+
         fluidRow(
           column(
             width = 12,
@@ -76,44 +116,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                     "bottom",
                     options = list(container = "body")
           )
-        ),
-
-        # Help button
-        topButton =
-          bsButton(
-            ns("help_fit_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-        # Help modal
-        bs4MyModal(
-          id = ns("help_fit_data_dialog"),
-          title = "Help: Fitting data input",
-          trigger = ns("help_fit_data"),
-          size = "large",
-
-          # Option selection
-          radioGroupButtons(
-            inputId = ns("help_fit_data_option"),
-            label = NULL,
-            choices = c(
-              "Manual input" = "manual",
-              "Load data"    = "load"
-            )
-          ),
-          # Contents
-          conditionalPanel(
-            condition = "input.help_fit_data_option == 'manual'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_fit_data_input.md"))
-          ),
-          conditionalPanel(
-            condition = "input.help_fit_data_option == 'load'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_fit_data_load.md"))
-          )
         )
       ),
       # tabCard: Curve fitting overview ----
@@ -160,6 +162,46 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
         width = 5,
         title = "Data input options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_cases_data"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_cases_data_dialog"),
+            title = "Help: Cases data input",
+            trigger = ns("help_cases_data"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_cases_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input" = "manual",
+                "Load data"    = "load"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'manual'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_cases_data_input.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'load'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_cases_data_load.md"))
+            )
+          )
+        ),
+
         fluidRow(
           column(
             width = 12,
@@ -195,44 +237,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                     "bottom",
                     options = list(container = "body")
           )
-        ),
-
-        # Help button
-        topButton =
-          bsButton(
-            ns("help_cases_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-        # Help modal
-        bs4MyModal(
-          id = ns("help_cases_data_dialog"),
-          title = "Help: Cases data input",
-          trigger = ns("help_cases_data"),
-          size = "large",
-
-          # Option selection
-          radioGroupButtons(
-            inputId = ns("help_cases_data_option"),
-            label = NULL,
-            choices = c(
-              "Manual input" = "manual",
-              "Load data"    = "load"
-            )
-          ),
-          # Contents
-          conditionalPanel(
-            condition = "input.help_cases_data_option == 'manual'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_cases_data_input.md"))
-          ),
-          conditionalPanel(
-            condition = "input.help_cases_data_option == 'load'",
-            ns = ns,
-            withMathJax(includeMarkdown("help/help_cases_data_load.md"))
-          )
         )
       ),
       # Card: hot Cases input ----
@@ -243,6 +247,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           noPadding = TRUE,
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          # Cases table
           rHandsontableOutput(ns("case_data_hot")),
           # Button
           br(),
@@ -255,6 +261,58 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           noPadding = TRUE,
           title = "Dose estimation options",
           status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          topButton = div(
+            # Help button
+            bsButton(
+              ns("help_estimate_options"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+            # Help modal
+            bs4MyModal(
+              id = ns("help_estimate_options_dialog"),
+              title = "Help: Dose estimation options",
+              trigger = ns("help_estimate_options"),
+              size = "large",
+
+              # Option selection
+              radioGroupButtons(
+                inputId = ns("help_estimate_options_option"),
+                label = NULL,
+                choices = c(
+                  "Exposure"             = "exposure",
+                  "Assessment"           = "assess",
+                  "Error calculation"    = "error",
+                  "Survival coefficient" = "surv_coeff"
+                )
+
+              ),
+              # Contents
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'exposure'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_dose_exposure.md"))
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'assess'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_dose_assessment.md"))
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'error'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'surv_coeff'",
+                ns = ns,
+                withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
+              )
+            )
+          ),
 
           # Type of exposure selection
           div(
@@ -444,161 +502,16 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             br()
           ),
 
-          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose"),
-
-          # Help button
-          topButton =
-            bsButton(
-              ns("help_estimate_options"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_estimate_options_dialog"),
-            title = "Help: Dose estimation options",
-            trigger = ns("help_estimate_options"),
-            size = "large",
-
-            # Option selection
-            radioGroupButtons(
-              inputId = ns("help_estimate_options_option"),
-              label = NULL,
-              choices = c(
-                "Exposure"             = "exposure",
-                "Assessment"           = "assess",
-                "Error calculation"    = "error",
-                "Survival coefficient" = "surv_coeff"
-              )
-
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_estimate_options_option == 'exposure'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_dose_exposure.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_estimate_options_option == 'assess'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_dose_assessment.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_estimate_options_option == 'error'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_estimate_options_option == 'surv_coeff'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
-            )
-          )
-
+          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
         )
       )
     ),
 
     fluidRow(
-      # tabCard: Estimation results ----
       column(
         width = 6,
+        # tabCard: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
-        # bs4MyCard(
-        #   width = 12,
-        #   noPadding = TRUE,
-        #   title = "Results",
-        #   status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-        #
-        #   # h6("Whole-body exposure estimation"),
-        #   # div(
-        #   #   style="height = auto;",
-        #   #   rHandsontableOutput(ns("est_yields_whole"))
-        #   # ),
-        #   # br(),
-        #   # div(
-        #   #   style="height = auto;",
-        #   #   rHandsontableOutput(ns("est_doses_whole"))
-        #   # ),
-        #
-        #   # conditionalPanel(
-        #   #   condition = "input.assessment_select == 'partial-body'",
-        #   #   ns = ns,
-        #   #
-        #   #   br(),
-        #   #   h6("Partial-body exposure estimation"),
-        #   #   div(
-        #   #     style="height = auto;",
-        #   #     rHandsontableOutput(ns("est_yields_partial"))
-        #   #   ),
-        #   #   br(),
-        #   #   div(
-        #   #     style="height = auto;",
-        #   #     rHandsontableOutput(ns("est_doses_partial"))
-        #   #   ),
-        #   #
-        #   #   br(),
-        #   #   h6("Initial fraction of irradiated cells"),
-        #   #   div(
-        #   #     style="height = auto;",
-        #   #     rHandsontableOutput(ns("est_frac_partial"))
-        #   #   )
-        #   # ),
-        #   #
-        #   # conditionalPanel(
-        #   #   condition = "input.assessment_select == 'hetero'",
-        #   #   ns = ns,
-        #   #
-        #   #   br(),
-        #   #   h6("Observed fraction of irradiated cells and its yield"),
-        #   #   div(
-        #   #     style="height = auto;",
-        #   #     rHandsontableOutput(ns("est_mixing_prop_hetero"))
-        #   #   ),
-        #   #
-        #   #   br(),
-        #   #   h6("Heterogeneous exposure estimation"),
-        #   #   div(
-        #   #     class = "side-widget",
-        #   #     div(
-        #   #       style="height = auto;",
-        #   #       rHandsontableOutput(ns("est_yields_hetero"))
-        #   #     ),
-        #   #     br(),
-        #   #     div(
-        #   #       style="height = auto;",
-        #   #       rHandsontableOutput(ns("est_doses_hetero"))
-        #   #     ),
-        #   #     br()
-        #   #   ),
-        #   #
-        #   #   h6("Initial fraction of irradiated cells"),
-        #   #   div(
-        #   #     style="height = auto;",
-        #   #     rHandsontableOutput(ns("est_frac_hetero"))
-        #   #   )
-        #   # ),
-        #
-        #   # Help button
-        #   topButton =
-        #     bsButton(
-        #       ns("help_dose_mixed_yields"),
-        #       label = "",
-        #       icon = icon("question"),
-        #       style = "default", size = "default"
-        #     ),
-        #   # Help modal
-        #   bs4MyModal(
-        #     id = ns("help_dose_mixed_yields_dialog"),
-        #     title = "Help: Partial and heterogeneous exposures",
-        #     trigger = ns("help_dose_mixed_yields"),
-        #     size = "large",
-        #     withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
-        #   )
-        # ),
-
 
         # Card: Export data and results ----
         bs4MyCard(
@@ -606,6 +519,46 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           noPadding = TRUE,
           title = "Save results",
           status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          topButton = div(
+            # Help button
+            bsButton(
+              ns("help_fit_data_save"),
+              label = "",
+              icon = icon("question"),
+              style = "default", size = "default"
+            ),
+
+            # Help Modal
+            bs4MyModal(
+              id = ns("help_fit_data_save_dialog"),
+              title = "Help: Export results",
+              trigger = ns("help_fit_data_save"),
+              size = "large",
+
+              # Option selection
+              # radioGroupButtons(
+              #   inputId = ns("help_fit_data_save_option"),
+              #   label = NULL,
+              #   choices = c(
+              #     "Fitting results" = "data",
+              #     "Report"          = "report"
+              #   )
+              # ),
+              # Contents
+              # conditionalPanel(
+              #   condition = "input.help_fit_data_save_option == 'data'",
+              #   ns = ns,
+              #   withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+              # ),
+              # conditionalPanel(
+              # condition = "input.help_fit_data_save_option == 'report'",
+              # ns = ns,
+              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+              # )
+            )
+          ),
+
           # Case description
           textAreaInput(
             inputId = ns("results_comments"),
@@ -626,46 +579,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           # ),
           # Download report
           # div(class = "widget-sep", br()),
-          downloadButton(ns("save_report"), class = "export-button", "Download report"),
-
-          # Help button
-          topButton =
-            bsButton(
-              ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-          # Help Modal
-          bs4MyModal(
-            id = ns("help_fit_data_save_dialog"),
-            title = "Help: Export results",
-            trigger = ns("help_fit_data_save"),
-            size = "large",
-
-            # Option selection
-            # radioGroupButtons(
-            #   inputId = ns("help_fit_data_save_option"),
-            #   label = NULL,
-            #   choices = c(
-            #     "Fitting results" = "data",
-            #     "Report"          = "report"
-            #   )
-            # ),
-            # Contents
-            # conditionalPanel(
-            #   condition = "input.help_fit_data_save_option == 'data'",
-            #   ns = ns,
-            #   withMathJax(includeMarkdown("help/help_fit_data_save.md"))
-            # ),
-            # conditionalPanel(
-              # condition = "input.help_fit_data_save_option == 'report'",
-              # ns = ns,
-              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
-            # )
-          )
-
+          downloadButton(ns("save_report"), class = "export-button", "Download report")
         )
       ),
       # Card: Plot curves ----
@@ -2053,7 +1967,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial and heterogeneous exposures",
+            title = "Help: Partial-body and heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -2095,7 +2009,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial and heterogeneous exposures",
+            title = "Help: Partial-body and heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -2157,7 +2071,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial and heterogeneous exposures",
+            title = "Help: Partial-body and heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
