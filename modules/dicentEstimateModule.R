@@ -1801,23 +1801,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
       )
 
-    # Confidence interval auxiliary data frame
-    if (assessment != "partial-body") {
-      conf_int_aux_df <- data.frame(
-        x = c(0, 0),
-        y = c(0, 0),
-        z = c("curve", "yield"),
-        stringsAsFactors = FALSE
-      )
-    } else {
-      conf_int_aux_df <- data.frame(
-        x = c(0, 0, 0),
-        y = c(0, 0, 0),
-        z = c("curve", "yield", "dolphin"),
-        stringsAsFactors = FALSE
-      )
-    }
-
     # Make base plot
     gg_curve <- ggplot(curves_data) +
       # Fitted curve
@@ -1844,12 +1827,6 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         aes(x = dose, y = yield, color = type, shape = level),
         size = 2, na.rm = TRUE
       ) +
-      # Confidence intervals
-      geom_point(
-        data = conf_int_aux_df,
-        aes(x = x, y = y, fill = z),
-        alpha = 0
-      ) +
       # Assessment
       scale_color_manual(
         values = hcl(
@@ -1859,28 +1836,25 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         ) %>%
           .[1:4] %>%
           `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
-        breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2")
+        breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2"),
+        labels = c(
+          paste0("Whole-body", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
+          paste0("Partial-body", " (", round(100 * 0.95, 0), "%", ")"),
+          paste0("Heterogeneous 1", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
+          paste0("Heterogeneous 2", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")")
+        )
       ) +
       # Estimation level
       scale_shape_manual(
         values = c("Lower" = 15, "Estimate" = 16, "Upper" = 17),
         breaks = c("Lower", "Estimate", "Upper")
       ) +
-      # Confidence interval
-      scale_fill_manual(
-        values = c("curve" = "red", "yield" = "green", "dolphin" = "blue"),
-        labels = c(
-          paste0("Curve: ", round(100 * conf_int_curve, 0), "%"),
-          paste0("Yield: ", round(100 * conf_int_yield, 0), "%"),
-          paste0("Dolphin: ", round(100 * 0.95, 0), "%")
-        )
-      ) +
       guides(
         color = guide_legend(order = 1),
         shape = guide_legend(order = 2),
         fill = guide_legend(order = 3)
       ) +
-      labs(color = "Assessment", shape = "Estimation", fill = "Confidence interval") +
+      labs(color = "Assessment", shape = "Estimation") +
       # Tweak legend
       theme(
         legend.title = element_text(size = 10),
