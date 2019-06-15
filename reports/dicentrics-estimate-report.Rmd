@@ -39,6 +39,10 @@ est_yields_hetero <- params$est_results_list[["est_yields_hetero"]]
 est_doses_hetero <- params$est_results_list[["est_doses_hetero"]]
 est_frac_hetero <- params$est_results_list[["est_frac_hetero"]]
 
+AIC_whole <- params$est_results_list[["AIC_whole"]]
+AIC_partial <- params$est_results_list[["AIC_partial"]]
+AIC_hetero <- params$est_results_list[["AIC_hetero"]]
+
 fit_coeffs <- params$est_results_list[["fit_coeffs"]]
 fit_formula_tex <- params$est_results_list[["fit_formula_tex"]]
 protraction <- params$est_results_list[["protraction"]]
@@ -119,6 +123,18 @@ if (TRUE) {
 } 
 ```
 
+`r if (TRUE) {"### Relative quality of the estimation"}`
+```{r echo=FALSE}
+if (TRUE) {
+  AIC_whole %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+} 
+```
+
 `r if (assessment == "partial-body") {"### Partial-body exposure estimation"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
@@ -165,6 +181,18 @@ if (assessment == "partial-body") {
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+} 
+```
+
+`r if (assessment == "partial-body") {"### Relative quality of the estimation"}`
+```{r echo=FALSE}
+if (assessment == "partial-body") {
+  AIC_partial %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
@@ -232,6 +260,18 @@ if (assessment == "hetero") {
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
 }
+```
+
+`r if (assessment == "hetero") {"### Relative quality of the estimation"}`
+```{r echo=FALSE}
+if (assessment == "hetero") {
+  AIC_hetero %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+} 
 ```
 
 
