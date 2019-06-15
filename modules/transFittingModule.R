@@ -31,26 +31,8 @@ transFittingUI <- function(id, label) {
             trigger = ns("help_colors"),
             size = "large",
 
-            # Option selection
-            radioGroupButtons(
-              inputId = ns("help_colors_option"),
-              label = NULL,
-              choices = c(
-                "Manual input" = "manual",
-                "Load data"    = "load"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_colors_option == 'manual'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_count_data_input.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_colors_option == 'load'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/help_count_data_load.md"))
-            )
+            withMathJax(includeMarkdown("help/help_colors_data_input.md"))
+
           )
         ),
 
