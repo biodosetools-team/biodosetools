@@ -803,7 +803,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
         # Summary of model used
-        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
+        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion ≤ 1.")
       } else if (fit_dispersion > 1) {
         # For Quasi-poisson model
         fit_coeffs <- cbind(
@@ -816,7 +816,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
         # Summary of model used
-        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", round(fit_dispersion, 2), ") > 1.")
+        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
       }
 
       # Return objects
@@ -1022,7 +1022,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           `row.names<-`(names(fit_coeffs_vec))
 
         # Summary of model used
-        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as dispersion ≤ 1.")
+        fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion ≤ 1.")
       } else if (model_family == "quasipoisson" | (model_family == "automatic" & fit_dispersion > 1)) {
         fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
         t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
@@ -1037,7 +1037,7 @@ dicentFittingResults <- function(input, output, session, stringsAsFactors) {
           `row.names<-`(names(fit_coeffs_vec))
 
         # Summary of model used
-        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as dispersion (=", round(fit_dispersion, 2), ") > 1.")
+        fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
       }
 
       # Calculate correlation matrix
