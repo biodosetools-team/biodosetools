@@ -1912,6 +1912,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_yields_hetero = NA,
       est_doses_hetero = NA,
       est_frac_hetero = NA,
+      # AICs
+      AIC_whole = AIC_whole,
+      AIC_partial = NA,
+      AIC_hetero = NA,
       # Plot
       gg_curve = gg_curve,
       # Required for report
@@ -1922,6 +1926,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       case_description = input$case_description,
       results_comments = input$results_comments
     )
+
     if (assessment == "partial-body") {
       # Partial
       est_results_list[["est_doses_partial"]] <- est_doses_partial
@@ -1931,6 +1936,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       est_results_list[["est_yields_hetero"]] <- NA
       est_results_list[["est_doses_hetero"]] <- NA
       est_results_list[["est_frac_hetero"]] <- NA
+      # AICs
+      est_results_list[["AIC_partial"]] <- AIC_partial
+      est_results_list[["AIC_hetero"]] <- NA
 
     } else if (assessment == "hetero"){
       # Heterogeneous
@@ -1941,7 +1949,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Reset Partial
       est_results_list[["est_doses_partial"]] <- NA
       est_results_list[["est_frac_partial"]] <- NA
+      # AICs
+      est_results_list[["AIC_partial"]] <- NA
+      est_results_list[["AIC_hetero"]] <- AIC_hetero
     }
+
     # Check if protracted correction was applied
     if (exposure == "protracted" & stringr::str_detect(fit_formula_tex, "beta")) {
       est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
@@ -1992,6 +2004,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           div(
             style="height = auto;",
             rHandsontableOutput(session$ns("est_doses_whole"))
+          ),
+
+          br(),
+          h6("Relative quality of the estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("AIC_whole"))
           )
         )
       )
@@ -2033,6 +2052,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           div(
             style="height = auto;",
             rHandsontableOutput(session$ns("est_doses_whole"))
+          ),
+
+          br(),
+          h6("Relative quality of the estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
         bs4TabPanel(
@@ -2053,6 +2079,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           div(
             style="height = auto;",
             rHandsontableOutput(session$ns("est_frac_partial"))
+          ),
+
+          br(),
+          h6("Relative quality of the estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("AIC_partial"))
           )
         )
       )
@@ -2094,6 +2127,13 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
           div(
             style="height = auto;",
             rHandsontableOutput(session$ns("est_doses_whole"))
+          ),
+
+          br(),
+          h6("Relative quality of the estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
         bs4TabPanel(
@@ -2116,14 +2156,21 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
             div(
               style="height = auto;",
               rHandsontableOutput(session$ns("est_doses_hetero"))
-            ),
-            br()
+            )
           ),
 
+          br(),
           h6("Initial fraction of irradiated cells"),
           div(
             style="height = auto;",
             rHandsontableOutput(session$ns("est_frac_hetero"))
+          ),
+
+          br(),
+          h6("Relative quality of the estimation"),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(session$ns("AIC_hetero"))
           )
         )
       )
@@ -2162,7 +2209,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_yields_partial <- renderRHandsontable({
-    # Estimated recieved doses (partial)
+    # Estimated recieved doses (partial-body)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(yield) %>%
@@ -2179,7 +2226,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_doses_partial <- renderRHandsontable({
-    # Estimated recieved doses (partial)
+    # Estimated recieved doses (partial-body)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(dose) %>%
@@ -2196,7 +2243,7 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
   })
 
   output$est_frac_partial <- renderRHandsontable({
-    # Estimated fraction of irradiated blood for dose dose1 (partial)
+    # Estimated fraction of irradiated blood for dose dose1 (partial-body)
     if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_frac_partial"]] %>%
       t() %>%
@@ -2267,6 +2314,39 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       `colnames<-`(c("estimate", "std_err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  output$AIC_whole <- renderRHandsontable({
+    # AIC for estimated dose (whole)
+    if (input$button_estimate <= 0) return(NULL)
+    data()[["AIC_whole"]] %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  output$AIC_partial <- renderRHandsontable({
+    # AIC for estimated dose (partial-body)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
+    data()[["AIC_partial"]] %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  output$AIC_hetero <- renderRHandsontable({
+    # AIC for estimated dose (heterogeneous)
+    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    data()[["AIC_hetero"]] %>%
+      matrix %>%
+      `colnames<-`(c("AIC")) %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
