@@ -249,7 +249,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           # Cases table
-          rHandsontableOutput(ns("case_data_hot")),
+          div(
+            style="height = auto;",
+            rHandsontableOutput(ns("case_data_hot"))
+          ),
           # Button
           br(),
           actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
