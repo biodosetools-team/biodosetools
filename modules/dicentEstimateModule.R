@@ -1236,12 +1236,12 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Manual log-likelihood function
       loglik_from_data <- function(data, fit_link) {
         if (fit_link == "identity") {
-          loglik <- - yield(data[[dose_var]]) +
-            log(yield(data[[dose_var]])) * data[[yield_var]] -
+          loglik <- - yield_fun(data[[dose_var]], 1) +
+            log(yield_fun(data[[dose_var]], 1)) * data[[yield_var]] -
             log(factorial(data[[yield_var]]))
         } else if (fit_link == "log") {
-          loglik <- - exp(yield(data[[dose_var]])) +
-            yield(data[[dose_var]]) * data[[yield_var]] -
+          loglik <- - exp(yield_fun(data[[dose_var]], 1)) +
+            yield_fun(data[[dose_var]], 1) * data[[yield_var]] -
             log(factorial(data[[yield_var]]))
         }
         return(sum(loglik))
@@ -1292,8 +1292,18 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       ) %>%
         `row.names<-`(c("lower", "estimate", "upper"))
 
-      # Return object
-      return(est_doses)
+      # Calculate AIC as a GOF indicator
+      AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+                           dose_var = "dose", yield_var = "yield", fit_link = "identity")
+
+
+      # Return objects
+      results_list <- list(
+        est_doses = est_doses,
+        AIC       = AIC
+      )
+
+      return(results_list)
     }
 
     # Calcs: partial dose estimation
@@ -1445,6 +1455,11 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         ) %>%
           `row.names<-`(c("lower", "estimate", "upper"))
 
+        # Calculate AIC as a GOF indicator
+        AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+                             dose_var = "dose", yield_var = "yield", fit_link = "identity")
+
+
         # Get estimate for fraction irradiated
         F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
@@ -1486,7 +1501,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       # Return objects
       results_list <- list(
         est_doses = est_doses,
-        est_frac = est_frac
+        est_frac  = est_frac,
+        AIC       = AIC
       )
 
       return(results_list)
@@ -1694,6 +1710,15 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         ) %>%
           `row.names<-`(c("dose1", "dose2"))
 
+        # Calculate AIC as a GOF indicator
+        est_doses_AIC <- data.frame(
+          dose = est_doses["estimate",] %>% as.numeric(),
+          yield = est_yields["estimate",] %>% as.numeric()
+        )
+
+        AIC <- AIC_from_data(general_fit_coeffs, est_doses_AIC,
+                             dose_var = "dose", yield_var = "yield", fit_link = "identity")
+
         # WIP: This is not requiered yet
         # Gradient
         # h <- 0.000001
@@ -1726,7 +1751,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
         est_mixing_prop = est_mixing_prop,
         est_yields      = est_yields,
         est_doses       = est_doses,
-        est_frac        = est_frac
+        est_frac        = est_frac,
+        AIC             = AIC
       )
 
       return(results_list)
@@ -1735,10 +1761,14 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     # Calculations ----
 
     # Calculate whole-body results
-    est_doses_whole <- estimate_whole_body(
+    results_whole <- estimate_whole_body(
       case_data, conf_int_yield,
       conf_int_curve, protracted_g_value
     )
+    # Parse results
+    est_doses_whole <- results_whole[["est_doses"]]
+    AIC_whole <-       results_whole[["AIC"]]
+
     if (assessment == "partial-body") {
       # Calculate partial results
       results_partial <- estimate_partial_dolphin(
@@ -1747,7 +1777,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
-      est_frac_partial <- results_partial[["est_frac"]]
+      est_frac_partial <-  results_partial[["est_frac"]]
+      AIC_partial <-       results_partial[["AIC"]]
+
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
@@ -1756,9 +1788,10 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
       )
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
-      est_yields_hetero <- results_hetero[["est_yields"]]
-      est_doses_hetero <- results_hetero[["est_doses"]]
-      est_frac_hetero <- results_hetero[["est_frac"]]
+      est_yields_hetero <-      results_hetero[["est_yields"]]
+      est_doses_hetero <-       results_hetero[["est_doses"]]
+      est_frac_hetero <-        results_hetero[["est_frac"]]
+      AIC_hetero <-             results_hetero[["AIC"]]
     }
 
     # Make plot ----
@@ -2184,7 +2217,8 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      # `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
       rhandsontable(width = "100%", height = "100%") %>%
