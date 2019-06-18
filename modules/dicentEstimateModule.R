@@ -1164,9 +1164,9 @@ dicentEstimateResults <- function(input, output, session, stringsAsFactors) {
     conf_int_yield <- conf_int_yield %>% correct_conf_int(seq(0, 10, 0.2), protracted_g_value, type = "yield")
 
     # Calculate infimums of the different curves
-    yield_low_inf <- yield_fun(0, 1) - R_factor(conf_int_curve) * yield_error_fun(0, 1)
+    yield_low_inf <- yield_fun(0, 1) + R_factor(conf_int_curve) * yield_error_fun(0, 1)
     yield_est_inf <- yield_fun(0, 1)
-    yield_upp_inf <- yield_fun(0, 1) + R_factor(conf_int_curve) * yield_error_fun(0, 1)
+    yield_upp_inf <- yield_fun(0, 1) - R_factor(conf_int_curve) * yield_error_fun(0, 1)
 
     # Projection functions ----
 
