@@ -544,6 +544,31 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
     return(data)
   })
 
+  color_list <- reactive({
+    input$button_upd_chrom_table
+
+    isolate({
+      dna_table <- data.table::fread("libs/dna-content-fractions.csv")
+      color_scheme <- input$trans_color_scheme
+    })
+
+
+    if (color_scheme == "m_fish") {
+      chromosomes <- dna_table %>%
+        dplyr::select_("chromosome", paste0("fraction_", sex)) %>%
+        na.omit() %>%
+        dplyr::select(chromosome) %>%
+        unlist() %>%
+        unname()
+
+      color_list <- paste("M-Fish", chromosomes)
+    } else {
+      color_list <- input$trans_color_select
+    }
+
+    return(color_list)
+  })
+
   # Output ----
   output$chromosome_table <- renderRHandsontable({
     if (input$button_upd_chrom_table <= 0) return(NULL)
@@ -553,7 +578,7 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
       hot_cols(colWidths = 115) %>%
       hot_col(col = 2, allowInvalid = TRUE) %>%
       hot_col(c(1), readOnly = TRUE) %>%
-      hot_col(col = 2, type = "dropdown", source = input$trans_color_select, strict = TRUE)
+      hot_col(col = 2, type = "dropdown", source = color_list(), strict = TRUE)
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
 
