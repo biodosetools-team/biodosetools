@@ -32,6 +32,12 @@ server <- function(input, output) {
   callModule(module = transChromosomeTable, id = "trans_fitting")
   callModule(module = transFittingResults, id = "trans_fitting", fraction_value = transFraction)
 
+  # Dose Estimation
+  callModule(module = transEstimateHotTable, id = "trans_estimate")
+  callModule(module = transEstimateFittingCurveHotTable, id = "trans_estimate")
+  callModule(module = transEstimateFittingCurve, id = "trans_estimate")
+  callModule(module = transEstimateResults, id = "trans_estimate")
+
   # Micronuclei Modules ----
 
 }

@@ -116,6 +116,21 @@ sidebar <- bs4DashMySidebar(
       tabName = "tab-trans-fitting",
       icon = "paint-brush"
     ),
+    bs4MySidebarMenuItem(
+      condition = "input.experiment_select == 'trans'",
+      HTML(
+        paste(
+          "Dose estimation",
+          bs4Badge(
+            "in progress",
+            position = "right",
+            status = "danger"
+          )
+        )
+      ),
+      tabName = "tab-trans-estimate",
+      icon = "calculator"
+    ),
 
     # Language selector
     bs4SidebarHeader("Language"),
@@ -193,7 +208,9 @@ body <- bs4DashBody(
     # Translocations Modules ----
 
     # Fitting
-    transFittingUI(id = "trans_fitting", label = "tab-trans-fitting")
+    transFittingUI(id = "trans_fitting", label = "tab-trans-fitting"),
+    # Dose Estimation
+    transEstimateUI(id = "trans_estimate", label = "tab-trans-estimate")
 
     # Micronuclei Modules ----
   )
