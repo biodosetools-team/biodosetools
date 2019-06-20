@@ -10,6 +10,148 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
+      # Card: Stains color options ----
+      bs4MyCard(
+        width = 6,
+        title = "Stains color options",
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_colors"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_colors_dialog"),
+            title = "Help: Stain color data input",
+            trigger = ns("help_colors"),
+            size = "large",
+
+            withMathJax(includeMarkdown("help/help_colors_data_input.md"))
+
+          )
+        ),
+
+        fluidRow(
+          column(
+            width = 12,
+
+            fluidRow(
+              innerColumn(
+                width = 6,
+
+                awesomeRadio(
+                  inputId = ns("trans_sex"),
+                  status = "warning",
+                  label = "Sex",
+                  choices = c(
+                    "Male"   = "male",
+                    "Female" = "female"
+                  ),
+                  selected = "male"
+                ),
+
+                selectizeInput(
+                  inputId = ns("trans_chromosome_select"),
+                  label = "Chromosomes",
+                  choices = c( 1:21, "X", "Y"),
+                  options = list(
+                    placeholder = 'Select stained chromosomes'
+                  ),
+                  multiple = TRUE
+                )
+              ),
+
+              innerColumn(
+                width = 6,
+
+                h6(strong("Stain color scheme")),
+                awesomeCheckbox(
+                  inputId = ns("trans_m_fish_scheme"),
+                  status = "warning",
+                  label = "Use M-Fish",
+                  value = FALSE
+                ),
+
+                conditionalPanel(
+                  condition = "!input.trans_m_fish_scheme",
+                  ns = ns,
+                  selectizeInput(
+                    inputId = ns("trans_color_select"),
+                    label = "Stain colors",
+                    choices = c(
+                      "Red",
+                      "Green",
+                      "Orange",
+                      "Purple",
+                      "Yellow",
+                      "Cyan",
+                      "Magenta"
+                    ),
+                    options = list(
+                      placeholder = 'Select used colors'#,
+                      # maxItems = 5
+                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                    ),
+                    multiple = TRUE
+                  )
+                )
+              )
+            ),
+
+            br(),
+            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+          )
+        )
+      ),
+
+      column(
+        width = 6,
+
+        # Card: Chromosome-color table ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Chromosome data",
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              rHandsontableOutput(outputId = ns("chromosome_table"))
+            ),
+            div(
+              style = "padding-left: 7.5px; padding-top: 23px;",
+              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
+            )
+          )
+        ),
+
+        # Card: Conversion factor to full genome ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Genomic conversion factor",
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              uiOutput(ns("fraction"))
+
+            )
+          )
+        )
+
+      )
+    ),
+
+    fluidRow(
       # Card: Curve fitting options ----
       bs4MyCard(
         width = 5,
@@ -256,258 +398,281 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           # Button
           br(),
           actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
+        )
+        )
+    ),
+
+    fluidRow(
+      bs4MyCard(
+        width = 5,
+        title = "Confounders options",
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        div(
+          class = "side-widget",
+          style = "width: 150px;",
+          awesomeCheckboxGroup(
+            inputId = ns("trans_conf"),
+            status = "warning",
+            label = "Confounders",
+            choices = c(
+              "Age"     = "age",
+              "Sex"     = "sex",
+              "Smoking" = "smoke"
+            ),
+            selected = NULL #c("age")
+          )
+        )
+      ),
+
+      # Card: Estimation options ----
+      bs4MyCard(
+        width = 7,
+        title = "Dose estimation options",
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_estimate_options"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_estimate_options_dialog"),
+            title = "Help: Dose estimation options",
+            trigger = ns("help_estimate_options"),
+            size = "large",
+
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_estimate_options_option"),
+              label = NULL,
+              choices = c(
+                "Exposure"             = "exposure",
+                "Assessment"           = "assess",
+                "Error calculation"    = "error",
+                "Survival coefficient" = "surv_coeff"
+              )
+
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'exposure'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_exposure.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'assess'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_assessment.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'error'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_estimate_options_option == 'surv_coeff'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
+            )
+          )
         ),
 
-        # Card: Estimation options ----
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Dose estimation options",
-          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-          topButton = div(
-            # Help button
-            bsButton(
-              ns("help_estimate_options"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
+        # Type of exposure selection
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("exposure_select"),
+            label = "Exposure",
+            width = "175px",
+            choices = list(
+              "Acute"      = "acute",
+              "Protracted" = "protracted"
             ),
+            selected = "acute"
+          )
+        ),
+        div(class = "widget-sep", br()),
 
-            # Help modal
-            bs4MyModal(
-              id = ns("help_estimate_options_dialog"),
-              title = "Help: Dose estimation options",
-              trigger = ns("help_estimate_options"),
-              size = "large",
-
-              # Option selection
-              radioGroupButtons(
-                inputId = ns("help_estimate_options_option"),
-                label = NULL,
-                choices = c(
-                  "Exposure"             = "exposure",
-                  "Assessment"           = "assess",
-                  "Error calculation"    = "error",
-                  "Survival coefficient" = "surv_coeff"
-                )
-
-              ),
-              # Contents
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'exposure'",
-                ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_exposure.md"))
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'assess'",
-                ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_assessment.md"))
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'error'",
-                ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'surv_coeff'",
-                ns = ns,
-                withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
-              )
-            )
-          ),
-
-          # Type of exposure selection
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("exposure_select"),
-              label = "Exposure",
-              width = "175px",
-              choices = list(
-                "Acute"      = "acute",
-                "Protracted" = "protracted"
-              ),
-              selected = "acute"
-            )
-          ),
-          div(class = "widget-sep", br()),
-
-          # Assessment selection
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("assessment_select"),
-              label = "Assessment",
-              width = "175px",
-              choices = list(
-                "Whole-body"    = "whole-body",
-                "Partial-body"  = "partial-body",
-                "Heterogeneous" = "hetero"
-              ),
-              selected = "whole-body"
-            )
-          ),
-          div(class = "widget-sep", br()),
-
-          # Curve method selection
-          div(
-            style = "display: inline-block;",
-            conditionalPanel(
-              condition = "input.assessment_select != 'partial-body'",
-              ns = ns,
-
-              div(
-                class = "side-widget-tall",
-                selectInput(
-                  ns("curve_method_select"),
-                  label = "Error calculation",
-                  width = "250px",
-                  choices = list(
-                    "Merkle's method (83%-83%)" = "merkle-83",
-                    "Merkle's method (95%-95%)" = "merkle-95"
-                    # "Simple method"             = "simple"
-                  ),
-                  selected = "merkle-83"
-                )
-              )
+        # Assessment selection
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("assessment_select"),
+            label = "Assessment",
+            width = "175px",
+            choices = list(
+              "Whole-body"    = "whole-body",
+              "Partial-body"  = "partial-body",
+              "Heterogeneous" = "hetero"
             ),
+            selected = "whole-body"
+          )
+        ),
+        div(class = "widget-sep", br()),
 
-            # Partial method selection
-            conditionalPanel(
-              condition = "input.assessment_select == 'partial-body'",
-              ns = ns,
-
-              div(
-                class = "side-widget-tall",
-                selectInput(
-                  ns("partial_method_select"),
-                  label = "Calculation method",
-                  width = "250px",
-                  choices = list(
-                    "Dolphin" = "dolphin"
-                  ),
-                  selected = "dolphin"
-                )
-              )
-            )
-          ),
-
-          # Protracted timing
+        # Curve method selection
+        div(
+          style = "display: inline-block;",
           conditionalPanel(
-            condition = "input.exposure_select == 'protracted'",
+            condition = "input.assessment_select != 'partial-body'",
             ns = ns,
 
-            br(),
-
-            # Irradiation time
-            div(
-              class = "side-widget-tall",
-              numericInput(
-                ns("protracted_time"),
-                label = "Irradiation time (h)",
-                width = "175px",
-                value = 0.5,
-                step = 0.1,
-                min = 0
-              )
-            ),
-            div(class = "widget-sep", br()),
-
-            # Rejoining time
-            div(
-              class = "side-widget-tall",
-              numericInput(
-                ns("protracted_life_time"),
-                label = "Rejoining time (h)",
-                width = "175px",
-                value = 2,
-                step = 0.1,
-                min = 2,
-                max = 5
-              )
-            )
-          ),
-
-          # Coefficient conditional input
-          conditionalPanel(
-            condition = "input.assessment_select != 'whole-body'",
-            ns = ns,
-
-            br(),
-
-            # Coefficient input selection
             div(
               class = "side-widget-tall",
               selectInput(
-                ns("fraction_coeff_select"),
-                label = "Survival coefficient",
-                width = "175px",
+                ns("curve_method_select"),
+                label = "Error calculation",
+                width = "250px",
                 choices = list(
-                  "D0" = "d0",
-                  "Gamma" = "gamma"
+                  "Merkle's method (83%-83%)" = "merkle-83",
+                  "Merkle's method (95%-95%)" = "merkle-95"
+                  # "Simple method"             = "simple"
                 ),
-                selected = "d0"
-              )
-            ),
-
-            div(class = "widget-sep", br()),
-
-            div(
-              class = "side-widget",
-              # Input gamma
-              conditionalPanel(
-                condition = "input.fraction_coeff_select == 'gamma'",
-                ns = ns,
-                div(
-                  class = "side-widget-tall",
-                  numericInput(
-                    width = "175px",
-                    ns("gamma_coeff"), "Gamma",
-                    value = 0.3706479, step = 0.01
-                  )
-                ),
-                div(
-                  class = "side-widget-tall",
-                  numericInput(
-                    width = "150px",
-                    ns("gamma_error"), "Error of gamma",
-                    value = 0.009164707, step = 0.0001
-                  )
-                )
-              ),
-              # Input D0
-              conditionalPanel(
-                condition = "input.fraction_coeff_select == 'd0'",
-                ns = ns,
-                div(
-                  class = "side-widget-tall",
-                  numericInput(
-                    width = "150px",
-                    ns("d0_coeff"), "D0",
-                    value = 2.7, step = 0.01,
-                    min = 2.7, max = 3.5
-                  )
-                )
+                selected = "merkle-83"
               )
             )
           ),
 
+          # Partial method selection
           conditionalPanel(
-            condition = "input.assessment_select == 'whole-body'",
+            condition = "input.assessment_select == 'partial-body'",
             ns = ns,
-            br()
+
+            div(
+              class = "side-widget-tall",
+              selectInput(
+                ns("partial_method_select"),
+                label = "Calculation method",
+                width = "250px",
+                choices = list(
+                  "Dolphin" = "dolphin"
+                ),
+                selected = "dolphin"
+              )
+            )
+          )
+        ),
+
+        # Protracted timing
+        conditionalPanel(
+          condition = "input.exposure_select == 'protracted'",
+          ns = ns,
+
+          br(),
+
+          # Irradiation time
+          div(
+            class = "side-widget-tall",
+            numericInput(
+              ns("protracted_time"),
+              label = "Irradiation time (h)",
+              width = "175px",
+              value = 0.5,
+              step = 0.1,
+              min = 0
+            )
+          ),
+          div(class = "widget-sep", br()),
+
+          # Rejoining time
+          div(
+            class = "side-widget-tall",
+            numericInput(
+              ns("protracted_life_time"),
+              label = "Rejoining time (h)",
+              width = "175px",
+              value = 2,
+              step = 0.1,
+              min = 2,
+              max = 5
+            )
+          )
+        ),
+
+        # Coefficient conditional input
+        conditionalPanel(
+          condition = "input.assessment_select != 'whole-body'",
+          ns = ns,
+
+          br(),
+
+          # Coefficient input selection
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("fraction_coeff_select"),
+              label = "Survival coefficient",
+              width = "175px",
+              choices = list(
+                "D0" = "d0",
+                "Gamma" = "gamma"
+              ),
+              selected = "d0"
+            )
           ),
 
-          conditionalPanel(
-            condition = "input.assessment_select != 'whole-body'",
-            ns = ns,
-            br()
-          ),
+          div(class = "widget-sep", br()),
 
-          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
-        )
+          div(
+            class = "side-widget",
+            # Input gamma
+            conditionalPanel(
+              condition = "input.fraction_coeff_select == 'gamma'",
+              ns = ns,
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "175px",
+                  ns("gamma_coeff"), "Gamma",
+                  value = 0.3706479, step = 0.01
+                )
+              ),
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "150px",
+                  ns("gamma_error"), "Error of gamma",
+                  value = 0.009164707, step = 0.0001
+                )
+              )
+            ),
+            # Input D0
+            conditionalPanel(
+              condition = "input.fraction_coeff_select == 'd0'",
+              ns = ns,
+              div(
+                class = "side-widget-tall",
+                numericInput(
+                  width = "150px",
+                  ns("d0_coeff"), "D0",
+                  value = 2.7, step = 0.01,
+                  min = 2.7, max = 3.5
+                )
+              )
+            )
+          )
+        ),
+
+        conditionalPanel(
+          condition = "input.assessment_select == 'whole-body'",
+          ns = ns,
+          br()
+        ),
+
+        conditionalPanel(
+          condition = "input.assessment_select != 'whole-body'",
+          ns = ns,
+          br()
+        ),
+
+        actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
       )
+      # )
     ),
 
     fluidRow(
