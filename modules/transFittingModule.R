@@ -9,10 +9,10 @@ transFittingUI <- function(id, label) {
     h2("Dose-effect Fitting"),
 
     fluidRow(
-      # Card: Color options ----
+      # Card: Stains color options ----
       bs4MyCard(
         width = 6,
-        title = "Color options",
+        title = "Stains color options",
         status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
         topButton = div(
@@ -27,7 +27,7 @@ transFittingUI <- function(id, label) {
           # Help modal
           bs4MyModal(
             id = ns("help_colors_dialog"),
-            title = "Help: Color data input",
+            title = "Help: Stain color data input",
             trigger = ns("help_colors"),
             size = "large",
 
@@ -69,7 +69,7 @@ transFittingUI <- function(id, label) {
               innerColumn(
                 width = 6,
 
-                h6(strong("Color scheme")),
+                h6(strong("Stain color scheme")),
                 awesomeCheckbox(
                   inputId = ns("trans_m_fish_scheme"),
                   status = "warning",
@@ -78,11 +78,11 @@ transFittingUI <- function(id, label) {
                 ),
 
                 conditionalPanel(
-                  condition = "!input.trans_m_fish_scheme'",
+                  condition = "!input.trans_m_fish_scheme",
                   ns = ns,
                   selectizeInput(
                     inputId = ns("trans_color_select"),
-                    label = "Colors",
+                    label = "Stain colors",
                     choices = c(
                       "Red",
                       "Green",
@@ -511,139 +511,6 @@ transFittingUI <- function(id, label) {
         )
       )
     )
-  )
-}
-
-transChromosomeTable <- function(input, output, session, stringsAsFactors) {
-  table <- reactive({
-    input$button_upd_chrom_table
-
-    isolate({
-      chromosome <- input$trans_chromosome_select
-    })
-
-    data <- data.frame(
-      Chromosome = sort(as.factor(chromosome)),
-      Stain = as.factor(rep(NA, length(chromosome)))
-    )
-
-    return(data)
-  })
-
-  color_list <- reactive({
-    input$button_upd_chrom_table
-
-    isolate({
-      color_scheme <- input$trans_m_fish_scheme
-      dna_table <- data.table::fread("libs/dna-content-fractions.csv")
-      sex <- input$trans_sex
-    })
-
-    if (color_scheme) {
-      chromosomes <- dna_table %>%
-        dplyr::select_("chromosome", paste0("fraction_", sex)) %>%
-        na.omit() %>%
-        dplyr::select(chromosome) %>%
-        unlist() %>%
-        unname()
-
-      color_list <- paste("M-Fish", chromosomes)
-    } else {
-      color_list <- input$trans_color_select
-    }
-
-    return(color_list)
-  })
-
-  # Output ----
-  output$chromosome_table <- renderRHandsontable({
-    if (input$button_upd_chrom_table <= 0) return(NULL)
-
-    hot <- table() %>%
-      rhandsontable() %>%
-      hot_cols(colWidths = 115) %>%
-      hot_col(col = 2, allowInvalid = TRUE) %>%
-      hot_col(c(1), readOnly = TRUE) %>%
-      hot_col(col = 2, type = "dropdown", source = color_list(), strict = TRUE)
-
-    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
-
-    return(hot)
-  })
-}
-
-transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFactors) {
-
-  # Calculate fraction ----
-
-  fraction <- reactive({
-
-    # Create button dependency for updating dimensions
-    input$button_calc_fraction
-
-    isolate({
-      dna_table <- data.table::fread("libs/dna-content-fractions.csv")
-      chromosome_table <- hot_to_r(input$chromosome_table)
-      chromosome <- chromosome_table[["Chromosome"]] %>% as.character()
-      color <- chromosome_table[["Stain"]]
-      sex <- input$trans_sex
-    })
-
-
-
-    get_fraction <- function(dna_table, chromosome, color, sex) {
-      # Construct color/chromosome table
-      color_table <-
-        cbind(
-          color,
-          chromosome
-        ) %>%
-        as.data.frame() %>%
-        dplyr::mutate(
-          chromosome = as.character(chromosome)
-        )
-
-      # Full table
-      full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
-        dplyr::group_by(color) %>%
-        dplyr::summarise(frac = sum(get(paste0("fraction_", sex))))
-
-      # Calculate first sum
-      single_sum <- full_table %>%
-        dplyr::select(frac) %>%
-        dplyr::summarise(sum(frac * (1 - frac))) %>%
-        unname() %>%
-        unlist()
-
-      # Calculate second sum
-      if (nrow(full_table) >= 2) {
-        cross_sum <- full_table[["frac"]] %>%
-          combn(2) %>%
-          t() %>%
-          as.data.frame() %>%
-          dplyr::summarise(sum(V1 * V2)) %>%
-          unname() %>%
-          unlist()
-      } else {
-        cross_sum <- 0
-      }
-
-      return(2 / 0.974 * (single_sum - cross_sum))
-    }
-
-    return(get_fraction(dna_table, chromosome, color, sex))
-  })
-
-  # Output ----
-  output$fraction <- renderUI({
-    if (input$button_calc_fraction <= 0) return(NULL)
-    frac_value <- fraction()
-    frac_text <- paste0("The genomic conversion factor to full genome is ", frac_value %>% round(3) %>%  as.character(), ".")
-    return(frac_text)
-  })
-
-  return(
-    list(frac = reactive(fraction()))
   )
 }
 

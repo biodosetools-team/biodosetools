@@ -25,15 +25,19 @@ server <- function(input, output) {
   # Translocations Modules ----
 
   # Fitting
-  transFraction <-
-    callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
-
   callModule(module = transFittingHotTable, id = "trans_fitting")
   callModule(module = transChromosomeTable, id = "trans_fitting")
-  callModule(module = transFittingResults, id = "trans_fitting", fraction_value = transFraction)
+  transFittingFraction <-
+    callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
+  callModule(module = transFittingResults, id = "trans_fitting", fraction_value = transFittingFraction)
 
   # Dose Estimation
   callModule(module = transEstimateHotTable, id = "trans_estimate")
+
+  callModule(module = transChromosomeTable, id = "trans_estimate")
+  transEstimateFraction <-
+    callModule(module = transFractionToFullGenomeCalc, id = "trans_estimate")
+
   callModule(module = transEstimateFittingCurveHotTable, id = "trans_estimate")
   callModule(module = transEstimateFittingCurve, id = "trans_estimate")
   callModule(module = transEstimateResults, id = "trans_estimate")

@@ -21,6 +21,7 @@ source("modules/dicentFittingModule.R")
 source("modules/dicentEstimateModule.R")
 
 # Translocations
+source("modules/transGeneralModule.R")
 source("modules/transFittingModule.R")
 source("modules/transEstimateModule.R")
 
