@@ -40,85 +40,71 @@ transFittingUI <- function(id, label) {
           column(
             width = 12,
 
-            div(
-              class = "side-widget",
-              style = "width: 150px;",
-              awesomeRadio(
-                inputId = ns("trans_sex"),
-                status = "warning",
-                label = "Sex",
-                choices = c(
-                  "Male"   = "male",
-                  "Female" = "female"
+            fluidRow(
+              innerColumn(
+                width = 6,
+
+                awesomeRadio(
+                  inputId = ns("trans_sex"),
+                  status = "warning",
+                  label = "Sex",
+                  choices = c(
+                    "Male"   = "male",
+                    "Female" = "female"
+                  ),
+                  selected = "male"
                 ),
-                selected = "male"
-              )
-            ),
 
-            # div(
-            #   class = "side-widget",
-            #   style = "width: 150px;",
-            #   awesomeCheckboxGroup(
-            #     inputId = ns("trans_conf"),
-            #     status = "warning",
-            #     label = "Confounders",
-            #     choices = c(
-            #       "Age"     = "age",
-            #       "Sex"     = "sex",
-            #       "Smoking" = "smoke"
-            #     ),
-            #     selected = NULL #c("age")
-            #   )
-            # ),
-
-            selectizeInput(
-              inputId = ns("trans_chromosome_select"),
-              label = "Chromosomes",
-              choices = c(
-                1:21,
-                "X", "Y"
+                selectizeInput(
+                  inputId = ns("trans_chromosome_select"),
+                  label = "Chromosomes",
+                  choices = c( 1:21, "X", "Y"),
+                  options = list(
+                    placeholder = 'Select stained chromosomes'
+                  ),
+                  multiple = TRUE
+                )
               ),
-              options = list(
-                placeholder = 'Select stained chromosomes'
-              ),
-              multiple = TRUE
-            ),
 
-            awesomeCheckboxGroup(
-              inputId = ns("trans_color_scheme"),
-              status = "warning",
-              label = "Color scheme",
-              choices = c(
-                "Use M-Fish" = "m_fish"
+              innerColumn(
+                width = 6,
+
+                h6(strong("Color scheme")),
+                awesomeCheckbox(
+                  inputId = ns("trans_m_fish_scheme"),
+                  status = "warning",
+                  label = "Use M-Fish",
+                  value = FALSE
+                ),
+
+                conditionalPanel(
+                  condition = "!input.trans_m_fish_scheme'",
+                  ns = ns,
+                  selectizeInput(
+                    inputId = ns("trans_color_select"),
+                    label = "Colors",
+                    choices = c(
+                      "Red",
+                      "Green",
+                      "Orange",
+                      "Purple",
+                      "Yellow",
+                      "Cyan",
+                      "Magenta"
+                    ),
+                    options = list(
+                      placeholder = 'Select used colors'#,
+                      # maxItems = 5
+                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                    ),
+                    multiple = TRUE
+                  )
+                )
               )
             ),
 
-            conditionalPanel(
-              condition = "input.trans_color_scheme != 'm_fish'",
-              ns = ns,
-              selectizeInput(
-                inputId = ns("trans_color_select"),
-                label = "Colors",
-                choices = c(
-                  "Red",
-                  "Green",
-                  "Orange",
-                  "Purple",
-                  "Yellow",
-                  "Cyan",
-                  "Magenta"
-                ),
-                options = list(
-                  placeholder = 'Select used colors'#,
-                  # maxItems = 5
-                  # TODO: use renderUI to force maxItems ot be length(trans_color_select)
-                ),
-                multiple = TRUE
-              )
-            ),
-
+            br(),
             actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
-
           )
         )
       ),
@@ -548,12 +534,12 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
     input$button_upd_chrom_table
 
     isolate({
+      color_scheme <- input$trans_m_fish_scheme
       dna_table <- data.table::fread("libs/dna-content-fractions.csv")
-      color_scheme <- input$trans_color_scheme
+      sex <- input$trans_sex
     })
 
-
-    if (color_scheme == "m_fish") {
+    if (color_scheme) {
       chromosomes <- dna_table %>%
         dplyr::select_("chromosome", paste0("fraction_", sex)) %>%
         na.omit() %>%
