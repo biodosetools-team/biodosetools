@@ -3,11 +3,7 @@
 .RData
 .Ruserdata
 *.Rproj
-gof/
-src/
 tests/
-modules_src/
-0-modules
+rsconnect/
 help_template.R
-column_operations.R
 deploy_shinyapp.R
