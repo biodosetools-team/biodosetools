@@ -14,7 +14,7 @@ server <- function(input, output) {
 
   # Fitting
   callModule(id = "dicent_fitting", module = generalFittingCountsHotTable)
-  callModule(id = "dicent_fitting", module = dicentFittingResults)
+  callModule(id = "dicent_fitting", module = generalFittingResults, aberr_module = "dicentrics")
 
   # Dose Estimation
   callModule(id = "dicent_estimate", module = dicentEstimateCaseHotTable)
@@ -29,7 +29,7 @@ server <- function(input, output) {
   transFittingFraction <-
     callModule(id = "trans_fitting", module = transFractionToFullGenomeCalc)
   callModule(id = "trans_fitting", module = generalFittingCountsHotTable)
-  callModule(id = "trans_fitting", module = transFittingResults, fraction_value = transFittingFraction)
+  callModule(id = "trans_fitting", module = generalFittingResults, aberr_module = "translocations", fraction_value = transFittingFraction)
 
   # Dose Estimation
   callModule(id = "trans_estimate", module = transEstimateCaseHotTable)
