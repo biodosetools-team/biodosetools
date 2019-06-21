@@ -16,14 +16,17 @@ source("translations/translations.R")
 
 # Modules --------------------------------------------------
 
+# General
+source("modules/generalFittingModules.R")
+
 # Dicentrics
-source("modules/dicentFittingModule.R")
-source("modules/dicentEstimateModule.R")
+source("modules/dicentFittingModules.R")
+source("modules/dicentEstimateModules.R")
 
 # Translocations
-source("modules/transGeneralModule.R")
-source("modules/transFittingModule.R")
-source("modules/transEstimateModule.R")
+source("modules/transGeneralModules.R")
+source("modules/transFittingModules.R")
+source("modules/transEstimateModules.R")
 
 # Build UI -------------------------------------------------
 

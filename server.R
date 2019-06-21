@@ -13,7 +13,7 @@ server <- function(input, output) {
   # Dicentrics Modules ----
 
   # Fitting
-  callModule(module = dicentFittingHotTable, id = "dicent_fitting")
+  callModule(module = generalFittingCountsHotTable, id = "dicent_fitting")
   callModule(module = dicentFittingResults, id = "dicent_fitting")
 
   # Dose Estimation
@@ -25,18 +25,16 @@ server <- function(input, output) {
   # Translocations Modules ----
 
   # Fitting
-  callModule(module = transFittingHotTable, id = "trans_fitting")
   callModule(module = transChromosomeTable, id = "trans_fitting")
-  transFittingFraction <-
-    callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
+  transFittingFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
+  callModule(module = generalFittingCountsHotTable, id = "trans_fitting")
   callModule(module = transFittingResults, id = "trans_fitting", fraction_value = transFittingFraction)
 
   # Dose Estimation
   callModule(module = transEstimateHotTable, id = "trans_estimate")
 
   callModule(module = transChromosomeTable, id = "trans_estimate")
-  transEstimateFraction <-
-    callModule(module = transFractionToFullGenomeCalc, id = "trans_estimate")
+  transEstimateFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_estimate")
 
   callModule(module = transEstimateFittingCurveHotTable, id = "trans_estimate")
   callModule(module = transEstimateFittingCurve, id = "trans_estimate")
