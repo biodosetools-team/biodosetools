@@ -13,33 +13,34 @@ server <- function(input, output) {
   # Dicentrics Modules ----
 
   # Fitting
-  callModule(module = generalFittingCountsHotTable, id = "dicent_fitting")
-  callModule(module = dicentFittingResults, id = "dicent_fitting")
+  callModule(id = "dicent_fitting", module = generalFittingCountsHotTable)
+  callModule(id = "dicent_fitting", module = dicentFittingResults)
 
   # Dose Estimation
-  callModule(module = dicentEstimateHotTable, id = "dicent_estimate")
-  callModule(module = dicentEstimateFittingCurveHotTable, id = "dicent_estimate")
-  callModule(module = dicentEstimateFittingCurve, id = "dicent_estimate")
-  callModule(module = dicentEstimateResults, id = "dicent_estimate")
+  callModule(id = "dicent_estimate", module = dicentEstimateCaseHotTable)
+  callModule(id = "dicent_estimate", module = dicentEstimateFittingCurveHotTables)
+  callModule(id = "dicent_estimate", module = dicentEstimateFittingCurve)
+  callModule(id = "dicent_estimate", module = dicentEstimateResults)
 
   # Translocations Modules ----
 
   # Fitting
-  callModule(module = transChromosomeTable, id = "trans_fitting")
-  transFittingFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_fitting")
-  callModule(module = generalFittingCountsHotTable, id = "trans_fitting")
-  callModule(module = transFittingResults, id = "trans_fitting", fraction_value = transFittingFraction)
+  callModule(id = "trans_fitting", module = transChromosomeTable)
+  transFittingFraction <-
+    callModule(id = "trans_fitting", module = transFractionToFullGenomeCalc)
+  callModule(id = "trans_fitting", module = generalFittingCountsHotTable)
+  callModule(id = "trans_fitting", module = transFittingResults, fraction_value = transFittingFraction)
 
   # Dose Estimation
-  callModule(module = transEstimateHotTable, id = "trans_estimate")
+  callModule(id = "trans_estimate", module = transEstimateCaseHotTable)
 
-  callModule(module = transChromosomeTable, id = "trans_estimate")
-  transEstimateFraction <- callModule(module = transFractionToFullGenomeCalc, id = "trans_estimate")
+  callModule(id = "trans_estimate", module = transChromosomeTable)
+  transEstimateFraction <-
+    callModule(id = "trans_estimate", module = transFractionToFullGenomeCalc)
 
-  callModule(module = transEstimateFittingCurveHotTable, id = "trans_estimate")
-  callModule(module = transEstimateFittingCurve, id = "trans_estimate")
-  callModule(module = transEstimateResults, id = "trans_estimate")
+  callModule(id = "trans_estimate", module = transEstimateFittingCurveHotTables)
+  callModule(id = "trans_estimate", module = transEstimateFittingCurve)
+  callModule(id = "trans_estimate", module = transEstimateResults)
 
   # Micronuclei Modules ----
-
 }

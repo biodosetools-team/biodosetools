@@ -779,7 +779,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 }
 
 
-transEstimateHotTable <- function(input, output, session, stringsAsFactors) {
+transEstimateCaseHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -924,7 +924,7 @@ transEstimateHotTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
-transEstimateFittingCurveHotTable <- function(input, output, session, stringsAsFactors) {
+transEstimateFittingCurveHotTables <- function(input, output, session, stringsAsFactors) {
 
   # Reset tables ----
   table_reset <- reactiveValues(value = 0)

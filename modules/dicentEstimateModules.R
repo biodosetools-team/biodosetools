@@ -614,7 +614,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 }
 
 
-dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
+dicentEstimateCaseHotTable <- function(input, output, session, stringsAsFactors) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -759,7 +759,7 @@ dicentEstimateHotTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
-dicentEstimateFittingCurveHotTable <- function(input, output, session, stringsAsFactors) {
+dicentEstimateFittingCurveHotTables <- function(input, output, session, stringsAsFactors) {
 
   # Reset tables ----
   table_reset <- reactiveValues(value = 0)
