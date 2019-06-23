@@ -192,6 +192,16 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
         fit_var_cov_mat = fit_var_cov_mat,
         fit_cor_mat = fit_cor_mat
       )
+
+      # Additional info for translocations module
+      if (aberr_module == "translocations") {
+        if (input$frequency_select == "measured_freq") {
+          trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_fraction_value, ".")
+        } else {
+          trans_frequency_message <- "The provided fitting curve is already full genome."
+        }
+        fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
+      }
     }
 
     return(fit_results_list)
@@ -202,6 +212,12 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
     # Fitting formula
     if (input$button_view_fit_data <= 0) return(NULL)
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
+  })
+
+  output$fit_trans_frequency_message <- renderUI({
+    # Fitting formula
+    if (input$button_view_fit_data <= 0 | aberr_module != "translocations") return(NULL)
+    data()[["fit_trans_frequency_message"]]
   })
 
   output$fit_model_statistics <- renderRHandsontable({
