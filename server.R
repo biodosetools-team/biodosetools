@@ -18,8 +18,8 @@ server <- function(input, output) {
 
   # Dose Estimation
   callModule(id = "dicent_estimate", module = dicentEstimateCaseHotTable)
-  callModule(id = "dicent_estimate", module = dicentEstimateFittingCurveHotTables)
-  callModule(id = "dicent_estimate", module = dicentEstimateFittingCurve)
+  callModule(id = "dicent_estimate", module = generalEstimateFittingCurveHotTables)
+  callModule(id = "dicent_estimate", module = generalEstimateFittingCurve, aberr_module = "dicentrics")
   callModule(id = "dicent_estimate", module = dicentEstimateResults)
 
   # Translocations Modules ----
@@ -38,8 +38,8 @@ server <- function(input, output) {
   transEstimateFraction <-
     callModule(id = "trans_estimate", module = transFractionToFullGenomeCalc)
 
-  callModule(id = "trans_estimate", module = transEstimateFittingCurveHotTables)
-  callModule(id = "trans_estimate", module = transEstimateFittingCurve)
+  callModule(id = "trans_estimate", module = generalEstimateFittingCurveHotTables)
+  callModule(id = "trans_estimate", module = generalEstimateFittingCurve, aberr_module = "translocations")
   callModule(id = "trans_estimate", module = transEstimateResults)
 
   # Micronuclei Modules ----

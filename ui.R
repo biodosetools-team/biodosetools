@@ -18,6 +18,7 @@ source("translations/translations.R")
 
 # General
 source("modules/generalFittingModules.R")
+source("modules/generalEstimateModules.R")
 
 # Dicentrics
 source("modules/dicentFittingModules.R")
