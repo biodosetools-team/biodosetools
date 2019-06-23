@@ -74,16 +74,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   ns("formula_select"),
                   width = 165,
                   label = "Fitting formula",
-                  choices = list(
-                    "Linear quadratic" = c(
-                      "Y = C + αD + βD²" = "lin-quad"
-                      # "Y = αD + βD²" = "lin-quad-no-int"
-                    ),
-                    "Linear" = c(
-                      "Y = C + αD" = "lin"
-                      # "Y = αD" = "lin-no-int"
-                    )
-                  ),
+                  choices = global_fitting_formulas,
                   selected = "lin-quad"
                 )
               ),
@@ -91,11 +82,11 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
-              h6("Coefficients"),
+              h6(strong("Coefficients")),
               rHandsontableOutput(ns("fit_coeffs_hot")),
 
               br(),
-              h6("Variance-covariance matrix"),
+              h6(strong("Variance-covariance matrix")),
               rHandsontableOutput(ns("fit_var_cov_mat_hot")),
 
               br()

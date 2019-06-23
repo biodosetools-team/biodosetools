@@ -13,8 +13,10 @@ library(bs4Dash)
 source("libs/app_version.R")
 source("translations/translations.R")
 
-
 # Modules --------------------------------------------------
+
+# Global variables
+source("modules/globalVariables.R")
 
 # General
 source("modules/generalFittingModules.R")
