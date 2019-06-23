@@ -216,16 +216,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                   ns("formula_select"),
                   width = 165,
                   label = "Fitting formula",
-                  choices = list(
-                    "Linear quadratic" = c(
-                      "Y = C + αD + βD²" = "lin-quad"
-                      # "Y = αD + βD²" = "lin-quad-no-int"
-                    ),
-                    "Linear" = c(
-                      "Y = C + αD" = "lin"
-                      # "Y = αD" = "lin-no-int"
-                    )
-                  ),
+                  choices = global_fitting_formulas,
                   selected = "lin-quad"
                 )
               ),
@@ -233,11 +224,41 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
-              h6("Coefficients"),
+              br(),
+              selectInput(
+                ns("frequency_select"),
+                label = "Translocation frequency",
+                choices = list(
+                  "Measured by FISH" = "measured_freq",
+                  "Full genome"      = "full_gen_freq"
+                ),
+                selected = "measured_freq"
+              )
+            ),
+
+            conditionalPanel(
+              condition = "!input.load_fit_data_check & input.frequency_select == 'measured_freq'",
+              ns = ns,
+
+              numericInput(
+                ns("fit_fraction_value"),
+                "Genomic conversion factor",
+                value = NA,
+                min = 0,
+                max = 1,
+                step = 0.001
+              )
+            ),
+
+            conditionalPanel(
+              condition = "!input.load_fit_data_check",
+              ns = ns,
+
+              h6(strong("Coefficients")),
               rHandsontableOutput(ns("fit_coeffs_hot")),
 
               br(),
-              h6("Variance-covariance matrix"),
+              h6(strong("Variance-covariance matrix")),
               rHandsontableOutput(ns("fit_var_cov_mat_hot")),
 
               br()
@@ -275,6 +296,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
+          br(),
+          h6("Translocation frequency"),
+          uiOutput(ns("fit_trans_frequency_message")),
+
+          br(),
           h6("Coefficients"),
           rHandsontableOutput(ns("fit_coeffs"))
         ),
