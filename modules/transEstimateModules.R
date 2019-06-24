@@ -10,148 +10,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # Card: Stains color options ----
-      bs4MyCard(
-        width = 6,
-        title = "Stains color options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-        topButton = div(
-          # Help button
-          bsButton(
-            ns("help_colors"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_colors_dialog"),
-            title = "Help: Stain color data input",
-            trigger = ns("help_colors"),
-            size = "large",
-
-            withMathJax(includeMarkdown("help/help_colors_data_input.md"))
-
-          )
-        ),
-
-        fluidRow(
-          column(
-            width = 12,
-
-            fluidRow(
-              innerColumn(
-                width = 6,
-
-                awesomeRadio(
-                  inputId = ns("trans_sex"),
-                  status = "warning",
-                  label = "Sex",
-                  choices = c(
-                    "Male"   = "male",
-                    "Female" = "female"
-                  ),
-                  selected = "male"
-                ),
-
-                selectizeInput(
-                  inputId = ns("trans_chromosome_select"),
-                  label = "Chromosomes",
-                  choices = c( 1:21, "X", "Y"),
-                  options = list(
-                    placeholder = 'Select stained chromosomes'
-                  ),
-                  multiple = TRUE
-                )
-              ),
-
-              innerColumn(
-                width = 6,
-
-                h6(strong("Stain color scheme")),
-                awesomeCheckbox(
-                  inputId = ns("trans_m_fish_scheme"),
-                  status = "warning",
-                  label = "Use M-Fish",
-                  value = FALSE
-                ),
-
-                conditionalPanel(
-                  condition = "!input.trans_m_fish_scheme",
-                  ns = ns,
-                  selectizeInput(
-                    inputId = ns("trans_color_select"),
-                    label = "Stain colors",
-                    choices = c(
-                      "Red",
-                      "Green",
-                      "Orange",
-                      "Purple",
-                      "Yellow",
-                      "Cyan",
-                      "Magenta"
-                    ),
-                    options = list(
-                      placeholder = 'Select used colors'#,
-                      # maxItems = 5
-                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
-                    ),
-                    multiple = TRUE
-                  )
-                )
-              )
-            ),
-
-            br(),
-            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
-          )
-        )
-      ),
-
-      column(
-        width = 6,
-
-        # Card: Chromosome-color table ----
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Chromosome data",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          fluidRow(
-            column(
-              width = 12,
-
-              rHandsontableOutput(outputId = ns("chromosome_table"))
-            ),
-            div(
-              style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
-            )
-          )
-        ),
-
-        # Card: Conversion factor to full genome ----
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Genomic conversion factor",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          fluidRow(
-            column(
-              width = 12,
-
-              uiOutput(ns("fraction"))
-
-            )
-          )
-        )
-
-      )
-    ),
-
-    fluidRow(
       # Card: Curve fitting options ----
       bs4MyCard(
         width = 5,
@@ -321,6 +179,148 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Variance-covariance matrix"),
           rHandsontableOutput(ns("fit_var_cov_mat"))
         )
+      )
+    ),
+
+    fluidRow(
+      # Card: Stains color options ----
+      bs4MyCard(
+        width = 6,
+        title = "Stains color options",
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          bsButton(
+            ns("help_colors"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_colors_dialog"),
+            title = "Help: Stain color data input",
+            trigger = ns("help_colors"),
+            size = "large",
+
+            withMathJax(includeMarkdown("help/help_colors_data_input.md"))
+
+          )
+        ),
+
+        fluidRow(
+          column(
+            width = 12,
+
+            fluidRow(
+              innerColumn(
+                width = 6,
+
+                awesomeRadio(
+                  inputId = ns("trans_sex"),
+                  status = "warning",
+                  label = "Sex",
+                  choices = c(
+                    "Male"   = "male",
+                    "Female" = "female"
+                  ),
+                  selected = "male"
+                ),
+
+                selectizeInput(
+                  inputId = ns("trans_chromosome_select"),
+                  label = "Chromosomes",
+                  choices = c( 1:21, "X", "Y"),
+                  options = list(
+                    placeholder = 'Select stained chromosomes'
+                  ),
+                  multiple = TRUE
+                )
+              ),
+
+              innerColumn(
+                width = 6,
+
+                h6(strong("Stain color scheme")),
+                awesomeCheckbox(
+                  inputId = ns("trans_m_fish_scheme"),
+                  status = "warning",
+                  label = "Use M-Fish",
+                  value = FALSE
+                ),
+
+                conditionalPanel(
+                  condition = "!input.trans_m_fish_scheme",
+                  ns = ns,
+                  selectizeInput(
+                    inputId = ns("trans_color_select"),
+                    label = "Stain colors",
+                    choices = c(
+                      "Red",
+                      "Green",
+                      "Orange",
+                      "Purple",
+                      "Yellow",
+                      "Cyan",
+                      "Magenta"
+                    ),
+                    options = list(
+                      placeholder = 'Select used colors'#,
+                      # maxItems = 5
+                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                    ),
+                    multiple = TRUE
+                  )
+                )
+              )
+            ),
+
+            br(),
+            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+          )
+        )
+      ),
+
+      column(
+        width = 6,
+
+        # Card: Chromosome-color table ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Chromosome data",
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              rHandsontableOutput(outputId = ns("chromosome_table"))
+            ),
+            div(
+              style = "padding-left: 7.5px; padding-top: 23px;",
+              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
+            )
+          )
+        ),
+
+        # Card: Conversion factor to full genome ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Genomic conversion factor",
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              uiOutput(ns("fraction"))
+
+            )
+          )
+        )
+
       )
     ),
 
