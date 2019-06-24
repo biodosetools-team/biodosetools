@@ -156,7 +156,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
 
     # Model statistic function for translocations
     get_model_statistics <- function(model_data, fit_coeffs_vec, genome_fraction,
-                                     response = "yield", link = "identity") {
+                                     response = "yield", link = "identity", type = "theory") {
       # Calculate from theory or use statistics calculated by glm
       if (type == "theory") {
         # Renormalize data if necessary
