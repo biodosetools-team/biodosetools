@@ -840,6 +840,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
     results_list[["gg_curve"]] <- gg_curve
 
+    # Additional results if using translocations
     if (aberr_module == "translocations") {
       results_list[["genome_frac"]] <- fraction
       results_list[["chromosome_table"]] <- chromosome_table

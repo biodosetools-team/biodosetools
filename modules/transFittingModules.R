@@ -69,7 +69,7 @@ transFittingUI <- function(id, label) {
               innerColumn(
                 width = 6,
 
-                h6(strong("Stain color scheme")),
+                widgetLabel("Stain color scheme"),
                 awesomeCheckbox(
                   inputId = ns("trans_m_fish_scheme"),
                   status = "warning",

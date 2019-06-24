@@ -82,11 +82,11 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
-              h6(strong("Coefficients")),
+              widgetLabel("Coefficients"),
               rHandsontableOutput(ns("fit_coeffs_hot")),
 
               br(),
-              h6(strong("Variance-covariance matrix")),
+              widgetLabel("Variance-covariance matrix"),
               rHandsontableOutput(ns("fit_var_cov_mat_hot")),
 
               br()
