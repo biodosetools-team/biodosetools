@@ -98,22 +98,12 @@ sidebar <- bs4DashMySidebar(
       condition = "input.experiment_select == 'dicent'",
       tabName = "tab-dicent-estimate",
       icon = "calculator"
-      # )
     ),
 
     # Translocations
     bs4MySidebarMenuItem(
+      "Fitting",
       condition = "input.experiment_select == 'trans'",
-      HTML(
-        paste(
-          "Fitting",
-          bs4Badge(
-            "in progress",
-            position = "right",
-            status = "danger"
-          )
-        )
-      ),
       tabName = "tab-trans-fitting",
       icon = "paint-brush"
     ),
