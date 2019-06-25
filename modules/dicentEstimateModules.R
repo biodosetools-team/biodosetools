@@ -59,11 +59,14 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           column(
             width = 12,
             # Load data from file
-            awesomeCheckbox(
+            mySwitchInput(
               inputId = ns("load_fit_data_check"),
-              label = "Load fit data from file",
-              value = TRUE, status = "warning"
+              size = "mini",
+              onStatus = "options",
+              sideLabel = "Load fit data from RDS file",
+              value = TRUE
             ),
+
             # Manual input ----
             conditionalPanel(
               condition = "!input.load_fit_data_check",
@@ -197,11 +200,14 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           column(
             width = 12,
             # Load data from file
-            awesomeCheckbox(
+            mySwitchInput(
               inputId = ns("load_case_data_check"),
-              label = "Load data from file",
-              value = FALSE, status = "warning"
+              size = "mini",
+              onStatus = "options",
+              sideLabel = "Load data from file",
+              value = FALSE
             ),
+
             # Inputs
             conditionalPanel(
               condition = "!input.load_case_data_check",

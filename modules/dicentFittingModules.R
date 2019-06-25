@@ -64,18 +64,24 @@ dicentFittingUI <- function(id, label) {
           column(
             width = 12,
             # Load file checkbox
-            awesomeCheckbox(
+            mySwitchInput(
               inputId = ns("load_count_data_check"),
-              label = "Load data from file",
-              value = FALSE, status = "warning"
+              size = "mini",
+              onStatus = "options",
+              sideLabel = "Load data from file",
+              value = FALSE
             ),
+
             # Full/aggregated data checkbox
-            awesomeCheckbox(
+            mySwitchInput(
               inputId = ns("use_aggr_count_data_check"),
+              size = "mini",
+              onStatus = "options",
               width = "100%",
-              label = "Only provide total number of dicentrics",
-              value = FALSE, status = "warning"
+              sideLabel = "Only provide total number of translocations",
+              value = FALSE
             ),
+
             # Manual input ----
             conditionalPanel(
               condition = "!input.load_count_data_check",
