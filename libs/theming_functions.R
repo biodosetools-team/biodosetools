@@ -397,6 +397,28 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
             border-color: ', export_color, ';
           }
 
+          /* Custom shinyWidgets::switchInput colors */
+
+          .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-options {
+            background: ', options_color, ';
+            color: #fff;
+          }
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-inputs {
+            background: ', inputs_color, ';
+            color: #fff;
+          }
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-results {
+            background: ', results_color, ';
+            color: #fff;
+          }
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-export {
+            background: ', export_color, ';
+            color: #fff;
+          }
+
           '
 
         )

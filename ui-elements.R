@@ -2,6 +2,7 @@
 
 source("libs/theming.R", local = T)
 source("libs/widgets_functions.R", local = T)
+source("libs/widgets_aux_functions.R", local = T)
 # source("libs/withLocalMathJax.R", local = T)
 
 html_tags <- tags$head(

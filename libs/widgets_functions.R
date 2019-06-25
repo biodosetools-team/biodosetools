@@ -341,6 +341,13 @@ bs4MyModal <- function(id, title, trigger, ..., size) {
       # ))
     ))
   )
+  # shinyBSDep <- htmltools::htmlDependency(
+  #   "shinyBS", packageVersion("shinyBS"),
+  #   src = c("href" = "sbs"),
+  #   script = "shinyBS.js",
+  #   stylesheet = "shinyBS.css"
+  # )
+
   # htmltools::attachDependencies(bsTag, shinyBSDep)
 }
 
@@ -360,7 +367,69 @@ bs4MySidebarMenuItem <- function(..., condition = NULL, tabName = NULL, icon = N
 }
 
 
-# Function: custom columns ----
+# Function: mySwitchInput ----
+mySwitchInput <- function(inputId, label = NULL, value = FALSE, onLabel = "ON",
+                          offLabel = "OFF", onStatus = NULL, offStatus = NULL, size = "default",
+                          labelWidth = "auto", handleWidth = "auto", disabled = FALSE,
+                          inline = FALSE, width = NULL, sideLabel = NULL) {
+  dropNulls <- function (x) {
+    x[!vapply(x, is.null, FUN.VALUE = logical(1))]
+  }
+
+  value <- shiny::restoreInput(id = inputId, default = value)
+  size <- match.arg(arg = size, choices = c(
+    "default", "mini",
+    "small", "normal", "large"
+  ))
+  switchProps <- dropNulls(list(
+    id = inputId, type = "checkbox",
+    class = "sw-switchInput", `data-input-id` = inputId,
+    `data-on-text` = onLabel, `data-off-text` = offLabel,
+    `data-label-text` = label, `data-on-color` = onStatus,
+    `data-off-color` = offStatus, `data-label-width` = labelWidth,
+    `data-handle-width` = handleWidth, disabled = if (!disabled) NULL else disabled,
+    `data-size` = if (size == "default") "" else size
+  ))
+  switchProps <- lapply(switchProps, function(x) {
+    if (identical(x, TRUE)) {
+      "true"
+    } else if (identical(x, FALSE)) {
+      "false"
+    } else {
+      x
+    }
+  })
+  inputTag <- do.call(htmltools::tags$input, switchProps)
+  if (!is.null(value) && value) {
+    inputTag$attribs$checked <- "checked"
+  }
+  switchInputTag <- htmltools::tags$div(
+    class = "form-group shiny-input-container",
+    class = if (inline) {
+      "shiny-input-container-inline"
+    }, style = if (inline) {
+      "display: inline-block;"
+    }, style = if (!is.null(width)) {
+      paste0(
+        "width: ", htmltools::validateCssUnit(width),
+        ";"
+      )
+    }, style = if (size == "mini") {
+      "margin-bottom: 5px;"
+    },
+    inputTag,
+    if (!is.null(sideLabel)) {
+      htmltools::tags$div(
+        style = "vertical-align: top; display: inline-block; padding-left: 4px; max-width: 70%;",
+        p(sideLabel)
+      )
+    }
+  )
+  attachShinyWidgetsDep(switchInputTag, "bsswitch")
+}
+
+
+# Function: innerColumn ----
 innerColumn <- function(width, ..., offset = 0) {
   if (!is.numeric(width)) {#|| (width < 1) || (width > 12)) {
     stop("column width must be between 1 and 12")
