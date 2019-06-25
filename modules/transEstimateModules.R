@@ -522,95 +522,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             )
           ),
 
-
-          # div(
-          #   class = "side-widget",
-          #   style = "padding-right: 10px;",
-          #   conditionalPanel(
-          #     condition = "input.trans_confounders.includes('age')",
-          #     ns = ns,
-          #     numericInput(
-          #       ns("trans_confounder_age"),
-          #       width = 75,
-          #       "Age",
-          #       value = 25,
-          #       min = 0,
-          #       step = 1
-          #     )
-          #   )
-          # ),
-          #
-          # div(
-          #   class = "side-widget",
-          #   style = "max-width: 140px; margin-right: -40px;",
-          #   conditionalPanel(
-          #     condition = "input.trans_confounders.includes('sex')",
-          #     ns = ns,
-          #     widgetLabel("Sex", 14),
-          #     switchInput(
-          #       ns("trans_confounder_sex"),
-          #       value = TRUE
-          #     )
-          #   )
-          # ),
-          #
-          # div(
-          #   class = "side-widget",
-          #   style = "max-width: 140px; margin-right: -40px;",
-          #   conditionalPanel(
-          #     condition = "input.trans_confounders.includes('smoke')",
-          #     ns = ns,
-          #     widgetLabel("Smoking", 14),
-          #     switchInput(
-          #       ns("trans_confounder_smoke"),
-          #       value = TRUE
-          #     )
-          #   )
-          # ),
-          #
-          # div(
-          #   class = "side-widget",
-          #   style = "padding-right: 10px;",
-          #   conditionalPanel(
-          #     condition = "input.trans_confounders.includes('race')",
-          #     ns = ns,
-          #     selectInput(
-          #       ns("trans_confounder_race"),
-          #       label = "Race",
-          #       width = "100px",
-          #       choices = list(
-          #         "White"  = "white",
-          #         "Asian"  = "asian",
-          #         "Black"  = "black",
-          #         "Others" = "other"
-          #       ),
-          #       selected = "white"
-          #     )
-          #   )
-          # ),
-          #
-          # div(
-          #   class = "side-widget",
-          #   style = "padding-right: 10px;",
-          #   conditionalPanel(
-          #     condition = "input.trans_confounders.includes('region')",
-          #     ns = ns,
-          #     selectInput(
-          #       ns("trans_confounder_region"),
-          #       label = "Lab region",
-          #       width = "180px",
-          #       choices = list(
-          #         "North America"  = "n-america",
-          #         "Asia"           = "asia",
-          #         "Western Europe" = "w-europe",
-          #         "Central Europe" = "c-europe",
-          #         "Eastern Europe" = "e-europe"
-          #       ),
-          #       selected = "w-europe"
-          #     )
-          #   )
-          # ),
-
           # Cases table
           div(
             style="height = auto;",
@@ -704,8 +615,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               width = "175px",
               choices = list(
                 "Whole-body"    = "whole-body",
-                "Partial-body"  = "partial-body",
-                "Heterogeneous" = "hetero"
+                "Partial-body"  = "partial-body"
               ),
               selected = "whole-body"
             )
