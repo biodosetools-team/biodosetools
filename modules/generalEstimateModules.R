@@ -349,3 +349,246 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
       hot_cols(format = "0.000")
   })
 }
+
+generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors, aberr_module, fraction_value = NULL) {
+
+  # Reset table ----
+  table_reset <- reactiveValues(value = 0)
+
+  observeEvent(input$button_upd_table, {
+    table_reset$value <- 1
+  })
+
+  # Translocation confounder function ----
+  get_translocation_rate <- function(cells, fraction, age_value,
+                                     sex_bool = FALSE, smoker_bool = FALSE,
+                                     race_value = "none", region_value = "none") {
+    age_trans_frequency <- function(age) {
+      trans_frequency <- exp(-7.925) + exp(-9.284) * (age * exp(0.01062 * age))
+      return(trans_frequency)
+    }
+
+    sex_trans_list <- c(1, 1, 0.92) %>%
+      `names<-`(c("none", "male", "female"))
+    smoke_trans_list <- c(1, 1.19) %>%
+      `names<-`(c("FALSE", "TRUE"))
+    race_trans_list <- c(1, 1, 1.23, 0.84, 1.06) %>%
+      `names<-`(c("none", "white", "asian", "black", "other"))
+    region_trans_list <- c(1, 1, 0.99, 1.75, 1.75, 0.86) %>%
+      `names<-`(c("none", "n-america", "w-europe", "c-europe", "e-europe", "asia"))
+
+    sex_value <- ifelse(sex_bool, input$trans_sex, "none")
+
+    sex_trans_frequency <- sex_trans_list[[sex_value]]
+    smoke_trans_frequency <- smoke_trans_list[[as.character(smoker_bool)]]
+    race_trans_frequency <- race_trans_list[[race_value]]
+    region_trans_frequency <- region_trans_list[[region_value]]
+
+    expected_aberr <- cells * fraction *
+      age_trans_frequency(age_value) *
+      sex_trans_frequency *
+      smoke_trans_frequency *
+      race_trans_frequency *
+      region_trans_frequency
+
+    return(expected_aberr)
+  }
+
+  # Initialize data frame ----
+  previous <- reactive({
+
+    # Create button dependency for updating dimensions
+    input$button_upd_table
+
+    isolate({
+      load_case_data <- input$load_case_data_check
+      case_data <- input$load_case_data
+      # num_cases <- as.numeric(input$num_cases)
+      num_cases <- 1
+      num_aberrs <- as.numeric(input$num_aberrs) + 1
+    })
+
+    if (!load_case_data) {
+      # Base data frame
+      full_data <- data.frame(
+        matrix(
+          0,
+          nrow = num_cases,
+          ncol = num_aberrs
+        )
+      ) %>%
+        `colnames<-`(paste0("C", seq(0, num_aberrs - 1, 1)))
+
+    } else {
+      full_data <- read.csv(case_data$datapath, header = TRUE) %>%
+        dplyr::mutate_at(vars(starts_with("C")), as.integer)
+    }
+
+    return(full_data)
+  })
+
+  # Reactive data frame ----
+  changed_data <- reactive({
+    # Create button dependency for updating dimensions
+    input$button_upd_table
+    input$button_upd_params
+
+    isolate({
+      if (is.null(input$case_data_hot) || isolate(table_reset$value == 1)) {
+        table_reset$value <- 0
+        mytable <- previous()
+
+        # Initial renderization of the table
+        if (aberr_module == "dicentrics") {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              y = 0,
+              y_err = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(N, X, everything()) %>%
+            dplyr::mutate_at(
+              c("X", "N", grep("C", names(.), value = TRUE)),
+              as.integer
+            )
+        } else if (aberr_module == "translocations") {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              Xt = 0,
+              y = 0,
+              y_err = 0,
+              yt = 0,
+              yt_err = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(N, X, Xt, everything()) %>%
+            dplyr::mutate_at(
+              c("X", "N", grep("C", names(.), value = TRUE)),
+              as.integer
+            )
+        }
+
+      } else if (!identical(previous(), input$case_data_hot)) {
+        mytable <- as.data.frame(hot_to_r(input$case_data_hot))
+
+        # Calculated columns
+        if (aberr_module == "dicentrics") {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              y = 0,
+              y_err = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(N, X, everything())
+        } else if (aberr_module == "translocations") {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              N = 0,
+              X = 0,
+              Xt = 0,
+              y = 0,
+              y_err = 0,
+              yt = 0,
+              yt_err = 0,
+              DI = 0,
+              u = 0
+            ) %>%
+            dplyr::select(N, X, Xt, everything())
+        }
+
+        # Index variables
+        if (aberr_module == "dicentrics") {
+          first_trans_index <- 3
+          last_trans_index <- ncol(mytable) - 4
+        } else if (aberr_module == "translocations") {
+          first_trans_index <- 4
+          last_trans_index <- ncol(mytable) - 6
+        }
+
+        num_rows <- nrow(mytable)
+
+        mytable <- mytable %>%
+          dplyr::mutate(
+            X = as.integer(X),
+            N = as.integer(rowSums(.[first_trans_index:last_trans_index]))
+          )
+
+        # Ugly method to calculate index of dispersion
+        for (row in 1:num_rows) {
+          xf <- 0
+          x2f <- 0
+          # Calculate summatories
+          for (k in seq(0, last_trans_index - first_trans_index, 1)) {
+            xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
+            x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
+          }
+          # Calculate variance and mean
+          var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
+          mean <- xf / mytable[row, "N"]
+          # Save values into data frame
+          mytable[row, "X"] <- as.integer(xf)
+          mytable[row, "DI"] <- var / mean
+          mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
+          mytable[row, "y"] <- mytable[row, "X"] / mytable[row, "N"]
+          mytable[row, "y_err"] <- sqrt(var / mytable[row, "N"])
+        }
+
+        # Calculate expected translocation rate
+        if (aberr_module == "translocations") {
+          fraction <- fraction_value$frac()
+          mytable <- mytable %>%
+            dplyr::mutate(
+              Xt = ifelse(
+                input$trans_confounders,
+                get_translocation_rate(
+                  N, fraction,
+                  age_value = input$trans_confounder_age,
+                  sex_bool = input$trans_confounder_sex,
+                  smoker_bool = input$trans_confounder_smoke,
+                  race_value = input$trans_confounder_race,
+                  region_value = input$trans_confounder_region
+                ),
+                0
+              ),
+              yt = (X - Xt) / (N * fraction),
+              yt_err = 0
+            )
+        }
+
+        return(mytable)
+      }
+    })
+  })
+
+  # Output ----
+  output$case_data_hot <- renderRHandsontable({
+    # Read number of columns
+    num_cols <- ncol(changed_data())
+
+    # Convert to hot and format table
+    hot <- changed_data() %>%
+      rhandsontable(width = "100%", height = "100%") %>%
+      hot_cols(colWidths = 50) %>%
+      hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+      hot_col(ncol(changed_data()), renderer = "
+           function (instance, td, row, col, prop, value, cellProperties) {
+             Handsontable.renderers.NumericRenderer.apply(this, arguments);
+             if (value > 1.96) {
+              td.style.background = 'pink';
+             }
+           }")
+    # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+
+    hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
+    return(hot)
+  })
+}
