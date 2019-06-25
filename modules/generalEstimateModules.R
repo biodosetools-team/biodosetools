@@ -578,7 +578,6 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     hot <- changed_data() %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_cols(colWidths = 50) %>%
-      hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
       hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
@@ -587,6 +586,14 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
              }
            }")
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+
+    if (aberr_module == "dicentrics") {
+      hot <- hot %>%
+        hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE)
+    } else if (aberr_module == "translocations") {
+      hot <- hot %>%
+        hot_col(c(1, 2, 3, seq(num_cols - 5, num_cols, 1)), readOnly = TRUE)
+    }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
@@ -1560,7 +1567,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     return(est_results_list)
   })
 
-  # renderUI: Estimare results tabCard ----
+  # renderUI: Estimate results tabCard ----
   output$estimate_results_ui <- renderUI({
     assessment <- input$assessment_select
 
