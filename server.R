@@ -20,7 +20,7 @@ server <- function(input, output) {
   callModule(id = "dicent_estimate", module = generalEstimateCaseHotTable, aberr_module = "dicentrics")
   callModule(id = "dicent_estimate", module = generalEstimateFittingCurveHotTables)
   callModule(id = "dicent_estimate", module = generalEstimateFittingCurve, aberr_module = "dicentrics")
-  callModule(id = "dicent_estimate", module = dicentEstimateResults)
+  callModule(id = "dicent_estimate", module = generalEstimateResults, aberr_module = "dicentrics")
 
   # Translocations Modules ----
 
@@ -39,7 +39,7 @@ server <- function(input, output) {
 
   callModule(id = "trans_estimate", module = generalEstimateFittingCurveHotTables)
   callModule(id = "trans_estimate", module = generalEstimateFittingCurve, aberr_module = "translocations")
-  callModule(id = "trans_estimate", module = transEstimateResults)
+  callModule(id = "trans_estimate", module = generalEstimateResults, aberr_module = "translocations")
 
   # Micronuclei Modules ----
 }
