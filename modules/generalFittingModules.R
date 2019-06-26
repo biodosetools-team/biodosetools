@@ -88,7 +88,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
     }
 
     isolate({
-      if (is.null(input$count_data_hot) || isolate(table_reset$value == 1)) {
+      if (is.null(input$count_data_hot) | isolate(table_reset$value == 1)) {
 
         table_reset$value <- 0
         mytable <- previous()
@@ -300,7 +300,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     }
 
     prepare_maxlik_count_data <- function(count_data, model_formula) {
-      if (ncol(count_data) > 3) {
+
+      if (ncol(count_data) > 3 & aberr_module != "translocations") {
         # Full distribution data
         dose_vec <- rep(
           count_data[["D"]],
@@ -331,12 +332,12 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
           aberr = dics_vec,
           dose = dose_vec,
           C = cell_vec) %>%
-          mutate(
+          dplyr::mutate(
             α = dose * C,
             β = dose^2 * C) %>%
           dplyr::select(aberr, C, α, β, dose)
       } else {
-        # Aggregated data only
+        # Aggregated data only or if using translocations
         parsed_data <- count_data %>%
           dplyr::rename(
             aberr = X,
@@ -350,7 +351,6 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       }
 
       # Delete C column for models with no intercept
-
       if (stringr::str_detect(model_formula, "no-int")) {
         parsed_data <- parsed_data %>%
           dplyr::select(-C)
@@ -520,7 +520,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
             β = dose^2 * C
           ) %>%
           dplyr::rename(aberr = X) %>%
-          select(aberr, dose, C, α, β)
+          dplyr::select(aberr, dose, C, α, β)
       } else {
         data_aggr <- data
       }
@@ -560,7 +560,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       mf <- mf[c(1, m)]
       mf$drop.unused.levels <- TRUE
 
-      if (length(fit_formula[[3]]) > 1 && identical(fit_formula[[3]][[1]], as.name("|"))) {
+      if (length(fit_formula[[3]]) > 1 & identical(fit_formula[[3]][[1]], as.name("|"))) {
         ff <- fit_formula
         fit_formula[[3]][1] <- call("+")
         mf$formula <- fit_formula

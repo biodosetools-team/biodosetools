@@ -80,7 +80,7 @@ generalEstimateFittingCurveHotTables <- function(input, output, session, strings
     # Create button dependency for updating dimensions
     input$button_gen_table
 
-    if (is.null(input$fit_coeffs_hot) || isolate(table_reset$value == 1)) {
+    if (is.null(input$fit_coeffs_hot) | isolate(table_reset$value == 1)) {
       table_reset$value <- 0
       return(previous_coeffs())
     } else if (!identical(previous_coeffs(), input$fit_coeffs_hot)) {
@@ -98,7 +98,7 @@ generalEstimateFittingCurveHotTables <- function(input, output, session, strings
     # Create button dependency for updating dimensions
     input$button_gen_table
 
-    if (is.null(input$fit_var_cov_mat_hot) || isolate(table_var_reset$value == 1)) {
+    if (is.null(input$fit_var_cov_mat_hot) | isolate(table_var_reset$value == 1)) {
       table_var_reset$value <- 0
       return(previous_var())
     } else if (!identical(previous_var(), input$fit_var_cov_mat_hot)) {
@@ -434,7 +434,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     input$button_upd_params
 
     isolate({
-      if (is.null(input$case_data_hot) || isolate(table_reset$value == 1)) {
+      if (is.null(input$case_data_hot) | isolate(table_reset$value == 1)) {
         table_reset$value <- 0
         mytable <- previous()
 
@@ -1119,7 +1119,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
       # Select translocation counts
       counts <- case_data[1, ] %>%
-        select(contains("C")) %>%
+        dplyr::select(contains("C")) %>%
         as.numeric()
 
       # Get fitting model variables
@@ -1815,7 +1815,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_yields_partial <- renderRHandsontable({
     # Estimated recieved doses (partial-body)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(yield) %>%
       t() %>%
@@ -1832,7 +1832,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_doses_partial <- renderRHandsontable({
     # Estimated recieved doses (partial-body)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
       dplyr::select(dose) %>%
       t() %>%
@@ -1849,7 +1849,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_frac_partial <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose dose1 (partial-body)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_frac_partial"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1865,7 +1865,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_mixing_prop_hetero <- renderRHandsontable({
     # Estimated yields (heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
@@ -1880,7 +1880,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_yields_hetero <- renderRHandsontable({
     # Estimated recieved doses (heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_yields_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1896,7 +1896,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_doses_hetero <- renderRHandsontable({
     # Estimated recieved doses (heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_doses_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1912,7 +1912,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$est_frac_hetero <- renderRHandsontable({
     # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
@@ -1937,7 +1937,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$AIC_partial <- renderRHandsontable({
     # AIC for estimated dose (partial-body)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["AIC_partial"]] %>%
       matrix %>%
       `colnames<-`(c("AIC")) %>%
@@ -1948,7 +1948,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   output$AIC_hetero <- renderRHandsontable({
     # AIC for estimated dose (heterogeneous)
-    if (input$button_estimate <= 0 || data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["AIC_hetero"]] %>%
       matrix %>%
       `colnames<-`(c("AIC")) %>%
