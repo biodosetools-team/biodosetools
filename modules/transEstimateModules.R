@@ -272,7 +272,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                       "Magenta"
                     ),
                     options = list(
-                      placeholder = 'Select used colors'#,
+                      placeholder = 'Select observed colors'#,
                       # maxItems = 5
                       # TODO: use renderUI to force maxItems ot be length(trans_color_select)
                     ),
@@ -480,11 +480,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               class = "side-widget",
               style = "padding-right: 10px;",
               selectInput(
-                ns("trans_confounder_race"),
-                label = "Race",
+                ns("trans_confounder_ethnicity"),
+                label = "Ethnicity",
                 width = "150px",
                 choices = list(
-                  "Races" = c(
+                  "Ethnicities" = c(
                     "White"  = "white",
                     "Asian"  = "asian",
                     "Black"  = "black",

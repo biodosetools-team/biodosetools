@@ -362,7 +362,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
   # Translocation confounder function ----
   get_translocation_rate <- function(cells, fraction, age_value,
                                      sex_bool = FALSE, smoker_bool = FALSE,
-                                     race_value = "none", region_value = "none") {
+                                     ethnicity_value = "none", region_value = "none") {
     age_trans_frequency <- function(age) {
       trans_frequency <- exp(-7.925) + exp(-9.284) * (age * exp(0.01062 * age))
       return(trans_frequency)
@@ -372,7 +372,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
       `names<-`(c("none", "male", "female"))
     smoke_trans_list <- c(1, 1.19) %>%
       `names<-`(c("FALSE", "TRUE"))
-    race_trans_list <- c(1, 1, 1.23, 0.84, 1.06) %>%
+    ethnicity_trans_list <- c(1, 1, 1.23, 0.84, 1.06) %>%
       `names<-`(c("none", "white", "asian", "black", "other"))
     region_trans_list <- c(1, 1, 0.99, 1.75, 1.75, 0.86) %>%
       `names<-`(c("none", "n-america", "w-europe", "c-europe", "e-europe", "asia"))
@@ -381,14 +381,14 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 
     sex_trans_frequency <- sex_trans_list[[sex_value]]
     smoke_trans_frequency <- smoke_trans_list[[as.character(smoker_bool)]]
-    race_trans_frequency <- race_trans_list[[race_value]]
+    ethnicity_trans_frequency <- ethnicity_trans_list[[ethnicity_value]]
     region_trans_frequency <- region_trans_list[[region_value]]
 
     expected_aberr <- cells * fraction *
       age_trans_frequency(age_value) *
       sex_trans_frequency *
       smoke_trans_frequency *
-      race_trans_frequency *
+      ethnicity_trans_frequency *
       region_trans_frequency
 
     return(expected_aberr)
@@ -554,7 +554,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
                   smoker_bool = input$trans_confounder_smoke,
-                  race_value = input$trans_confounder_race,
+                  ethnicity_value = input$trans_confounder_ethnicity,
                   region_value = input$trans_confounder_region
                 ),
                 0

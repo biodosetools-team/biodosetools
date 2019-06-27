@@ -94,7 +94,7 @@ transFittingUI <- function(id, label) {
                       "Magenta"
                     ),
                     options = list(
-                      placeholder = 'Select used colors'#,
+                      placeholder = 'Select observed colors'#,
                       # maxItems = 5
                       # TODO: use renderUI to force maxItems ot be length(trans_color_select)
                     ),
