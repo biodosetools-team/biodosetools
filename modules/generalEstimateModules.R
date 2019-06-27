@@ -444,8 +444,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              y = 0,
-              y_err = 0,
+              Fp = 0,
+              Fp_err = 0,
               DI = 0,
               u = 0
             ) %>%
@@ -459,15 +459,15 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              Xt = 0,
-              y = 0,
-              y_err = 0,
-              yt = 0,
-              yt_err = 0,
+              Fp = 0,
+              Fp_err = 0,
               DI = 0,
-              u = 0
+              u = 0,
+              Xc = 0,
+              Fg = 0,
+              Fg_err = 0
             ) %>%
-            dplyr::select(N, X, Xt, everything()) %>%
+            dplyr::select(N, X, everything()) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
@@ -483,8 +483,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              y = 0,
-              y_err = 0,
+              Fp = 0,
+              Fp_err = 0,
               DI = 0,
               u = 0
             ) %>%
@@ -494,15 +494,15 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              Xt = 0,
-              y = 0,
-              y_err = 0,
-              yt = 0,
-              yt_err = 0,
+              Fp = 0,
+              Fp_err = 0,
               DI = 0,
-              u = 0
+              u = 0,
+              Xc = 0,
+              Fg = 0,
+              Fg_err = 0,
             ) %>%
-            dplyr::select(N, X, Xt, everything())
+            dplyr::select(N, X, everything())
         }
 
         # Index variables
@@ -510,8 +510,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
           first_trans_index <- 3
           last_trans_index <- ncol(mytable) - 4
         } else if (aberr_module == "translocations") {
-          first_trans_index <- 4
-          last_trans_index <- ncol(mytable) - 6
+          first_trans_index <- 3
+          last_trans_index <- ncol(mytable) - 7
         }
 
         num_rows <- nrow(mytable)
@@ -538,8 +538,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
           mytable[row, "X"] <- as.integer(xf)
           mytable[row, "DI"] <- var / mean
           mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
-          mytable[row, "y"] <- mytable[row, "X"] / mytable[row, "N"]
-          mytable[row, "y_err"] <- sqrt(var / mytable[row, "N"])
+          mytable[row, "Fp"] <- mytable[row, "X"] / mytable[row, "N"]
+          mytable[row, "Fp_err"] <- sqrt(var / mytable[row, "N"])
         }
 
         # Calculate expected translocation rate
@@ -547,7 +547,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
           fraction <- fraction_value$frac()
           mytable <- mytable %>%
             dplyr::mutate(
-              Xt = ifelse(
+              Xc = ifelse(
                 input$trans_confounders,
                 get_translocation_rate(
                   N, fraction,
@@ -559,8 +559,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                 ),
                 0
               ),
-              yt = (X - Xt) / (N * fraction),
-              yt_err = 0
+              Fg = (X - Xc) / (N * fraction),
+              Fg_err = 0
             )
         }
 
@@ -592,7 +592,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
         hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE)
     } else if (aberr_module == "translocations") {
       hot <- hot %>%
-        hot_col(c(1, 2, 3, seq(num_cols - 5, num_cols, 1)), readOnly = TRUE)
+        hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE)
     }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
@@ -858,11 +858,11 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
-      yield_est <- case_data[["y"]]
+      yield_est <- case_data[["Fp"]]
 
       # Modify results for translocations
       if (aberr_module == "translocations") {
-        aberr <- aberr - case_data[["Xt"]]
+        aberr <- aberr - case_data[["Xc"]]
       }
 
       # Calculate CI using Exact Poisson tests
@@ -942,7 +942,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
       # Modify results for translocations
       if (aberr_module == "translocations") {
-        aberr <- aberr - case_data[["Xt"]]
+        aberr <- aberr - case_data[["Xc"]]
       }
 
       C <- general_fit_coeffs[[1]]
