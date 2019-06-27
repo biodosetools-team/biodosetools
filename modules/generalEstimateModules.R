@@ -577,22 +577,29 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     # Convert to hot and format table
     hot <- changed_data() %>%
       rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 50) %>%
-      hot_col(ncol(changed_data()), renderer = "
+      hot_cols(colWidths = 50)
+    # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+
+    if (aberr_module == "dicentrics") {
+      hot <- hot %>%
+        hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(ncol(changed_data()), renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
               td.style.background = 'pink';
              }
            }")
-    # hot_table(highlightCol = TRUE, highlightRow = TRUE)
-
-    if (aberr_module == "dicentrics") {
-      hot <- hot %>%
-        hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE)
     } else if (aberr_module == "translocations") {
       hot <- hot %>%
-        hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE)
+        hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(ncol(changed_data()) - 3, renderer = "
+           function (instance, td, row, col, prop, value, cellProperties) {
+             Handsontable.renderers.NumericRenderer.apply(this, arguments);
+             if (value > 1.96) {
+              td.style.background = 'pink';
+             }
+           }")
     }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
@@ -601,7 +608,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 }
 
 
-generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module) {
+generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module, fraction_value = NULL) {
 
   data <- reactive({
     # Calcs: get variables ----
@@ -863,6 +870,10 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Modify results for translocations
       if (aberr_module == "translocations") {
         aberr <- aberr - case_data[["Xc"]]
+        yield_est <- case_data[["Fg"]]
+        fraction <- fraction_value$frac()
+      } else {
+        fractiton <- 1
       }
 
       # Calculate CI using Exact Poisson tests
@@ -871,8 +882,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       aberr_low <- aberr_row[1]
       aberr_upp <- aberr_row[2]
 
-      yield_low <- aberr_low / cells
-      yield_upp <- aberr_upp / cells
+      yield_low <- aberr_low / (cells * fraction)
+      yield_upp <- aberr_upp / (cells * fraction)
       # TODO: possible modification IAEA§9.7.3
 
       # Correct "unrootable" yields
@@ -971,6 +982,13 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         lambda_est <- uniroot(function(yield) {
           yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
         }, c(1e-16, 100))$root
+
+        if (aberr_module == "translocations") {
+          fraction <- fraction_value$frac()
+          lambda_est <- lambda_est / fraction
+          # lambda_low <- lambda_low / fraction
+          # lambda_upp <- lambda_upp / fraction
+        }
 
         pi_est <- aberr / (lambda_est * cells)
 
