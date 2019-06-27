@@ -535,6 +535,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         # Card: Estimation options ----
         bs4MyCard(
           width = 12,
+          noPadding = TRUE,
           title = "Dose estimation options",
           status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 

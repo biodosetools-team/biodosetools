@@ -216,7 +216,6 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         isolate({
           fraction <- fraction_value$frac()
 
-
           count_data <- count_data %>%
             dplyr::mutate(
               N = N * fraction

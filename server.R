@@ -39,7 +39,7 @@ server <- function(input, output) {
 
   callModule(id = "trans_estimate", module = generalEstimateFittingCurveHotTables)
   callModule(id = "trans_estimate", module = generalEstimateFittingCurve, aberr_module = "translocations")
-  callModule(id = "trans_estimate", module = generalEstimateResults, aberr_module = "translocations")
+  callModule(id = "trans_estimate", module = generalEstimateResults, aberr_module = "translocations", fraction_value = transEstimateFraction)
 
   # Micronuclei Modules ----
 }
