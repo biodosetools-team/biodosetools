@@ -206,22 +206,22 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     })
 
     if (aberr_module == "translocations") {
-      input$button_fit
-
-      isolate({
-        frequency_select <- input$frequency_select
-        fraction <- fraction_value$frac()
-        chromosome_table <- hot_to_r(input$chromosome_table)
-      })
+      frequency_select <- input$frequency_select
+      chromosome_table <- hot_to_r(input$chromosome_table)
 
       if (frequency_select == "full_gen_freq") {
         # Get fraction of translocations from transFractionToFullGenomeCalc() module
-        fraction <- fraction_value$frac()
+        input$button_fit
 
-        count_data <- count_data %>%
-          dplyr::mutate(
-            N = N * fraction
-          )
+        isolate({
+          fraction <- fraction_value$frac()
+
+
+          count_data <- count_data %>%
+            dplyr::mutate(
+              N = N * fraction
+            )
+        })
       }
     }
 
@@ -832,22 +832,26 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     }
 
     # Perform calculations ----
-    fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
-    gg_curve <- get_dose_curve(fit_results_list)
+    input$button_fit
 
-    # Make list of results to return
-    results_list <- fit_results_list
-    results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
-    results_list[["gg_curve"]] <- gg_curve
+    isolate({
+      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
+      gg_curve <- get_dose_curve(fit_results_list)
 
-    # Additional results if using translocations
-    if (aberr_module == "translocations") {
-      results_list[["genome_frac"]] <- fraction
-      results_list[["chromosome_table"]] <- chromosome_table
-      results_list[["frequency_select"]] <- frequency_select
-    }
+      # Make list of results to return
+      results_list <- fit_results_list
+      results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
+      results_list[["gg_curve"]] <- gg_curve
 
-    return(results_list)
+      # Additional results if using translocations
+      if (aberr_module == "translocations") {
+        results_list[["genome_frac"]] <- fraction
+        results_list[["chromosome_table"]] <- chromosome_table
+        results_list[["frequency_select"]] <- frequency_select
+      }
+
+      return(results_list)
+    })
   })
 
   # Results outputs ----
