@@ -17,6 +17,7 @@ source("translations/translations.R")
 
 # Global variables
 source("modules/globalVariables.R")
+source("modules/helpAuxiliaryModules.R")
 
 # General
 source("modules/generalFittingModules.R")

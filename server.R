@@ -24,6 +24,10 @@ server <- function(input, output) {
 
   # Translocations Modules ----
 
+  # Help
+  callModule(id = "trans_fitting", module = helpChromosomeHotTable)
+  callModule(id = "trans_estimate", module = helpChromosomeHotTable)
+
   # Fitting
   callModule(id = "trans_fitting", module = transChromosomeTable)
   transFittingFraction <-
