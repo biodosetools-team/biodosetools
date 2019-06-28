@@ -103,12 +103,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
-          ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
           )
         )
       ),
@@ -227,12 +221,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               placeholder = "Short summary of the case"),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
-          ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
           )
         )
       ),

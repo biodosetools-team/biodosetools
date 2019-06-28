@@ -105,13 +105,6 @@ dicentFittingUI <- function(id, label) {
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
-          ),
-          # Tooltips
-          bsTooltip(
-            ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
           )
         )
       ),

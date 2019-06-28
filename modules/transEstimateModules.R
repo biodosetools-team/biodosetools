@@ -51,7 +51,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
               withMathJax(includeMarkdown("help/help_fit_data_load.md"))
-            )
+            ),
+            withMathJax(includeMarkdown("help/help_fit_data_trans_estimate.md"))
           )
         ),
 
@@ -134,12 +135,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
             # Buttons
             actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
-          ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
           )
         )
       ),
@@ -373,7 +368,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
               withMathJax(includeMarkdown("help/help_cases_data_load.md"))
-            )
+            ),
+            withMathJax(includeMarkdown("help/help_cases_data_trans_confounders.md"))
           )
         ),
 
@@ -420,12 +416,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
-          ),
-          # Tooltip
-          bsTooltip(ns("button_upd_table"),
-                    "Note that previously introduced data will be deleted.",
-                    "bottom",
-                    options = list(container = "body")
           )
         )
       ),
@@ -438,7 +428,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          # Confounders
+          # Confounders ----
           conditionalPanel(
             condition = "input.trans_confounders",
             ns = ns,
@@ -524,7 +514,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             )
           ),
 
-          # Cases table
+          # Cases table ----
           div(
             style="height = auto;",
             rHandsontableOutput(ns("case_data_hot"))
