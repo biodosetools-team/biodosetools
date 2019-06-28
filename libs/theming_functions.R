@@ -189,7 +189,7 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
           .side-widget-tall {
             display: inline-block;
             vertical-align: bottom;
-            margin-bottom: -20px;
+            margin-bottom: -22px;
           }
 
           .widget-sep {
