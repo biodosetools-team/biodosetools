@@ -250,13 +250,6 @@ transFittingUI <- function(id, label) {
             ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
-          ),
-          # Tooltips
-          bsTooltip(
-            ns("button_upd_table"),
-            "Note that previously introduced data will be deleted.",
-            "bottom",
-            options = list(container = "body")
           )
         )
       ),
@@ -326,16 +319,6 @@ transFittingUI <- function(id, label) {
                 "Quasipoisson" = "quasipoisson"
               ),
               selected = "automatic"
-            ),
-            # Fitting model
-            selectInput(
-              ns("frequency_select"),
-              label = "Translocation frequency",
-              choices = list(
-                "Measured by FISH" = "measured_freq",
-                "Full genome"      = "full_gen_freq"
-              ),
-              selected = "measured_freq"
             )
           )
         )
@@ -373,8 +356,23 @@ transFittingUI <- function(id, label) {
             selected = ".csv"
           )
         ),
-        div(class = "widget-sep", br()),
-        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
+        div(style = "height: 10px;", br()),
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting"),
+        div(
+          class = "side-widget-tall",
+          # Translocation frequency
+          selectInput(
+            ns("frequency_select"),
+            # label = "Translocation frequency",
+            label = NULL,
+            width = "180px",
+            choices = list(
+              "Measured by FISH" = "measured_freq",
+              "Full genome"      = "full_gen_freq"
+            ),
+            selected = "measured_freq"
+          )
+        )
       )
     ),
 
