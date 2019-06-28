@@ -37,8 +37,12 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
     hot <- table() %>%
       rhandsontable(width = "100%", height = "100%") %>%
       hot_col(1, colWidths = 115, readOnly = TRUE) %>%
-      hot_col(2:ncol(table()), colWidths = 85) %>%
       hot_cols(halign = "htCenter")
+
+    if(ncol(table()) > 1) {
+      hot <- hot %>%
+        hot_col(2:ncol(table()), colWidths = 85)
+    }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
 
