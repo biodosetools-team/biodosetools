@@ -89,11 +89,11 @@ transFittingUI <- function(id, label) {
                     choices = c(
                       "Red",
                       "Green",
+                      "Yellow",
                       "Orange",
                       "Purple",
-                      "Yellow",
-                      "Cyan",
-                      "Magenta"
+                      "Magenta",
+                      "Cyan"
                     ),
                     options = list(
                       placeholder = 'Select observed colors'#,

@@ -267,11 +267,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                     choices = c(
                       "Red",
                       "Green",
+                      "Yellow",
                       "Orange",
                       "Purple",
-                      "Yellow",
-                      "Cyan",
-                      "Magenta"
+                      "Magenta",
+                      "Cyan"
                     ),
                     options = list(
                       placeholder = 'Select observed colors'#,
