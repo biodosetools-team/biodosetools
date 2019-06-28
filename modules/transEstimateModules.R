@@ -209,7 +209,9 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             trigger = ns("help_colors"),
             size = "large",
 
-            withMathJax(includeMarkdown("help/help_colors_data_input.md"))
+            withMathJax(includeMarkdown("help/help_colors_data_input.md")),
+            rHandsontableOutput(ns("help_chromosome_hot")),
+            withMathJax(includeMarkdown("help/help_colors_data_input_b.md"))
 
           )
         ),
