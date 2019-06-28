@@ -129,7 +129,7 @@ transFittingUI <- function(id, label) {
             ),
             div(
               style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
+              actionButton(ns("button_calc_genome_fraction"), class = "inputs-button", "Calculate fraction")
             )
           )
         ),
@@ -144,7 +144,7 @@ transFittingUI <- function(id, label) {
             column(
               width = 12,
 
-              uiOutput(ns("fraction"))
+              uiOutput(ns("genome_fraction"))
 
             )
           )

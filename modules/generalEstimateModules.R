@@ -281,7 +281,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
       if (aberr_module == "translocations") {
         # Message about used translocation frequency
         if (input$frequency_select == "measured_freq") {
-          trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_fraction_value, ".")
+          trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_genome_fraction, ".")
         } else {
           trans_frequency_message <- "The provided fitting curve is already full genome."
         }
@@ -350,7 +350,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
   })
 }
 
-generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors, aberr_module, fraction_value = NULL) {
+generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -544,7 +544,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 
         # Calculate expected translocation rate
         if (aberr_module == "translocations") {
-          fraction <- fraction_value$frac()
+          fraction <- genome_fraction$genome_fraction()
           mytable <- mytable %>%
             dplyr::mutate(
               Xc = ifelse(
@@ -608,7 +608,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 }
 
 
-generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module, fraction_value = NULL) {
+generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   data <- reactive({
     # Calcs: get variables ----
@@ -871,7 +871,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       if (aberr_module == "translocations") {
         aberr <- aberr - case_data[["Xc"]]
         yield_est <- case_data[["Fg"]]
-        fraction <- fraction_value$frac()
+        fraction <- genome_fraction$genome_fraction()
       } else {
         fractiton <- 1
       }
@@ -984,7 +984,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         }, c(1e-16, 100))$root
 
         if (aberr_module == "translocations") {
-          fraction <- fraction_value$frac()
+          fraction <- genome_fraction$genome_fraction()
           lambda_est <- lambda_est / fraction
           # lambda_low <- lambda_low / fraction
           # lambda_upp <- lambda_upp / fraction

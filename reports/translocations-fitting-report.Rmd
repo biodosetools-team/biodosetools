@@ -36,7 +36,7 @@ fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
 
-genome_frac <- params$fit_results_list[["genome_frac"]]
+genome_fraction <- params$fit_results_list[["genome_fraction"]]
 chromosome_table <- params$fit_results_list[["chromosome_table"]]
 frequency_select <- params$fit_results_list[["frequency_select"]]
 ```
@@ -95,7 +95,7 @@ withMathJax(paste0("$$", fit_formula_tex, "$$"))
 `r if (frequency_select == "full_gen_freq") paste("full genome translocation frequency.") else if (frequency_select == "measured_freq") paste("translocation frequency measured by FISH.")`
 
 ### Genomic conversion factor
-`r paste0("The genomic conversion factor to full genome is ", genome_frac %>% round(3) %>%  as.character(), ".")`
+`r paste0("The genomic conversion factor to full genome is ", genome_fraction %>% round(3) %>%  as.character(), ".")`
 
 ### Coefficients
 ```{r echo=FALSE}

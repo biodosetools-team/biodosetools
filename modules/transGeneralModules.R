@@ -52,12 +52,12 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
 
 transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFactors) {
 
-  # Calculate fraction ----
+  # Calculate genomic fraction ----
 
-  fraction <- reactive({
+  genome_fraction <- reactive({
 
     # Create button dependency for updating dimensions
-    input$button_calc_fraction
+    input$button_calc_genome_fraction
 
     isolate({
       dna_table <- data.table::fread("libs/dna-content-fractions.csv")
@@ -84,7 +84,7 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
       color <- chromosome_table_clean[["Stain"]]
     }
 
-    get_fraction <- function(dna_table, chromosome, color, sex) {
+    get_genome_fraction <- function(dna_table, chromosome, color, sex) {
       # Construct color/chromosome table
       color_table <-
         cbind(
@@ -99,18 +99,18 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
       # Full table
       full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
         dplyr::group_by(color) %>%
-        dplyr::summarise(frac = sum(get(paste0("fraction_", sex))))
+        dplyr::summarise(genome_fraction = sum(get(paste0("fraction_", sex))))
 
       # Calculate first sum
       single_sum <- full_table %>%
-        dplyr::select(frac) %>%
-        dplyr::summarise(sum(frac * (1 - frac))) %>%
+        dplyr::select(genome_fraction) %>%
+        dplyr::summarise(sum(genome_fraction * (1 - genome_fraction))) %>%
         unname() %>%
         unlist()
 
       # Calculate second sum
       if (nrow(full_table) >= 2) {
-        cross_sum <- full_table[["frac"]] %>%
+        cross_sum <- full_table[["genome_fraction"]] %>%
           combn(2) %>%
           t() %>%
           as.data.frame() %>%
@@ -124,18 +124,18 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
       return(2 / 0.974 * (single_sum - cross_sum))
     }
 
-    return(get_fraction(dna_table, chromosome, color, sex))
+    return(get_genome_fraction(dna_table, chromosome, color, sex))
   })
 
   # Output ----
-  output$fraction <- renderUI({
-    if (input$button_calc_fraction <= 0) return(NULL)
-    frac_value <- fraction()
-    frac_text <- paste0("The genomic conversion factor to full genome is ", frac_value %>% round(3) %>%  as.character(), ".")
-    return(frac_text)
+  output$genome_fraction <- renderUI({
+    if (input$button_calc_genome_fraction <= 0) return(NULL)
+    genome_fraction_value <- genome_fraction()
+    genome_fraction_text <- paste0("The genomic conversion factor to full genome is ", genome_fraction_value %>% round(3) %>%  as.character(), ".")
+    return(genome_fraction_text)
   })
 
   return(
-    list(frac = reactive(fraction()))
+    list(genome_fraction = reactive(genome_fraction()))
   )
 }

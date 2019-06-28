@@ -192,7 +192,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
   })
 }
 
-generalFittingResults <- function(input, output, session, stringsAsFactors, aberr_module, fraction_value = NULL) {
+generalFittingResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   data <- reactive({
     # Calculations ----
@@ -208,16 +208,16 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     if (aberr_module == "translocations") {
       frequency_select <- input$frequency_select
       chromosome_table <- hot_to_r(input$chromosome_table)
-      fraction <- fraction_value$frac()
+      genome_fraction <- genome_fraction$genome_fraction()
 
+      # Modify N for translocations using full genome frequency
       if (frequency_select == "full_gen_freq") {
-        # Get fraction of translocations from transFractionToFullGenomeCalc() module
         input$button_fit
 
         isolate({
           count_data <- count_data %>%
             dplyr::mutate(
-              N = N * fraction
+              N = N * genome_fraction
             )
         })
       }
@@ -843,7 +843,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
       # Additional results if using translocations
       if (aberr_module == "translocations") {
-        results_list[["genome_frac"]] <- fraction
+        results_list[["genome_fraction"]] <- genome_fraction
         results_list[["chromosome_table"]] <- chromosome_table
         results_list[["frequency_select"]] <- frequency_select
       }

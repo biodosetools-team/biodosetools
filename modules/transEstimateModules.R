@@ -104,7 +104,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
 
               numericInput(
-                ns("fit_fraction_value"),
+                ns("fit_genome_fraction"),
                 "Genomic conversion factor",
                 value = NA,
                 min = 0,
@@ -302,7 +302,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
             div(
               style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(ns("button_calc_fraction"), class = "inputs-button", "Calculate fraction")
+              actionButton(ns("button_calc_genome_fraction"), class = "inputs-button", "Calculate fraction")
             )
           )
         ),
@@ -317,7 +317,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             column(
               width = 12,
 
-              uiOutput(ns("fraction"))
+              uiOutput(ns("genome_fraction"))
 
             )
           )

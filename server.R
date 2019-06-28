@@ -33,17 +33,17 @@ server <- function(input, output) {
   transFittingFraction <-
     callModule(id = "trans_fitting", module = transFractionToFullGenomeCalc)
   callModule(id = "trans_fitting", module = generalFittingCountsHotTable)
-  callModule(id = "trans_fitting", module = generalFittingResults, aberr_module = "translocations", fraction_value = transFittingFraction)
+  callModule(id = "trans_fitting", module = generalFittingResults, aberr_module = "translocations", genome_fraction = transFittingFraction)
 
   # Dose Estimation
   callModule(id = "trans_estimate", module = transChromosomeTable)
   transEstimateFraction <-
     callModule(id = "trans_estimate", module = transFractionToFullGenomeCalc)
-  callModule(id = "trans_estimate", module = generalEstimateCaseHotTable, aberr_module = "translocations", fraction_value = transEstimateFraction)
+  callModule(id = "trans_estimate", module = generalEstimateCaseHotTable, aberr_module = "translocations", genome_fraction = transEstimateFraction)
 
   callModule(id = "trans_estimate", module = generalEstimateFittingCurveHotTables)
   callModule(id = "trans_estimate", module = generalEstimateFittingCurve, aberr_module = "translocations")
-  callModule(id = "trans_estimate", module = generalEstimateResults, aberr_module = "translocations", fraction_value = transEstimateFraction)
+  callModule(id = "trans_estimate", module = generalEstimateResults, aberr_module = "translocations", genome_fraction = transEstimateFraction)
 
   # Micronuclei Modules ----
 }
