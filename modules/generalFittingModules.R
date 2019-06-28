@@ -208,14 +208,13 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     if (aberr_module == "translocations") {
       frequency_select <- input$frequency_select
       chromosome_table <- hot_to_r(input$chromosome_table)
+      fraction <- fraction_value$frac()
 
       if (frequency_select == "full_gen_freq") {
         # Get fraction of translocations from transFractionToFullGenomeCalc() module
         input$button_fit
 
         isolate({
-          fraction <- fraction_value$frac()
-
           count_data <- count_data %>%
             dplyr::mutate(
               N = N * fraction
