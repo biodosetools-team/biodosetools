@@ -439,6 +439,19 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               sideLabel = "Use confounders",
               value = FALSE
             ),
+            conditionalPanel(
+              condition = "input.trans_confounders",
+              ns = ns,
+              selectInput(
+                inputId = ns("trans_confounders_type"),
+                label = NULL,
+                choices = c(
+                  "Using Sigurdson" = "sigurdson",
+                  "Using own data" = "manual"
+                ),
+                selected = "sigurdson"
+              )
+            ),
 
             # Case description
             textAreaInput(
@@ -462,7 +475,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
           # Confounders ----
           conditionalPanel(
-            condition = "input.trans_confounders",
+            condition = "input.trans_confounders & input.trans_confounders_type == 'sigurdson'",
             ns = ns,
             div(
               class = "side-widget",
@@ -543,6 +556,17 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                 ),
                 selected = "none"
               )
+            )
+          ),
+
+          conditionalPanel(
+            condition = "input.trans_confounders & input.trans_confounders_type == 'manual'",
+            ns = ns,
+            numericInput(
+              ns("trans_expected_aberr_value"),
+              label = "Translocation frequency per cell",
+              value = 0.00339,
+              step = 0.00001
             )
           ),
 

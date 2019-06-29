@@ -553,10 +553,11 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
         # Calculate expected translocation rate
         if (aberr_module == "translocations") {
           genome_fraction <- genome_fraction$genome_fraction()
+
           mytable <- mytable %>%
             dplyr::mutate(
               Xc = ifelse(
-                input$trans_confounders,
+                input$trans_confounders & input$trans_confounders_type == 'sigurdson',
                 get_translocation_rate(
                   N, genome_fraction,
                   age_value = input$trans_confounder_age,
@@ -565,7 +566,11 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                   ethnicity_value = input$trans_confounder_ethnicity,
                   region_value = input$trans_confounder_region
                 ),
-                0
+                ifelse(
+                  input$trans_confounders & input$trans_confounders_type == 'manual',
+                  input$trans_expected_aberr_value * N * genome_fraction,
+                  0
+                )
               ),
               Fg = (X - Xc) / (N * genome_fraction),
               Fg_err = 0
