@@ -224,7 +224,7 @@ footer <- bs4DashFooter(
     trigger = "contributors",
     size = "large",
 
-    includeMarkdown("help/contributors_app.md")
+    includeMarkdown("www/contributors_app.md")
   )
 
 )
