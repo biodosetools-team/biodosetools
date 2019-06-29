@@ -169,16 +169,18 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
 
   # Output ----
   output$count_data_hot <- renderRHandsontable({
+    num_cols <- as.numeric(ncol(changed_data()))
+
     hot <- changed_data() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = (num_cols * 50 + 60), height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
-    if (ncol(changed_data()) > 3) {
+    if (num_cols > 3) {
       hot <- hot %>%
-        hot_col(c(2, 3, seq(ncol(changed_data()) - 1, ncol(changed_data()), 1)), readOnly = TRUE) %>%
-        hot_col(ncol(changed_data()), renderer = "
+        hot_col(c(2, 3, seq(num_cols - 1, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {

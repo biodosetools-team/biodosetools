@@ -298,7 +298,10 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             column(
               width = 12,
 
-              rHandsontableOutput(outputId = ns("chromosome_table"))
+              div(
+                style="height: auto; max-width: 100%; overflow-y: hidden; overflow-x: auto;",
+                rHandsontableOutput(outputId = ns("chromosome_table"))
+              )
             ),
             div(
               style = "padding-left: 7.5px; padding-top: 23px;",
@@ -524,7 +527,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
           # Cases table ----
           div(
-            style="height = auto;",
+            style="height: auto; max-width: 100%; overflow-y: hidden; overflow-x: auto;",
             rHandsontableOutput(ns("case_data_hot"))
           ),
           # Button

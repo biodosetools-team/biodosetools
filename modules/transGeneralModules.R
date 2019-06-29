@@ -34,8 +34,10 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
   output$chromosome_table <- renderRHandsontable({
     if (input$button_upd_chrom_table <= 0) return(NULL)
 
+    num_cols <- as.numeric(ncol(table()))
+
     hot <- table() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
       hot_col(1, colWidths = 115, readOnly = TRUE) %>%
       hot_cols(halign = "htCenter")
 

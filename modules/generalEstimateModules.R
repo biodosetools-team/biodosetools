@@ -572,11 +572,11 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
   # Output ----
   output$case_data_hot <- renderRHandsontable({
     # Read number of columns
-    num_cols <- ncol(changed_data())
+    num_cols <- as.numeric(ncol(changed_data()))
 
     # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = (num_cols * 50 + 50), height = "100%") %>%
       hot_cols(colWidths = 50)
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 

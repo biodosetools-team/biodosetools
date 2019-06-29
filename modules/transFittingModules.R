@@ -125,7 +125,10 @@ transFittingUI <- function(id, label) {
             column(
               width = 12,
 
-              rHandsontableOutput(outputId = ns("chromosome_table"))
+              div(
+                style="height: auto; max-width: 100%; overflow-y: hidden; overflow-x: auto;",
+                rHandsontableOutput(outputId = ns("chromosome_table"))
+              )
             ),
             div(
               style = "padding-left: 7.5px; padding-top: 23px;",
@@ -339,8 +342,9 @@ transFittingUI <- function(id, label) {
         width = 12,
         title = "Data input",
         status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-        div(style="height = auto;",
-            rHandsontableOutput(ns("count_data_hot"))
+        div(
+          style="height: auto; max-width: 100%; overflow-y: hidden; overflow-x: auto;",
+          rHandsontableOutput(ns("count_data_hot"))
         ),
         # Buttons
         br(),
