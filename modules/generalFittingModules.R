@@ -172,7 +172,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
     num_cols <- as.numeric(ncol(changed_data()))
 
     hot <- changed_data() %>%
-      rhandsontable(width = (num_cols * 50 + 60), height = "100%") %>%
+      rhandsontable(width = (60 + num_cols * 50), height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
@@ -881,22 +881,26 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   output$fit_model_statistics <- renderRHandsontable({
     # Model-level statistics
     if (input$button_fit <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
+
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (num_cols * 70), height = "100%") %>%
       hot_cols(colWidths = 70)
   })
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_fit <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
+
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
-      as.data.frame() %>%
-      dplyr::select(-statistic) %>%
-      as.matrix() %>%
+      # as.data.frame() %>%
+      # dplyr::select(-statistic) %>%
+      # as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -904,10 +908,12 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_fit <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
+
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -915,9 +921,11 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_fit <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
+
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })

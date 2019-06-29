@@ -119,7 +119,7 @@ generalEstimateFittingCurveHotTables <- function(input, output, session, strings
 
     # Convert to hot and format table
     hot <- changed_coeffs_data() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000000")
 
@@ -133,7 +133,7 @@ generalEstimateFittingCurveHotTables <- function(input, output, session, strings
 
     # Convert to hot and format table
     hot <- changed_var_data() %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.00000000")
 
@@ -308,22 +308,26 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
   output$fit_model_statistics <- renderRHandsontable({
     # Model-level statistics
     if (input$button_view_fit_data <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
+
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (num_cols * 70), height = "100%") %>%
       hot_cols(colWidths = 70)
   })
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_view_fit_data <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
+
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
       as.data.frame() %>%
       dplyr::select(-statistic) %>%
       as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + (num_cols - 1) * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -331,10 +335,12 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
   output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
+
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -342,9 +348,11 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
   output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
+    num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
+
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = 375, height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -576,7 +584,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 
     # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable(width = (num_cols * 50 + 50), height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
       hot_cols(colWidths = 50)
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
@@ -1785,16 +1793,13 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           br(),
           h6("Heterogeneous exposure estimation"),
           div(
-            class = "side-widget",
-            div(
-              class = "hot-improved",
-              rHandsontableOutput(session$ns("est_yields_hetero"))
-            ),
-            br(),
-            div(
-              class = "hot-improved",
-              rHandsontableOutput(session$ns("est_doses_hetero"))
-            )
+            class = "hot-improved",
+            rHandsontableOutput(session$ns("est_yields_hetero"))
+          ),
+          br(),
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(session$ns("est_doses_hetero"))
           ),
 
           br(),
@@ -1828,7 +1833,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1841,7 +1846,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1858,7 +1863,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1875,7 +1880,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose") %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1891,7 +1896,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("frac") %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1906,7 +1911,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 370, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1922,7 +1927,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1938,7 +1943,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 290, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1952,7 +1957,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("estimate", "std_err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 210, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1963,7 +1968,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     data()[["AIC_whole"]] %>%
       matrix %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1974,7 +1979,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     data()[["AIC_partial"]] %>%
       matrix %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1985,7 +1990,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     data()[["AIC_hetero"]] %>%
       matrix %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
