@@ -187,7 +187,7 @@ dicentFittingUI <- function(id, label) {
         title = "Data input",
         status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         div(
-          style="height: auto; max-width: 100%; overflow-y: hidden; overflow-x: auto;",
+          class = "hot-improved",
           rHandsontableOutput(ns("count_data_hot"))
         ),
         # Buttons
@@ -243,20 +243,32 @@ dicentFittingUI <- function(id, label) {
 
               br(),
               h6("Coefficients"),
-              rHandsontableOutput(ns("fit_coeffs"))
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_coeffs"))
+              )
             ),
             bs4TabPanel(
               tabName = "Summary statistics",
               h6("Model-level statistics"),
-              rHandsontableOutput(ns("fit_model_statistics")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_model_statistics"))
+              ),
 
               br(),
               h6("Correlation matrix"),
-              rHandsontableOutput(ns("fit_cor_mat")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_cor_mat"))
+              ),
 
               br(),
               h6("Variance-covariance matrix"),
-              rHandsontableOutput(ns("fit_var_cov_mat"))
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_var_cov_mat"))
+              )
             )
           )
         ),

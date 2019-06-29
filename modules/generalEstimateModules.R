@@ -1635,19 +1635,19 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           active = TRUE,
           h6("Whole-body exposure estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
           ),
 
           br(),
           h6("Relative quality of the estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("AIC_whole"))
           )
         )
@@ -1683,19 +1683,19 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           active = TRUE,
           h6("Whole-body exposure estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
           ),
 
           br(),
           h6("Relative quality of the estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
@@ -1703,26 +1703,26 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           tabName = "Partial-body",
           h6("Partial-body exposure estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_yields_partial"))
           ),
           br(),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_partial"))
           ),
 
           br(),
           h6("Initial fraction of irradiated cells"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_frac_partial"))
           ),
 
           br(),
           h6("Relative quality of the estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("AIC_partial"))
           )
         )
@@ -1758,19 +1758,19 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           active = TRUE,
           h6("Whole-body exposure estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
           ),
 
           br(),
           h6("Relative quality of the estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
@@ -1778,7 +1778,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           tabName = "Heterogeneous",
           h6("Observed fraction of irradiated cells and its yield"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
           ),
 
@@ -1787,12 +1787,12 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           div(
             class = "side-widget",
             div(
-              style="height = auto;",
+              class = "hot-improved",
               rHandsontableOutput(session$ns("est_yields_hetero"))
             ),
             br(),
             div(
-              style="height = auto;",
+              class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_hetero"))
             )
           ),
@@ -1800,14 +1800,14 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           br(),
           h6("Initial fraction of irradiated cells"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("est_frac_hetero"))
           ),
 
           br(),
           h6("Relative quality of the estimation"),
           div(
-            style="height = auto;",
+            class = "hot-improved",
             rHandsontableOutput(session$ns("AIC_hetero"))
           )
         )
