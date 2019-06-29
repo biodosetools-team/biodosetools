@@ -118,11 +118,17 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
 
               widgetLabel("Coefficients"),
-              rHandsontableOutput(ns("fit_coeffs_hot")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_coeffs_hot"))
+              ),
 
               br(),
               widgetLabel("Variance-covariance matrix"),
-              rHandsontableOutput(ns("fit_var_cov_mat_hot")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_var_cov_mat_hot"))
+              ),
 
               br()
             ),
@@ -159,7 +165,10 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
           br(),
           h6("Coefficients"),
-          rHandsontableOutput(ns("fit_coeffs"))
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_coeffs"))
+          )
         ),
         bs4TabPanel(
           tabName = "Summary statistics",
@@ -167,16 +176,25 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             condition = "input.load_fit_data_check",
             ns = ns,
             h6("Model-level statistics"),
-            rHandsontableOutput(ns("fit_model_statistics")),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_model_statistics"))
+            ),
             br()
           ),
 
           h6("Correlation matrix"),
-          rHandsontableOutput(ns("fit_cor_mat")),
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_cor_mat"))
+          ),
 
           br(),
           h6("Variance-covariance matrix"),
-          rHandsontableOutput(ns("fit_var_cov_mat"))
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_var_cov_mat"))
+          )
         )
       )
     ),
@@ -205,7 +223,10 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             size = "large",
 
             withMathJax(includeMarkdown("help/help_colors_data_input.md")),
-            rHandsontableOutput(ns("help_chromosome_hot")),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("help_chromosome_hot"))
+            ),
             withMathJax(includeMarkdown("help/help_colors_data_input_b.md"))
 
           )

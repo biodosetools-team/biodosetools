@@ -86,11 +86,17 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
               br(),
               widgetLabel("Coefficients"),
-              rHandsontableOutput(ns("fit_coeffs_hot")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_coeffs_hot"))
+              ),
 
               br(),
               widgetLabel("Variance-covariance matrix"),
-              rHandsontableOutput(ns("fit_var_cov_mat_hot")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_var_cov_mat_hot"))
+              ),
 
               br()
             ),
@@ -122,7 +128,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           uiOutput(ns("fit_formula_tex")),
 
           h6("Coefficients"),
-          rHandsontableOutput(ns("fit_coeffs"))
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_coeffs"))
+          )
         ),
         bs4TabPanel(
           tabName = "Summary statistics",
@@ -130,16 +139,25 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             condition = "input.load_fit_data_check",
             ns = ns,
             h6("Model-level statistics"),
-            rHandsontableOutput(ns("fit_model_statistics")),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_model_statistics"))
+            ),
             br()
           ),
 
           h6("Correlation matrix"),
-          rHandsontableOutput(ns("fit_cor_mat")),
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_cor_mat"))
+            ),
 
           br(),
           h6("Variance-covariance matrix"),
-          rHandsontableOutput(ns("fit_var_cov_mat"))
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("fit_var_cov_mat"))
+          )
         )
       )
     ),
