@@ -315,6 +315,12 @@ bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border
             border-color:  ', export_color_border, ';
           }
 
+          .small-action-button {
+            height: 25px;
+            line-height: 0;
+            padding: 0 8px 0 8px;
+          }
+
           /* Custom shinyBS status colors */
 
           /* Options Checkbox & Radio button */

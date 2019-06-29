@@ -8,5 +8,5 @@ For example, if you paint
 
 then you should select three different colors, i.e., Red, Green, and Yellow.
 
-Click on <button class="btn btn-default action-button options-button shiny-bound-input" style="height: 25px; line-height: 0.8;"  type="button">Generate table</button> to match each chromosome to its observed color, as seen below:
+Click on <button class="btn btn-default action-button options-button shiny-bound-input small-action-button"  type="button">Generate table</button> to match each chromosome to its observed color, as seen below:
 
