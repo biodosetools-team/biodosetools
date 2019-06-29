@@ -809,6 +809,17 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
           yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
         )
 
+      # Name of the aberration to use in the y-axis
+      if (aberr_module == "dicentrics") {
+        aberr_name <- stringr::str_to_title(aberr_module)
+      } else if (aberr_module == "translocations") {
+        if (nchar(input$trans_name) > 0) {
+          aberr_name <- input$trans_name
+        } else {
+          aberr_name <- stringr::str_to_title(aberr_module)
+        }
+      }
+
       # Make plot
       gg_curve <- ggplot(plot_data) +
         # Observed data
@@ -822,7 +833,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         ) +
         # Confidence bands (Merkle, 1983)
         geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-        labs(x = "Dose (Gy)", y = "Dicentrics/cells") +
+        labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
         theme_bw()
 
       # Return object

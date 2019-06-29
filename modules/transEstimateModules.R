@@ -376,6 +376,14 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         fluidRow(
           column(
             width = 12,
+
+            # Name of translocations
+            textInput(
+              inputId = ns("trans_name"),
+              label = "Name of translocations",
+              placeholder = "Input type of translocations"
+            ),
+
             # Load data from file
             mySwitchInput(
               inputId = ns("load_case_data_check"),

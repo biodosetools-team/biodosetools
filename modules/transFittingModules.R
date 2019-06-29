@@ -208,6 +208,14 @@ transFittingUI <- function(id, label) {
         fluidRow(
           column(
             width = 12,
+
+            # Name of translocations
+            textInput(
+              inputId = ns("trans_name"),
+              label = "Name of translocations",
+              placeholder = "Input type of translocations"
+            ),
+
             # Load file checkbox
             mySwitchInput(
               inputId = ns("load_count_data_check"),
