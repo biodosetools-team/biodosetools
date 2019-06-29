@@ -208,7 +208,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
     if (load_fit_data) {
       fit_results_list <- readRDS(fit_data$datapath)
 
-      genome_fraction <- fit_results_list[["genome_frac"]]
+      genome_fraction <- fit_results_list[["genome_fraction"]]
 
       # Additional info for translocations module
       if (aberr_module == "translocations") {
@@ -360,7 +360,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
   })
 
   # Translocation confounder function ----
-  get_translocation_rate <- function(cells, fraction, age_value,
+  get_translocation_rate <- function(cells, genome_fraction, age_value,
                                      sex_bool = FALSE, smoker_bool = FALSE,
                                      ethnicity_value = "none", region_value = "none") {
     age_trans_frequency <- function(age) {
@@ -384,7 +384,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     ethnicity_trans_frequency <- ethnicity_trans_list[[ethnicity_value]]
     region_trans_frequency <- region_trans_list[[region_value]]
 
-    expected_aberr <- cells * fraction *
+    expected_aberr <- cells * genome_fraction *
       age_trans_frequency(age_value) *
       sex_trans_frequency *
       smoke_trans_frequency *
@@ -544,13 +544,13 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 
         # Calculate expected translocation rate
         if (aberr_module == "translocations") {
-          fraction <- genome_fraction$genome_fraction()
+          genome_fraction <- genome_fraction$genome_fraction()
           mytable <- mytable %>%
             dplyr::mutate(
               Xc = ifelse(
                 input$trans_confounders,
                 get_translocation_rate(
-                  N, fraction,
+                  N, genome_fraction,
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
                   smoker_bool = input$trans_confounder_smoke,
@@ -559,7 +559,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                 ),
                 0
               ),
-              Fg = (X - Xc) / (N * fraction),
+              Fg = (X - Xc) / (N * genome_fraction),
               Fg_err = 0
             )
         }
@@ -871,9 +871,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       if (aberr_module == "translocations") {
         aberr <- aberr - case_data[["Xc"]]
         yield_est <- case_data[["Fg"]]
-        fraction <- genome_fraction$genome_fraction()
+        genome_fraction <- genome_fraction$genome_fraction()
       } else {
-        fractiton <- 1
+        genome_fraction <- 1
       }
 
       # Calculate CI using Exact Poisson tests
@@ -882,8 +882,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       aberr_low <- aberr_row[1]
       aberr_upp <- aberr_row[2]
 
-      yield_low <- aberr_low / (cells * fraction)
-      yield_upp <- aberr_upp / (cells * fraction)
+      yield_low <- aberr_low / (cells * genome_fraction)
+      yield_upp <- aberr_upp / (cells * genome_fraction)
       # TODO: possible modification IAEA§9.7.3
 
       # Correct "unrootable" yields
@@ -984,10 +984,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         }, c(1e-16, 100))$root
 
         if (aberr_module == "translocations") {
-          fraction <- genome_fraction$genome_fraction()
-          lambda_est <- lambda_est / fraction
-          # lambda_low <- lambda_low / fraction
-          # lambda_upp <- lambda_upp / fraction
+          genome_fraction <- genome_fraction$genome_fraction()
+          lambda_est <- lambda_est / genome_fraction
         }
 
         pi_est <- aberr / (lambda_est * cells)
@@ -1442,82 +1440,99 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         level = rep(c("Lower", "Estimate", "Upper"), 3)
       )
     }
-    # AIC_from_data(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield")
 
-    # Rightmost limit of the plot
-    max_dose <- 1.05 * est_full_doses[["dose"]] %>%
-      ifelse(is.na(.), 0, .) %>%
-      max()
 
-    # Plot data from curves
-    curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
-      dplyr::mutate(
-        yield = yield_fun(dose, protracted_g_value),
-        yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
-        yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
-      )
+    get_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve) {
+      # Rightmost limit of the plot
+      max_dose <- 1.05 * est_full_doses[["dose"]] %>%
+        ifelse(is.na(.), 0, .) %>%
+        max()
 
-    # Make base plot
-    gg_curve <- ggplot(curves_data) +
-      # Fitted curve
-      stat_function(
-        data = data.frame(x = c(0, max_dose)),
-        mapping = aes(x),
-        fun = function(x) yield_fun(x, protracted_g_value),
-        linetype = "dashed"
-      ) +
-      # Confidence bands (Merkle, 1983)
-      geom_ribbon(
-        data = curves_data,
-        aes(x = dose, ymin = yield_low, ymax = yield_upp),
-        alpha = 0.25
-      ) +
-      labs(x = "Dose (Gy)", y = paste0(stringr::str_to_title(aberr_module), "/cells")) +
-      theme_bw()
-
-    # Add doses to plot
-    gg_curve <- gg_curve +
-      # Estimated whole-body doses
-      geom_point(
-        data = est_full_doses,
-        aes(x = dose, y = yield, color = type, shape = level),
-        size = 2, na.rm = TRUE
-      ) +
-      # Assessment
-      scale_color_manual(
-        values = hcl(
-          h = seq(15, 375, length = 4 + 1),
-          l = 65,
-          c = 100
-        ) %>%
-          .[1:4] %>%
-          `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
-        breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2"),
-        labels = c(
-          paste0("Whole-body", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
-          paste0("Partial-body", " (", round(100 * 0.95, 0), "%", ")"),
-          paste0("Heterogeneous 1", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
-          paste0("Heterogeneous 2", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")")
+      # Plot data from curves
+      curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
+        dplyr::mutate(
+          yield = yield_fun(dose, protracted_g_value),
+          yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
+          yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
         )
-      ) +
-      # Estimation level
-      scale_shape_manual(
-        values = c("Lower" = 15, "Estimate" = 16, "Upper" = 17),
-        breaks = c("Lower", "Estimate", "Upper")
-      ) +
-      guides(
-        color = guide_legend(order = 1),
-        shape = guide_legend(order = 2),
-        fill = guide_legend(order = 3)
-      ) +
-      labs(color = "Assessment", shape = "Estimation") +
-      # Tweak legend
-      theme(
-        legend.title = element_text(size = 10),
-        legend.text = element_text(size = 8),
-        legend.spacing.y = unit(5, "points"),
-        legend.key.height = unit(12, "points")
-      )
+
+      # Name of the aberration to use in the y-axis
+      if (aberr_module == "dicentrics") {
+        aberr_name <- stringr::str_to_title(aberr_module)
+      } else if (aberr_module == "translocations") {
+        if (nchar(input$trans_name) > 0) {
+          aberr_name <- input$trans_name
+        } else {
+          aberr_name <- stringr::str_to_title(aberr_module)
+        }
+      }
+
+      # Make base plot
+      gg_curve <- ggplot(curves_data) +
+        # Fitted curve
+        stat_function(
+          data = data.frame(x = c(0, max_dose)),
+          mapping = aes(x),
+          fun = function(x) yield_fun(x, protracted_g_value),
+          linetype = "dashed"
+        ) +
+        # Confidence bands (Merkle, 1983)
+        geom_ribbon(
+          data = curves_data,
+          aes(x = dose, ymin = yield_low, ymax = yield_upp),
+          alpha = 0.25
+        ) +
+        labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
+        theme_bw()
+
+      # Add doses to plot
+      gg_curve <- gg_curve +
+        # Estimated whole-body doses
+        geom_point(
+          data = est_full_doses,
+          aes(x = dose, y = yield, color = type, shape = level),
+          size = 2, na.rm = TRUE
+        ) +
+        # Assessment
+        scale_color_manual(
+          values = hcl(
+            h = seq(15, 375, length = 4 + 1),
+            l = 65,
+            c = 100
+          ) %>%
+            .[1:4] %>%
+            `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
+          breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2"),
+          labels = c(
+            paste0("Whole-body", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
+            paste0("Partial-body", " (", round(100 * 0.95, 0), "%", ")"),
+            paste0("Heterogeneous 1", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
+            paste0("Heterogeneous 2", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")")
+          )
+        ) +
+        # Estimation level
+        scale_shape_manual(
+          values = c("Lower" = 15, "Estimate" = 16, "Upper" = 17),
+          breaks = c("Lower", "Estimate", "Upper")
+        ) +
+        guides(
+          color = guide_legend(order = 1),
+          shape = guide_legend(order = 2),
+          fill = guide_legend(order = 3)
+        ) +
+        labs(color = "Assessment", shape = "Estimation") +
+        # Tweak legend
+        theme(
+          legend.title = element_text(size = 10),
+          legend.text = element_text(size = 8),
+          legend.spacing.y = unit(5, "points"),
+          legend.key.height = unit(12, "points")
+        )
+
+      return(gg_curve)
+    }
+
+    gg_curve <- get_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve)
 
     # Return list ----
 
