@@ -151,28 +151,31 @@ sidebar <- bs4DashMySidebar(
 # Home screen ----
 home <- bs4TabItem(
   tabName = "home",
-  h2("About this project", style = "margin-left: 10%;"),
-  shiny::includeMarkdown("www/body.md"),
-
-  # Buttons
   div(
-    style = "margin-left: 10%;",
+    style = "padding-bottom: 20px;",
+    h2("About this project", style = "margin-left: 10%;"),
+    shiny::includeMarkdown("www/about_body.md"),
 
-    # GitHub icon
-    actionButton(
-      inputId = "github_link", label = "Source code",
-      icon = icon("github"),
-      class = "home-button",
-      onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
-    ),
-    div(class = "widget-sep", br()),
+    # Buttons
+    div(
+      style = "margin-left: 10%;",
 
-    # Wiki/Documentation icon
-    actionButton(
-      inputId = "wiki_link", label = "Documentation",
-      icon = icon("book"),
-      class = "home-button",
-      onclick = "window.open('https://biodosimetry-uab.github.io/', '_blank')"
+      # GitHub icon
+      actionButton(
+        inputId = "github_link", label = "Source code",
+        icon = icon("github"),
+        class = "home-button",
+        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
+      ),
+      div(class = "widget-sep", br()),
+
+      # Wiki/Documentation icon
+      actionButton(
+        inputId = "wiki_link", label = "Documentation",
+        icon = icon("book"),
+        class = "home-button",
+        onclick = "window.open('https://biodosimetry-uab.github.io/', '_blank')"
+      )
     )
   )
 )
@@ -213,5 +216,15 @@ body <- bs4DashBody(
 footer <- bs4DashFooter(
   copyrights = a(paste("Version", app_version), href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/NEWS.md"),
   # right_text = format(Sys.time(), '%Y')
-  right_text = a("Contributors", href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/CONTRIBUTORS.md")
+  right_text = a(id = "contributors", "Contributors", href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/CONTRIBUTORS.md"),
+
+  bs4MyModal(
+    id = "contributors_dialog",
+    title = "Biodose Tools Contributors",
+    trigger = "contributors",
+    size = "large",
+
+    includeMarkdown("help/contributors_app.md")
+  )
+
 )

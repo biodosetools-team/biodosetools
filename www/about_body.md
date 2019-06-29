@@ -17,3 +17,7 @@
 <p style="padding-left: 10%; padding-right: 10%;">
   The project is initially developed by <a href="http://www.reneb.net">RENEB</a> association, but contributions are always welcome.
 </p>
+
+<div style="height: 10px;">
+  <br>
+</div>
