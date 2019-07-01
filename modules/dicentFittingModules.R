@@ -78,7 +78,7 @@ dicentFittingUI <- function(id, label) {
               size = "mini",
               onStatus = "options",
               width = "100%",
-              sideLabel = "Only provide total number of translocations",
+              sideLabel = "Only provide total number of dicentrics",
               value = FALSE
             ),
 
