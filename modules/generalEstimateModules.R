@@ -508,8 +508,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              Fp = 0,
-              Fp_err = 0,
+              y = 0,
+              y_err = 0,
               DI = 0,
               u = 0
             ) %>%
@@ -563,8 +563,15 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
           mytable[row, "X"] <- as.integer(xf)
           mytable[row, "DI"] <- var / mean
           mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
+
+          if (aberr_module == "dicentrics") {
+            mytable[row, "y"] <- mytable[row, "X"] / mytable[row, "N"]
+            mytable[row, "y_err"] <- sqrt(var / mytable[row, "N"])
+          }
+          else if (aberr_module == "translocations") {
           mytable[row, "Fp"] <- mytable[row, "X"] / mytable[row, "N"]
           mytable[row, "Fp_err"] <- sqrt(var / mytable[row, "N"])
+          }
         }
 
         # Calculate expected translocation rate
@@ -936,7 +943,12 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
       aberr <- case_data[["X"]]
       cells <- case_data[["N"]]
-      yield_est <- case_data[["Fp"]]
+
+      if (aberr_module == "dicentrics") {
+        yield_est <- case_data[["y"]]
+      } else if (aberr_module == "translocations") {
+        yield_est <- case_data[["Fp"]]
+      }
 
       # Modify results for translocations
       if (aberr_module == "translocations") {
