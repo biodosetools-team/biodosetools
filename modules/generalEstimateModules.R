@@ -384,6 +384,25 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     table_reset$value <- 1
   })
 
+  # Calculate aberrations with purr ----
+  aberr_calc <- function(df, aberr_prefix = "C", power = 1) {
+    purrr::map_df(
+      df %>%
+        .[grep(aberr_prefix, names(.))] %>%
+        t() %>%
+        as.data.frame(),
+      ~ . *
+        df %>%
+        .[grep(aberr_prefix, names(.))] %>%
+        names() %>%
+        stringr::str_extract("[0-9]") %>%
+        as.numeric() %>%
+        .^power
+    ) %>%
+      t() %>%
+      rowSums()
+  }
+
   # Translocation confounder function ----
   get_translocation_rate <- function(cells, genome_fraction, age_value,
                                      sex_bool = FALSE, smoker_bool = FALSE,
@@ -503,82 +522,41 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
         mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
         # Calculated columns
-        if (aberr_module == "dicentrics") {
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = 0,
-              X = 0,
-              y = 0,
-              y_err = 0,
-              DI = 0,
-              u = 0
-            ) %>%
-            dplyr::select(N, X, everything())
-        } else if (aberr_module == "translocations") {
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = 0,
-              X = 0,
-              Fp = 0,
-              Fp_err = 0,
-              DI = 0,
-              u = 0,
-              Xc = 0,
-              Fg = 0,
-              Fg_err = 0,
-            ) %>%
-            dplyr::select(N, X, everything())
-        }
-
-        # Index variables
-        if (aberr_module == "dicentrics") {
-          first_trans_index <- 3
-          last_trans_index <- ncol(mytable) - 4
-        } else if (aberr_module == "translocations") {
-          first_trans_index <- 3
-          last_trans_index <- ncol(mytable) - 7
-        }
-
-        num_rows <- nrow(mytable)
-
         mytable <- mytable %>%
           dplyr::mutate(
-            X = as.integer(X),
-            N = as.integer(rowSums(.[first_trans_index:last_trans_index]))
-          )
+            N = as.integer(rowSums(.[grep("C", names(.))])),
+            X = aberr_calc(mytable, power = 1),
+            X2 = aberr_calc(mytable, power = 2),
+            var = (X2 - (X^2) / N) / (N - 1),
+            std_err = sqrt(var / N),
+            mean = X / N,
+            DI = var / mean,
+            u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / N))),
+          ) %>%
+          dplyr::mutate_at(
+            c("X", "N", grep("C", names(.), value = TRUE)),
+            as.integer
+          ) %>%
+          dplyr::select(-X2, -var) %>%
+          dplyr::select(N, X, everything())
 
-        # Ugly method to calculate index of dispersion
-        for (row in 1:num_rows) {
-          xf <- 0
-          x2f <- 0
-          # Calculate summatories
-          for (k in seq(0, last_trans_index - first_trans_index, 1)) {
-            xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
-            x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
-          }
-          # Calculate variance and mean
-          var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
-          mean <- xf / mytable[row, "N"]
-          # Save values into data frame
-          mytable[row, "X"] <- as.integer(xf)
-          mytable[row, "DI"] <- var / mean
-          mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
-
-          if (aberr_module == "dicentrics") {
-            mytable[row, "y"] <- mytable[row, "X"] / mytable[row, "N"]
-            mytable[row, "y_err"] <- sqrt(var / mytable[row, "N"])
-          }
-          else if (aberr_module == "translocations") {
-          mytable[row, "Fp"] <- mytable[row, "X"] / mytable[row, "N"]
-          mytable[row, "Fp_err"] <- sqrt(var / mytable[row, "N"])
-          }
-        }
-
-        # Calculate expected translocation rate
-        if (aberr_module == "translocations") {
+        # Rename mean and std_err depending on aberration module
+        if (aberr_module == "dicentrics") {
+          mytable <- mytable %>%
+            dplyr::mutate(
+              y = mean,
+              y_err = std_err
+            ) %>%
+            dplyr::select(-mean, -std_err)
+        } else if (aberr_module == "translocations") {
           genome_fraction <- genome_fraction$genome_fraction()
 
           mytable <- mytable %>%
+            dplyr::mutate(
+              Fp = mean,
+              Fp_err = std_err
+            ) %>%
+            dplyr::select(-mean, - std_err) %>%
             dplyr::mutate(
               Xc = ifelse(
                 input$trans_confounders & input$trans_confounders_type == 'sigurdson',
