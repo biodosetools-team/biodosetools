@@ -270,6 +270,18 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
         }
       }
 
+      # Conversion of coefficients and statistics
+      if (input$frequency_select == "measured_freq") {
+        genome_fraction <- input$fit_genome_fraction
+
+        # Update coefficients
+        fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / genome_fraction
+        fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / genome_fraction
+
+        # Update variance-covariance matrix
+        fit_var_cov_mat <- fit_var_cov_mat / genome_fraction^2
+      }
+
       fit_results_list <- list(
         fit_formula_tex = fit_formula_tex,
         fit_coeffs = fit_coeffs,
@@ -338,7 +350,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
 
     data()[["fit_var_cov_mat"]] %>%
-      formatC(format = "e", digits = 3) %>%
+      # formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
       rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
@@ -650,31 +662,50 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     }
 
     # Get fitting data ----
-    if (load_fit_data) {
-      fit_results_list <- readRDS(fit_data$datapath)
+    # if (load_fit_data) {
+    #   fit_results_list <- readRDS(fit_data$datapath)
+    #
+    #   # Summarise fit
+    #   fit_coeffs <- fit_results_list[["fit_coeffs"]]
+    #   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+    #   fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
+    #
+    #   fit_coeffs <- hot_to_r(input$fit_coeffs)
+    #   fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
+    #   fit_formula_tex <- input$fit_formula_tex
+    # } else {
+    #   fit_coeffs <- hot_to_r(input$fit_coeffs)
+    #   fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
+    #
+    #   model_formula <- input$formula_select
+    #   # Parse formula
+    #   if (model_formula == "lin-quad") {
+    #     fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+    #   } else if (model_formula == "lin") {
+    #     fit_formula_tex <- "Y = C + \\alpha D"
+    #   }
+    #   else if (model_formula == "lin-quad-no-int") {
+    #     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+    #   }
+    #   else if (model_formula == "lin-no-int") {
+    #     fit_formula_tex <- "Y = \\alpha D"
+    #   }
+    # }
 
-      # Summarise fit
-      fit_coeffs <- fit_results_list[["fit_coeffs"]]
-      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
-      fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
-    } else {
-      fit_coeffs <- hot_to_r(input$fit_coeffs_hot)
-      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot)
+    # Get data from table
+    fit_coeffs <- hot_to_r(input$fit_coeffs)
+    cat("\nFIT COEFFS\n")
+    cat(fit_coeffs %>% colnames())
 
-      model_formula <- input$formula_select
-      # Parse formula
-      if (model_formula == "lin-quad") {
-        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-      } else if (model_formula == "lin") {
-        fit_formula_tex <- "Y = C + \\alpha D"
-      }
-      else if (model_formula == "lin-quad-no-int") {
-        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-      }
-      else if (model_formula == "lin-no-int") {
-        fit_formula_tex <- "Y = \\alpha D"
-      }
-    }
+    fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
+    cat("\nFIT VAR-COR\n")
+    cat(fit_var_cov_mat %>% class())
+    cat("\n")
+    cat(fit_var_cov_mat[1,1])
+
+    fit_formula_tex <- "Y = C + \\alpha D"#input$fit_formula_tex
+    cat("\n")
+    cat("tex formula")
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L) %>%
