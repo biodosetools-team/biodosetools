@@ -205,101 +205,106 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
       return(fit_model_statistics)
     }
 
-    if (load_fit_data) {
-      fit_results_list <- readRDS(fit_data$datapath)
+    input$button_view_fit_data
 
-      genome_fraction <- fit_results_list[["genome_fraction"]]
+    isolate({
+      if (load_fit_data) {
+        fit_results_list <- readRDS(fit_data$datapath)
 
-      # Additional info for translocations module
-      if (aberr_module == "translocations") {
+        # Additional info for translocations module
+        if (aberr_module == "translocations") {
+          fit_genome_fraction <- fit_results_list[["genome_fraction"]]
 
-        # Message about used translocation frequency
-        if (fit_results_list[["frequency_select"]] == "measured_freq") {
-          trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(genome_fraction, 3), ".")
-        } else {
-          trans_frequency_message <- "The provided fitting curve is already full genome."
+          # Message about used translocation frequency
+          if (fit_results_list[["frequency_select"]] == "measured_freq") {
+            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(fit_genome_fraction, 3), ".")
+          } else {
+            trans_frequency_message <- "The provided fitting curve is already full genome."
+          }
+          fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
+
+          # Conversion of coefficients and statistics
+          if (fit_results_list[["frequency_select"]] == "measured_freq") {
+
+            # Update coefficients
+            fit_results_list[["fit_coeffs"]][,"estimate"] <- fit_results_list[["fit_coeffs"]][,"estimate"] / fit_genome_fraction
+            fit_results_list[["fit_coeffs"]][,"std.error"] <- fit_results_list[["fit_coeffs"]][,"std.error"] / fit_genome_fraction
+
+            # Update variance-covariance matrix
+            fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
+
+            # Update model-specific statistics
+            fit_results_list[["fit_model_statistics"]] <- get_model_statistics(
+              fit_results_list[["fit_raw_data"]],
+              fit_results_list[["fit_coeffs"]][,"estimate"],
+              fit_genome_fraction
+            )
+          }
         }
-        fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
+      } else {
+        model_formula <- input$formula_select
+        # Parse formula
+        if (model_formula == "lin-quad") {
+          fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+        } else if (model_formula == "lin") {
+          fit_formula_tex <- "Y = C + \\alpha D"
+        }
+        else if (model_formula == "lin-quad-no-int") {
+          fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+        }
+        else if (model_formula == "lin-no-int") {
+          fit_formula_tex <- "Y = \\alpha D"
+        }
+
+        fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
+        fit_coeffs <- fit_coeffs_raw %>%
+          cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
+          as.matrix()
+
+        fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
+          as.matrix()
+
+        fit_cor_mat <- fit_var_cov_mat
+        for (x_var in rownames(fit_var_cov_mat)) {
+          for (y_var in colnames(fit_var_cov_mat)) {
+            fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] /
+              (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
+          }
+        }
 
         # Conversion of coefficients and statistics
-        if (fit_results_list[["frequency_select"]] == "measured_freq") {
+        if (aberr_module == "translocations") {
+          if (input$frequency_select == "measured_freq") {
+            fit_genome_fraction <- input$fit_genome_fraction
 
-          # Update coefficients
-          fit_results_list[["fit_coeffs"]][,"estimate"] <- fit_results_list[["fit_coeffs"]][,"estimate"] / genome_fraction
-          fit_results_list[["fit_coeffs"]][,"std.error"] <- fit_results_list[["fit_coeffs"]][,"std.error"] / genome_fraction
+            # Update coefficients
+            fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / fit_genome_fraction
+            fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / fit_genome_fraction
 
-          # Update variance-covariance matrix
-          fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / genome_fraction^2
+            # Update variance-covariance matrix
+            fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
+          }
+        }
 
-          # Update model-specific statistics
-          fit_results_list[["fit_model_statistics"]] <- get_model_statistics(
-            fit_results_list[["fit_raw_data"]],
-            fit_results_list[["fit_coeffs"]][,"estimate"],
-            genome_fraction
-          )
+        fit_results_list <- list(
+          fit_formula_tex = fit_formula_tex,
+          fit_coeffs = fit_coeffs,
+          fit_var_cov_mat = fit_var_cov_mat,
+          fit_cor_mat = fit_cor_mat
+        )
+
+        # Additional info for translocations module
+        if (aberr_module == "translocations") {
+          # Message about used translocation frequency
+          if (input$frequency_select == "measured_freq") {
+            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_genome_fraction, ".")
+          } else {
+            trans_frequency_message <- "The provided fitting curve is already full genome."
+          }
+          fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
         }
       }
-    } else {
-      model_formula <- input$formula_select
-      # Parse formula
-      if (model_formula == "lin-quad") {
-        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-      } else if (model_formula == "lin") {
-        fit_formula_tex <- "Y = C + \\alpha D"
-      }
-      else if (model_formula == "lin-quad-no-int") {
-        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-      }
-      else if (model_formula == "lin-no-int") {
-        fit_formula_tex <- "Y = \\alpha D"
-      }
-
-      fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
-      fit_coeffs <- fit_coeffs_raw %>%
-        cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
-        as.matrix()
-
-      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
-        as.matrix()
-
-      fit_cor_mat <- fit_var_cov_mat
-      for (x_var in rownames(fit_var_cov_mat)) {
-        for (y_var in colnames(fit_var_cov_mat)) {
-          fit_cor_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var] /
-            (fit_coeffs[x_var, "std.error"] * fit_coeffs[y_var, "std.error"])
-        }
-      }
-
-      # Conversion of coefficients and statistics
-      if (input$frequency_select == "measured_freq") {
-        genome_fraction <- input$fit_genome_fraction
-
-        # Update coefficients
-        fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / genome_fraction
-        fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / genome_fraction
-
-        # Update variance-covariance matrix
-        fit_var_cov_mat <- fit_var_cov_mat / genome_fraction^2
-      }
-
-      fit_results_list <- list(
-        fit_formula_tex = fit_formula_tex,
-        fit_coeffs = fit_coeffs,
-        fit_var_cov_mat = fit_var_cov_mat,
-        fit_cor_mat = fit_cor_mat
-      )
-
-      # Additional info for translocations module
-      if (aberr_module == "translocations") {
-        # Message about used translocation frequency
-        if (input$frequency_select == "measured_freq") {
-          trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_genome_fraction, ".")
-        } else {
-          trans_frequency_message <- "The provided fitting curve is already full genome."
-        }
-        fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
-      }
-    }
+    })
 
     return(fit_results_list)
   })
@@ -350,7 +355,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
 
     data()[["fit_var_cov_mat"]] %>%
-      # formatC(format = "e", digits = 3) %>%
+      formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
       rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
@@ -464,8 +469,8 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::mutate(
               N = 0,
               X = 0,
-              Fp = 0,
-              Fp_err = 0,
+              y = 0,
+              y_err = 0,
               DI = 0,
               u = 0
             ) %>%
@@ -662,50 +667,72 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     }
 
     # Get fitting data ----
-    # if (load_fit_data) {
-    #   fit_results_list <- readRDS(fit_data$datapath)
-    #
-    #   # Summarise fit
-    #   fit_coeffs <- fit_results_list[["fit_coeffs"]]
-    #   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
-    #   fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
-    #
-    #   fit_coeffs <- hot_to_r(input$fit_coeffs)
-    #   fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
-    #   fit_formula_tex <- input$fit_formula_tex
-    # } else {
-    #   fit_coeffs <- hot_to_r(input$fit_coeffs)
-    #   fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
-    #
-    #   model_formula <- input$formula_select
-    #   # Parse formula
-    #   if (model_formula == "lin-quad") {
-    #     fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-    #   } else if (model_formula == "lin") {
-    #     fit_formula_tex <- "Y = C + \\alpha D"
-    #   }
-    #   else if (model_formula == "lin-quad-no-int") {
-    #     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-    #   }
-    #   else if (model_formula == "lin-no-int") {
-    #     fit_formula_tex <- "Y = \\alpha D"
-    #   }
-    # }
+    if (load_fit_data) {
+      fit_results_list <- readRDS(fit_data$datapath)
 
-    # Get data from table
-    fit_coeffs <- hot_to_r(input$fit_coeffs)
-    cat("\nFIT COEFFS\n")
-    cat(fit_coeffs %>% colnames())
+      # Additional info for translocations module
+      if (aberr_module == "translocations") {
+        fit_genome_fraction <- fit_results_list[["genome_fraction"]]
 
-    fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat)
-    cat("\nFIT VAR-COR\n")
-    cat(fit_var_cov_mat %>% class())
-    cat("\n")
-    cat(fit_var_cov_mat[1,1])
+        # Conversion of coefficients and statistics
+        if (fit_results_list[["frequency_select"]] == "measured_freq") {
 
-    fit_formula_tex <- "Y = C + \\alpha D"#input$fit_formula_tex
-    cat("\n")
-    cat("tex formula")
+          # Update coefficients
+          fit_results_list[["fit_coeffs"]][,"estimate"] <- fit_results_list[["fit_coeffs"]][,"estimate"] / fit_genome_fraction
+          fit_results_list[["fit_coeffs"]][,"std.error"] <- fit_results_list[["fit_coeffs"]][,"std.error"] / fit_genome_fraction
+
+          # Update variance-covariance matrix
+          fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
+        }
+      }
+    } else {
+      model_formula <- input$formula_select
+      # Parse formula
+      if (model_formula == "lin-quad") {
+        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+      } else if (model_formula == "lin") {
+        fit_formula_tex <- "Y = C + \\alpha D"
+      }
+      else if (model_formula == "lin-quad-no-int") {
+        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+      }
+      else if (model_formula == "lin-no-int") {
+        fit_formula_tex <- "Y = \\alpha D"
+      }
+
+      fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
+      fit_coeffs <- fit_coeffs_raw %>%
+        cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
+        as.matrix()
+
+      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
+        as.matrix()
+
+      # Conversion of coefficients and statistics
+      if (aberr_module == "translocations") {
+        if (input$frequency_select == "measured_freq") {
+          fit_genome_fraction <- input$fit_genome_fraction
+
+          # Update coefficients
+          fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / fit_genome_fraction
+          fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / fit_genome_fraction
+
+          # Update variance-covariance matrix
+          fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
+        }
+      }
+
+      fit_results_list <- list(
+        fit_formula_tex = fit_formula_tex,
+        fit_coeffs = fit_coeffs,
+        fit_var_cov_mat = fit_var_cov_mat
+      )
+    }
+
+    # Parse fitting data
+    fit_coeffs <- fit_results_list[["fit_coeffs"]]
+    fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+    fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L) %>%
