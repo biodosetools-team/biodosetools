@@ -748,6 +748,76 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       })
     }
 
+    # Detection limits ----
+
+    get_detection_limit <- function(fit_results_list, cells, conf_int = 0.83) {
+      # Summarise fit
+      fit_coeffs <- fit_results_list[["fit_coeffs"]]
+      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+
+      # Generalized variance-covariance matrix
+      general_fit_coeffs <- numeric(length = 3L) %>%
+        `names<-`(c("C", "α", "β"))
+
+      for (var in rownames(fit_coeffs)) {
+        general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
+      }
+
+      # Generalized fit coefficients
+      general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+        `row.names<-`(c("C", "α", "β")) %>%
+        `colnames<-`(c("C", "α", "β"))
+
+      for (x_var in rownames(fit_var_cov_mat)) {
+        for (y_var in colnames(fit_var_cov_mat)) {
+          general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
+        }
+      }
+
+      # Generalized curves ----
+      yield_fun <- function(d, G) {
+        general_fit_coeffs[[1]] +
+          general_fit_coeffs[[2]] * d +
+          general_fit_coeffs[[3]] * d^2 * G
+      }
+
+      # R factor depeding on selected CI
+      chisq_df <- nrow(fit_coeffs)
+      R_factor <- function(conf_int = 0.95) {
+        sqrt(qchisq(conf_int, df = chisq_df))
+      }
+
+      yield_error_fun <- function(d, G) {
+        res <- general_var_cov_mat[["C", "C"]] +
+          general_var_cov_mat[["α", "α"]] * d^2 +
+          general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
+          2 * general_var_cov_mat[["C", "α"]] * d +
+          2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
+          2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+        if (sum(res < 0) > 0) {
+          rep(0, length(res))
+        } else {
+          return(sqrt(res))
+        }
+      }
+
+      dose <- 0.0
+      aberr_min <- (yield_fun(dose, 1) + R_factor(conf_int) * yield_error_fun(dose, 1)) * cells
+
+      found <- FALSE
+      aberr_test <- 0
+      while (!found) {
+        aberr_test <- aberr_test + 1
+        aberr_low <- poisson.test(x = aberr_test, conf.level = conf_int)[["conf.int"]][1]
+
+        if (aberr_low >= aberr_min) {
+          found <- TRUE
+        }
+      }
+
+      return(c(aberr_min, aberr_test - 1))
+    }
+
     # Curve function ----
 
     get_dose_curve <- function(fit_results_list) {
@@ -860,6 +930,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["chromosome_table"]] <- chromosome_table
         results_list[["frequency_select"]] <- frequency_select
       }
+
+      cat(get_detection_limit(results_list, 1000) )
 
       return(results_list)
     })
