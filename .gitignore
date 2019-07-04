@@ -7,3 +7,4 @@ tests/
 rsconnect/
 help_template.R
 deploy_shinyapp.R
+www/MathJax
