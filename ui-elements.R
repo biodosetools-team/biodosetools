@@ -29,8 +29,8 @@ navbar <- bs4DashMyNavbar(
       width = 175,
       choices = c(
         "Dicentrics"            = "dicent",
-        "Translocations"        = "trans"#,
-        # "Micronuclei"           = "micro",
+        "Translocations"        = "trans",
+        "Micronuclei"           = "micro"#,
         # "H2AX"                  = "h2ax",
         # "Intercomparison Tests" = "intercomp"
       ),
@@ -113,15 +113,48 @@ sidebar <- bs4DashMySidebar(
         paste(
           "Dose estimation",
           bs4Badge(
-            "in progress",
+            "checking",
             position = "right",
-            status = "danger"
+            status = "warning"
           )
         )
       ),
       tabName = "tab-trans-estimate",
       icon = "calculator"
     ),
+
+    bs4MySidebarMenuItem(
+      condition = "input.experiment_select == 'micro'",
+      HTML(
+        paste(
+          "Fitting",
+          bs4Badge(
+            "in progress",
+            position = "right",
+            status = "danger"
+          )
+        )
+      ),
+      tabName = "tab-micro-estimate",
+      icon = "cog"
+    ),
+
+    bs4MySidebarMenuItem(
+      condition = "input.experiment_select == 'micro'",
+      HTML(
+        paste(
+          "Dose estimation",
+          bs4Badge(
+            "in progress",
+            position = "right",
+            status = "danger"
+          )
+        )
+      ),
+      tabName = "tab-micro-estimate",
+      icon = "calculator"
+    ),
+
 
     # Language selector
     bs4SidebarHeader("Language"),
