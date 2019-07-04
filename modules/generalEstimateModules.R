@@ -597,7 +597,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                 )
               ),
               Fg = (X - Xc) / (N * genome_fraction),
-              Fg_err = 0
+              Fg_err = Fp_err / sqrt(genome_fraction)
             )
         }
 
