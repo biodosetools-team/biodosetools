@@ -9,6 +9,25 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
     table_reset$value <- 1
   })
 
+  # Calculate aberrations with purr ----
+  aberr_calc <- function(df, aberr_prefix = "C", power = 1) {
+    purrr::map_df(
+      df %>%
+        .[grep(aberr_prefix, names(.))] %>%
+        t() %>%
+        as.data.frame(),
+      ~ . *
+        df %>%
+        .[grep(aberr_prefix, names(.))] %>%
+        names() %>%
+        stringr::str_extract("[0-9]") %>%
+        as.numeric() %>%
+        .^power
+    ) %>%
+      t() %>%
+      rowSums()
+  }
+
   # Initialize data frame ----
   previous <- reactive({
 
@@ -120,41 +139,20 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
           # Calculated columns
           mytable <- mytable %>%
             dplyr::mutate(
-              N = 0,
-              X = 0,
-              DI = 0,
-              u = 0
+              N = as.integer(rowSums(.[grep("C", names(.))])),
+              X = aberr_calc(mytable, power = 1),
+              X2 = aberr_calc(mytable, power = 2),
+              var = (X2 - (X^2) / N) / (N - 1),
+              mean = X / N,
+              DI = var / mean,
+              u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / N)))
             ) %>%
+            dplyr::mutate_at(
+              c("X", "N", grep("C", names(.), value = TRUE)),
+              as.integer
+            ) %>%
+            dplyr::select(-X2, -var, -mean) %>%
             dplyr::select(D, N, X, everything())
-
-          first_aberr_index <- 4
-          last_aberr_index <- ncol(mytable) - 2
-          num_rows <- nrow(mytable)
-
-          mytable <- mytable %>%
-            dplyr::mutate(
-              D = as.numeric(D),
-              X = as.integer(X),
-              N = as.integer(rowSums(.[first_aberr_index:last_aberr_index]))
-            )
-
-          # Ugly method to calculate index of dispersion
-          for (row in 1:num_rows) {
-            xf <- 0
-            x2f <- 0
-            # Calculate summatories
-            for (k in seq(0, last_aberr_index - first_aberr_index, 1)) {
-              xf <- xf + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k
-              x2f <- x2f + mytable[row, grep("C", names(mytable), value = T)][k + 1] * k^2
-            }
-            # Calculate variance and mean
-            var <- (x2f - (xf^2) / mytable[row, "N"]) / (mytable[row, "N"] - 1)
-            mean <- xf / mytable[row, "N"]
-            # Save values into data frame
-            mytable[row, "X"] <- as.integer(xf)
-            mytable[row, "DI"] <- var / mean
-            mytable[row, "u"] <- (var / mean - 1) * sqrt((mytable[row, "N"] - 1) / (2 * (1 - 1 / mytable[row, "X"])))
-          }
         } else {
           mytable <- mytable %>%
             dplyr::mutate(
