@@ -164,7 +164,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           uiOutput(ns("fit_trans_frequency_message")),
 
           br(),
-          h6("Coefficients"),
+          h6("Full genome coefficients"),
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_coeffs"))
