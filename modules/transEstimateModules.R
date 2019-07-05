@@ -6,7 +6,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
   bs4TabItem(
     tabName = label,
-    h2("Dose estimation"),
+    h2("Translocations: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(

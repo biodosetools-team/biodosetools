@@ -6,7 +6,7 @@ dicentFittingUI <- function(id, label) {
 
   bs4TabItem(
     tabName = label,
-    h2("Dose-effect Fitting"),
+    h2("Dicentrics: Dose-effect fitting"),
 
     fluidRow(
       # Card: Data input options ----

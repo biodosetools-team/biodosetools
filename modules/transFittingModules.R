@@ -6,7 +6,7 @@ transFittingUI <- function(id, label) {
 
   bs4TabItem(
     tabName = label,
-    h2("Dose-effect Fitting"),
+    h2("Translocations: Dose-effect fitting"),
 
     fluidRow(
       # Card: Stains color options ----

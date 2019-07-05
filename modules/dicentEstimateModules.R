@@ -6,7 +6,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
   bs4TabItem(
     tabName = label,
-    h2("Dose estimation"),
+    h2("Dicentrics: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
