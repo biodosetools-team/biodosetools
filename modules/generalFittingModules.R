@@ -748,7 +748,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
     # Detection limits ----
 
-    get_detection_limit <- function(fit_results_list, cells, conf_int = 0.83) {
+    get_detection_limit <- function(fit_results_list, cells, conf_int = 0.95) {
       # Summarise fit
       fit_coeffs <- fit_results_list[["fit_coeffs"]]
       fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
@@ -813,7 +813,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         }
       }
 
-      return(c(aberr_min, aberr_test - 1))
+      # return(c(cells, aberr_min, aberr_low, aberr_test))
+      return(aberr_test)
     }
 
     # Curve function ----
@@ -929,7 +930,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["frequency_select"]] <- frequency_select
       }
 
-      cat(get_detection_limit(results_list, 1000) )
+      # cat(get_detection_limit(results_list, 1000))
 
       return(results_list)
     })
