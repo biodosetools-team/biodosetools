@@ -108,17 +108,8 @@ sidebar <- bs4DashMySidebar(
       icon = "paint-brush"
     ),
     bs4MySidebarMenuItem(
+      "Dose estimation",
       condition = "input.experiment_select == 'trans'",
-      HTML(
-        paste(
-          "Dose estimation",
-          bs4Badge(
-            "checking",
-            position = "right",
-            status = "warning"
-          )
-        )
-      ),
       tabName = "tab-trans-estimate",
       icon = "calculator"
     ),
