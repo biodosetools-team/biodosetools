@@ -26,7 +26,7 @@ inputs_color_border =  "#4c44ac"
 inputs_color_hover =   "#7275ce"
 
 # Results colors
-results_color =        main_color
+results_color =        "#2db77d"
 results_color_border = "#13794a"
 results_color_hover =  "#37e495"
 
