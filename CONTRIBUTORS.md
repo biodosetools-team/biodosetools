@@ -1,6 +1,6 @@
 # Biodose Tools Contributors
 
-The project is initially developed by [RENEB](http://www.reneb.net) association, as a collaboration between Universitat Autònoma de Barcelona (UAB), Bundesamt für Strahlenschutz (BfS), Durham University (DU), Institut de Radioprotection et de Sûreté Nucléaire (IRSN), Universidad de la Rioja (UdR), and Public Health of England (PHE).
+The project is initially developed by [RENEB](http://www.reneb.net) association, as a collaboration between Universitat Autònoma de Barcelona ([UAB](https://www.uab.cat/)), Bundesamt für Strahlenschutz ([BfS](http://www.bfs.de/EN/home/home_node.html)), Durham University ([DU](https://www.dur.ac.uk/)), Institut de Radioprotection et de Sûreté Nucléaire ([IRSN](https://www.irsn.fr/EN/Pages/Home.aspx)), Universidad de la Rioja ([UdR](https://www.unirioja.es/)), and Public Health England ([PHE](https://www.phe-protectionservices.org.uk/)).
 
 ### Principal contributors
 
