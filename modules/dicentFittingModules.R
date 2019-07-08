@@ -174,7 +174,10 @@ dicentFittingUI <- function(id, label) {
                 "Quasipoisson" = "quasipoisson"
               ),
               selected = "automatic"
-            )
+            ),
+            # Detection limits
+            widgetLabel("Detection limits"),
+            textInput(ns("detection_lims_cells"), "Number of cells", value = "150 500 1000")
           )
         )
       )
@@ -268,6 +271,14 @@ dicentFittingUI <- function(id, label) {
               div(
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_var_cov_mat"))
+              )
+            ),
+            bs4TabPanel(
+              tabName = "Detection limits",
+              h6("Detection limits"),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_detection_lims"))
               )
             )
           )

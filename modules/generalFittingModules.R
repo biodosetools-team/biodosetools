@@ -746,77 +746,6 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       })
     }
 
-    # Detection limits ----
-
-    get_detection_limit <- function(fit_results_list, cells, conf_int = 0.95) {
-      # Summarise fit
-      fit_coeffs <- fit_results_list[["fit_coeffs"]]
-      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
-
-      # Generalized variance-covariance matrix
-      general_fit_coeffs <- numeric(length = 3L) %>%
-        `names<-`(c("C", "α", "β"))
-
-      for (var in rownames(fit_coeffs)) {
-        general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
-      }
-
-      # Generalized fit coefficients
-      general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-        `row.names<-`(c("C", "α", "β")) %>%
-        `colnames<-`(c("C", "α", "β"))
-
-      for (x_var in rownames(fit_var_cov_mat)) {
-        for (y_var in colnames(fit_var_cov_mat)) {
-          general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
-        }
-      }
-
-      # Generalized curves ----
-      yield_fun <- function(d, G) {
-        general_fit_coeffs[[1]] +
-          general_fit_coeffs[[2]] * d +
-          general_fit_coeffs[[3]] * d^2 * G
-      }
-
-      # R factor depeding on selected CI
-      chisq_df <- nrow(fit_coeffs)
-      R_factor <- function(conf_int = 0.95) {
-        sqrt(qchisq(conf_int, df = chisq_df))
-      }
-
-      yield_error_fun <- function(d, G) {
-        res <- general_var_cov_mat[["C", "C"]] +
-          general_var_cov_mat[["α", "α"]] * d^2 +
-          general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
-          2 * general_var_cov_mat[["C", "α"]] * d +
-          2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
-          2 * general_var_cov_mat[["α", "β"]] * d^3 * G
-        if (sum(res < 0) > 0) {
-          rep(0, length(res))
-        } else {
-          return(sqrt(res))
-        }
-      }
-
-      dose <- 0.0
-      aberr_min <- (yield_fun(dose, 1) + R_factor(conf_int) * yield_error_fun(dose, 1)) * cells
-
-      found <- FALSE
-      aberr_test <- 0
-      while (!found) {
-        aberr_test <- aberr_test + 1
-        aberr_low <- poisson.test(x = aberr_test, conf.level = conf_int)[["conf.int"]][1]
-
-        if (aberr_low >= aberr_min) {
-          found <- TRUE
-        }
-      }
-
-      # return(c(cells, aberr_min, aberr_low, aberr_test))
-      return(aberr_test)
-    }
-
     # Curve function ----
 
     get_dose_curve <- function(fit_results_list) {
@@ -936,6 +865,77 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     })
   })
 
+  # Detection limits ----
+
+  get_detection_limit <- function(fit_results_list, cells, conf_int = 0.95) {
+    # Summarise fit
+    fit_coeffs <- fit_results_list[["fit_coeffs"]]
+    fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+
+    # Generalized variance-covariance matrix
+    general_fit_coeffs <- numeric(length = 3L) %>%
+      `names<-`(c("C", "α", "β"))
+
+    for (var in rownames(fit_coeffs)) {
+      general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
+    }
+
+    # Generalized fit coefficients
+    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+      `row.names<-`(c("C", "α", "β")) %>%
+      `colnames<-`(c("C", "α", "β"))
+
+    for (x_var in rownames(fit_var_cov_mat)) {
+      for (y_var in colnames(fit_var_cov_mat)) {
+        general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
+      }
+    }
+
+    # Generalized curves ----
+    yield_fun <- function(d, G) {
+      general_fit_coeffs[[1]] +
+        general_fit_coeffs[[2]] * d +
+        general_fit_coeffs[[3]] * d^2 * G
+    }
+
+    # R factor depeding on selected CI
+    chisq_df <- nrow(fit_coeffs)
+    R_factor <- function(conf_int = 0.95) {
+      sqrt(qchisq(conf_int, df = chisq_df))
+    }
+
+    yield_error_fun <- function(d, G) {
+      res <- general_var_cov_mat[["C", "C"]] +
+        general_var_cov_mat[["α", "α"]] * d^2 +
+        general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
+        2 * general_var_cov_mat[["C", "α"]] * d +
+        2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
+        2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+      if (sum(res < 0) > 0) {
+        rep(0, length(res))
+      } else {
+        return(sqrt(res))
+      }
+    }
+
+    dose <- 0.0
+    aberr_min <- (yield_fun(dose, 1) + R_factor(conf_int) * yield_error_fun(dose, 1)) * cells
+
+    found <- FALSE
+    aberr_test <- 0
+    while (!found) {
+      aberr_test <- aberr_test + 1
+      aberr_low <- poisson.test(x = aberr_test, conf.level = conf_int)[["conf.int"]][1]
+
+      if (aberr_low >= aberr_min) {
+        found <- TRUE
+      }
+    }
+
+    # return(c(cells, aberr_min, aberr_low, aberr_test))
+    return(aberr_test)
+  }
+
   # Results outputs ----
   output$fit_formula_tex <- renderUI({
     # Fitting formula
@@ -999,6 +999,36 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
+  })
+
+  output$fit_detection_lims <- renderRHandsontable({
+    # Detection limits
+    if (input$button_fit <= 0) return(NULL)
+
+    det_lims <- data.frame(
+      N = input$detection_lims_cells %>%
+        stringr::str_split(" ") %>%
+        unlist() %>%
+        as.numeric()
+    )
+
+    det_lims <- det_lims %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(
+        X95 = get_detection_limit(data(), cells = N, conf_int = 0.95),
+        X83 = get_detection_limit(data(), cells = N, conf_int = 0.83)
+      ) %>%
+      dplyr::mutate_at(
+        c("N", grep("X", names(.), value = TRUE)),
+        as.integer
+      )
+
+    num_cols <- 3
+
+    det_lims %>%
+      # Convert to hot and format table
+      rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
+      hot_cols(colWidths = 50)
   })
 
   output$plot <- renderPlot(
