@@ -749,6 +749,11 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       protracted_time <- input$protracted_time
       protracted_life_time <- input$protracted_life_time
       protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
+    } else if (exposure == "protracted_high") {
+      protracted_g_value <- 0
+      # Used in report (dummy values)
+      protracted_time <- NA
+      protracted_life_time <- NA
     } else {
       protracted_g_value <- 1
       # Used in report (dummy values)

@@ -329,7 +329,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               width = "175px",
               choices = list(
                 "Acute"      = "acute",
-                "Protracted" = "protracted"
+                "Protracted" = "protracted",
+                "Highly protracted" = "protracted_high"
               ),
               selected = "acute"
             )
