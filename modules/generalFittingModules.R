@@ -170,9 +170,10 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
     num_cols <- as.numeric(ncol(changed_data()))
 
     hot <- changed_data() %>%
-      rhandsontable(width = (60 + num_cols * 50), height = "100%") %>%
+      rhandsontable(width = (70 + num_cols * 50), height = "100%") %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
+      hot_col(c(2), colWidths = 60) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (num_cols > 3) {
@@ -932,8 +933,17 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       }
     }
 
-    # return(c(cells, aberr_min, aberr_low, aberr_test))
-    return(aberr_test)
+    # Estimate dose
+    project_yield_lower <- function(yield, conf_int) {
+      uniroot(function(dose) {
+        yield_fun(dose, 1) + R_factor(conf_int) * yield_error_fun(dose, 1) - yield
+      }, c(1e-16, 100))$root
+    }
+
+    yield_low <- aberr_low / cells
+    dose_low <- project_yield_lower(yield_low, conf_int)
+
+    return(c(aberr_test, dose_low))
   }
 
   # Results outputs ----
@@ -1015,19 +1025,22 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     det_lims <- det_lims %>%
       dplyr::rowwise() %>%
       dplyr::mutate(
-        X95 = get_detection_limit(data(), cells = N, conf_int = 0.95),
-        X83 = get_detection_limit(data(), cells = N, conf_int = 0.83)
+        X95 = get_detection_limit(data(), cells = N, conf_int = 0.95)[1],
+        D95 = get_detection_limit(data(), cells = N, conf_int = 0.95)[2] * 1000,
+        X83 = get_detection_limit(data(), cells = N, conf_int = 0.83)[1],
+        D83 = get_detection_limit(data(), cells = N, conf_int = 0.83)[2] * 1000
       ) %>%
       dplyr::mutate_at(
         c("N", grep("X", names(.), value = TRUE)),
         as.integer
       )
 
-    num_cols <- 3
+    num_cols <- 5
 
     det_lims %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
+      rhandsontable(width = (70 + num_cols * 50), height = "100%") %>%
+      hot_col(c(3,5), format = "0.00", colWidths = 60) %>%
       hot_cols(colWidths = 50)
   })
 
