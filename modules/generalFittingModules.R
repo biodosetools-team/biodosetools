@@ -168,9 +168,11 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
   # Output ----
   output$count_data_hot <- renderRHandsontable({
     num_cols <- as.numeric(ncol(changed_data()))
+    col_headers <- colnames(changed_data())
+    col_headers[1] <- paste(col_headers[1], "(Gy)")
 
     hot <- changed_data() %>%
-      rhandsontable(width = (70 + num_cols * 50), height = "100%") %>%
+      rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
       hot_col(c(2), colWidths = 60) %>%
@@ -1036,10 +1038,12 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       )
 
     num_cols <- 5
+    col_headers <- c("N", "X95", "D (Gy)", "X83", "D (Gy)")
 
     det_lims %>%
       # Convert to hot and format table
-      rhandsontable(width = (70 + num_cols * 50), height = "100%") %>%
+      rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+      hot_col(c(1), readOnly = TRUE) %>%
       hot_col(c(3,5), format = "0.00", colWidths = 60) %>%
       hot_cols(colWidths = 50)
   })

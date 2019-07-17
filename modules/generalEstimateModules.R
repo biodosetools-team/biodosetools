@@ -258,7 +258,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
 
         fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
         fit_coeffs <- fit_coeffs_raw %>%
-          cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
+          # cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
           as.matrix()
 
         fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
@@ -341,10 +341,10 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
       as.data.frame() %>%
-      dplyr::select(-statistic) %>%
+      # dplyr::select(-statistic) %>%
       as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + (num_cols - 1) * 100), height = "100%") %>%
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -1689,7 +1689,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial-body and heterogeneous exposures",
+            title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -1737,7 +1737,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial-body and heterogeneous exposures",
+            title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -1812,7 +1812,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           # Help modal
           bs4MyModal(
             id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Partial-body and heterogeneous exposures",
+            title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
             withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
@@ -1891,7 +1891,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1904,7 +1904,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1921,7 +1921,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1936,9 +1936,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`("dose") %>%
+      `row.names<-`("dose (Gy)") %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1952,9 +1952,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`("frac") %>%
+      `row.names<-`("fraction") %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1969,7 +1969,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 370, height = "100%") %>%
+      rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1985,7 +1985,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1999,9 +1999,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`(c("dose1", "dose2")) %>%
+      `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 290, height = "100%") %>%
+      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -2012,10 +2012,10 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("estimate", "std_err")) %>%
+      `colnames<-`(c("estimate", "std.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 210, height = "100%") %>%
+      rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
