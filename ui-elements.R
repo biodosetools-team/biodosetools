@@ -144,28 +144,28 @@ sidebar <- bs4DashMySidebar(
       ),
       tabName = "tab-micro-estimate",
       icon = "calculator"
-    ),
+    )#,
 
 
     # Language selector
-    bs4SidebarHeader("Language"),
-
-    pickerInput(
-      inputId = "countries",
-      label = NULL,
-      multiple = F,
-      choices = countries,
-
-      choicesOpt = list(
-        content =
-          mapply(countries, flags, FUN = function(country, flagUrl) {
-            HTML(paste(
-              tags$img(src=flagUrl, width=20, height=15),
-              country
-            ))
-          }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
-      )
-    )
+    # bs4SidebarHeader("Language"),
+    #
+    # pickerInput(
+    #   inputId = "countries",
+    #   label = NULL,
+    #   multiple = F,
+    #   choices = countries,
+    #
+    #   choicesOpt = list(
+    #     content =
+    #       mapply(countries, flags, FUN = function(country, flagUrl) {
+    #         HTML(paste(
+    #           tags$img(src=flagUrl, width=20, height=15),
+    #           country
+    #         ))
+    #       }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    #   )
+    # )
   )
 )
 
