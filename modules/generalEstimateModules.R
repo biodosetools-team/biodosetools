@@ -793,19 +793,37 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     if (grepl("merkle", error_method, fixed = TRUE)) {
       conf_int_curve <- paste0("0.", gsub("\\D", "", error_method)) %>% as.numeric()
       conf_int_yield <- conf_int_curve
-      conf_int_delta <- NA
+
+      # Parse CI text for plot legend
+      conf_int_text_whole <- paste0("(", round(100 * conf_int_curve, 0), "%",
+                                    "-" , round(100 * conf_int_yield, 0), "%", ")")
     } else if (error_method == "delta") {
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
       conf_int_delta <- 0.95
+
+      # Parse CI text for plot legend
+      conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
     }
 
-    # Select partial body and heterogeneous CI depending on selected method
+    # Initialize partial-body and heterogeneous CI text for plot legend
+    conf_int_text_partial <- NULL
+    conf_int_text_hetero <- NULL
+
+    # Select partial-body and heterogeneous CI depending on selected method
     if (assessment == "partial-body") {
       conf_int_dolphin <- 0.95
+
+      # Parse CI text for plot legend
+      conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
+
     } else if (assessment == "hetero") {
       conf_int_curve_hetero <- paste0("0.", gsub("\\D", "", error_method_hetero)) %>% as.numeric()
       conf_int_yield_hetero <- conf_int_curve_hetero
+
+      # Parse CI text for plot legend
+      conf_int_text_hetero <- paste0("(", round(100 * conf_int_curve_hetero, 0), "%",
+                                     "-" , round(100 * conf_int_yield_hetero, 0), "%", ")")
     }
 
     # Correct conf_int_yield if simple method is required
@@ -1692,10 +1710,10 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
           breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2"),
           labels = c(
-            paste0("Whole-body", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
-            paste0("Partial-body", " (", round(100 * 0.95, 0), "%", ")"),
-            paste0("Heterogeneous 1", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")"),
-            paste0("Heterogeneous 2", " (", round(100 * conf_int_curve, 0), "%", "-" , round(100 * conf_int_yield, 0), "%", ")")
+            paste("Whole-body", conf_int_text_whole),
+            paste("Partial-body", conf_int_text_partial),
+            paste("Heterogeneous 1", conf_int_text_hetero),
+            paste("Heterogeneous 2", conf_int_text_hetero)
           )
         ) +
         # Estimation level
