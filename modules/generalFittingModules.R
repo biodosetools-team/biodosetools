@@ -934,16 +934,16 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     }
 
     # Estimate dose
-    project_yield_lower <- function(yield, conf_int) {
+    project_yield_estimate <- function(yield, conf_int) {
       uniroot(function(dose) {
-        yield_fun(dose, 1) + R_factor(conf_int) * yield_error_fun(dose, 1) - yield
+        yield_fun(dose, 1) - yield
       }, c(1e-16, 100))$root
     }
 
-    yield_low <- aberr_low / cells
-    dose_low <- project_yield_lower(yield_low, conf_int)
+    yield_est <- aberr_test / cells
+    dose_est <- project_yield_estimate(yield_est, conf_int)
 
-    return(c(aberr_test, dose_low))
+    return(c(aberr_test, dose_est))
   }
 
   # Results outputs ----
