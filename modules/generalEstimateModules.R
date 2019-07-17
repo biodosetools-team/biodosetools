@@ -635,7 +635,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       fit_data <- input$load_fit_data
       exposure <- input$exposure_select
       assessment <- input$assessment_select
-      # curve_method <- input$curve_method_select
 
       # Cases data
       case_data <- hot_to_r(input$case_data_hot)
@@ -644,11 +643,13 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       fraction_coeff <- input$fraction_coeff_select
     })
 
-    # Get error/calculation method
-    if (assessment != "partial-body") {
-      curve_method <- input$curve_method_select
-    } else {
-      curve_method <- input$partial_method_select
+    # Get error/calculation methods
+    error_method <- input$error_method_whole_select
+    # if (assessment == "partial-body") {
+    #   error_method_partial <- input$error_method_partial_select
+    # }
+    if (assessment == "hetero") {
+      error_method_hetero <- input$error_method_hetero_select
     }
 
     # Get fitting data ----
@@ -788,17 +789,23 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       }
     }
 
-    # Select CI depending on selected method
-    if (grepl("merkle", curve_method, fixed = TRUE)) {
-      conf_int_curve <- paste0("0.", gsub("\\D", "", curve_method)) %>% as.numeric()
+    # Select whole-body CI depending on selected method
+    if (grepl("merkle", error_method, fixed = TRUE)) {
+      conf_int_curve <- paste0("0.", gsub("\\D", "", error_method)) %>% as.numeric()
       conf_int_yield <- conf_int_curve
-      # } else if (curve_method == "simple") {
-      #   conf_int_curve <- 0 # This makes R_factor = 0
-      #   conf_int_yield <- 0.95
-    } else { # For partial body
+      conf_int_delta <- NA
+    } else if (error_method == "delta") {
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
+      conf_int_delta <- 0.95
+    }
+
+    # Select partial body and heterogeneous CI depending on selected method
+    if (assessment == "partial-body") {
       conf_int_dolphin <- 0.95
+    } else if (assessment == "hetero") {
+      conf_int_curve_hetero <- paste0("0.", gsub("\\D", "", error_method_hetero)) %>% as.numeric()
+      conf_int_yield_hetero <- conf_int_curve_hetero
     }
 
     # Correct conf_int_yield if simple method is required
@@ -929,9 +936,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
       if (aberr_module == "dicentrics") {
         yield_est <- case_data[["y"]]
-      } else if (aberr_module == "translocations") {
-        yield_est <- case_data[["Fp"]]
-      }
+      } #else if (aberr_module == "translocations") {
+        # yield_est <- case_data[["Fp"]]
+      # }
 
       # Modify results for translocations
       if (aberr_module == "translocations") {
@@ -965,6 +972,128 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Whole-body estimation results
       est_doses <- data.frame(
         yield = c(yield_low, yield_est, yield_upp),
+        dose  = c(dose_low, dose_est, dose_upp)
+      ) %>%
+        `row.names<-`(c("lower", "estimate", "upper"))
+
+      # Calculate AIC as a GOF indicator
+      AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+                           dose_var = "dose", yield_var = "yield", fit_link = "identity")
+
+
+      # Return objects
+      results_list <- list(
+        est_doses = est_doses,
+        AIC       = AIC
+      )
+
+      return(results_list)
+    }
+
+    # Calcs: whole-body estimation
+    estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
+                                          conf_int, protracted_g_value, cov = TRUE) {
+      # cov: TRUE if the covariances of the regression coefficients should be considered,
+      #      otherwise only the diagonal of the covariance matrix is used
+
+      # aberr <- case_data[["X"]]
+      # cells <- case_data[["N"]]
+
+      if (aberr_module == "dicentrics") {
+        lambda_est <- case_data[["y"]]
+      } else if (aberr_module == "translocations") {
+        lambda_est <- case_data[["Fg"]]
+        # genome_fraction <- genome_fraction$genome_fraction()
+      }
+      # else {
+      #   genome_fraction <- 1
+      # }
+      # if (aberr_module == "translocations") {
+      #   genome_fraction <- genome_fraction$genome_fraction()
+      #   lambda_est <- lambda_est / genome_fraction
+      # }
+
+      C <- general_fit_coeffs[[1]]
+      α <- general_fit_coeffs[[2]]
+      β <- general_fit_coeffs[[3]]
+
+      var_cov_mat <- general_var_cov_mat
+
+      # Detect fitting model
+      fit_is_lq <- isFALSE(β == 0)
+
+      # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
+      if (fit_is_lq) {
+        # Update β to correct for protracted exposures
+        β <- β * protracted_g_value
+
+        # Auxiliary variable
+        z <- α^2 + 4 * β * (lambda_est - C)
+
+        # Get estimate for dose
+        dose_est <- (-α + sqrt(z)) / (2 * β)
+
+        # Derivatives of regression curve coefs
+        deriv_lambda <- (z)^(-0.5)
+        deriv_C <- -(z)^(-0.5)
+        deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
+        deriv_β <- protracted_g_value * (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+      } else {
+        # Get estimate for dose
+        dose_est <- (lambda_est - C) / α
+
+        # Derivatives of regression curve coefs
+        deriv_lambda <- 1 / α
+        deriv_C <- - (1 / α)
+        deriv_α <- (C - lambda_est) / α^2
+        deriv_β <- 0
+      }
+
+      # Get variance of lambda based on delta methods (see Savage et al.)
+      # lambda_est_sd <- sqrt(cov_est[1, 1])
+      if (aberr_module == "dicentrics") {
+        lambda_est_sd <- case_data[["y_err"]]
+      } else if (aberr_module == "translocations") {
+        lambda_est_sd <- case_data[["Fg_err"]]
+        # genome_fraction <- genome_fraction$genome_fraction()
+      }
+
+      # Get confidence interval of lambda estimates
+      lambda_low <- lambda_est - qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+      lambda_upp <- lambda_est + qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+
+      if (cov) {
+        dose_est_var <-
+          (deriv_C^2) * var_cov_mat[1, 1] +
+          (deriv_α^2) * var_cov_mat[2, 2] +
+          (deriv_β^2) * var_cov_mat[3, 3] +
+          (deriv_lambda^2) * (lambda_est_sd^2) +
+          2 * (deriv_C * deriv_α) * var_cov_mat[1, 2] +
+          2 * (deriv_C * deriv_β) * var_cov_mat[1, 3] +
+          2 * (deriv_α * deriv_β) * var_cov_mat[2, 3]
+      } else {
+        dose_est_var <-
+          (deriv_C^2) * var_cov_mat[1, 1] +
+          (deriv_α^2) * var_cov_mat[2, 2] +
+          (deriv_β^2) * var_cov_mat[3, 3] +
+          (deriv_lambda^2) * (lambda_est_sd^2)
+        # TODO: These values shouldn't even exist if cov == FALSE
+      }
+
+      # Get confidence interval of dose estimates
+      dose_low <- dose_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+      dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+
+      # Correct negative values
+      lambda_low <- correct_negative_vals(lambda_low)
+      lambda_upp <- correct_negative_vals(lambda_upp)
+      dose_low <- correct_negative_vals(dose_low)
+      dose_est <- correct_negative_vals(dose_est)
+      dose_upp <- correct_negative_vals(dose_upp)
+
+      # Whole-body estimation results
+      est_doses <- data.frame(
+        yield = c(lambda_low, lambda_est, lambda_upp),
         dose  = c(dose_low, dose_est, dose_upp)
       ) %>%
         `row.names<-`(c("lower", "estimate", "upper"))
@@ -1448,10 +1577,18 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # Calculations ----
 
     # Calculate whole-body results
-    results_whole <- estimate_whole_body(
-      case_data, conf_int_yield,
-      conf_int_curve, protracted_g_value
-    )
+    if (grepl("merkle", error_method, fixed = TRUE)) {
+      results_whole <- estimate_whole_body(
+        case_data, conf_int_yield,
+        conf_int_curve, protracted_g_value
+      )
+    } else if (error_method == "delta") {
+      results_whole <- estimate_whole_body_delta(
+        case_data, general_fit_coeffs, general_var_cov_mat,
+        conf_int_delta, protracted_g_value
+      )
+    }
+
     # Parse results
     est_doses_whole <- results_whole[["est_doses"]]
     AIC_whole <-       results_whole[["AIC"]]
@@ -1471,7 +1608,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-        conf_int_yield, conf_int_curve, protracted_g_value
+        conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value
       )
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
