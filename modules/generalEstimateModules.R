@@ -996,22 +996,11 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # cov: TRUE if the covariances of the regression coefficients should be considered,
       #      otherwise only the diagonal of the covariance matrix is used
 
-      # aberr <- case_data[["X"]]
-      # cells <- case_data[["N"]]
-
       if (aberr_module == "dicentrics") {
         lambda_est <- case_data[["y"]]
       } else if (aberr_module == "translocations") {
         lambda_est <- case_data[["Fg"]]
-        # genome_fraction <- genome_fraction$genome_fraction()
       }
-      # else {
-      #   genome_fraction <- 1
-      # }
-      # if (aberr_module == "translocations") {
-      #   genome_fraction <- genome_fraction$genome_fraction()
-      #   lambda_est <- lambda_est / genome_fraction
-      # }
 
       C <- general_fit_coeffs[[1]]
       α <- general_fit_coeffs[[2]]
@@ -1049,13 +1038,11 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         deriv_β <- 0
       }
 
-      # Get variance of lambda based on delta methods (see Savage et al.)
-      # lambda_est_sd <- sqrt(cov_est[1, 1])
+      # Get variance of lambda assuming Poisson
       if (aberr_module == "dicentrics") {
         lambda_est_sd <- case_data[["y_err"]]
       } else if (aberr_module == "translocations") {
         lambda_est_sd <- case_data[["Fg_err"]]
-        # genome_fraction <- genome_fraction$genome_fraction()
       }
 
       # Get confidence interval of lambda estimates
@@ -1077,7 +1064,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           (deriv_α^2) * var_cov_mat[2, 2] +
           (deriv_β^2) * var_cov_mat[3, 3] +
           (deriv_lambda^2) * (lambda_est_sd^2)
-        # TODO: These values shouldn't even exist if cov == FALSE
       }
 
       # Get confidence interval of dose estimates
@@ -1250,7 +1236,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             (deriv_α^2) * var_cov_mat[2, 2] +
             (deriv_β^2) * var_cov_mat[3, 3] +
             (deriv_lambda^2) * (lambda_est_sd^2)
-          # TODO: These values shouldn't even exist if cov == FALSE
         }
 
         # Get confidence interval of dose estimates

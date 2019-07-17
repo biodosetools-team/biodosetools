@@ -352,7 +352,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               selected = "whole-body"
             )
           ),
-          # div(class = "widget-sep", br()),
 
           br(),
           br(),
@@ -372,7 +371,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               selected = "merkle-83"
             )
           ),
-
           div(class = "widget-sep", br()),
 
           # Partial-body error method selection
