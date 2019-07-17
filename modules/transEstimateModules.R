@@ -701,7 +701,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                 label = "Partial-body error method",
                 width = "250px",
                 choices = list(
-                  "Dolphin" = "dolphin"
+                  "Dolphin (95%)" = "dolphin"
                 ),
                 selected = "dolphin"
               )
