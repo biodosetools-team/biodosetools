@@ -1038,13 +1038,13 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       )
 
     num_cols <- 5
-    col_headers <- c("N", "X95", "D (Gy)", "X83", "D (Gy)")
+    col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
 
     det_lims %>%
       # Convert to hot and format table
-      rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+      rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
       hot_col(c(1), readOnly = TRUE) %>%
-      hot_col(c(3,5), format = "0.00", colWidths = 60) %>%
+      hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
       hot_cols(colWidths = 50)
   })
 
