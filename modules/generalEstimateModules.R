@@ -1836,7 +1836,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )
         ),
 
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Whole-body",
           active = TRUE,
           h6("Whole-body exposure estimation"),
@@ -1884,7 +1884,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )
         ),
 
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Whole-body",
           active = TRUE,
           h6("Whole-body exposure estimation"),
@@ -1905,7 +1905,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Partial-body",
           h6("Partial-body exposure estimation"),
           div(
@@ -1959,7 +1959,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )
         ),
 
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Whole-body",
           active = TRUE,
           h6("Whole-body exposure estimation"),
@@ -1980,7 +1980,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             rHandsontableOutput(session$ns("AIC_whole"))
           )
         ),
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Heterogeneous",
           h6("Observed fraction of irradiated cells and its yield"),
           div(

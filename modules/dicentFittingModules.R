@@ -235,7 +235,7 @@ dicentFittingUI <- function(id, label) {
             solidHeader = TRUE,
             closable = FALSE,
 
-            bs4TabPanel(
+            bs4MyTabPanel(
               tabName = "Result of curve fit",
               active = TRUE,
               h6("Fit formula"),
@@ -251,7 +251,7 @@ dicentFittingUI <- function(id, label) {
                 rHandsontableOutput(ns("fit_coeffs"))
               )
             ),
-            bs4TabPanel(
+            bs4MyTabPanel(
               tabName = "Summary statistics",
               h6("Model-level statistics"),
               div(
@@ -273,7 +273,7 @@ dicentFittingUI <- function(id, label) {
                 rHandsontableOutput(ns("fit_var_cov_mat"))
               )
             ),
-            bs4TabPanel(
+            bs4MyTabPanel(
               tabName = "Detection limits",
               h6("Detection limits"),
               div(
