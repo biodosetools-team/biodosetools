@@ -153,7 +153,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         solidHeader = TRUE,
         closable = FALSE,
 
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Result of curve fit",
           active = TRUE,
           h6("Fit formula"),
@@ -170,7 +170,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
-        bs4TabPanel(
+        bs4MyTabPanel(
           tabName = "Summary statistics",
           conditionalPanel(
             condition = "input.load_fit_data_check",
@@ -854,26 +854,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               trigger = ns("help_fit_data_save"),
               size = "large",
 
-              # Option selection
-              # radioGroupButtons(
-              #   inputId = ns("help_fit_data_save_option"),
-              #   label = NULL,
-              #   choices = c(
-              #     "Fitting results" = "data",
-              #     "Report"          = "report"
-              #   )
-              # ),
               # Contents
-              # conditionalPanel(
-              #   condition = "input.help_fit_data_save_option == 'data'",
-              #   ns = ns,
-              #   withMathJax(includeMarkdown("help/help_fit_data_save.md"))
-              # ),
-              # conditionalPanel(
-              # condition = "input.help_fit_data_save_option == 'report'",
-              # ns = ns,
               withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
-              # )
             )
           ),
 
@@ -883,18 +865,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             label = "Comments",
             placeholder = "Comments to be included on report"),
 
-          # Download fit data & report
-          # downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
-          # div(
-          #   class = "side-widget-tall",
-          #   selectInput(
-          #     ns("save_fit_data_format"),
-          #     label = NULL,
-          #     width = "85px",
-          #     choices = list(".rds"),
-          #     selected = ".rds"
-          #   )
-          # ),
           # Download report
           # div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report")

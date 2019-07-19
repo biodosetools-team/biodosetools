@@ -1080,11 +1080,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list <- data()
         results_list[["gg_curve"]] <- NULL
         saveRDS(results_list, file = file)
-      } #else if (input$save_fit_data_format == ".csv") {
-      #   write.csv(data()[["fit_coeffs"]], file, row.names = FALSE)
-      # } else if (input$save_fit_data_format == ".tex") {
-      #   print(xtable::xtable(data()[["fit_coeffs"]]), type = "latex", file)
-      # }
+      }
     }
   )
 
