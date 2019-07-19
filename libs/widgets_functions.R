@@ -190,7 +190,7 @@ bs4MyCard <- function(..., title = NULL, footer = NULL, status = NULL, elevation
   }, cardTag)
 }
 
-# Function: bs4MytabCard ----
+# Function: bs4MyTabCard ----
 bs4MyTabCard <- function(..., id, title = NULL, status = NULL, elevation = NULL,
                          solidHeader = FALSE, headerBorder = TRUE, gradientColor = NULL,
                          tabStatus = NULL, width = 6, height = NULL, collapsible = TRUE,
@@ -305,6 +305,28 @@ bs4MyTabCard <- function(..., id, title = NULL, status = NULL, elevation = NULL,
   }, tabCardTag)
 }
 
+
+# Function: bs4MyTabPanel ----
+bs4MyTabPanel <- function(..., tabName, active = FALSE, noPadding = TRUE) {
+  id <- tabName
+  id <- gsub(x = id, pattern = "[[:punct:]]", replacement = "")
+  id <- gsub(x = id, pattern = " ", replacement = "")
+
+  tabPanelTag <- shiny::tags$div(
+    class =
+      if (active) {
+        "tab-pane active"
+      } else {
+        "tab-pane"
+      },
+    style =
+      if (noPadding) {
+        "padding: 0px;"
+      },
+    id = id, ...
+  )
+  return(list(tabName, tabPanelTag))
+}
 
 
 # Function: bs4MyModal ----
@@ -440,3 +462,4 @@ innerColumn <- function(width, ..., offset = 0) {
   }
   div(class = colClass, ...)
 }
+
