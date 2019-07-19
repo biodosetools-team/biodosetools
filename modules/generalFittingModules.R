@@ -1024,12 +1024,16 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     # Detection limits
     if (input$button_fit <= 0) return(NULL)
 
-    det_lims <- data.frame(
-      N = input$detection_lims_cells %>%
-        stringr::str_split(" ") %>%
-        unlist() %>%
-        as.numeric()
-    )
+    input$button_fit
+
+    isolate({
+      det_lims <- data.frame(
+        N = input$detection_lims_cells %>%
+          stringr::str_split(" ") %>%
+          unlist() %>%
+          as.numeric()
+      )
+    })
 
     det_lims <- det_lims %>%
       dplyr::rowwise() %>%
