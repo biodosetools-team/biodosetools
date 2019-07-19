@@ -333,7 +333,10 @@ transFittingUI <- function(id, label) {
                 "Quasipoisson" = "quasipoisson"
               ),
               selected = "automatic"
-            )
+            ),
+            # Detection limits
+            widgetLabel("Detection limits"),
+            textInput(ns("detection_lims_cells"), "Number of cells", value = "150 500 1000")
           )
         )
       )
@@ -406,7 +409,7 @@ transFittingUI <- function(id, label) {
             solidHeader = TRUE,
             closable = FALSE,
 
-            bs4TabPanel(
+            bs4MyTabPanel(
               tabName = "Result of curve fit",
               active = TRUE,
               h6("Fit formula"),
@@ -422,7 +425,7 @@ transFittingUI <- function(id, label) {
                 rHandsontableOutput(ns("fit_coeffs"))
               )
             ),
-            bs4TabPanel(
+            bs4MyTabPanel(
               tabName = "Summary statistics",
               h6("Model-level statistics"),
               div(
@@ -442,6 +445,14 @@ transFittingUI <- function(id, label) {
               div(
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_var_cov_mat"))
+              )
+            ),
+            bs4MyTabPanel(
+              tabName = "Detection limits",
+              h6("Detection limits"),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(ns("fit_detection_lims"))
               )
             )
           )
