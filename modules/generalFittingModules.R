@@ -912,6 +912,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
       model_formula <- input$formula_select
       model_family <- input$family_select
+      detection_lims_cells <- input$detection_lims_cells
+
     })
 
     if (aberr_module == "translocations") {
@@ -950,6 +952,29 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["chromosome_table"]] <- chromosome_table
         results_list[["frequency_select"]] <- frequency_select
       }
+
+      # Calculate detection limits
+        detection_lims <- data.frame(
+          N = detection_lims_cells %>%
+            stringr::str_split(" ") %>%
+            unlist() %>%
+            as.numeric()
+        )
+
+      detection_lims <- detection_lims %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(
+          X95 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.95)[1],
+          D95 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
+          X83 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.83)[1],
+          D83 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
+        ) %>%
+        dplyr::mutate_at(
+          c("N", grep("X", names(.), value = TRUE)),
+          as.integer
+        )
+
+      results_list[["detection_lims"]] <- detection_lims
 
       return(results_list)
     })
@@ -1024,34 +1049,12 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     # Detection limits
     if (input$button_fit <= 0) return(NULL)
 
-    input$button_fit
-
-    isolate({
-      det_lims <- data.frame(
-        N = input$detection_lims_cells %>%
-          stringr::str_split(" ") %>%
-          unlist() %>%
-          as.numeric()
-      )
-    })
-
-    det_lims <- det_lims %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(
-        X95 = get_detection_limit(data(), cells = N, conf_int = 0.95)[1],
-        D95 = get_detection_limit(data(), cells = N, conf_int = 0.95)[2] * 1000,
-        X83 = get_detection_limit(data(), cells = N, conf_int = 0.83)[1],
-        D83 = get_detection_limit(data(), cells = N, conf_int = 0.83)[2] * 1000
-      ) %>%
-      dplyr::mutate_at(
-        c("N", grep("X", names(.), value = TRUE)),
-        as.integer
-      )
+    detection_lims <- data()[["detection_lims"]]
 
     num_cols <- 5
     col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
 
-    det_lims %>%
+    detection_lims %>%
       # Convert to hot and format table
       rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
       hot_col(c(1), readOnly = TRUE) %>%
