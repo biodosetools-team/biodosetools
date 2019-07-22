@@ -335,8 +335,7 @@ transFittingUI <- function(id, label) {
               selected = "automatic"
             ),
             # Detection limits
-            widgetLabel("Detection limits"),
-            textInput(ns("detection_lims_cells"), "Number of cells", value = "150 500 1000")
+            textInput(ns("detection_lims_cells"), "Cells for detection limits", value = "150 500 1000")
           )
         )
       )
