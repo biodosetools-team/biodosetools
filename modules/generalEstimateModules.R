@@ -340,9 +340,9 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
 
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
-      as.data.frame() %>%
+      # as.data.frame() %>%
       # dplyr::select(-statistic) %>%
-      as.matrix() %>%
+      # as.matrix() %>%
       # Convert to hot and format table
       rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
       hot_cols(colWidths = 100) %>%
@@ -598,7 +598,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     if (aberr_module == "dicentrics") {
       hot <- hot %>%
         hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
-        hot_col(ncol(changed_data()), renderer = "
+        hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -608,7 +608,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
     } else if (aberr_module == "translocations") {
       hot <- hot %>%
         hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
-        hot_col(ncol(changed_data()) - 3, renderer = "
+        hot_col(num_cols - 3, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -2164,7 +2164,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # AIC for estimated dose (whole)
     if (input$button_estimate <= 0) return(NULL)
     data()[["AIC_whole"]] %>%
-      matrix %>%
+      matrix() %>%
       `colnames<-`(c("AIC")) %>%
       rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
@@ -2175,7 +2175,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # AIC for estimated dose (partial-body)
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["AIC_partial"]] %>%
-      matrix %>%
+      matrix() %>%
       `colnames<-`(c("AIC")) %>%
       rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
@@ -2186,7 +2186,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # AIC for estimated dose (heterogeneous)
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["AIC_hetero"]] %>%
-      matrix %>%
+      matrix() %>%
       `colnames<-`(c("AIC")) %>%
       rhandsontable(width = 80, height = "100%") %>%
       hot_cols(colWidths = 80) %>%
