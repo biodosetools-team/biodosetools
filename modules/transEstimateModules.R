@@ -867,7 +867,17 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
           # Download report
           # div(class = "widget-sep", br()),
-          downloadButton(ns("save_report"), class = "export-button", "Download report")
+          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_report_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".html", ".docx"),
+              selected = ".html"
+            )
+          )
         )
       ),
       # Card: Plot curves ----
