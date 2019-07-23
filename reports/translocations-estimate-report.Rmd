@@ -51,6 +51,9 @@ case_data <- params$est_results_list[["case_data"]]
 case_description <- params$est_results_list[["case_description"]]
 results_comments <- params$est_results_list[["results_comments"]]
 gg_curve <- params$est_results_list[["gg_curve"]]
+
+genome_fraction <- params$est_results_list[["genome_fraction"]]
+chromosome_table <- params$est_results_list[["chromosome_table"]]
 ```
 
 ## Curve used
@@ -75,28 +78,70 @@ if (protraction[1]) {
 `r if (protraction[1]) paste(".")` 
 
 
-### Coefficients
+### Full genome coefficients
 ```{r echo=FALSE}
-fit_coeffs %>% 
-  rhandsontable(width = "100%", height = "100%") %>% 
-  hot_cols(format = "0.000")
+num_cols <- as.numeric(ncol(fit_coeffs))
+
+fit_coeffs %>%
+  formatC(format = "e", digits = 3) %>%
+  # as.data.frame() %>%
+  # dplyr::select(-statistic) %>%
+  # as.matrix() %>%
+  # Convert to hot and format table
+  rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+  hot_cols(colWidths = 100) %>%
+  hot_cols(halign = "htRight")
 ```
 
+## Case chromosome data
 
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(chromosome_table))
+
+hot <- chromosome_table %>%
+  rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+  hot_col(1, colWidths = 115, readOnly = TRUE) %>%
+  hot_cols(halign = "htCenter")
+
+if(num_cols > 1) {
+  hot <- hot %>%
+    hot_col(2:num_cols, colWidths = 85)
+}
+
+hot
+```
+
+### Genomic conversion factor
+`r paste0("The genomic conversion factor to full genome is ", genome_fraction %>% round(3) %>%  as.character(), ".")`
 
 ## Case data analyzed
 ```{r echo=FALSE}
-case_data %>% 
-  rhandsontable(width = "100%", height = "100%")
+# Read number of columns
+num_cols <- as.numeric(ncol(case_data))
+
+# Convert to hot and format table
+case_data %>%
+  rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
+  hot_cols(colWidths = 50) %>% 
+  # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+  hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
+  hot_col(num_cols - 3, renderer = "
+     function (instance, td, row, col, prop, value, cellProperties) {
+       Handsontable.renderers.NumericRenderer.apply(this, arguments);
+       if (value > 1.96) {
+        td.style.background = 'pink';
+       }
+     }")
 ```
 
 ### Case description
 `r case_description`
 
-
 ## Dose estimation results
 
-`r if (TRUE) {"### Whole-body exposure estimation"}`
+`r if (TRUE) {"### Whole-body exposure results"}`
+
+`r if (TRUE) {"#### Whole-body exposure estimation"}`
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
@@ -104,7 +149,7 @@ if (TRUE) {
     t() %>%
     as.data.frame() %>%
     # Convert to hot and format table
-    rhandsontable(width = "100%", height = "100%") %>%
+    rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
 } 
@@ -117,104 +162,108 @@ if (TRUE) {
     t() %>%
     as.data.frame() %>%
     # Convert to hot and format table
-    rhandsontable(width = "100%", height = "100%") %>%
+    rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
 } 
 ```
 
-`r if (TRUE) {"### Relative quality of the estimation"}`
+`r if (TRUE) {"#### Relative quality of the estimation"}`
 ```{r echo=FALSE}
 if (TRUE) {
   AIC_whole %>%
-      matrix %>%
-      `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    matrix() %>%
+    `colnames<-`(c("AIC")) %>%
+    rhandsontable(width = 80, height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 } 
 ```
 
-`r if (assessment == "partial-body") {"### Partial-body exposure estimation"}`
+`r if (assessment == "partial-body") {"### Partial-body exposure results"}`
+
+`r if (assessment == "partial-body") {"#### Partial-body exposure estimation"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
-      dplyr::select(yield) %>%
-      t() %>%
-      as.data.frame() %>%
-      # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`("yield") %>%
-      # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    dplyr::select(yield) %>%
+    t() %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`("yield") %>%
+    # Convert to hot and format table
+    rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 } 
 ```
 
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial %>%
+  est_doses_partial%>%
     dplyr::select(dose) %>%
     t() %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
-    `row.names<-`("dose") %>%
+    `row.names<-`("dose (Gy)") %>%
     # Convert to hot and format table
-    rhandsontable(width = "100%", height = "100%") %>%
+    rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
 } 
 ```
 
-`r if (assessment == "partial-body") {"### Initial fraction of irradiated cells"}`
+`r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_frac_partial %>%
-      t() %>%
-      as.data.frame() %>%
-      # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`("fraction") %>%
-      # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    t() %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`("fraction") %>%
+    # Convert to hot and format table
+    rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 } 
 ```
 
-`r if (assessment == "partial-body") {"### Relative quality of the estimation"}`
+`r if (assessment == "partial-body") {"#### Relative quality of the estimation"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   AIC_partial %>%
-      matrix %>%
-      `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    matrix() %>%
+    `colnames<-`(c("AIC")) %>%
+    rhandsontable(width = 80, height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 } 
 ```
 
-`r if (assessment == "hetero") {"### Observed fraction of irradiated cells and its yield"}`
+`r if (assessment == "hetero") {"### Heterogeneous exposure results"}`
+
+`r if (assessment == "hetero") {"#### Observed fraction of irradiated cells and its yield"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_mixing_prop_hetero %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
+      rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
 }
 ```
 
-`r if (assessment == "hetero") {"### Heterogeneous exposure estimation"}`
+`r if (assessment == "hetero") {"#### Heterogeneous exposure estimation"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_yields_hetero %>%
@@ -225,7 +274,7 @@ if (assessment == "hetero") {
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`(c("yield1", "yield2")) %>%
     # Convert to hot and format table
-    rhandsontable(width = "100%", height = "100%") %>%
+    rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
 }
@@ -234,46 +283,45 @@ if (assessment == "hetero") {
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_doses_hetero %>%
-      t() %>%
-      as.data.frame() %>%
-      # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("lower", "estimate", "upper")) %>%
-      `row.names<-`(c("dose1", "dose2")) %>%
-      # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    t() %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
+    # Convert to hot and format table
+    rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
-`r if (assessment == "hetero") {"### Initial fraction of irradiated cells"}`
+`r if (assessment == "hetero") {"#### Initial fraction of irradiated cells"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_frac_hetero %>%
-      # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("estimate", "std_err")) %>%
-      `row.names<-`(c("dose1", "dose2")) %>%
-      # Convert to hot and format table
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("estimate", "std.err")) %>%
+    `row.names<-`(c("dose1", "dose2")) %>%
+    # Convert to hot and format table
+    rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
-`r if (assessment == "hetero") {"### Relative quality of the estimation"}`
+`r if (assessment == "hetero") {"#### Relative quality of the estimation"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   AIC_hetero %>%
-      matrix %>%
-      `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = "100%", height = "100%") %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    matrix() %>%
+    `colnames<-`(c("AIC")) %>%
+    rhandsontable(width = 80, height = "100%") %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 } 
 ```
-
 
 ### Curve plot
 ```{r echo=FALSE}
