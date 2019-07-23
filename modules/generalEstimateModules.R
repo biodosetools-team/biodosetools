@@ -948,6 +948,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     if (aberr_module == "translocations") {
       est_results_list[["genome_fraction"]] <- genome_fraction$genome_fraction()
       est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
+      est_results_list[["trans_sex"]] <- input$trans_sex
 
       if (!input$trans_confounders) {
         est_results_list[["confounders"]] <- NULL

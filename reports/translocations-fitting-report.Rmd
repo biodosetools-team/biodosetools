@@ -39,10 +39,13 @@ detection_lims <- params$fit_results_list[["detection_lims"]]
 
 genome_fraction <- params$fit_results_list[["genome_fraction"]]
 chromosome_table <- params$fit_results_list[["chromosome_table"]]
+trans_sex <- params$fit_results_list[["trans_sex"]]
 frequency_select <- params$fit_results_list[["frequency_select"]]
 ```
 
 ## Chromosome data
+
+The analyzed blood sample comes from a `r trans_sex` individual.
 
 ```{r echo=FALSE}
 num_cols <- as.numeric(ncol(chromosome_table))

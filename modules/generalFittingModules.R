@@ -251,6 +251,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["genome_fraction"]] <- genome_fraction
         results_list[["chromosome_table"]] <- chromosome_table
         results_list[["frequency_select"]] <- frequency_select
+        results_list[["trans_sex"]] <- input$trans_sex
       }
 
       # Calculate detection limits

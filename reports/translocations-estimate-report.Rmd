@@ -54,6 +54,7 @@ gg_curve <- params$est_results_list[["gg_curve"]]
 
 genome_fraction <- params$est_results_list[["genome_fraction"]]
 chromosome_table <- params$est_results_list[["chromosome_table"]]
+trans_sex <- params$est_results_list[["trans_sex"]]
 confounders <- params$est_results_list[["confounders"]]
 ```
 
@@ -96,6 +97,8 @@ fit_coeffs %>%
 ```
 
 ## Case chromosome data
+
+The analyzed blood sample comes from a `r trans_sex` individual.
 
 ```{r echo=FALSE}
 num_cols <- as.numeric(ncol(chromosome_table))
