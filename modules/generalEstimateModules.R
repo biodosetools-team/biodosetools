@@ -559,7 +559,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
             dplyr::select(-mean, - std_err) %>%
             dplyr::mutate(
               Xc = ifelse(
-                input$trans_confounders & input$trans_confounders_type == 'sigurdson',
+                input$trans_confounders & input$trans_confounders_type == "sigurdson",
                 get_translocation_rate(
                   N, genome_fraction,
                   age_value = input$trans_confounder_age,
@@ -569,7 +569,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
                   region_value = input$trans_confounder_region
                 ),
                 ifelse(
-                  input$trans_confounders & input$trans_confounders_type == 'manual',
+                  input$trans_confounders & input$trans_confounders_type == "manual",
                   input$trans_expected_aberr_value * N * genome_fraction,
                   0
                 )
@@ -948,6 +948,20 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     if (aberr_module == "translocations") {
       est_results_list[["genome_fraction"]] <- genome_fraction$genome_fraction()
       est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
+
+      if (!input$trans_confounders) {
+        est_results_list[["confounders"]] <- NULL
+      } else if (input$trans_confounders & input$trans_confounders_type == "sigurdson") {
+        est_results_list[["confounders"]] <- c(
+          age_value = input$trans_confounder_age,
+          sex_bool = input$trans_confounder_sex,
+          smoker_bool = input$trans_confounder_smoke,
+          ethnicity_value = input$trans_confounder_ethnicity,
+          region_value = input$trans_confounder_region
+        )
+      } else if (input$trans_confounders & input$trans_confounders_type == "manual") {
+        est_results_list[["confounders"]] <- input$trans_expected_aberr_value
+      }
     }
 
     return(est_results_list)
