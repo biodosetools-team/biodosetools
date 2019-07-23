@@ -11,7 +11,7 @@ library(bs4Dash)
 # Misc -----------------------------------------------------
 
 source("libs/app_version.R")
-source("translations/translations.R")
+# source("translations/translations.R")
 
 # Modules --------------------------------------------------
 
