@@ -417,14 +417,15 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste(aberr_module, "-fitting-report-", Sys.Date(), ".html", sep = "")
+      paste(aberr_module, "-fitting-report-", Sys.Date(), input$save_report_format, sep = "")
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
       tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- paste0("reports/", aberr_module, "-fitting-report.Rmd")
+      localReport <- paste0("reports/", aberr_module, "-fitting-report-",
+                            stringr::str_replace(input$save_report_format, '.', ''), ".Rmd")
 
       file.copy(localReport, tempReport, overwrite = TRUE)
 
