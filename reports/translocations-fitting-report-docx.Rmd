@@ -33,7 +33,23 @@ frequency_select <- params$fit_results_list[["frequency_select"]]
 The analyzed blood sample comes from a `r trans_sex` individual.
 
 ```{r echo=FALSE}
-chromosome_table %>% 
+num_cols <- ncol(chromosome_table)
+
+chromosome_table <- chromosome_table %>% 
+  as.data.frame() 
+
+if (num_cols > 1) {
+  chromosome_table <- chromosome_table %>% 
+    mutate_at(seq(2, num_cols , 1), function(x) {
+      case_when(
+        is.na(x) ~ "",
+        (x == "FALSE") ~ "",
+        (x == "TRUE") ~ "x",
+      )
+    })
+}
+
+chromosome_table%>% 
   pander::pander()
 ```
 
