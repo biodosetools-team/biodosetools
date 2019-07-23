@@ -505,7 +505,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             div(
               class = "side-widget",
               style = "max-width: 140px; margin-right: -40px;",
-              widgetLabel("Smoking", 14),
+              widgetLabel("Smoker", 14),
               switchInput(
                 ns("trans_confounder_smoke"),
                 onStatus = "inputs",
