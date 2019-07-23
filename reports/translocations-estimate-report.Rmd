@@ -54,7 +54,9 @@ gg_curve <- params$est_results_list[["gg_curve"]]
 
 genome_fraction <- params$est_results_list[["genome_fraction"]]
 chromosome_table <- params$est_results_list[["chromosome_table"]]
+confounders <- params$est_results_list[["confounders"]]
 ```
+
 
 ## Curve used
 
@@ -132,6 +134,24 @@ case_data %>%
         td.style.background = 'pink';
        }
      }")
+```
+
+
+### Confounders
+
+`r if (is.null(confounders)) paste("No confounders were selected.")`
+`r if (!is.null(confounders) & length(confounders) == 1) paste0("To account for confounders, the following translocation frequency per cell was manually input: ", confounders, ".")`
+
+`r if (!is.null(confounders) & length(confounders) == 1) paste("The following confounders were selected:")`
+```{r echo=FALSE}
+if (!is.null(confounders) & length(confounders) > 1) {
+  confounders %>% 
+    as.matrix() %>% 
+    t() %>% 
+    `colnames<-`(c("Age", "Sex", "Smoking", "Ethnicity", "Lab region")) %>% 
+    rhandsontable(width = 625, height = "100%") %>% 
+    hot_cols(colWidths = 125, halign = "htCenter")
+}
 ```
 
 ### Case description
