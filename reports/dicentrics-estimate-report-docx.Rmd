@@ -68,10 +68,7 @@ fit_coeffs %>%
   # dplyr::select(-statistic) %>%
   # as.matrix() %>%
   pander::pander()
-  
 ```
-
-
 
 ## Case data analyzed
 ```{r echo=FALSE}

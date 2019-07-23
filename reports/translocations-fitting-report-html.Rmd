@@ -2,7 +2,7 @@
 title: "Curve fitting report"
 author: "`r paste('Biodose Tools', '-', app_version)`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
-output: 
+output:
   # prettydoc::html_pretty:
     # theme: cayman
   html_document:
@@ -168,7 +168,6 @@ detection_lims %>%
   hot_col(c(3, 5), format = "0.00", colWidths = 75) %>%
   hot_cols(colWidths = 50)
 ```
-
 
 ### Curve plot
 ```{r echo=FALSE}

@@ -2,7 +2,7 @@
 title: "Dose estimation report"
 author: "`r paste('Biodose Tools', '-', app_version)`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
-output: 
+output:
   # prettydoc::html_pretty:
     # theme: cayman
   html_document:
@@ -58,7 +58,6 @@ trans_sex <- params$est_results_list[["trans_sex"]]
 confounders <- params$est_results_list[["confounders"]]
 ```
 
-
 ## Curve used
 
 ### Fit formula
@@ -66,20 +65,19 @@ confounders <- params$est_results_list[["confounders"]]
 withMathJax(paste0("$$", fit_formula_tex, if (protraction[1]) "G(x)", "$$"))
 ```
 
-`r if (protraction[1] ) paste("where")` 
-`r if (protraction[1]) withMathJax("\\( G(x) \\)")` 
+`r if (protraction[1] ) paste("where")`
+`r if (protraction[1]) withMathJax("\\( G(x) \\)")`
 `r if (protraction[1]) paste("is a time-dependent correction that takes into account protracted and fractionated exposures:")`
 ```{r echo=FALSE}
 if (protraction[1]) {
   withMathJax(paste0("$$", "G(x) = \\frac{2}{x^{2}} \\left(x - 1 - e^{-x} \\right), \\quad x = \\frac{t}{t_{0}}", "$$"))
 }
 ```
-`r if (protraction[1]) paste("The protraction times used for the dose estimation were")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste("and")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste(".")` 
-
+`r if (protraction[1]) paste("The protraction times used for the dose estimation were")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste("and")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste(".")`
 
 ### Full genome coefficients
 ```{r echo=FALSE}
@@ -127,7 +125,7 @@ num_cols <- as.numeric(ncol(case_data))
 # Convert to hot and format table
 case_data %>%
   rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
-  hot_cols(colWidths = 50) %>% 
+  hot_cols(colWidths = 50) %>%
   # hot_table(highlightCol = TRUE, highlightRow = TRUE)
   hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
   hot_col(num_cols - 3, renderer = "
@@ -138,7 +136,6 @@ case_data %>%
        }
      }")
 ```
-
 
 ### Confounders
 
@@ -154,17 +151,17 @@ if (!is.null(confounders) & length(confounders) > 1) {
     as.data.frame() %>%
     mutate(
       sex_bool = with(., case_when(
-        (sex_bool == TRUE)  ~ "Used", 
+        (sex_bool == TRUE)  ~ "Used",
         (sex_bool == FALSE) ~ "Not used"
       )),
       smoker_bool = with(., case_when(
-        (smoker_bool == TRUE)  ~ "Yes", 
+        (smoker_bool == TRUE)  ~ "Yes",
         (smoker_bool == FALSE) ~ "No"
       )),
       ethnicity_value = with(., case_when(
-        (ethnicity_value == "white") ~ "White", 
-        (ethnicity_value == "asian") ~ "Asian", 
-        (ethnicity_value == "black") ~ "Black", 
+        (ethnicity_value == "white") ~ "White",
+        (ethnicity_value == "asian") ~ "Asian",
+        (ethnicity_value == "black") ~ "Black",
         (ethnicity_value == "other") ~ "Others",
         TRUE ~ "Not specified"
       )),
@@ -201,7 +198,7 @@ if (TRUE) {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 ```{r echo=FALSE}
@@ -214,7 +211,7 @@ if (TRUE) {
     rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 `r if (TRUE) {"#### Relative quality of the estimation"}`
@@ -226,7 +223,7 @@ if (TRUE) {
     rhandsontable(width = 80, height = "100%") %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"### Partial-body exposure results"}`
@@ -246,7 +243,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 ```{r echo=FALSE}
@@ -263,7 +260,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
@@ -280,7 +277,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}`
@@ -292,7 +289,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 80, height = "100%") %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 ### Curve plot
