@@ -197,11 +197,13 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
 
 generalFittingResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
+  # Calculations ----
+
   # Source fitting calculation functions
   source("calcs/fittingFunctions.R", local = TRUE)
   source("calcs/fittingAuxFunctions.R", local = TRUE)
 
-  # Calculations ----
+  # Reactive environment
   data <- reactive({
     input$button_fit
 
