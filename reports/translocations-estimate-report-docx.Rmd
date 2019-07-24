@@ -213,12 +213,12 @@ if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(yield) %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>% 
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("yield") %>%
-    formatC(format = "f", digits = 3) %>% 
     pander::pander()
 } 
 ```
@@ -229,12 +229,12 @@ if (assessment == "partial-body") {
   est_doses_partial%>%
     dplyr::select(dose) %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>% 
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("dose (Gy)") %>%
-    formatC(format = "f", digits = 3) %>% 
     pander::pander()
 } 
 ```
@@ -244,12 +244,12 @@ if (assessment == "partial-body") {
 if (assessment == "partial-body") {
   est_frac_partial %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>% 
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("fraction") %>%
-    formatC(format = "f", digits = 3) %>% 
     pander::pander()
 } 
 ```
