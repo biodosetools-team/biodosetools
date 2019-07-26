@@ -636,7 +636,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/estimate/dose_curve_method.md"))
+                withMathJax(includeMarkdown("help/estimate/dose_error.md")),
+                withMathJax(includeMarkdown("help/trans/dose_error_methods.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
