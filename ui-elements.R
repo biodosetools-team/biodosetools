@@ -189,7 +189,7 @@ home <- bs4TabItem(
         inputId = "github_link", label = "Source code",
         icon = icon("github"),
         class = "home-button",
-        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools', '_blank')"
+        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools/', '_blank')"
       ),
       div(class = "widget-sep", br()),
 
@@ -198,7 +198,7 @@ home <- bs4TabItem(
         inputId = "wiki_link", label = "Documentation",
         icon = icon("book"),
         class = "home-button",
-        onclick = "window.open('https://biodosimetry-uab.github.io/', '_blank')"
+        onclick = "window.open('https://biodosimetry-uab.github.io/documentation/', '_blank')"
       )
     )
   )
