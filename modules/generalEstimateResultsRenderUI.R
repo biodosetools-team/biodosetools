@@ -25,7 +25,7 @@ output$estimate_results_ui <- renderUI({
           title = "Help: Heterogeneous exposures",
           trigger = session$ns("help_dose_mixed_yields"),
           size = "large",
-          withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          withMathJax(includeMarkdown("help/estimate/dose_mixed_yields.md"))
         )
       ),
 
@@ -74,7 +74,7 @@ output$estimate_results_ui <- renderUI({
           title = "Help: Heterogeneous exposures",
           trigger = session$ns("help_dose_mixed_yields"),
           size = "large",
-          withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          withMathJax(includeMarkdown("help/estimate/dose_mixed_yields.md"))
         )
       ),
 
@@ -150,7 +150,7 @@ output$estimate_results_ui <- renderUI({
           title = "Help: Heterogeneous exposures",
           trigger = session$ns("help_dose_mixed_yields"),
           size = "large",
-          withMathJax(includeMarkdown("help/help_dose_mixed_yields.md"))
+          withMathJax(includeMarkdown("help/estimate/dose_mixed_yields.md"))
         )
       ),
 

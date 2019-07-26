@@ -31,12 +31,12 @@ transFittingUI <- function(id, label) {
             trigger = ns("help_colors"),
             size = "large",
 
-            withMathJax(includeMarkdown("help/help_colors_data_input.md")),
+            withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
             div(
               class = "hot-improved",
               rHandsontableOutput(ns("help_chromosome_hot"))
             ),
-            withMathJax(includeMarkdown("help/help_colors_data_input_b.md"))
+            withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
 
           )
         ),
@@ -196,17 +196,17 @@ transFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.help_count_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_count_data_input.md"))
+              withMathJax(includeMarkdown("help/fitting/count_data_input.md"))
             ),
             conditionalPanel(
               condition = "input.help_count_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_count_data_load.md"))
+              withMathJax(includeMarkdown("help/fitting/count_data_load.md"))
             ),
             conditionalPanel(
               condition = "input.help_count_data_option == 'aggr'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_count_data_aggregated.md"))
+              withMathJax(includeMarkdown("help/fitting/count_data_aggregated.md"))
             )
           )
         ),
@@ -303,12 +303,12 @@ transFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.help_fitting_options_option == 'formula'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_fitting_options_formula.md"))
+              withMathJax(includeMarkdown("help/fitting/fitting_options_formula.md"))
             ),
             conditionalPanel(
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_fitting_options_model.md"))
+              withMathJax(includeMarkdown("help/fitting/fitting_options_model.md"))
             )
           )
         ),
@@ -493,12 +493,12 @@ transFittingUI <- function(id, label) {
               conditionalPanel(
                 condition = "input.help_fit_data_save_option == 'data'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_fit_data_save.md"))
+                withMathJax(includeMarkdown("help/save/fit_data_save.md"))
               ),
               conditionalPanel(
                 condition = "input.help_fit_data_save_option == 'report'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+                withMathJax(includeMarkdown("help/save/fit_data_save_report.md"))
               )
             )
           ),

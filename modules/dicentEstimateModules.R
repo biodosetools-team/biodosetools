@@ -45,12 +45,12 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_fit_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_fit_data_input.md"))
+              withMathJax(includeMarkdown("help/estimate/fit_data_input.md"))
             ),
             conditionalPanel(
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_fit_data_load.md"))
+              withMathJax(includeMarkdown("help/estimate/fit_data_load.md"))
             )
           )
         ),
@@ -198,12 +198,12 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_cases_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_cases_data_input.md"))
+              withMathJax(includeMarkdown("help/estimate/cases_data_input.md"))
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/help_cases_data_load.md"))
+              withMathJax(includeMarkdown("help/estimate/cases_data_load.md"))
             )
           )
         ),
@@ -300,22 +300,22 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'exposure'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_exposure.md"))
+                withMathJax(includeMarkdown("help/estimate/dose_exposure.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'assess'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_assessment.md"))
+                withMathJax(includeMarkdown("help/estimate/dose_assessment.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_dose_curve_method.md"))
+                withMathJax(includeMarkdown("help/estimate/dose_curve_method.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/help_fraction_coeff_select.md"))
+                withMathJax(includeMarkdown("help/estimate/fraction_coeff_select.md"))
               )
             )
           ),
@@ -559,7 +559,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Contents
-              withMathJax(includeMarkdown("help/help_fit_data_save_report.md"))
+              withMathJax(includeMarkdown("help/save/fit_data_save_report.md"))
             )
           ),
 
