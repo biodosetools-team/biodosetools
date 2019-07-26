@@ -4,7 +4,7 @@ The only required data are:
 - The doses `D` in Gy.
 - The cell distributions of dicentrics `CX`, where `X` can be `0, 1, 2, 3...`.
 
-The rest of columns will be calculated automatically:
+The rest of columns will be calculated automatically after clicking <button class="btn btn-default action-button inputs-button shiny-bound-input small-action-button"  type="button">Calculate parameters</button>:
 
 - `N` is the total number of cells.
 - `X` is the number of aberrations.
