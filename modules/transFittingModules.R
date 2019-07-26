@@ -295,8 +295,9 @@ transFittingUI <- function(id, label) {
               inputId = ns("help_fitting_options_option"),
               label = NULL,
               choices = c(
-                "Fitting formula" = "formula",
-                "Fitting model"   = "model"
+                "Fitting formula"  = "formula",
+                "Fitting model"    = "model",
+                "Detection limits" = "detection_limits"
               )
             ),
             # Contents
@@ -309,6 +310,11 @@ transFittingUI <- function(id, label) {
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
               withMathJax(includeMarkdown("help/fitting/fitting_options_model.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'detection_limits'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/trans/fitting_options_detection_limits.md"))
             )
           )
         ),
