@@ -1,5 +1,7 @@
 </br>
-At the end, click on the <button class="btn btn-default action-button inputs-button shiny-bound-input small-action-button" type="button">Calculate fraction</button> to calculate the fraction of genome hybridized, or genomic conversion factor.
+At the end, click on the <button class="btn btn-default action-button inputs-button shiny-bound-input small-action-button" type="button">Calculate fraction</button> to calculate genomic conversion factor, or fraction of genome hybridized, $f = F_{p} / F_{g}$, where
+- $F_{p}$ is the observed yield.
+- $F_{g}$ is the full genome yield.
 
 ##### M-Fish
 
