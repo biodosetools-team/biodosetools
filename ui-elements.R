@@ -126,7 +126,7 @@ sidebar <- bs4DashMySidebar(
           )
         )
       ),
-      tabName = "tab-micro-estimate",
+      tabName = "tab-micro-fitting",
       icon = "cog"
     ),
 
@@ -228,9 +228,14 @@ body <- bs4DashBody(
     # Fitting
     transFittingUI(id = "trans_fitting", label = "tab-trans-fitting"),
     # Dose Estimation
-    transEstimateUI(id = "trans_estimate", label = "tab-trans-estimate")
+    transEstimateUI(id = "trans_estimate", label = "tab-trans-estimate"),
 
     # Micronuclei Modules ----
+
+    # Fitting
+    microFittingUI(id = "micro_fitting", label = "tab-micro-fitting"),
+    # Dose Estimation
+    microEstimateUI(id = "micro_estimate", label = "tab-micro-estimate")
   )
 )
 

@@ -32,6 +32,10 @@ source("modules/transGeneralModules.R")
 source("modules/transFittingModules.R")
 source("modules/transEstimateModules.R")
 
+# Micronuclei
+source("modules/microFittingModules.R")
+source("modules/microEstimateModules.R")
+
 # Build UI -------------------------------------------------
 
 source("ui-elements.R")
