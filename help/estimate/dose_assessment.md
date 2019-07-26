@@ -1,4 +1,4 @@
-If the $u$ -value is overdispersed, $u > 1.96$, it should be indicative of either
+If the $u$-value is overdispersed, $u > 1.96$, it should be indicative of either
 - A non-homogeneous exposure to low-LET radiation.
 - An exposure to a high-LET radiation.
 
