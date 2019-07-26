@@ -6,7 +6,7 @@ In case you don't have access to the full dicentrics distribution, you can choos
 - `N` is the total number of cells.
 - `X` is the number of aberrations.
 
-This can be input manually or using a `.csv` (or `.txt) file:
+This can be input manually or using a `.csv` (or `.txt`) file:
 
 ```
 D   ,N   ,X

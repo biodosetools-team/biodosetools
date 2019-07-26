@@ -4,7 +4,7 @@ The only requirement for the data is to be in `.csv` (or `.txt`) format and two 
 
 - The columns should include headers.
 - The first column should be named `D` and contain the doses in Gy.
-- The remaining columns should contain the cell distributions of dicentrics `CX`, where `X` can `0, 1, 2, 3...`.
+- The remaining columns should contain the cell distributions of dicentrics `CX`, where `X` can `0, 1, 2, 3`...
 
 An example of how the data should be formatted can be seen below.
 
