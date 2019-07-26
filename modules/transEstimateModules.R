@@ -39,7 +39,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               choices = c(
                 "Manual input" = "manual",
                 "Load data"    = "load"
-              )
+              ),
+              selected = "load"
             ),
             # Contents
             conditionalPanel(
@@ -52,7 +53,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               ns = ns,
               withMathJax(includeMarkdown("help/estimate/fit_data_load.md"))
             ),
-            withMathJax(includeMarkdown("help/trans/fit_data_trans_estimate.md"))
+            withMathJax(includeMarkdown("help/trans/fit_data_estimate.md"))
           )
         ),
 
@@ -379,21 +380,27 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               label = NULL,
               choices = c(
                 "Manual input" = "manual",
-                "Load data"    = "load"
+                "Load data"    = "load",
+                "Confounders"  = "confounders"
               )
             ),
             # Contents
             conditionalPanel(
               condition = "input.help_cases_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/cases_data_input.md"))
+              withMathJax(includeMarkdown("help/trans/cases_data_input.md"))
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/cases_data_load.md"))
+              withMathJax(includeMarkdown("help/trans/cases_data_load.md"))
             ),
-            withMathJax(includeMarkdown("help/trans/cases_data_trans_confounders.md"))
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'confounders'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/trans/cases_data_confounders.md"))
+            )
+
           )
         ),
 

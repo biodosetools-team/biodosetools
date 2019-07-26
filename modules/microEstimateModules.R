@@ -39,7 +39,8 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               choices = c(
                 "Manual input" = "manual",
                 "Load data"    = "load"
-              )
+              ),
+              selected = "load"
             ),
             # Contents
             conditionalPanel(
