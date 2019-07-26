@@ -483,7 +483,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
         mytable <- previous()
 
         # Initial renderization of the table
-        if (aberr_module == "dicentrics") {
+        if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
           mytable <- mytable %>%
             dplyr::mutate(
               N = 0,
@@ -541,7 +541,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
           dplyr::select(N, X, everything())
 
         # Rename mean and std_err depending on aberration module
-        if (aberr_module == "dicentrics") {
+        if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
           mytable <- mytable %>%
             dplyr::mutate(
               y = mean,
@@ -595,7 +595,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
       hot_cols(colWidths = 50)
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
-    if (aberr_module == "dicentrics") {
+    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
       hot <- hot %>%
         hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
         hot_col(num_cols, renderer = "

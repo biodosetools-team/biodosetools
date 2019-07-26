@@ -133,7 +133,7 @@ get_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, c
     )
 
   # Name of the aberration to use in the y-axis
-  if (aberr_module == "dicentrics") {
+  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     aberr_name <- stringr::str_to_title(aberr_module)
   } else if (aberr_module == "translocations") {
     if (nchar(input$trans_name) > 0) {

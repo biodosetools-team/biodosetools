@@ -33,9 +33,7 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
 
   if (aberr_module == "dicentrics") {
     yield_est <- case_data[["y"]]
-  } #else if (aberr_module == "translocations") {
-  # yield_est <- case_data[["Fp"]]
-  # }
+  }
 
   # Modify results for translocations
   if (aberr_module == "translocations") {
@@ -93,7 +91,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   # cov: TRUE if the covariances of the regression coefficients should be considered,
   #      otherwise only the diagonal of the covariance matrix is used
 
-  if (aberr_module == "dicentrics") {
+  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
     lambda_est <- case_data[["Fg"]]
@@ -136,7 +134,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   }
 
   # Get variance of lambda assuming Poisson
-  if (aberr_module == "dicentrics") {
+  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est_sd <- case_data[["y_err"]]
   } else if (aberr_module == "translocations") {
     lambda_est_sd <- case_data[["Fg_err"]]
