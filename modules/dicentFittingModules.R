@@ -311,8 +311,8 @@ dicentFittingUI <- function(id, label) {
                 inputId = ns("help_fit_data_save_option"),
                 label = NULL,
                 choices = c(
-                  "Fitting results" = "data",
-                  "Report"          = "report"
+                  "Fitting data" = "data",
+                  "Report"       = "report"
                 )
               ),
               # Contents

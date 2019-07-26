@@ -1,5 +1,11 @@
 ##### Report
 
-The report contains the results of the curve fit and the summary statistics, and curve plot.
+The report contains:
+ - Original count data used
+ - Results of the curve fitting
+ - Summary statistics
+ - Detection limits
+ - Curve plot
 
-Additionally, it allows the user to download the `RDS` object with the fitting results.
+The report can be downloaded in `.HTML` and `.DOCX`. The `.HTML` report allows the user to download the `RDS` object with the fitting results.
+
