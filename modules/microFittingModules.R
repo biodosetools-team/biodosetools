@@ -149,7 +149,7 @@ microFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
-              withMathJax(includeMarkdown("help/fitting/fitting_options_model.md"))
+              withMathJax(includeMarkdown("help/micro/fitting_options_model.md"))
             )
           )
         ),
