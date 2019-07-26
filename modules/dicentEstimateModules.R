@@ -559,7 +559,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Contents
-              withMathJax(includeMarkdown("help/save/fit_data_save_report.md"))
+              withMathJax(includeMarkdown("help/save/estimate_data_save_report.md"))
             )
           ),
 

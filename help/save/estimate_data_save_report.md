@@ -1,5 +1,10 @@
 ##### Report
 
-The report contains the results of the curve fit and the summary statistics, and curve plot.
+The report contains:
+ - Dose-effect curve used
+ - Original case data used
+ - Case description
+ - Results of the dose estimation
+ - Dose estimation plot
 
-Additionally, it allows the user to download the `RDS` object with the fitting results.
+ The report can be downloaded in `.HTML` and `.DOCX`.
