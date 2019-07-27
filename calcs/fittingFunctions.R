@@ -174,7 +174,6 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   }
   fit_formula <- as.formula(fit_formula_raw)
 
-
   # Perform automatic fit calculation
   if (model_family == "poisson") {
     # Poisson model
@@ -184,7 +183,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       data = model_data
     )
     fit_dispersion <- NULL
-  } else {
+    fit_final_model <- "poisson"
+  } else if (model_family == "automatic" | model_family == "quasipoisson") {
     # Automatic and Quasi-poisson model
     fit_results <- glm(
       formula = fit_formula,
@@ -193,15 +193,27 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       data = model_data
     )
     fit_dispersion <- summary(fit_results)$dispersion
+    fit_final_model <- "quasipoisson"
     # Check if Poisson model is more suitable
-    if (fit_dispersion <= 1) {
+    if (fit_dispersion <= 1 & aberr_module != "micronuclei") {
       fit_results <- glm(
         formula = fit_formula,
         family = poisson(link = fit_link),
         data = model_data
       )
       fit_dispersion <- NULL
+      fit_final_model <- "poisson"
     }
+  } else if (model_family == "nb2") {
+    fit_results <- MASS::glm.nb(
+      formula = fit_formula,
+      link = fit_link,
+      weights = weights,
+      data = model_data
+    )
+    # fit_dispersion <- NULL
+    fit_dispersion <- summary(fit_results)$dispersion
+    fit_final_model <- "nb2"
   }
 
   # Summarise fit
@@ -218,7 +230,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
   # Make coefficients table
-  if (is.null(fit_dispersion)) {
+  if (fit_final_model == "poisson") {
     # For Poisson model
     fit_coeffs <- cbind(
       estimate =  fit_coeffs_vec,
@@ -231,7 +243,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 
     # Summary of model used
     fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion ≤ 1.")
-  } else if (fit_dispersion > 1) {
+  } else if (fit_final_model == "quasipoisson") {
     # For Quasi-poisson model
     fit_coeffs <- cbind(
       estimate =  fit_coeffs_vec,
@@ -244,6 +256,19 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 
     # Summary of model used
     fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+  } else if (fit_final_model == "nb2") {
+    # For Poisson model
+    fit_coeffs <- cbind(
+      estimate =  fit_coeffs_vec,
+      std.error = sqrt(diag(fit_var_cov_mat)),
+      statistic = t_value,
+      p.value =   2 * pnorm(-abs(t_value))
+    ) %>%
+      `row.names<-`(names(fit_coeffs_vec)) %>%
+      `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
+
+    # Summary of model used
+    fit_model_summary <- paste("A Negative binomial (NB2) model was used.")
   }
 
   # Return objects

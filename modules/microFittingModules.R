@@ -178,7 +178,7 @@ microFittingUI <- function(id, label) {
                 # "Automatic" = "automatic",
                 # "Poisson" = "poisson",
                 "Quasipoisson" = "quasipoisson",
-                "Negative binomial" = "nb2"
+                "Negative binomial (NB2)" = "nb2"
               ),
               selected = "automatic"
             ),
