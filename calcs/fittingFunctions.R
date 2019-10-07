@@ -491,6 +491,22 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
     # Summary of model used
     fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+  } else if (model_family == "nb2") {
+    # TODO: update coefficients for NB2
+    fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
+    t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
+
+    # For Quasi-poisson model
+    fit_coeffs <- cbind(
+      estimate =  fit_coeffs_vec,
+      std.error = sqrt(diag(fit_var_cov_mat)),
+      statistic = t_value,
+      p.value =   2 * 2 * pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+    ) %>%
+      `row.names<-`(names(fit_coeffs_vec))
+
+    # Summary of model used
+    fit_model_summary <- paste("Work in progress: A Negative binomial (NB2) model was used.")
   }
 
   # Calculate correlation matrix
