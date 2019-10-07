@@ -145,7 +145,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
               var = (X2 - (X^2) / N) / (N - 1),
               mean = X / N,
               DI = var / mean,
-              u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / N)))
+              u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / X)))
             ) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
