@@ -1,1 +1,1 @@
-app_version <- "2019.07.27-beta"
+app_version <- "2019.10.15-beta"
