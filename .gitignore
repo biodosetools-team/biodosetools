@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 *.Rproj
-tests/
+test-scripts/
 rsconnect/
 app_file_manifest.txt
 help_template.R
