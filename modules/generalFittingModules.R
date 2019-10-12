@@ -1,6 +1,6 @@
 # General Fitting Modules ----------------------------------
 
-generalFittingCountsHotTable <- function(input, output, session, stringsAsFactors) {
+generalFittingCountsHotTable <- function(input, output, session, stringsAsFactors, aberr_module) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -136,6 +136,14 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
         mytable <- as.data.frame(hot_to_r(input$count_data_hot))
 
         if (!use_aggr_count_data) {
+          # Expected u-value for assessment
+          assessment_u = 1.00
+
+          if (aberr_module == "micronuclei" ) {
+            assessment_u = 1.17
+          }
+
+
           # Calculated columns
           mytable <- mytable %>%
             dplyr::mutate(
@@ -145,7 +153,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
               var = (X2 - (X^2) / N) / (N - 1),
               mean = X / N,
               DI = var / mean,
-              u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / X)))
+              u = (var / mean - assessment_u) * sqrt( (N - 1) / (2 * (1 - 1 / X)))
             ) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),

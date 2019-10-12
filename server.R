@@ -15,7 +15,8 @@ server <- function(input, output) {
   # Fitting
   callModule(
     id = "dicent_fitting",
-    module = generalFittingCountsHotTable
+    module = generalFittingCountsHotTable,
+    aberr_module = "dicentrics"
   )
   callModule(
     id = "dicent_fitting",
@@ -67,7 +68,8 @@ server <- function(input, output) {
   ) -> transFittingFraction
   callModule(
     id = "trans_fitting",
-    module = generalFittingCountsHotTable
+    module = generalFittingCountsHotTable,
+    aberr_module = "translocations"
   )
   callModule(
     id = "trans_fitting",
@@ -113,7 +115,8 @@ server <- function(input, output) {
   # Fitting
   callModule(
     id = "micro_fitting",
-    module = generalFittingCountsHotTable
+    module = generalFittingCountsHotTable,
+    aberr_module = "micronuclei"
   )
   callModule(
     id = "micro_fitting",
