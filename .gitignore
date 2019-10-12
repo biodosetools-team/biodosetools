@@ -5,6 +5,7 @@
 *.Rproj
 tests/
 rsconnect/
+app_file_manifest.txt
 help_template.R
 deploy_shinyapp.R
 www/MathJax
