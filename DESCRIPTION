@@ -1,0 +1,16 @@
+Package: biodosetools
+Title: Shiny App To Be Used By Biological Dosimetry Laboratories
+Version: 3.0.0
+Authors@R: 
+    person(given = "Alfredo",
+           family = "Hernández",
+           role = c("aut", "cre"),
+           email = "aldomann.designs@gmail.com",
+           comment = c(ORCID = "0000-0002-2660-4545"))
+Description: Shiny App To Be Used By Biological Dosimetry Laboratories.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    shiny
+RoxygenNote: 6.1.1
