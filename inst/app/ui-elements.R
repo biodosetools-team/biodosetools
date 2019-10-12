@@ -52,7 +52,7 @@ navbar <- bs4DashMyNavbar(
       inputId = "github_link", label = "Give feedback",
       icon = icon("comment"),
       class = "results-button",
-      onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools/issues/new', '_blank')"
+      onclick = "window.open('https://github.com/biodosimetry-uab/biodosetools/issues/new', '_blank')"
     )
   ),
 
@@ -189,7 +189,7 @@ home <- bs4TabItem(
         inputId = "github_link", label = "Source code",
         icon = icon("github"),
         class = "home-button",
-        onclick = "window.open('https://github.com/biodosimetry-uab/biodose-tools/', '_blank')"
+        onclick = "window.open('https://github.com/biodosimetry-uab/biodosetools/', '_blank')"
       ),
       div(class = "widget-sep", br()),
 
@@ -243,9 +243,9 @@ body <- bs4DashBody(
 # Footer ---------------------------------------------------
 
 footer <- bs4DashFooter(
-  copyrights = a(paste("Version", app_version), href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/NEWS.md"),
+  copyrights = a(paste("Version", app_version), href="https://github.com/biodosimetry-uab/biodosetools/blob/master/NEWS.md"),
   # right_text = format(Sys.time(), '%Y')
-  right_text = a(id = "contributors", "Contributors", href="https://github.com/biodosimetry-uab/biodose-tools/blob/master/CONTRIBUTORS.md"),
+  right_text = a(id = "contributors", "Contributors", href="https://github.com/biodosimetry-uab/biodosetools/blob/master/CONTRIBUTORS.md"),
 
   bs4MyModal(
     id = "contributors_dialog",
