@@ -74,10 +74,11 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
       color <- paste("M-Fish", chromosome_table[["Chromosome"]]) %>% as.character()
     } else {
       chromosome_table_melt <- chromosome_table %>%
-        reshape2::melt(
-          id.var = "Chromosome",
-          variable.name = "Stain",
-          value.name = "Bool")
+        tidyr::pivot_longer(
+          cols = -Chromosome,
+          names_to = "Stain",
+          values_to = "Bool"
+        )
 
       chromosome_table_clean <- chromosome_table_melt %>%
         dplyr::filter(Bool == TRUE)
