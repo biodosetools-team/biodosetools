@@ -26,5 +26,9 @@ Imports:
     data.table,
     rhandsontable,
     rmarkdown,
-    xtable
+    xtable,
+    MASS,
+    maxLik,
+    mixtools,
+    msm
 RoxygenNote: 6.1.1
