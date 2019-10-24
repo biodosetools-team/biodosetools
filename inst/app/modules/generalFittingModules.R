@@ -220,7 +220,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
       model_formula <- input$formula_select
       model_family <- input$family_select
-      decision_thresh_cells <- input$decision_thresh_cells
+      # decision_thresh_cells <- input$decision_thresh_cells
 
     })
 
@@ -262,28 +262,28 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["trans_sex"]] <- input$trans_sex
       }
 
-      # Calculate decision thresholds
-        decision_thresh <- data.frame(
-          N = decision_thresh_cells %>%
-            stringr::str_split(" ") %>%
-            unlist() %>%
-            as.numeric()
-        )
-
-      decision_thresh <- decision_thresh %>%
-        dplyr::rowwise() %>%
-        dplyr::mutate(
-          X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
-          D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
-          X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
-          D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
-        ) %>%
-        dplyr::mutate_at(
-          c("N", grep("X", names(.), value = TRUE)),
-          as.integer
-        )
-
-      results_list[["decision_thresh"]] <- decision_thresh
+      # # Calculate decision thresholds
+      # decision_thresh <- data.frame(
+      #   N = decision_thresh_cells %>%
+      #     stringr::str_split(" ") %>%
+      #     unlist() %>%
+      #     as.numeric()
+      # )
+      #
+      # decision_thresh <- decision_thresh %>%
+      #   dplyr::rowwise() %>%
+      #   dplyr::mutate(
+      #     X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
+      #     D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
+      #     X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
+      #     D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
+      #   ) %>%
+      #   dplyr::mutate_at(
+      #     c("N", grep("X", names(.), value = TRUE)),
+      #     as.integer
+      #   )
+      #
+      # results_list[["decision_thresh"]] <- decision_thresh
 
       return(results_list)
     })
@@ -354,22 +354,22 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       hot_cols(format = "0.000")
   })
 
-  output$fit_decision_thresh <- renderRHandsontable({
-    # Decision thresholds
-    if (input$button_fit <= 0) return(NULL)
-
-    decision_thresh <- data()[["decision_thresh"]]
-
-    num_cols <- 5
-    col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
-
-    decision_thresh %>%
-      # Convert to hot and format table
-      rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
-      hot_col(c(1), readOnly = TRUE) %>%
-      hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
-      hot_cols(colWidths = 50)
-  })
+  # output$fit_decision_thresh <- renderRHandsontable({
+  #   # Decision thresholds
+  #   if (input$button_fit <= 0) return(NULL)
+  #
+  #   decision_thresh <- data()[["decision_thresh"]]
+  #
+  #   num_cols <- 5
+  #   col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
+  #
+  #   decision_thresh %>%
+  #     # Convert to hot and format table
+  #     rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+  #     hot_col(c(1), readOnly = TRUE) %>%
+  #     hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
+  #     hot_cols(colWidths = 50)
+  # })
 
   output$plot <- renderPlot(
     # Plot of the data and fitted curve

@@ -137,8 +137,8 @@ dicentFittingUI <- function(id, label) {
               label = NULL,
               choices = c(
                 "Fitting formula"  = "formula",
-                "Fitting model"    = "model",
-                "Decision thresholds" = "decision_thresholds"
+                "Fitting model"    = "model"#,
+                # "Decision thresholds" = "decision_thresholds"
               )
             ),
             # Contents
@@ -151,12 +151,12 @@ dicentFittingUI <- function(id, label) {
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
               withMathJax(includeMarkdown("help/fitting/fitting_options_model.md"))
-            ),
-            conditionalPanel(
-              condition = "input.help_fitting_options_option == 'decision_thresholds'",
-              ns = ns,
-              withMathJax(includeMarkdown("help/fitting/fitting_options_decision_thresholds.md"))
-            )
+            )#,
+            # conditionalPanel(
+            #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
+            #   ns = ns,
+            #   withMathJax(includeMarkdown("help/fitting/fitting_options_decision_thresholds.md"))
+            # )
           )
         ),
 
@@ -180,9 +180,9 @@ dicentFittingUI <- function(id, label) {
                 "Quasipoisson" = "quasipoisson"
               ),
               selected = "automatic"
-            ),
+            )#,
             # Decision thresholds
-            textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
+            # textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
         )
       )
@@ -277,15 +277,15 @@ dicentFittingUI <- function(id, label) {
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_var_cov_mat"))
               )
-            ),
-            bs4MyTabPanel(
-              tabName = "Decision thresholds",
-              h6("Decision thresholds"),
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(ns("fit_decision_thresh"))
-              )
-            )
+            )#,
+            # bs4MyTabPanel(
+            #   tabName = "Decision thresholds",
+            #   h6("Decision thresholds"),
+            #   div(
+            #     class = "hot-improved",
+            #     rHandsontableOutput(ns("fit_decision_thresh"))
+            #   )
+            # )
           )
         ),
 
