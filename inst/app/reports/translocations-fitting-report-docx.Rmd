@@ -20,7 +20,7 @@ fit_var_cov_mat <- params$fit_results_list[["fit_var_cov_mat"]]
 fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
-detection_lims <- params$fit_results_list[["detection_lims"]]
+# detection_lims <- params$fit_results_list[["detection_lims"]]
 
 genome_fraction <- params$fit_results_list[["genome_fraction"]]
 chromosome_table <- params$fit_results_list[["chromosome_table"]]
@@ -109,13 +109,13 @@ fit_var_cov_mat %>%
   pander::pander()
 ```
 
-### Detection limits
-```{r echo=FALSE}
-detection_lims %>%
-  `colnames<-`(c("N", "X95", "D (mGy)", "X83", "D (mGy)")) %>% 
-  pander::pander()
-  # TODO: hot_col(c(3, 5), format = "0.00", colWidths = 75) 
-```
+<!-- ### Detection limits -->
+<!-- ```{r echo=FALSE} -->
+<!-- detection_lims %>% -->
+<!--   `colnames<-`(c("N", "X95", "D (mGy)", "X83", "D (mGy)")) %>%  -->
+<!--   pander::pander() -->
+<!--   # TODO: hot_col(c(3, 5), format = "0.00", colWidths = 75)  -->
+<!-- ``` -->
 
 ### Curve plot
 ```{r echo=FALSE}

@@ -35,7 +35,7 @@ fit_var_cov_mat <- params$fit_results_list[["fit_var_cov_mat"]]
 fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
-detection_lims <- params$fit_results_list[["detection_lims"]]
+# detection_lims <- params$fit_results_list[["detection_lims"]]
 ```
 
 ## Count data used
@@ -124,18 +124,18 @@ fit_var_cov_mat %>%
   hot_cols(halign = "htRight")
 ```
 
-### Detection limits
-```{r echo=FALSE}
-num_cols <- 5
-col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
+<!-- ### Detection limits -->
+<!-- ```{r echo=FALSE} -->
+<!-- num_cols <- 5 -->
+<!-- col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)") -->
 
-detection_lims %>%
-  # Convert to hot and format table
-  rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
-  hot_col(c(1), readOnly = TRUE) %>%
-  hot_col(c(3, 5), format = "0.00", colWidths = 75) %>%
-  hot_cols(colWidths = 50)
-```
+<!-- detection_lims %>% -->
+<!--   # Convert to hot and format table -->
+<!--   rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>% -->
+<!--   hot_col(c(1), readOnly = TRUE) %>% -->
+<!--   hot_col(c(3, 5), format = "0.00", colWidths = 75) %>% -->
+<!--   hot_cols(colWidths = 50) -->
+<!-- ``` -->
 
 
 ### Curve plot
