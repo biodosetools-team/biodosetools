@@ -261,8 +261,23 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
           # cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
           as.matrix()
 
-        fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
-          as.matrix()
+        if (input$use_var_cov_matrix) {
+          fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
+            as.matrix()
+        } else {
+          # Calculate var-cov matrix when none is provided
+          fit_var_cov_mat <- matrix(
+            0,
+            nrow = nrow(fit_coeffs),
+            ncol = nrow(fit_coeffs)
+          ) %>%
+            `colnames<-`(rownames(fit_coeffs)) %>%
+            `rownames<-`(rownames(fit_coeffs))
+
+          for (x_var in rownames(fit_var_cov_mat)) {
+            fit_var_cov_mat[[x_var, x_var]] <- fit_coeffs[x_var, "std.error"] * fit_coeffs[x_var, "std.error"]
+          }
+        }
 
         fit_cor_mat <- fit_var_cov_mat
         for (x_var in rownames(fit_var_cov_mat)) {
@@ -694,8 +709,23 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
         cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
         as.matrix()
 
-      fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
-        as.matrix()
+      if (input$use_var_cov_matrix) {
+        fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
+          as.matrix()
+      } else {
+        # Calculate var-cov matrix when none is provided
+        fit_var_cov_mat <- matrix(
+          0,
+          nrow = nrow(fit_coeffs),
+          ncol = nrow(fit_coeffs)
+        ) %>%
+          `colnames<-`(rownames(fit_coeffs)) %>%
+          `rownames<-`(rownames(fit_coeffs))
+
+        for (x_var in rownames(fit_var_cov_mat)) {
+          fit_var_cov_mat[[x_var, x_var]] <- fit_coeffs[x_var, "std.error"] * fit_coeffs[x_var, "std.error"]
+        }
+      }
 
       # Conversion of coefficients and statistics
       if (aberr_module == "translocations") {
