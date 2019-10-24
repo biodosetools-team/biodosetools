@@ -86,6 +86,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
+              br(),
               widgetLabel("Coefficients"),
               div(
                 class = "hot-improved",
@@ -93,14 +94,26 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               ),
 
               br(),
+              mySwitchInput(
+                inputId = ns("use_var_cov_matrix"),
+                size = "mini",
+                onStatus = "options",
+                sideLabel = "Provide variance-covariance matrix",
+                value = FALSE
+              )
+            ),
+
+            conditionalPanel(
+              condition = "input.use_var_cov_matrix",
+              ns = ns,
               widgetLabel("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_var_cov_mat_hot"))
               ),
-
               br()
             ),
+
             # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
