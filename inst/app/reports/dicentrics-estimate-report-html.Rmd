@@ -146,17 +146,17 @@ if (TRUE) {
 } 
 ```
 
-`r if (TRUE) {"#### Relative quality of the estimation"}`
-```{r echo=FALSE}
-if (TRUE) {
-  AIC_whole %>%
-    matrix() %>%
-    `colnames<-`(c("AIC")) %>%
-    rhandsontable(width = 80, height = "100%") %>%
-    hot_cols(colWidths = 80) %>%
-    hot_cols(format = "0.000")
-} 
-```
+<!-- `r if (TRUE) {"#### Relative quality of the estimation"}` -->
+<!-- ```{r echo=FALSE} -->
+<!-- if (TRUE) { -->
+<!--   AIC_whole %>% -->
+<!--     matrix() %>% -->
+<!--     `colnames<-`(c("AIC")) %>% -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
+<!-- }  -->
+<!-- ``` -->
 
 `r if (assessment == "partial-body") {"### Partial-body exposure results"}`
 
@@ -212,17 +212,17 @@ if (assessment == "partial-body") {
 } 
 ```
 
-`r if (assessment == "partial-body") {"#### Relative quality of the estimation"}`
-```{r echo=FALSE}
-if (assessment == "partial-body") {
-  AIC_partial %>%
-    matrix() %>%
-    `colnames<-`(c("AIC")) %>%
-    rhandsontable(width = 80, height = "100%") %>%
-    hot_cols(colWidths = 80) %>%
-    hot_cols(format = "0.000")
-} 
-```
+<!-- `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}` -->
+<!-- ```{r echo=FALSE} -->
+<!-- if (assessment == "partial-body") { -->
+<!--   AIC_partial %>% -->
+<!--     matrix() %>% -->
+<!--     `colnames<-`(c("AIC")) %>% -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
+<!-- }  -->
+<!-- ``` -->
 
 `r if (assessment == "hetero") {"### Heterogeneous exposure results"}`
 
@@ -289,17 +289,17 @@ if (assessment == "hetero") {
 }
 ```
 
-`r if (assessment == "hetero") {"#### Relative quality of the estimation"}`
-```{r echo=FALSE}
-if (assessment == "hetero") {
-  AIC_hetero %>%
-    matrix() %>%
-    `colnames<-`(c("AIC")) %>%
-    rhandsontable(width = 80, height = "100%") %>%
-    hot_cols(colWidths = 80) %>%
-    hot_cols(format = "0.000")
-} 
-```
+<!-- `r if (assessment == "hetero") {"#### Relative quality of the estimation"}` -->
+<!-- ```{r echo=FALSE} -->
+<!-- if (assessment == "hetero") { -->
+<!--   AIC_hetero %>% -->
+<!--     matrix() %>% -->
+<!--     `colnames<-`(c("AIC")) %>% -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
+<!-- }  -->
+<!-- ``` -->
 
 ### Curve plot
 ```{r echo=FALSE}
