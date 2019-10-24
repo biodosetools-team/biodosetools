@@ -41,14 +41,14 @@ output$estimate_results_ui <- renderUI({
         div(
           class = "hot-improved",
           rHandsontableOutput(session$ns("est_doses_whole"))
-        ),
+        )#,
 
-        br(),
-        h6("Relative quality of the estimation"),
-        div(
-          class = "hot-improved",
-          rHandsontableOutput(session$ns("AIC_whole"))
-        )
+        # br(),
+        # h6("Relative quality of the estimation"),
+        # div(
+        #   class = "hot-improved",
+        #   rHandsontableOutput(session$ns("AIC_whole"))
+        # )
       )
     )
   # Partial-body ----
@@ -90,14 +90,14 @@ output$estimate_results_ui <- renderUI({
         div(
           class = "hot-improved",
           rHandsontableOutput(session$ns("est_doses_whole"))
-        ),
+        )#,
 
-        br(),
-        h6("Relative quality of the estimation"),
-        div(
-          class = "hot-improved",
-          rHandsontableOutput(session$ns("AIC_whole"))
-        )
+        # br(),
+        # h6("Relative quality of the estimation"),
+        # div(
+        #   class = "hot-improved",
+        #   rHandsontableOutput(session$ns("AIC_whole"))
+        # )
       ),
       bs4MyTabPanel(
         tabName = "Partial-body",
@@ -117,14 +117,14 @@ output$estimate_results_ui <- renderUI({
         div(
           class = "hot-improved",
           rHandsontableOutput(session$ns("est_frac_partial"))
-        ),
+        )#,
 
-        br(),
-        h6("Relative quality of the estimation"),
-        div(
-          class = "hot-improved",
-          rHandsontableOutput(session$ns("AIC_partial"))
-        )
+        # br(),
+        # h6("Relative quality of the estimation"),
+        # div(
+        #   class = "hot-improved",
+        #   rHandsontableOutput(session$ns("AIC_partial"))
+        # )
       )
     )
   # Heterogeneous ----
@@ -166,14 +166,14 @@ output$estimate_results_ui <- renderUI({
         div(
           class = "hot-improved",
           rHandsontableOutput(session$ns("est_doses_whole"))
-        ),
+        )#,
 
-        br(),
-        h6("Relative quality of the estimation"),
-        div(
-          class = "hot-improved",
-          rHandsontableOutput(session$ns("AIC_whole"))
-        )
+        # br(),
+        # h6("Relative quality of the estimation"),
+        # div(
+        #   class = "hot-improved",
+        #   rHandsontableOutput(session$ns("AIC_whole"))
+        # )
       ),
       bs4MyTabPanel(
         tabName = "Heterogeneous",
@@ -200,14 +200,14 @@ output$estimate_results_ui <- renderUI({
         div(
           class = "hot-improved",
           rHandsontableOutput(session$ns("est_frac_hetero"))
-        ),
+        )#,
 
-        br(),
-        h6("Relative quality of the estimation"),
-        div(
-          class = "hot-improved",
-          rHandsontableOutput(session$ns("AIC_hetero"))
-        )
+        # br(),
+        # h6("Relative quality of the estimation"),
+        # div(
+        #   class = "hot-improved",
+        #   rHandsontableOutput(session$ns("AIC_hetero"))
+        # )
       )
     )
   } else {
