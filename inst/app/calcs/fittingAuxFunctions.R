@@ -91,8 +91,8 @@ get_dose_curve <- function(fit_results_list) {
   return(gg_curve)
 }
 
-# Detection limits ----
-get_detection_limit <- function(fit_results_list, cells, conf_int = 0.95) {
+# Decision thresholds ----
+get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95) {
 
   # Use measured translocation frequency fit
   if (aberr_module == "translocations" ) {

@@ -138,7 +138,7 @@ dicentFittingUI <- function(id, label) {
               choices = c(
                 "Fitting formula"  = "formula",
                 "Fitting model"    = "model",
-                "Detection limits" = "detection_limits"
+                "Decision thresholds" = "decision_thresholds"
               )
             ),
             # Contents
@@ -153,9 +153,9 @@ dicentFittingUI <- function(id, label) {
               withMathJax(includeMarkdown("help/fitting/fitting_options_model.md"))
             ),
             conditionalPanel(
-              condition = "input.help_fitting_options_option == 'detection_limits'",
+              condition = "input.help_fitting_options_option == 'decision_thresholds'",
               ns = ns,
-              withMathJax(includeMarkdown("help/fitting/fitting_options_detection_limits.md"))
+              withMathJax(includeMarkdown("help/fitting/fitting_options_decision_thresholds.md"))
             )
           )
         ),
@@ -181,8 +181,8 @@ dicentFittingUI <- function(id, label) {
               ),
               selected = "automatic"
             ),
-            # Detection limits
-            textInput(ns("detection_lims_cells"), "Cells for detection limits", value = "150 500 1000")
+            # Decision thresholds
+            textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
         )
       )
@@ -279,11 +279,11 @@ dicentFittingUI <- function(id, label) {
               )
             ),
             bs4MyTabPanel(
-              tabName = "Detection limits",
-              h6("Detection limits"),
+              tabName = "Decision thresholds",
+              h6("Decision thresholds"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_detection_lims"))
+                rHandsontableOutput(ns("fit_decision_thresh"))
               )
             )
           )

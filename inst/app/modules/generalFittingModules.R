@@ -220,7 +220,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
       model_formula <- input$formula_select
       model_family <- input$family_select
-      detection_lims_cells <- input$detection_lims_cells
+      decision_thresh_cells <- input$decision_thresh_cells
 
     })
 
@@ -262,28 +262,28 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
         results_list[["trans_sex"]] <- input$trans_sex
       }
 
-      # Calculate detection limits
-        detection_lims <- data.frame(
-          N = detection_lims_cells %>%
+      # Calculate decision thresholds
+        decision_thresh <- data.frame(
+          N = decision_thresh_cells %>%
             stringr::str_split(" ") %>%
             unlist() %>%
             as.numeric()
         )
 
-      detection_lims <- detection_lims %>%
+      decision_thresh <- decision_thresh %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
-          X95 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.95)[1],
-          D95 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
-          X83 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.83)[1],
-          D83 = get_detection_limit(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
+          X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
+          D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
+          X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
+          D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
         ) %>%
         dplyr::mutate_at(
           c("N", grep("X", names(.), value = TRUE)),
           as.integer
         )
 
-      results_list[["detection_lims"]] <- detection_lims
+      results_list[["decision_thresh"]] <- decision_thresh
 
       return(results_list)
     })
@@ -354,16 +354,16 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       hot_cols(format = "0.000")
   })
 
-  output$fit_detection_lims <- renderRHandsontable({
-    # Detection limits
+  output$fit_decision_thresh <- renderRHandsontable({
+    # Decision thresholds
     if (input$button_fit <= 0) return(NULL)
 
-    detection_lims <- data()[["detection_lims"]]
+    decision_thresh <- data()[["decision_thresh"]]
 
     num_cols <- 5
     col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
 
-    detection_lims %>%
+    decision_thresh %>%
       # Convert to hot and format table
       rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
       hot_col(c(1), readOnly = TRUE) %>%
