@@ -119,6 +119,8 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
             dplyr::mutate(
               N = 0,
               X = 0,
+              mean = 0,
+              var = 0,
               DI = 0,
               u = 0
             ) %>%
@@ -150,8 +152,8 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
               N = as.integer(rowSums(.[grep("C", names(.))])),
               X = aberr_calc(mytable, power = 1),
               X2 = aberr_calc(mytable, power = 2),
-              var = (X2 - (X^2) / N) / (N - 1),
               mean = X / N,
+              var = (X2 - (X^2) / N) / (N - 1),
               DI = var / mean,
               u = (var / mean - assessment_u) * sqrt( (N - 1) / (2 * (1 - 1 / X)))
             ) %>%
@@ -159,7 +161,8 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
             ) %>%
-            dplyr::select(-X2, -var, -mean) %>%
+            # dplyr::select(-X2, -var, -mean) %>%
+            dplyr::select(-X2) %>%
             dplyr::select(D, N, X, everything())
         } else {
           mytable <- mytable %>%
@@ -188,7 +191,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
 
     if (num_cols > 3) {
       hot <- hot %>%
-        hot_col(c(2, 3, seq(num_cols - 1, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(c(2, 3, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
         hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
