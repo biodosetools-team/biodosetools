@@ -4,7 +4,13 @@
 \alias{get_decision_threshold}
 \title{Title}
 \usage{
-get_decision_threshold(fit_results_list, cells, conf_int = 0.95)
+get_decision_threshold(
+  fit_results_list,
+  cells,
+  conf_int = 0.95,
+  aberr_module,
+  input
+)
 }
 \arguments{
 \item{fit_results_list}{List of fit results}
@@ -12,6 +18,10 @@ get_decision_threshold(fit_results_list, cells, conf_int = 0.95)
 \item{cells}{N}
 
 \item{conf_int}{CI}
+
+\item{aberr_module}{Aberration module}
+
+\item{input}{UI input variable}
 }
 \value{
 A vector with aberr_test and dose_est

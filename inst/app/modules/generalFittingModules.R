@@ -276,10 +276,10 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       # decision_thresh <- decision_thresh %>%
       #   dplyr::rowwise() %>%
       #   dplyr::mutate(
-      #     X95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
-      #     D95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
-      #     X83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
-      #     D83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
+      #     X95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[1],
+      #     D95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[2] * 1000,
+      #     X83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[1],
+      #     D83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[2] * 1000
       #   ) %>%
       #   dplyr::mutate_at(
       #     c("N", grep("X", names(.), value = TRUE)),
