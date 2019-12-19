@@ -211,8 +211,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   # Calculations ----
 
   # Source fitting calculation functions
-  source("calcs/fittingFunctions.R", local = TRUE)
-  source("calcs/fittingAuxFunctions.R", local = TRUE)
+  # source("calcs/fittingFunctions.R", local = TRUE)
+  # source("calcs/fittingAuxFunctions.R", local = TRUE)
 
   # Reactive environment
   data <- reactive({
@@ -249,8 +249,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     input$button_fit
 
     isolate({
-      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
-      gg_curve <- get_dose_curve(fit_results_list)
+      fit_results_list <- biodosetools::get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
+      gg_curve <- biodosetools::get_fit_dose_curve(fit_results_list)
 
       # Make list of results to return
       results_list <- fit_results_list
@@ -276,10 +276,10 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       # decision_thresh <- decision_thresh %>%
       #   dplyr::rowwise() %>%
       #   dplyr::mutate(
-      #     X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
-      #     D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
-      #     X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
-      #     D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
+      #     X95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[1],
+      #     D95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95)[2] * 1000,
+      #     X83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[1],
+      #     D83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83)[2] * 1000
       #   ) %>%
       #   dplyr::mutate_at(
       #     c("N", grep("X", names(.), value = TRUE)),
