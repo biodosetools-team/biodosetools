@@ -1,5 +1,12 @@
 # Curve function ----
-get_dose_curve <- function(fit_results_list) {
+#' Title
+#'
+#' @param fit_results_list List of fit results
+#'
+#' @return ggplot object
+#' @export
+#'
+get_fit_dose_curve <- function(fit_results_list) {
   # Read objects from fit results list
   count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
@@ -32,7 +39,7 @@ get_dose_curve <- function(fit_results_list) {
   }
 
   chisq_df <- nrow(fit_coeffs)
-  R_factor <- sqrt(qchisq(0.95, df = chisq_df))
+  R_factor <- sqrt(stats::qchisq(0.95, df = chisq_df))
 
   yield_error_fun <- function(d) {
     sqrt(
@@ -72,32 +79,41 @@ get_dose_curve <- function(fit_results_list) {
   }
 
   # Make plot
-  gg_curve <- ggplot(plot_data) +
+  gg_curve <- ggplot2::ggplot(plot_data) +
     # Observed data
-    geom_point(aes(x = dose, y = yield)) +
+    ggplot2::geom_point(ggplot2::aes(x = dose, y = yield)) +
     # Fitted curve
-    stat_function(
+    ggplot2::stat_function(
       data = data.frame(x = c(0, max(plot_data[["dose"]]))),
-      mapping = aes(x),
+      mapping = ggplot2::aes(x),
       fun = function(x) yield_fun(x),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)
-    geom_ribbon(data = curves_data, aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-    labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
-    theme_bw()
+    ggplot2::geom_ribbon(data = curves_data, ggplot2::aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
+    ggplot2::labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
+    ggplot2::theme_bw()
 
   # Return object
   return(gg_curve)
 }
 
 # Decision thresholds ----
+#' Title
+#'
+#' @param fit_results_list List of fit results
+#' @param cells N
+#' @param conf_int CI
+#'
+#' @return A vector with aberr_test and dose_est
+#' @export
+#'
 get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95) {
 
   # Use measured translocation frequency fit
-  if (aberr_module == "translocations" ) {
+  if (aberr_module == "translocations") {
     if (input$frequency_select == "full_gen_freq") {
-      count_data <- hot_to_r(input$count_data_hot)
+      count_data <- rhandsontable::hot_to_r(input$count_data_hot)
       model_formula <- input$formula_select
       model_family <- input$family_select
 
@@ -138,7 +154,7 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95) {
   # R factor depeding on selected CI
   chisq_df <- nrow(fit_coeffs)
   R_factor <- function(conf_int = 0.95) {
-    sqrt(qchisq(conf_int, df = chisq_df))
+    sqrt(stats::qchisq(conf_int, df = chisq_df))
   }
 
   yield_error_fun <- function(d, G) {
@@ -162,7 +178,7 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95) {
   aberr_test <- 0
   while (!found) {
     aberr_test <- aberr_test + 1
-    aberr_low <- poisson.test(x = aberr_test, conf.level = conf_int)[["conf.int"]][1]
+    aberr_low <- stats::poisson.test(x = aberr_test, conf.level = conf_int)[["conf.int"]][1]
 
     if (aberr_low >= aberr_min) {
       found <- TRUE
@@ -171,7 +187,7 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95) {
 
   # Estimate dose
   project_yield_estimate <- function(yield, conf_int) {
-    uniroot(function(dose) {
+    stats::uniroot(function(dose) {
       yield_fun(dose, 1) - yield
     }, c(1e-16, 100))$root
   }

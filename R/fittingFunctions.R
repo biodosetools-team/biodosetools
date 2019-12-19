@@ -1,4 +1,16 @@
 # Fitting functions ----
+#' Title
+#'
+#' @param model_data Data of the model
+#' @param fit_coeffs_vec Vector of fitting coefficients
+#' @param glm_results Results of glm
+#' @param fit_algorithm String of the algorithm used
+#' @param response Type of response
+#' @param link Fit link
+#' @param type Theoretical or raw glm model statistics
+#'
+#' @return Model statistics
+#' @export
 get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_algorithm,
                                  response = "yield", link = "identity", type = "theory") {
   # Calculate from theory or use statistics calculated by glm
@@ -41,38 +53,43 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
 
     # Calculate model-specific statistics
     fit_model_statistics <- cbind(
-      logLik =   logLik,
+      logLik = logLik,
       deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-      df =       num_data - num_params,
-      AIC =      2 * num_params - 2 * logLik,
-      BIC =      log(num_data) * num_params - 2 * logLik
+      df = num_data - num_params,
+      AIC = 2 * num_params - 2 * logLik,
+      BIC = log(num_data) * num_params - 2 * logLik
     )
-
   } else if (type == "raw" & fit_algorithm == "glm") {
     # Get model-specific statistics
     fit_model_statistics <- cbind(
-      logLik =   stats::logLik(glm_results) %>% as.numeric(),
+      logLik = stats::logLik(glm_results) %>% as.numeric(),
       deviance = stats::deviance(glm_results),
-      df =       stats::df.residual(glm_results),
-      AIC =      stats::AIC(glm_results),
-      BIC =      stats::BIC(glm_results)
+      df = stats::df.residual(glm_results),
+      AIC = stats::AIC(glm_results),
+      BIC = stats::BIC(glm_results)
     )
   } else if (type == "raw" & fit_algorithm == "constraint-maxlik-optimization") {
     # Get model-specific statistics
     fit_model_statistics <- cbind(
-      logLik =   stats::logLik(glm_results),
-      deviance = sum(poisson(link = "identity")$dev.resids(Y, mu, 1)),
-      df =       n - npar,
-      AIC =      2 * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results),
-      BIC =      log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results)
+      logLik = stats::logLik(glm_results),
+      deviance = sum(stats::poisson(link = "identity")$dev.resids(Y, mu, 1)),
+      df = n - npar,
+      AIC = 2 * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results),
+      BIC = log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results)
     )
   }
 
   return(fit_model_statistics)
 }
 
+#' Title
+#'
+#' @param count_data Count data in dataframe form
+#' @param model_formula Formula
+#'
+#' @return Parsed count data
+#' @export
 prepare_maxlik_count_data <- function(count_data, model_formula) {
-
   if (ncol(count_data) > 3 & aberr_module != "translocations") {
     # Full distribution data
     dose_vec <- rep(
@@ -91,8 +108,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula) {
         grep("C", ., value = TRUE) %>%
         gsub("C", "", .) %>%
         rep(nrow(count_data)) %>%
-        as.numeric()
-      ,
+        as.numeric(),
       count_data %>%
         .[, grep("C", names(.), value = T)] %>%
         as.matrix() %>%
@@ -103,10 +119,12 @@ prepare_maxlik_count_data <- function(count_data, model_formula) {
     parsed_data <- data.frame(
       aberr = dics_vec,
       dose = dose_vec,
-      C = cell_vec) %>%
+      C = cell_vec
+    ) %>%
       dplyr::mutate(
         α = dose * C,
-        β = dose^2 * C) %>%
+        β = dose^2 * C
+      ) %>%
       dplyr::select(aberr, C, α, β, dose)
   } else {
     # Aggregated data only or if using translocations
@@ -132,6 +150,15 @@ prepare_maxlik_count_data <- function(count_data, model_formula) {
   return(parsed_data)
 }
 
+#' Title
+#'
+#' @param count_data Count data
+#' @param model_formula Model formula
+#' @param model_family Model family
+#' @param fit_link Family link
+#'
+#' @return Fit using GLM
+#' @export
 get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity") {
 
   # Store fit algorithm as a string
@@ -172,23 +199,23 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     fit_formula_raw <- "aberr ~ -1 + α"
     fit_formula_tex <- "Y = \\alpha D"
   }
-  fit_formula <- as.formula(fit_formula_raw)
+  fit_formula <- stats::as.formula(fit_formula_raw)
 
   # Perform automatic fit calculation
   if (model_family == "poisson") {
     # Poisson model
-    fit_results <- glm(
+    fit_results <- stats::glm(
       formula = fit_formula,
-      family = poisson(link = fit_link),
+      family = stats::poisson(link = fit_link),
       data = model_data
     )
     fit_dispersion <- NULL
     fit_final_model <- "poisson"
   } else if (model_family == "automatic" | model_family == "quasipoisson") {
     # Automatic and Quasi-poisson model
-    fit_results <- glm(
+    fit_results <- stats::glm(
       formula = fit_formula,
-      family = quasipoisson(link = fit_link),
+      family = stats::quasipoisson(link = fit_link),
       weights = weights,
       data = model_data
     )
@@ -196,9 +223,9 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     fit_final_model <- "quasipoisson"
     # Check if Poisson model is more suitable
     if (fit_dispersion <= 1 & aberr_module != "micronuclei") {
-      fit_results <- glm(
+      fit_results <- stats::glm(
         formula = fit_formula,
-        family = poisson(link = fit_link),
+        family = stats::poisson(link = fit_link),
         data = model_data
       )
       fit_dispersion <- NULL
@@ -223,8 +250,9 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   fit_coeffs_vec <- stats::coef(fit_results)
 
   # Model-specific statistics
-  fit_model_statistics <- get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
-                                               response = "yield", link = "identity", type = "theory")
+  fit_model_statistics <- biodosetools::get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
+    response = "yield", link = "identity", type = "theory"
+  )
 
   # Correct p-values depending on model dispersion
   t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
@@ -233,10 +261,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   if (fit_final_model == "poisson") {
     # For Poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * pnorm(-abs(t_value))
+      p.value = 2 * stats::pnorm(-abs(t_value))
     ) %>%
       `row.names<-`(names(fit_coeffs_vec)) %>%
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
@@ -246,10 +274,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   } else if (fit_final_model == "quasipoisson") {
     # For Quasi-poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * 2 * pt(-abs(t_value), fit_results$df.residual)
+      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_results$df.residual)
     ) %>%
       `row.names<-`(names(fit_coeffs_vec)) %>%
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
@@ -259,10 +287,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   } else if (fit_final_model == "nb2") {
     # For Poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * pnorm(-abs(t_value))
+      p.value = 2 * stats::pnorm(-abs(t_value))
     ) %>%
       `row.names<-`(names(fit_coeffs_vec)) %>%
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
@@ -293,6 +321,15 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   return(fit_results_list)
 }
 
+#' Title
+#'
+#' @param data Count data
+#' @param model_formula Model formula
+#' @param model_family Model family
+#' @param fit_link Family link
+#'
+#' @return maxLik fit results
+#' @export
 get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   # type can be "poisson", "quasipoisson" or "automatic"
   # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
@@ -338,7 +375,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
     fit_formula_raw <- "aberr ~ -1 + α"
     fit_formula_tex <- "Y = \\alpha D"
   }
-  fit_formula <- as.formula(fit_formula_raw)
+  fit_formula <- stats::as.formula(fit_formula_raw)
 
   if (stringr::str_detect(model_formula, "no-int")) {
     data_aggr <- data_aggr %>%
@@ -346,7 +383,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   }
 
   # Find starting values for the mean
-  mustart <- lm(fit_formula, data = data_aggr)$coefficients
+  mustart <- stats::lm(fit_formula, data = data_aggr)$coefficients
   if (mustart[1] <= 0) {
     mustart[1] <- 0.001
   }
@@ -372,19 +409,19 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
     ffz[[2]] <- NULL
   }
 
-  if (inherits(try(terms(ffz), silent = TRUE), "try-error")) {
+  if (inherits(try(stats::terms(ffz), silent = TRUE), "try-error")) {
     ffz <- eval(parse(text = sprintf(paste("%s -", deparse(ffc[[2]])), deparse(ffz))))
   }
 
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  mtX <- terms(ffc, data = data)
-  X <- model.matrix(mtX, mf)
-  mtZ <- terms(ffz, data = data)
-  mtZ <- terms(update(mtZ, ~.), data = data)
-  Z <- model.matrix(mtZ, mf)
-  Y <- model.response(mf, "numeric")
+  mtX <- stats::terms(ffc, data = data)
+  X <- stats::model.matrix(mtX, mf)
+  mtZ <- stats::terms(ffz, data = data)
+  mtZ <- stats::terms(stats::update(mtZ, ~.), data = data)
+  Z <- stats::model.matrix(mtZ, mf)
+  Y <- stats::model.response(mf, "numeric")
 
   if (all(X[, 1] == 1)) {
     intercept <- TRUE
@@ -396,7 +433,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   ndic <- max(Y)
   n <- length(Y)
   linkstr <- "logit"
-  linkobj <- make.link(linkstr)
+  linkobj <- stats::make.link(linkstr)
   linkinv <- linkobj$linkinv
   grad <- NULL
   kx <- NCOL(X)
@@ -405,7 +442,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
   # Find starting values for the mean
   if (fit_link == "log") {
-    if (is.null(mustart)) mustart <- as.numeric(glm.fit(X, Y, family = poisson())$coefficients)
+    if (is.null(mustart)) mustart <- as.numeric(stats::glm.fit(X, Y, family = stats::poisson())$coefficients)
   } else {
     if (is.null(mustart)) {
       stop("If link=identity, starting values must be provided")
@@ -458,8 +495,9 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
   # Model-specific statistics
-  fit_model_statistics <- get_model_statistics(data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
-                                               response = "yield", link = "identity", type = "theory")
+  fit_model_statistics <- biodosetools::get_model_statistics(data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
+    response = "yield", link = "identity", type = "theory"
+  )
 
   # Correct p-values depending on model dispersion
   if (model_family == "poisson" | (model_family == "automatic" & fit_dispersion <= 1)) {
@@ -467,10 +505,10 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
     # For Poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * pnorm(-abs(t_value))
+      p.value = 2 * stats::pnorm(-abs(t_value))
     ) %>%
       `row.names<-`(names(fit_coeffs_vec))
 
@@ -482,10 +520,10 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
     # For Quasi-poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * 2 * pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
     ) %>%
       `row.names<-`(names(fit_coeffs_vec))
 
@@ -498,10 +536,10 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
     # For Quasi-poisson model
     fit_coeffs <- cbind(
-      estimate =  fit_coeffs_vec,
+      estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value =   2 * 2 * pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
     ) %>%
       `row.names<-`(names(fit_coeffs_vec))
 
@@ -539,23 +577,34 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   return(fit_results_list)
 }
 
+#' Title
+#'
+#' @param count_data Count data
+#' @param model_formula Model formula
+#' @param model_family Model family
+#' @param fit_link Family link
+#'
+#' @return Fit results either using GLM or maxLik optimization
+#' @export
 get_fit_results <- function(count_data, model_formula, model_family, fit_link = "identity") {
   # If glm produces an error, constraint ML maximization is performed
-  tryCatch({
-    # Perform fitting
-    fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link)
+  tryCatch(
+    {
+      # Perform fitting
+      fit_results_list <- biodosetools::get_fit_glm_method(count_data, model_formula, model_family, fit_link)
 
-    # Return results
-    return(fit_results_list)
-  },
-  error = function(error_message) {
-    message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
-    # Perform fitting
-    prepared_data <- prepare_maxlik_count_data(count_data, model_formula)
-    fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
-    fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
+      # Return results
+      return(fit_results_list)
+    },
+    error = function(error_message) {
+      message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
+      # Perform fitting
+      prepared_data <- biodosetools::prepare_maxlik_count_data(count_data, model_formula)
+      fit_results_list <- biodosetools::get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
+      fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
 
-    # Return results
-    return(fit_results_list)
-  })
+      # Return results
+      return(fit_results_list)
+    }
+  )
 }
