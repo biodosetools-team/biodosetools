@@ -16,8 +16,8 @@ Imports:
     shinyBS,
     shinydashboard,
     shinyjs,
-    shinyWidgets,
-    bs4Dash (>= 0.4.0),
+    shinyWidgets (== 0.4.9),
+    bs4Dash (== 0.4.0),
     dplyr,
     ggplot2,
     purrr,
@@ -30,5 +30,6 @@ Imports:
     MASS,
     maxLik,
     mixtools,
-    msm
-RoxygenNote: 6.1.1
+    msm,
+    magrittr
+RoxygenNote: 7.0.2
