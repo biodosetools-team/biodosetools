@@ -4,10 +4,14 @@
 \alias{get_fit_dose_curve}
 \title{Title}
 \usage{
-get_fit_dose_curve(fit_results_list)
+get_fit_dose_curve(fit_results_list, aberr_module, input)
 }
 \arguments{
 \item{fit_results_list}{List of fit results}
+
+\item{aberr_module}{Aberration module}
+
+\item{input}{UI input variable}
 }
 \value{
 ggplot object

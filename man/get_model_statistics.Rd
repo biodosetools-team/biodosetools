@@ -11,7 +11,11 @@ get_model_statistics(
   fit_algorithm,
   response = "yield",
   link = "identity",
-  type = "theory"
+  type = "theory",
+  Y = NULL,
+  mu = NULL,
+  n = NULL,
+  npar = NULL
 )
 }
 \arguments{
@@ -28,6 +32,14 @@ get_model_statistics(
 \item{link}{Fit link}
 
 \item{type}{Theoretical or raw glm model statistics}
+
+\item{Y}{Y response (used in constraint-maxlik-optimization)}
+
+\item{mu}{mu response (used in constraint-maxlik-optimization)}
+
+\item{n}{number of parameters (used in constraint-maxlik-optimization)}
+
+\item{npar}{number of parameters (used in constraint-maxlik-optimization)}
 }
 \value{
 Model statistics

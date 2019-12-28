@@ -8,7 +8,8 @@ get_fit_glm_method(
   count_data,
   model_formula,
   model_family,
-  fit_link = "identity"
+  fit_link = "identity",
+  aberr_module
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ get_fit_glm_method(
 \item{model_family}{Model family}
 
 \item{fit_link}{Family link}
+
+\item{aberr_module}{Aberration module}
 }
 \value{
 Fit using GLM

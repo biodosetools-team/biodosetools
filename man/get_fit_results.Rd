@@ -4,7 +4,13 @@
 \alias{get_fit_results}
 \title{Title}
 \usage{
-get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
+get_fit_results(
+  count_data,
+  model_formula,
+  model_family,
+  fit_link = "identity",
+  aberr_module
+)
 }
 \arguments{
 \item{count_data}{Count data}
@@ -14,6 +20,8 @@ get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
 \item{model_family}{Model family}
 
 \item{fit_link}{Family link}
+
+\item{aberr_module}{Aberration module}
 }
 \value{
 Fit results either using GLM or maxLik optimization
