@@ -210,10 +210,6 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
   # Calculations ----
 
-  # Source fitting calculation functions
-  # source("calcs/fittingFunctions.R", local = TRUE)
-  # source("calcs/fittingAuxFunctions.R", local = TRUE)
-
   # Reactive environment
   data <- reactive({
     input$button_fit
