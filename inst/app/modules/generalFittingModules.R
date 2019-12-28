@@ -249,8 +249,8 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     input$button_fit
 
     isolate({
-      fit_results_list <- biodosetools::get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
-      gg_curve <- biodosetools::get_fit_dose_curve(fit_results_list)
+      fit_results_list <- biodosetools::get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
+      gg_curve <- biodosetools::get_fit_dose_curve(fit_results_list, aberr_module, input)
 
       # Make list of results to return
       results_list <- fit_results_list
