@@ -1,0 +1,13 @@
+#' \code{biodosetools} package
+#'
+#' Shiny App To Be Used By Biological Dosimetry Laboratories
+#'
+#' See the README on
+#' \href{https://github.com/biodosimetry-uab/biodosetools/}{GitHub}
+#'
+#' @docType package
+#' @name biodosetools
+NULL
+
+## quiets concerns of R CMD check re: the .'s that appear in pipelines
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
