@@ -31,5 +31,6 @@ Imports:
     maxLik,
     mixtools,
     msm,
-    magrittr
+    magrittr,
+    rlang
 RoxygenNote: 7.0.2
