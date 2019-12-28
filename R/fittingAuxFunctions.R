@@ -1,12 +1,13 @@
-# Curve function ----
 #' Title
 #'
 #' @param fit_results_list List of fit results
+#' @param aberr_module Aberration module
+#' @param input UI input variable
 #'
 #' @return ggplot object
 #' @export
 #'
-get_fit_dose_curve <- function(fit_results_list) {
+get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
   # Read objects from fit results list
   count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
@@ -55,16 +56,16 @@ get_fit_dose_curve <- function(fit_results_list) {
   # Plot data
   plot_data <- count_data %>%
     dplyr::mutate(
-      yield = X / N,
-      dose = D
+      yield = .data$X / .data$N,
+      dose = .data$D
     ) %>%
-    dplyr::select(dose, yield)
+    dplyr::select(.data$dose, .data$yield)
 
   curves_data <- data.frame(dose = seq(0, max(plot_data[["dose"]]), length.out = 100)) %>%
     dplyr::mutate(
-      yield = yield_fun(dose),
-      yield_low = yield_fun(dose) - R_factor * yield_error_fun(dose),
-      yield_upp = yield_fun(dose) + R_factor * yield_error_fun(dose)
+      yield = yield_fun(.data$dose),
+      yield_low = yield_fun(.data$dose) - R_factor * yield_error_fun(.data$dose),
+      yield_upp = yield_fun(.data$dose) + R_factor * yield_error_fun(.data$dose)
     )
 
   # Name of the aberration to use in the y-axis
@@ -81,24 +82,32 @@ get_fit_dose_curve <- function(fit_results_list) {
   # Make plot
   gg_curve <- ggplot2::ggplot(plot_data) +
     # Observed data
-    ggplot2::geom_point(ggplot2::aes(x = dose, y = yield)) +
+    ggplot2::geom_point(
+      mapping = ggplot2::aes(x = .data$dose, y = .data$yield)
+    ) +
     # Fitted curve
     ggplot2::stat_function(
       data = data.frame(x = c(0, max(plot_data[["dose"]]))),
-      mapping = ggplot2::aes(x),
+      mapping = ggplot2::aes(.data$x),
       fun = function(x) yield_fun(x),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)
-    ggplot2::geom_ribbon(data = curves_data, ggplot2::aes(x = dose, ymin = yield_low, ymax = yield_upp), alpha = 0.25) +
-    ggplot2::labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
+    ggplot2::geom_ribbon(
+      data = curves_data,
+      ggplot2::aes(x = .data$dose, ymin = .data$yield_low, ymax = .data$yield_upp),
+      alpha = 0.25
+    ) +
+    ggplot2::labs(
+      x = "Dose (Gy)",
+      y = paste0(aberr_name, "/cells")
+    ) +
     ggplot2::theme_bw()
 
   # Return object
   return(gg_curve)
 }
 
-# Decision thresholds ----
 #' Title
 #'
 #' @param fit_results_list List of fit results

@@ -1,4 +1,3 @@
-# Fitting functions ----
 #' Title
 #'
 #' @param model_data Data of the model
@@ -8,11 +7,16 @@
 #' @param response Type of response
 #' @param link Fit link
 #' @param type Theoretical or raw glm model statistics
+#' @param Y Y response (used in constraint-maxlik-optimization)
+#' @param mu mu response (used in constraint-maxlik-optimization)
+#' @param n number of parameters (used in constraint-maxlik-optimization)
+#' @param npar number of parameters (used in constraint-maxlik-optimization)
 #'
 #' @return Model statistics
 #' @export
 get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_algorithm,
-                                 response = "yield", link = "identity", type = "theory") {
+                                 response = "yield", link = "identity", type = "theory",
+                                 Y = NULL, mu = NULL, n = NULL, npar = NULL) {
   # Calculate from theory or use statistics calculated by glm
   if (type == "theory") {
     # Renormalize data if necessary
@@ -86,10 +90,12 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
 #'
 #' @param count_data Count data in dataframe form
 #' @param model_formula Formula
+#' @param aberr_module Aberration module
 #'
 #' @return Parsed count data
 #' @export
-prepare_maxlik_count_data <- function(count_data, model_formula) {
+#' @importFrom rlang .data
+prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   if (ncol(count_data) > 3 & aberr_module != "translocations") {
     # Full distribution data
     dose_vec <- rep(
@@ -122,28 +128,28 @@ prepare_maxlik_count_data <- function(count_data, model_formula) {
       C = cell_vec
     ) %>%
       dplyr::mutate(
-        α = dose * C,
-        β = dose^2 * C
+        α = .data$dose * .data$C,
+        β = .data$dose^2 * .data$C
       ) %>%
-      dplyr::select(aberr, C, α, β, dose)
+      dplyr::select(.data$aberr, .data$C, .data$α, .data$β, .data$dose)
   } else {
     # Aggregated data only or if using translocations
     parsed_data <- count_data %>%
       dplyr::rename(
-        aberr = X,
-        C = N
+        aberr = .data$X,
+        C = .data$N
       ) %>%
       dplyr::mutate(
-        α = D * C,
-        β = D^2 * C
+        α = .data$D * .data$C,
+        β = .data$D^2 * .data$C
       ) %>%
-      dplyr::select(aberr, C, α, β)
+      dplyr::select(.data$aberr, .data$C, .data$α, .data$β)
   }
 
   # Delete C column for models with no intercept
   if (stringr::str_detect(model_formula, "no-int")) {
     parsed_data <- parsed_data %>%
-      dplyr::select(-C)
+      dplyr::select(-.data$C)
   }
 
   # Return data frame
@@ -156,10 +162,11 @@ prepare_maxlik_count_data <- function(count_data, model_formula) {
 #' @param model_formula Model formula
 #' @param model_family Model family
 #' @param fit_link Family link
+#' @param aberr_module Aberration module
 #'
 #' @return Fit using GLM
 #' @export
-get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity") {
+get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
 
   # Store fit algorithm as a string
   fit_algorithm <- "glm"
@@ -250,8 +257,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   fit_coeffs_vec <- stats::coef(fit_results)
 
   # Model-specific statistics
-  fit_model_statistics <- biodosetools::get_model_statistics(model_data, fit_coeffs_vec, fit_results, fit_algorithm,
-    response = "yield", link = "identity", type = "theory"
+  fit_model_statistics <- biodosetools::get_model_statistics(
+    model_data, fit_coeffs_vec, fit_results, fit_algorithm,
+    response = "yield", link = "identity", type = "theory",
+    NULL, NULL, NULL, NULL
   )
 
   # Correct p-values depending on model dispersion
@@ -342,19 +351,19 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   # Parse full data into aggregated format
   if ("dose" %in% colnames(data)) {
     data_aggr <- data %>%
-      dplyr::group_by(aberr, dose) %>%
+      dplyr::group_by(.data$aberr, .data$dose) %>%
       dplyr::summarise(n = n()) %>%
-      dplyr::group_by(dose) %>%
+      dplyr::group_by(.data$dose) %>%
       dplyr::summarise(
-        C = sum(n),
-        X = sum(ifelse(aberr > 0, n * aberr, 0))
+        C = sum(.data$n),
+        X = sum(ifelse(.data$aberr > 0, n * .data$aberr, 0))
       ) %>%
       dplyr::mutate(
-        α = dose * C,
-        β = dose^2 * C
+        α = .data$dose * .data$C,
+        β = .data$dose^2 * .data$C
       ) %>%
       dplyr::rename(aberr = X) %>%
-      dplyr::select(aberr, dose, C, α, β)
+      dplyr::select(.data$aberr, .data$dose, .data$C, .data$α, .data$β)
   } else {
     data_aggr <- data
   }
@@ -379,7 +388,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
   if (stringr::str_detect(model_formula, "no-int")) {
     data_aggr <- data_aggr %>%
-      dplyr::select(-C)
+      dplyr::select(-.data$C)
   }
 
   # Find starting values for the mean
@@ -495,8 +504,10 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
   # Model-specific statistics
-  fit_model_statistics <- biodosetools::get_model_statistics(data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
-    response = "yield", link = "identity", type = "theory"
+  fit_model_statistics <- biodosetools::get_model_statistics(
+    data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
+    response = "yield", link = "identity", type = "theory",
+    Y, mu, n, npar
   )
 
   # Correct p-values depending on model dispersion
@@ -583,23 +594,25 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 #' @param model_formula Model formula
 #' @param model_family Model family
 #' @param fit_link Family link
+#' @param aberr_module Aberration module
 #'
 #' @return Fit results either using GLM or maxLik optimization
 #' @export
-get_fit_results <- function(count_data, model_formula, model_family, fit_link = "identity") {
+get_fit_results <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
   # If glm produces an error, constraint ML maximization is performed
   tryCatch(
     {
       # Perform fitting
-      fit_results_list <- biodosetools::get_fit_glm_method(count_data, model_formula, model_family, fit_link)
+      fit_results_list <- biodosetools::get_fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
 
       # Return results
       return(fit_results_list)
     },
     error = function(error_message) {
       message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
+
       # Perform fitting
-      prepared_data <- biodosetools::prepare_maxlik_count_data(count_data, model_formula)
+      prepared_data <- biodosetools::prepare_maxlik_count_data(count_data, model_formula, aberr_module)
       fit_results_list <- biodosetools::get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
       fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
 
