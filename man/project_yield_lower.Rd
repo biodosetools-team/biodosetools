@@ -4,7 +4,7 @@
 \alias{project_yield_lower}
 \title{Title}
 \usage{
-project_yield_lower(yield, conf_int)
+project_yield_lower(yield, protracted_g_value, conf_int)
 }
 \arguments{
 \item{conf_int}{}

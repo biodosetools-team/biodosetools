@@ -4,7 +4,7 @@
 \alias{project_yield_estimate}
 \title{Title}
 \usage{
-project_yield_estimate(yield)
+project_yield_estimate(yield, protracted_g_value)
 }
 \arguments{
 \item{yield}{}
