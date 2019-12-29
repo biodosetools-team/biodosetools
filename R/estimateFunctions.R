@@ -1,15 +1,25 @@
 # AIC and logLik from data ----
+#' Title
+#'
+#' @param general_fit_coeffs
+#' @param data
+#' @param dose_var
+#' @param yield_var
+#' @param fit_link
+#'
+#' @return
+#' @export
 AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
 
   # Manual log-likelihood function
   loglik_from_data <- function(data, fit_link) {
     if (fit_link == "identity") {
-      loglik <- - yield_fun(data[[dose_var]], 1) +
-        log(yield_fun(data[[dose_var]], 1)) * data[[yield_var]] -
+      loglik <- - biodosetools::yield_fun(data[[dose_var]], 1) +
+        log(biodosetools::yield_fun(data[[dose_var]], 1)) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     } else if (fit_link == "log") {
-      loglik <- - exp(yield_fun(data[[dose_var]], 1)) +
-        yield_fun(data[[dose_var]], 1) * data[[yield_var]] -
+      loglik <- - exp(biodosetools::yield_fun(data[[dose_var]], 1)) +
+        biodosetools::yield_fun(data[[dose_var]], 1) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     }
     return(sum(loglik))
@@ -26,6 +36,15 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 # Dose estimation functions ----
 
 # Calcs: whole-body estimation
+#' Title
+#'
+#' @param case_data
+#' @param conf_int_yield
+#' @param conf_int_curve
+#' @param protracted_g_value
+#'
+#' @return
+#' @export
 estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
 
   aberr <- case_data[["X"]]
@@ -60,9 +79,9 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
   yield_upp <- correct_yield(yield_upp)
 
   # Calculate projections
-  dose_est <- project_yield_estimate(yield_est)
-  dose_low <- project_yield_lower(yield_low, conf_int_curve)
-  dose_upp <- project_yield_upper(yield_upp, conf_int_curve)
+  dose_est <- biodosetools::project_yield_estimate(yield_est)
+  dose_low <- biodosetools::project_yield_lower(yield_low, conf_int_curve)
+  dose_upp <- biodosetools::project_yield_upper(yield_upp, conf_int_curve)
 
   # Whole-body estimation results
   est_doses <- data.frame(
@@ -72,7 +91,7 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
                        dose_var = "dose", yield_var = "yield", fit_link = "identity")
 
 
@@ -86,6 +105,17 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
 }
 
 # Calcs: whole-body estimation
+#' Title
+#'
+#' @param case_data
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param conf_int
+#' @param protracted_g_value
+#' @param cov
+#'
+#' @return
+#' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
                                       conf_int, protracted_g_value, cov = TRUE) {
   # cov: TRUE if the covariances of the regression coefficients should be considered,
@@ -166,11 +196,11 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
   # Correct negative values
-  lambda_low <- correct_negative_vals(lambda_low)
-  lambda_upp <- correct_negative_vals(lambda_upp)
-  dose_low <- correct_negative_vals(dose_low)
-  dose_est <- correct_negative_vals(dose_est)
-  dose_upp <- correct_negative_vals(dose_upp)
+  lambda_low <- biodosetools::correct_negative_vals(lambda_low)
+  lambda_upp <- biodosetools::correct_negative_vals(lambda_upp)
+  dose_low <- biodosetools::correct_negative_vals(dose_low)
+  dose_est <- biodosetools::correct_negative_vals(dose_est)
+  dose_upp <- biodosetools::correct_negative_vals(dose_upp)
 
   # Whole-body estimation results
   est_doses <- data.frame(
@@ -180,7 +210,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
                        dose_var = "dose", yield_var = "yield", fit_link = "identity")
 
 
@@ -194,6 +224,18 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 }
 
 # Calcs: partial dose estimation
+#' Title
+#'
+#' @param case_data
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param fraction_coeff
+#' @param conf_int
+#' @param protracted_g_value
+#' @param cov
+#'
+#' @return
+#' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                      conf_int, protracted_g_value, cov = TRUE) {
   # cov: TRUE if the covariances of the regression coefficients should be considered,
@@ -338,11 +380,11 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
     # Correct negative values
-    lambda_low <- correct_negative_vals(lambda_low)
-    lambda_upp <- correct_negative_vals(lambda_upp)
-    dose_low <- correct_negative_vals(dose_low)
-    dose_est <- correct_negative_vals(dose_est)
-    dose_upp <- correct_negative_vals(dose_upp)
+    lambda_low <- biodosetools::correct_negative_vals(lambda_low)
+    lambda_upp <- biodosetools::correct_negative_vals(lambda_upp)
+    dose_low <- biodosetools::correct_negative_vals(dose_low)
+    dose_est <- biodosetools::correct_negative_vals(dose_est)
+    dose_upp <- biodosetools::correct_negative_vals(dose_upp)
 
     # Partial estimation results
     est_doses <- data.frame(
@@ -352,7 +394,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
       `row.names<-`(c("lower", "estimate", "upper"))
 
     # Calculate AIC as a GOF indicator
-    AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate",],
+    AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
                          dose_var = "dose", yield_var = "yield", fit_link = "identity")
 
 
@@ -383,9 +425,9 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
     # Set to zero if F < 0 and to 1 if F > 1
-    F_low <- correct_boundary(F_low)
-    F_est <- correct_boundary(F_est)
-    F_upp <- correct_boundary(F_upp)
+    F_low <- biodosetools::correct_boundary(F_low)
+    F_est <- biodosetools::correct_boundary(F_est)
+    F_upp <- biodosetools::correct_boundary(F_upp)
 
     # Estimated fraction
     est_frac <- data.frame(
@@ -405,6 +447,18 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 }
 
 # Calcs: heterogeneous dose estimation
+#' Title
+#'
+#' @param case_data
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param fraction_coeff
+#' @param conf_int_yield
+#' @param conf_int_curve
+#' @param protracted_g_value
+#'
+#' @return
+#' @export
 estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                             conf_int_yield, conf_int_curve, protracted_g_value) {
 
@@ -427,12 +481,12 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
   # Function to calculate fractions of irradiated blood
   get_fraction <- function(g, f, mu1, mu2) {
-    dose1_est <- project_yield_estimate(mu1)
+    dose1_est <- biodosetools::project_yield_estimate(mu1)
 
     if (mu2 <= 0.01) {
       dose2_est <- 0
     } else {
-      dose2_est <- project_yield_estimate(mu2)
+      dose2_est <- biodosetools::project_yield_estimate(mu2)
     }
 
     frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
@@ -578,13 +632,13 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
       `row.names<-`(c("dose1", "dose2"))
 
     # Estimated received doses
-    dose1_est <- project_yield_estimate(yield1_est)
-    dose1_low <- project_yield_lower(yield1_low, conf_int_curve)
-    dose1_upp <- project_yield_upper(yield1_upp, conf_int_curve)
+    dose1_est <- biodosetools::project_yield_estimate(yield1_est)
+    dose1_low <- biodosetools::project_yield_lower(yield1_low, conf_int_curve)
+    dose1_upp <- biodosetools::project_yield_upper(yield1_upp, conf_int_curve)
 
-    dose2_est <- project_yield_estimate(yield2_est)
-    dose2_low <- project_yield_lower(yield2_low, conf_int_curve)
-    dose2_upp <- project_yield_upper(yield2_upp, conf_int_curve)
+    dose2_est <- biodosetools::project_yield_estimate(yield2_est)
+    dose2_low <- biodosetools::project_yield_lower(yield2_low, conf_int_curve)
+    dose2_upp <- biodosetools::project_yield_upper(yield2_upp, conf_int_curve)
 
     est_doses <- data.frame(
       dose1 = c(dose1_low, dose1_est, dose1_upp),
@@ -594,7 +648,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
     # Estimated fraction of irradiated blood for dose dose1
     F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
-    F1_est <- correct_boundary(F1_est)
+    F1_est <- biodosetools::correct_boundary(F1_est)
     F2_est <- 1 - F1_est
 
     # Approximated standard error
@@ -612,7 +666,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
       yield = est_yields["estimate",] %>% as.numeric()
     )
 
-    AIC <- AIC_from_data(general_fit_coeffs, est_doses_AIC,
+    AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses_AIC,
                          dose_var = "dose", yield_var = "yield", fit_link = "identity")
 
     # WIP: This is not requiered yet

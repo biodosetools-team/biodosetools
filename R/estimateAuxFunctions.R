@@ -1,5 +1,14 @@
 # Protracted function ----
 
+#' Title
+#'
+#' @param time
+#' @param time_0
+#'
+#' @return
+#' @export
+#'
+#' @examples
 protracted_g_function <- function(time, time_0) {
   x <- time / time_0
   g <- (2 / x^2) * (x - 1 + exp(-x))
@@ -7,6 +16,15 @@ protracted_g_function <- function(time, time_0) {
 }
 
 # Generalized curves ----
+#' Title
+#'
+#' @param d
+#' @param G
+#'
+#' @return
+#' @export
+#'
+#' @examples
 yield_fun <- function(d, G) {
   general_fit_coeffs[[1]] +
     general_fit_coeffs[[2]] * d +
@@ -14,11 +32,28 @@ yield_fun <- function(d, G) {
 }
 
 # R factor depeding on selected CI
+#' Title
+#'
+#' @param conf_int
+#'
+#' @return
+#' @export
+#'
+#' @examples
 R_factor <- function(conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
   sqrt(qchisq(conf_int, df = chisq_df))
 }
 
+#' Title
+#'
+#' @param d
+#' @param G
+#'
+#' @return
+#' @export
+#'
+#' @examples
 yield_error_fun <- function(d, G) {
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * d^2 +
@@ -34,6 +69,17 @@ yield_error_fun <- function(d, G) {
 }
 
 # Correct conf_int_yield if simple method is required
+#' Title
+#'
+#' @param conf_int
+#' @param G
+#' @param type
+#' @param d
+#'
+#' @return
+#' @export
+#'
+#' @examples
 correct_conf_int <- function(conf_int, G, type, d = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * d^2 +
@@ -54,30 +100,56 @@ correct_conf_int <- function(conf_int, G, type, d = seq(0, 10, 0.2)) {
 
 # Projection functions ----
 
+#' Title
+#'
+#' @param yield
+#'
+#' @return
+#' @export
+#'
+#' @examples
 project_yield_estimate <- function(yield) {
   if (yield >= yield_est_inf) {
     uniroot(function(dose) {
-      yield_fun(dose, protracted_g_value) - yield
+      biodosetools::yield_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
     0
   }
 }
 
+#' Title
+#'
+#' @param yield
+#' @param conf_int
+#'
+#' @return
+#' @export
+#'
+#' @examples
 project_yield_lower <- function(yield, conf_int) {
   if (yield >= yield_low_inf) {
     uniroot(function(dose) {
-      yield_fun(dose, protracted_g_value) + R_factor(conf_int) * yield_error_fun(dose, protracted_g_value) - yield
+      biodosetools::yield_fun(dose, protracted_g_value) + biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
     0
   }
 }
 
+#' Title
+#'
+#' @param yield
+#' @param conf_int
+#'
+#' @return
+#' @export
+#'
+#' @examples
 project_yield_upper <- function(yield, conf_int) {
   if (yield >= yield_upp_inf) {
     uniroot(function(dose) {
-      yield_fun(dose, protracted_g_value) - R_factor(conf_int) * yield_error_fun(dose, protracted_g_value) - yield
+      biodosetools::yield_fun(dose, protracted_g_value) - biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
     0
@@ -88,11 +160,27 @@ project_yield_upper <- function(yield, conf_int) {
 # Correction functions ----
 
 # Correct negative values
+#' Title
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
 correct_negative_vals <- function(x) {
   ifelse(x < 0, 0, x)
 }
 
 # Correct yields if they are below the curve
+#' Title
+#'
+#' @param yield
+#'
+#' @return
+#' @export
+#'
+#' @examples
 correct_yield <- function(yield) {
   yield_name <- deparse(substitute(yield))
   suffix <- stringr::str_extract(yield_name, "est|low|upp")
@@ -101,12 +189,20 @@ correct_yield <- function(yield) {
   if (yield < yield_inf) {
     yield <- 0
   }
-  yield <- correct_negative_vals(yield)
+  yield <- biodosetools::correct_negative_vals(yield)
 
   return(yield)
 }
 
 # Function to make sure F is bounded by 0 and 1
+#' Title
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
 correct_boundary <- function(x) {
   if (x > 1) {
     return(1)
@@ -118,7 +214,18 @@ correct_boundary <- function(x) {
 }
 
 # Curve function ----
-get_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve) {
+#' Title
+#'
+#' @param est_full_doses
+#' @param protracted_g_value
+#' @param conf_int_yield
+#' @param conf_int_curve
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve) {
   # Rightmost limit of the plot
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
@@ -127,9 +234,9 @@ get_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, c
   # Plot data from curves
   curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
     dplyr::mutate(
-      yield = yield_fun(dose, protracted_g_value),
-      yield_low = yield_fun(dose, protracted_g_value) - R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value),
-      yield_upp = yield_fun(dose, protracted_g_value) + R_factor(conf_int_curve) * yield_error_fun(dose, protracted_g_value)
+      yield = biodosetools::yield_fun(dose, protracted_g_value),
+      yield_low = biodosetools::yield_fun(dose, protracted_g_value) - biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(dose, protracted_g_value),
+      yield_upp = biodosetools::yield_fun(dose, protracted_g_value) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(dose, protracted_g_value)
     )
 
   # Name of the aberration to use in the y-axis
@@ -149,7 +256,7 @@ get_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, c
     stat_function(
       data = data.frame(x = c(0, max_dose)),
       mapping = aes(x),
-      fun = function(x) yield_fun(x, protracted_g_value),
+      fun = function(x) biodosetools::yield_fun(x, protracted_g_value),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)
