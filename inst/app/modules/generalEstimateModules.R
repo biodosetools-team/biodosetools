@@ -824,12 +824,16 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       conf_int_yield_hetero <- conf_int_curve_hetero
 
       # Parse CI text for plot legend
-      conf_int_text_hetero <- paste0("(", round(100 * conf_int_curve_hetero, 0), "%",
-                                     "-" , round(100 * conf_int_yield_hetero, 0), "%", ")")
+      conf_int_text_hetero <- paste0(
+        "(", round(100 * conf_int_curve_hetero, 0), "%",
+        "-" , round(100 * conf_int_yield_hetero, 0), "%", ")"
+      )
     }
 
-    conf_int_curve <- conf_int_curve %>% biodosetools::correct_conf_int(protracted_g_value, type = "curve")
-    conf_int_yield <- conf_int_yield %>% biodosetools::correct_conf_int(protracted_g_value, type = "yield")
+    conf_int_curve <- conf_int_curve %>%
+      biodosetools::correct_conf_int(protracted_g_value, type = "curve")
+    conf_int_yield <- conf_int_yield %>%
+      biodosetools::correct_conf_int(protracted_g_value, type = "yield")
 
     # Calculate infimums of the different curves
     yield_low_inf <- biodosetools::yield_fun(0, 1) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(0, 1)
