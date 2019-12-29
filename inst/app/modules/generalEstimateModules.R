@@ -642,7 +642,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
   data <- reactive({
     # Source auxiliary dose estimation functions
-    source("calcs/estimateAuxFunctions.R", local = TRUE)
+    # source("calcs/estimateAuxFunctions.R", local = TRUE)
 
     # Calcs: get variables ----
     input$button_estimate
@@ -776,7 +776,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     if (exposure == "protracted") {
       protracted_time <- input$protracted_time
       protracted_life_time <- input$protracted_life_time
-      protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
+      protracted_g_value <- biodosetools::protracted_g_function(protracted_time, protracted_life_time)
     } else if (exposure == "protracted_high") {
       protracted_g_value <- 0
       # Used in report (dummy values)
@@ -828,27 +828,27 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
                                      "-" , round(100 * conf_int_yield_hetero, 0), "%", ")")
     }
 
-    conf_int_curve <- conf_int_curve %>% correct_conf_int(protracted_g_value, type = "curve")
-    conf_int_yield <- conf_int_yield %>% correct_conf_int(protracted_g_value, type = "yield")
+    conf_int_curve <- conf_int_curve %>% biodosetools::correct_conf_int(protracted_g_value, type = "curve")
+    conf_int_yield <- conf_int_yield %>% biodosetools::correct_conf_int(protracted_g_value, type = "yield")
 
     # Calculate infimums of the different curves
-    yield_low_inf <- yield_fun(0, 1) + R_factor(conf_int_curve) * yield_error_fun(0, 1)
-    yield_est_inf <- yield_fun(0, 1)
-    yield_upp_inf <- yield_fun(0, 1) - R_factor(conf_int_curve) * yield_error_fun(0, 1)
+    yield_low_inf <- biodosetools::yield_fun(0, 1) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(0, 1)
+    yield_est_inf <- biodosetools::yield_fun(0, 1)
+    yield_upp_inf <- biodosetools::yield_fun(0, 1) - biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(0, 1)
 
     # Calculations ----
 
     # Source dose estimation calculation functions
-    source("calcs/estimateFunctions.R", local = TRUE)
+    # source("calcs/estimateFunctions.R", local = TRUE)
 
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
-      results_whole <- estimate_whole_body(
+      results_whole <- biodosetools::estimate_whole_body(
         case_data, conf_int_yield,
         conf_int_curve, protracted_g_value
       )
     } else if (error_method == "delta") {
-      results_whole <- estimate_whole_body_delta(
+      results_whole <- biodosetools::estimate_whole_body_delta(
         case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_delta, protracted_g_value
       )
@@ -860,7 +860,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
     if (assessment == "partial-body") {
       # Calculate partial results
-      results_partial <- estimate_partial_dolphin(
+      results_partial <- biodosetools::estimate_partial_dolphin(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_dolphin, protracted_g_value
       )
@@ -871,7 +871,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
-      results_hetero <- estimate_hetero(
+      results_hetero <- biodosetools::estimate_hetero(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value
       )
@@ -909,7 +909,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
     }
 
-    gg_curve <- get_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve)
+    gg_curve <- biodosetools::get_estimated_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve)
 
     # Return list ----
 
