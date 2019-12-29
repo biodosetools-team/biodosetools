@@ -42,7 +42,7 @@ yield_fun <- function(d, G) {
 #' @examples
 R_factor <- function(conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
-  sqrt(qchisq(conf_int, df = chisq_df))
+  sqrt(stats::qchisq(conf_int, df = chisq_df))
 }
 
 #' Title
@@ -108,9 +108,9 @@ correct_conf_int <- function(conf_int, G, type, d = seq(0, 10, 0.2)) {
 #' @export
 #'
 #' @examples
-project_yield_estimate <- function(yield) {
+project_yield_estimate <- function(yield, yield_est_inf, protracted_g_value) {
   if (yield >= yield_est_inf) {
-    uniroot(function(dose) {
+    stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
@@ -127,9 +127,9 @@ project_yield_estimate <- function(yield) {
 #' @export
 #'
 #' @examples
-project_yield_lower <- function(yield, conf_int) {
+project_yield_lower <- function(yield, yield_low_inf, conf_int, protracted_g_value) {
   if (yield >= yield_low_inf) {
-    uniroot(function(dose) {
+    stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) + biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
@@ -146,9 +146,9 @@ project_yield_lower <- function(yield, conf_int) {
 #' @export
 #'
 #' @examples
-project_yield_upper <- function(yield, conf_int) {
+project_yield_upper <- function(yield, yield_upp_inf, conf_int, protracted_g_value) {
   if (yield >= yield_upp_inf) {
-    uniroot(function(dose) {
+    stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) - biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield
     }, c(1e-16, 100))$root
   } else {
@@ -251,34 +251,34 @@ get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_in
   }
 
   # Make base plot
-  gg_curve <- ggplot(curves_data) +
+  gg_curve <- ggplot2::ggplot(curves_data) +
     # Fitted curve
-    stat_function(
+    ggplot2::stat_function(
       data = data.frame(x = c(0, max_dose)),
-      mapping = aes(x),
+      mapping = ggplot2::aes(x),
       fun = function(x) biodosetools::yield_fun(x, protracted_g_value),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)
-    geom_ribbon(
+    ggplot2::geom_ribbon(
       data = curves_data,
-      aes(x = dose, ymin = yield_low, ymax = yield_upp),
+      mapping = ggplot2::aes(x = dose, ymin = yield_low, ymax = yield_upp),
       alpha = 0.25
     ) +
-    labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
-    theme_bw()
+    ggplot2::labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
+    ggplot2::theme_bw()
 
   # Add doses to plot
   gg_curve <- gg_curve +
     # Estimated whole-body doses
-    geom_point(
+    ggplot2::geom_point(
       data = est_full_doses,
-      aes(x = dose, y = yield, color = type, shape = level),
+      mapping = ggplot2::aes(x = dose, y = yield, color = type, shape = level),
       size = 2, na.rm = TRUE
     ) +
     # Assessment
-    scale_color_manual(
-      values = hcl(
+    ggplot2::scale_color_manual(
+      values = grDevices::hcl(
         h = seq(15, 375, length = 4 + 1),
         l = 65,
         c = 100
@@ -294,22 +294,22 @@ get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_in
       )
     ) +
     # Estimation level
-    scale_shape_manual(
+    ggplot2::scale_shape_manual(
       values = c("Lower" = 15, "Estimate" = 16, "Upper" = 17),
       breaks = c("Lower", "Estimate", "Upper")
     ) +
-    guides(
-      color = guide_legend(order = 1),
-      shape = guide_legend(order = 2),
-      fill = guide_legend(order = 3)
+    ggplot2::guides(
+      color = ggplot2::guide_legend(order = 1),
+      shape = ggplot2::guide_legend(order = 2),
+      fill = ggplot2::guide_legend(order = 3)
     ) +
-    labs(color = "Assessment", shape = "Estimation") +
+    ggplot2::labs(color = "Assessment", shape = "Estimation") +
     # Tweak legend
-    theme(
-      legend.title = element_text(size = 10),
-      legend.text = element_text(size = 8),
-      legend.spacing.y = unit(5, "points"),
-      legend.key.height = unit(12, "points")
+    ggplot2::theme(
+      legend.title = ggplot2::element_text(size = 10),
+      legend.text = ggplot2::element_text(size = 8),
+      legend.spacing.y = ggplot2::unit(5, "points"),
+      legend.key.height = ggplot2::unit(12, "points")
     )
 
   return(gg_curve)

@@ -14,11 +14,11 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
   # Manual log-likelihood function
   loglik_from_data <- function(data, fit_link) {
     if (fit_link == "identity") {
-      loglik <- - biodosetools::yield_fun(data[[dose_var]], 1) +
+      loglik <- -biodosetools::yield_fun(data[[dose_var]], 1) +
         log(biodosetools::yield_fun(data[[dose_var]], 1)) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     } else if (fit_link == "log") {
-      loglik <- - exp(biodosetools::yield_fun(data[[dose_var]], 1)) +
+      loglik <- -exp(biodosetools::yield_fun(data[[dose_var]], 1)) +
         biodosetools::yield_fun(data[[dose_var]], 1) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     }
@@ -46,7 +46,6 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @return
 #' @export
 estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
-
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
 
@@ -64,7 +63,7 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
   }
 
   # Calculate CI using Exact Poisson tests
-  aberr_row <-  poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
+  aberr_row <- stats::poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
 
   aberr_low <- aberr_row[1]
   aberr_upp <- aberr_row[2]
@@ -86,19 +85,20 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
   # Whole-body estimation results
   est_doses <- data.frame(
     yield = c(yield_low, yield_est, yield_upp),
-    dose  = c(dose_low, dose_est, dose_upp)
+    dose = c(dose_low, dose_est, dose_upp)
   ) %>%
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
-                       dose_var = "dose", yield_var = "yield", fit_link = "identity")
+  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
+    dose_var = "dose", yield_var = "yield", fit_link = "identity"
+  )
 
 
   # Return objects
   results_list <- list(
     est_doses = est_doses,
-    AIC       = AIC
+    AIC = AIC
   )
 
   return(results_list)
@@ -158,7 +158,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 
     # Derivatives of regression curve coefs
     deriv_lambda <- 1 / α
-    deriv_C <- - (1 / α)
+    deriv_C <- -(1 / α)
     deriv_α <- (C - lambda_est) / α^2
     deriv_β <- 0
   }
@@ -171,8 +171,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   }
 
   # Get confidence interval of lambda estimates
-  lambda_low <- lambda_est - qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
-  lambda_upp <- lambda_est + qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+  lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+  lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
   if (cov) {
     dose_est_var <-
@@ -192,8 +192,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   }
 
   # Get confidence interval of dose estimates
-  dose_low <- dose_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
-  dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+  dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+  dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
   # Correct negative values
   lambda_low <- biodosetools::correct_negative_vals(lambda_low)
@@ -205,19 +205,20 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   # Whole-body estimation results
   est_doses <- data.frame(
     yield = c(lambda_low, lambda_est, lambda_upp),
-    dose  = c(dose_low, dose_est, dose_upp)
+    dose = c(dose_low, dose_est, dose_upp)
   ) %>%
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
-                       dose_var = "dose", yield_var = "yield", fit_link = "identity")
+  AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
+    dose_var = "dose", yield_var = "yield", fit_link = "identity"
+  )
 
 
   # Return objects
   results_list <- list(
     est_doses = est_doses,
-    AIC       = AIC
+    AIC = AIC
   )
 
   return(results_list)
@@ -297,7 +298,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     )
   } else {
     # Get estimates for pi and lambda
-    lambda_est <- uniroot(function(yield) {
+    lambda_est <- stats::uniroot(function(yield) {
       yield / (1 - exp(-yield)) - aberr / (cells - cells_0)
     }, c(1e-16, 100))$root
 
@@ -333,7 +334,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 
       # Derivatives of regression curve coefs
       deriv_lambda <- 1 / α
-      deriv_C <- - (1 / α)
+      deriv_C <- -(1 / α)
       deriv_α <- (C - lambda_est) / α^2
       deriv_β <- 0
     }
@@ -355,8 +356,8 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     lambda_est_sd <- sqrt(cov_est[1, 1])
 
     # Get confidence interval of lambda estimates
-    lambda_low <- lambda_est - qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
-    lambda_upp <- lambda_est + qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+    lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
+    lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
     if (cov) {
       dose_est_var <-
@@ -376,8 +377,8 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     }
 
     # Get confidence interval of dose estimates
-    dose_low <- dose_est - qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
-    dose_upp <- dose_est + qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+    dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+    dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
 
     # Correct negative values
     lambda_low <- biodosetools::correct_negative_vals(lambda_low)
@@ -394,8 +395,9 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
       `row.names<-`(c("lower", "estimate", "upper"))
 
     # Calculate AIC as a GOF indicator
-    AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate",],
-                         dose_var = "dose", yield_var = "yield", fit_link = "identity")
+    AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
+      dose_var = "dose", yield_var = "yield", fit_link = "identity"
+    )
 
 
     # Get estimate for fraction irradiated
@@ -405,24 +407,24 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     if (fit_is_lq) {
       # x5: pi_est, x4: lambda_est, x1: C, x2: alpha, x3: beta
       formula <- paste(
-        "~ x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0,")) /
-            (1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0,")))",
+        "~ x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")) /
+            (1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
     } else {
       # x4: pi_est, x3: lambda_est, x1: C, x2: alpha
       formula <- paste(
-        "~ x4 * exp((x3 - x1) / (x2 *", d0,")) /
-            (1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0,")))",
+        "~ x4 * exp((x3 - x1) / (x2 *", d0, ")) /
+            (1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
     }
 
     # Get confidence interval of fraction irradiated
-    F_upp <- F_est + qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
-    F_low <- F_est - qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
+    F_upp <- F_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
+    F_low <- F_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
 
     # Set to zero if F < 0 and to 1 if F > 1
     F_low <- biodosetools::correct_boundary(F_low)
@@ -439,8 +441,8 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
   # Return objects
   results_list <- list(
     est_doses = est_doses,
-    est_frac  = est_frac,
-    AIC       = AIC
+    est_frac = est_frac,
+    AIC = AIC
   )
 
   return(results_list)
@@ -464,7 +466,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
   # Select translocation counts
   counts <- case_data[1, ] %>%
-    dplyr::select(contains("C")) %>%
+    dplyr::select(dplyr::contains("C")) %>%
     as.numeric()
 
   # Get fitting model variables
@@ -474,7 +476,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
   # Likelihood function
   loglik <- function(coeffs) {
-    loglik <- sum(log(coeffs[1] * dpois(y, coeffs[2]) + (1 - coeffs[1]) * dpois(y, coeffs[3])))
+    loglik <- sum(log(coeffs[1] * stats::dpois(y, coeffs[2]) + (1 - coeffs[1]) * stats::dpois(y, coeffs[3])))
 
     return(-loglik)
   }
@@ -552,13 +554,13 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
     if (fraction_coeff == "gamma") {
       gamma <- input$gamma_coeff
       sigma[4, 4] <- input$gamma_error
-    } else if (fraction_coeff == "d0"){
+    } else if (fraction_coeff == "d0") {
       gamma <- 1 / input$d0_coeff
       sigma[4, 4] <- 0
     }
 
     # Calculate Maximum Likielihood Estimation
-    MLE <- optim(
+    MLE <- stats::optim(
       par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
       fn = loglik,
       method = c("L-BFGS-B"),
@@ -625,9 +627,9 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
     # Estimated mixing proportion
     est_mixing_prop <- data.frame(
       y_estimate = c(estim[2], estim[3]),
-      y_std_err =  c(std_estim[2], std_estim[3]),
+      y_std_err = c(std_estim[2], std_estim[3]),
       f_estimate = c(estim[1], 1 - estim[1]),
-      f_std_err =  rep(std_estim[1], 2)
+      f_std_err = rep(std_estim[1], 2)
     ) %>%
       `row.names<-`(c("dose1", "dose2"))
 
@@ -662,12 +664,13 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
     # Calculate AIC as a GOF indicator
     est_doses_AIC <- data.frame(
-      dose = est_doses["estimate",] %>% as.numeric(),
-      yield = est_yields["estimate",] %>% as.numeric()
+      dose = est_doses["estimate", ] %>% as.numeric(),
+      yield = est_yields["estimate", ] %>% as.numeric()
     )
 
     AIC <- biodosetools::AIC_from_data(general_fit_coeffs, est_doses_AIC,
-                         dose_var = "dose", yield_var = "yield", fit_link = "identity")
+      dose_var = "dose", yield_var = "yield", fit_link = "identity"
+    )
 
     # WIP: This is not requiered yet
     # Gradient
@@ -699,10 +702,10 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
   # Return objects
   results_list <- list(
     est_mixing_prop = est_mixing_prop,
-    est_yields      = est_yields,
-    est_doses       = est_doses,
-    est_frac        = est_frac,
-    AIC             = AIC
+    est_yields = est_yields,
+    est_doses = est_doses,
+    est_frac = est_frac,
+    AIC = AIC
   )
 
   return(results_list)
