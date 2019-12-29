@@ -108,7 +108,10 @@ correct_conf_int <- function(conf_int, G, type, d = seq(0, 10, 0.2)) {
 #' @export
 #'
 #' @examples
-project_yield_estimate <- function(yield, yield_est_inf, protracted_g_value) {
+project_yield_estimate <- function(yield, protracted_g_value) {
+
+  yield_est_inf <- biodosetools::yield_fun(0, 1)
+
   if (yield >= yield_est_inf) {
     stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) - yield
@@ -127,7 +130,10 @@ project_yield_estimate <- function(yield, yield_est_inf, protracted_g_value) {
 #' @export
 #'
 #' @examples
-project_yield_lower <- function(yield, yield_low_inf, conf_int, protracted_g_value) {
+project_yield_lower <- function(yield, protracted_g_value, conf_int) {
+
+  yield_low_inf <- biodosetools::yield_fun(0, 1) + biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(0, 1)
+
   if (yield >= yield_low_inf) {
     stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) + biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield
@@ -146,7 +152,10 @@ project_yield_lower <- function(yield, yield_low_inf, conf_int, protracted_g_val
 #' @export
 #'
 #' @examples
-project_yield_upper <- function(yield, yield_upp_inf, conf_int, protracted_g_value) {
+project_yield_upper <- function(yield, protracted_g_value,  conf_int) {
+
+  yield_upp_inf <- biodosetools::yield_fun(0, 1) - biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(0, 1)
+
   if (yield >= yield_upp_inf) {
     stats::uniroot(function(dose) {
       biodosetools::yield_fun(dose, protracted_g_value) - biodosetools::R_factor(conf_int) * biodosetools::yield_error_fun(dose, protracted_g_value) - yield

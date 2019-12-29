@@ -835,11 +835,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     conf_int_yield <- conf_int_yield %>%
       biodosetools::correct_conf_int(protracted_g_value, type = "yield")
 
-    # Calculate infimums of the different curves
-    yield_low_inf <- biodosetools::yield_fun(0, 1) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(0, 1)
-    yield_est_inf <- biodosetools::yield_fun(0, 1)
-    yield_upp_inf <- biodosetools::yield_fun(0, 1) - biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(0, 1)
-
     # Calculations ----
 
     # Source dose estimation calculation functions

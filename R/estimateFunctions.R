@@ -78,9 +78,9 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
   yield_upp <- correct_yield(yield_upp)
 
   # Calculate projections
-  dose_est <- biodosetools::project_yield_estimate(yield_est)
-  dose_low <- biodosetools::project_yield_lower(yield_low, conf_int_curve)
-  dose_upp <- biodosetools::project_yield_upper(yield_upp, conf_int_curve)
+  dose_est <- biodosetools::project_yield_estimate(yield_est, protracted_g_value)
+  dose_low <- biodosetools::project_yield_lower(yield_low, protracted_g_value, conf_int_curve)
+  dose_upp <- biodosetools::project_yield_upper(yield_upp, protracted_g_value, conf_int_curve)
 
   # Whole-body estimation results
   est_doses <- data.frame(
