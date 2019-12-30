@@ -80,7 +80,7 @@ yield_error_fun <- function(dose, general_var_cov_mat, protracted_g_value) {
 #' @export
 #'
 #' @examples
-correct_conf_int <- function(general_var_cov_mat, conf_int, G, type, d = seq(0, 10, 0.2)) {
+correct_conf_int <- function(conf_int, general_var_cov_mat, G, type, d = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * d^2 +
     general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
