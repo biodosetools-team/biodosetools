@@ -831,9 +831,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     }
 
     conf_int_curve <- conf_int_curve %>%
-      biodosetools::correct_conf_int(protracted_g_value, type = "curve")
+      biodosetools::correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
     conf_int_yield <- conf_int_yield %>%
-      biodosetools::correct_conf_int(protracted_g_value, type = "yield")
+      biodosetools::correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
 
     # Calculations ----
 
@@ -908,7 +908,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
     }
 
-    gg_curve <- biodosetools::get_estimated_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve)
+    gg_curve <- biodosetools::get_estimated_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve, aberr_module, input)
 
     # Return list ----
 

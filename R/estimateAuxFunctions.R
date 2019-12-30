@@ -80,7 +80,7 @@ yield_error_fun <- function(d, G) {
 #' @export
 #'
 #' @examples
-correct_conf_int <- function(conf_int, G, type, d = seq(0, 10, 0.2)) {
+correct_conf_int <- function(general_var_cov_mat, conf_int, G, type, d = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * d^2 +
     general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
@@ -234,7 +234,7 @@ correct_boundary <- function(x) {
 #' @export
 #'
 #' @examples
-get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve) {
+get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve, aberr_module, input) {
   # Rightmost limit of the plot
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
@@ -243,9 +243,9 @@ get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_in
   # Plot data from curves
   curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
     dplyr::mutate(
-      yield = biodosetools::yield_fun(dose, protracted_g_value),
-      yield_low = biodosetools::yield_fun(dose, protracted_g_value) - biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(dose, protracted_g_value),
-      yield_upp = biodosetools::yield_fun(dose, protracted_g_value) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(dose, protracted_g_value)
+      yield = biodosetools::yield_fun(.data$dose, protracted_g_value),
+      yield_low = biodosetools::yield_fun(.data$dose, protracted_g_value) - biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(.data$dose, protracted_g_value),
+      yield_upp = biodosetools::yield_fun(.data$dose, protracted_g_value) + biodosetools::R_factor(conf_int_curve) * biodosetools::yield_error_fun(.data$dose, protracted_g_value)
     )
 
   # Name of the aberration to use in the y-axis
@@ -264,14 +264,14 @@ get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_in
     # Fitted curve
     ggplot2::stat_function(
       data = data.frame(x = c(0, max_dose)),
-      mapping = ggplot2::aes(x),
-      fun = function(x) biodosetools::yield_fun(x, protracted_g_value),
+      mapping = ggplot2::aes(x = .data$x),
+      fun = function(x) biodosetools::yield_fun(.data$x, protracted_g_value),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)
     ggplot2::geom_ribbon(
       data = curves_data,
-      mapping = ggplot2::aes(x = dose, ymin = yield_low, ymax = yield_upp),
+      mapping = ggplot2::aes(x = .data$dose, ymin = .data$yield_low, ymax = .data$yield_upp),
       alpha = 0.25
     ) +
     ggplot2::labs(x = "Dose (Gy)", y = paste0(aberr_name, "/cells")) +
@@ -282,7 +282,7 @@ get_estimated_dose_curve <- function(est_full_doses, protracted_g_value, conf_in
     # Estimated whole-body doses
     ggplot2::geom_point(
       data = est_full_doses,
-      mapping = ggplot2::aes(x = dose, y = yield, color = type, shape = level),
+      mapping = ggplot2::aes(x = .data$dose, y = .data$yield, color = .data$type, shape = .data$level),
       size = 2, na.rm = TRUE
     ) +
     # Assessment
