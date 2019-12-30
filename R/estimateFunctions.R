@@ -14,12 +14,12 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
   # Manual log-likelihood function
   loglik_from_data <- function(data, fit_link) {
     if (fit_link == "identity") {
-      loglik <- -biodosetools::yield_fun(data[[dose_var]], 1) +
-        log(biodosetools::yield_fun(data[[dose_var]], 1)) * data[[yield_var]] -
+      loglik <- -biodosetools::yield_fun(data[[dose_var]], general_fit_coeffs, 1) +
+        log(biodosetools::yield_fun(data[[dose_var]], general_fit_coeffs, 1)) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     } else if (fit_link == "log") {
-      loglik <- -exp(biodosetools::yield_fun(data[[dose_var]], 1)) +
-        biodosetools::yield_fun(data[[dose_var]], 1) * data[[yield_var]] -
+      loglik <- -exp(biodosetools::yield_fun(data[[dose_var]], general_fit_coeffs, 1)) +
+        biodosetools::yield_fun(data[[dose_var]], general_fit_coeffs, 1) * data[[yield_var]] -
         log(factorial(data[[yield_var]]))
     }
     return(sum(loglik))
