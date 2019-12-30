@@ -108,7 +108,7 @@ correct_conf_int <- function(general_var_cov_mat, conf_int, G, type, d = seq(0, 
 #' @export
 #'
 #' @examples
-project_yield_estimate <- function(yield, protracted_g_value) {
+project_yield_estimate <- function(yield, general_fit_coeffs, protracted_g_value) {
   yield_est_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1)
 
   if (yield >= yield_est_inf) {
@@ -129,7 +129,7 @@ project_yield_estimate <- function(yield, protracted_g_value) {
 #' @export
 #'
 #' @examples
-project_yield_lower <- function(yield, protracted_g_value, conf_int) {
+project_yield_lower <- function(yield, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) {
   yield_low_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) + biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
 
   if (yield >= yield_low_inf) {
@@ -150,7 +150,7 @@ project_yield_lower <- function(yield, protracted_g_value, conf_int) {
 #' @export
 #'
 #' @examples
-project_yield_upper <- function(yield, protracted_g_value, conf_int) {
+project_yield_upper <- function(yield, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) {
   yield_upp_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) - biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
 
   if (yield >= yield_upp_inf) {
@@ -231,8 +231,8 @@ correct_boundary <- function(x) {
 #' @export
 #'
 #' @examples
-get_estimated_dose_curve <- function(est_full_doses, protracted_g_value,
-                                     conf_int_yield, conf_int_curve,
+get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general_var_cov_mat,
+                                     protracted_g_value, conf_int_yield, conf_int_curve,
                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
                                      aberr_module, input) {
   # Rightmost limit of the plot

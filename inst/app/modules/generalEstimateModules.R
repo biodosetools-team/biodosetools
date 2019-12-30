@@ -843,8 +843,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       results_whole <- biodosetools::estimate_whole_body(
-        case_data, general_fit_coeffs, conf_int_yield,
-        conf_int_curve, protracted_g_value,
+        case_data, general_fit_coeffs, general_var_cov_mat,
+        conf_int_yield, conf_int_curve, protracted_g_value,
         aberr_module
       )
     } else if (error_method == "delta") {
@@ -912,7 +912,12 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
     }
 
-    gg_curve <- biodosetools::get_estimated_dose_curve(est_full_doses, protracted_g_value, conf_int_yield, conf_int_curve, aberr_module, input)
+    gg_curve <- biodosetools::get_estimated_dose_curve(
+      est_full_doses, general_fit_coeffs, general_var_cov_mat,
+      protracted_g_value, conf_int_yield, conf_int_curve,
+      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
+      aberr_module, input
+    )
 
     # Return list ----
 
