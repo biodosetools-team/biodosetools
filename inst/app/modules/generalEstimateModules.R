@@ -843,13 +843,15 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       results_whole <- biodosetools::estimate_whole_body(
-        case_data, conf_int_yield,
-        conf_int_curve, protracted_g_value
+        case_data, general_fit_coeffs, conf_int_yield,
+        conf_int_curve, protracted_g_value,
+        aberr_module
       )
     } else if (error_method == "delta") {
       results_whole <- biodosetools::estimate_whole_body_delta(
         case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_delta, protracted_g_value
+        conf_int_delta, protracted_g_value,
+        aberr_module
       )
     }
 
@@ -861,7 +863,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Calculate partial results
       results_partial <- biodosetools::estimate_partial_dolphin(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-        conf_int_dolphin, protracted_g_value
+        conf_int_dolphin, protracted_g_value,
+        aberr_module, input
       )
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
@@ -872,7 +875,8 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       # Calculate heterogeneous result
       results_hetero <- biodosetools::estimate_hetero(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-        conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value
+        conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value,
+        input
       )
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]

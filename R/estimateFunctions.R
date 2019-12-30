@@ -45,7 +45,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #'
 #' @return
 #' @export
-estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protracted_g_value) {
+estimate_whole_body <- function(case_data, general_fit_coeffs, conf_int_yield, conf_int_curve, protracted_g_value, aberr_module) {
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
 
@@ -117,7 +117,8 @@ estimate_whole_body <- function(case_data, conf_int_yield, conf_int_curve, protr
 #' @return
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
-                                      conf_int, protracted_g_value, cov = TRUE) {
+                                      conf_int, protracted_g_value, cov = TRUE,
+                                      aberr_module) {
   # cov: TRUE if the covariances of the regression coefficients should be considered,
   #      otherwise only the diagonal of the covariance matrix is used
 
@@ -238,7 +239,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @return
 #' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-                                     conf_int, protracted_g_value, cov = TRUE) {
+                                     conf_int, protracted_g_value, cov = TRUE,
+                                     aberr_module, input) {
   # cov: TRUE if the covariances of the regression coefficients should be considered,
   #      otherwise only the diagonal of the covariance matrix is used
 
@@ -462,7 +464,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' @return
 #' @export
 estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-                            conf_int_yield, conf_int_curve, protracted_g_value) {
+                            conf_int_yield, conf_int_curve, protracted_g_value, input) {
 
   # Select translocation counts
   counts <- case_data[1, ] %>%
