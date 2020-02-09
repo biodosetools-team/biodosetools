@@ -103,6 +103,32 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
   return(yield)
 }
 
+#' Title
+#'
+#' @param dose Dose
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param protracted_g_value
+#' @param conf_int
+#'
+#' @return
+#' @export
+#'
+#' @examples
+calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
+  # Calculate factor per type
+  type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
+
+  # Calculate yield
+  yield <- biodosetools::yield_fun(0, general_fit_coeffs, 1) +
+    type_factor *
+    biodosetools::R_factor(general_fit_coeffs, conf_int) *
+    biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
+
+  return(yield)
+}
+
 # Correct conf_int_yield if simple method is required
 #' Title
 #'
