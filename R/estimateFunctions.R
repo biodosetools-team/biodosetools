@@ -84,16 +84,32 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 
   # Calculate projections
   message("about to project yields \n")
-  dose_est <- biodosetools::project_yield_estimate(
-    yield_est, general_fit_coeffs, protracted_g_value
+  dose_est <- biodosetools::project_yield(
+    yield = yield_est,
+    type = "estimate",
+    general_fit_coeffs = general_fit_coeffs,
+    general_var_cov_mat = NULL,
+    protracted_g_value = protracted_g_value,
+    conf_int = 0
   )
+
   message("proj est yield \n")
-  dose_low <- biodosetools::project_yield_lower(
-    yield_low, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve
+  dose_low <- biodosetools::project_yield(
+    yield = yield_low,
+    type = "lower",
+    general_fit_coeffs = general_fit_coeffs,
+    general_var_cov_mat = general_var_cov_mat,
+    protracted_g_value = protracted_g_value,
+    conf_int = conf_int_curve
   )
   message("proj low yield \n")
-  dose_upp <- biodosetools::project_yield_upper(
-    yield_upp, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve
+  dose_upp <- biodosetools::project_yield(
+    yield = yield_upp,
+    type = "upper",
+    general_fit_coeffs = general_fit_coeffs,
+    general_var_cov_mat = general_var_cov_mat,
+    protracted_g_value = protracted_g_value,
+    conf_int = conf_int_curve
   )
   message("proj upp yield \n")
 
@@ -504,12 +520,26 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
 
   # Function to calculate fractions of irradiated blood
   get_fraction <- function(g, f, mu1, mu2) {
-    dose1_est <- biodosetools::project_yield_estimate(mu1, general_fit_coeffs, protracted_g_value)
+    dose1_est <- biodosetools::project_yield(
+      yield = mu1,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
 
     if (mu2 <= 0.01) {
       dose2_est <- 0
     } else {
-      dose2_est <- biodosetools::project_yield_estimate(mu2, general_fit_coeffs, protracted_g_value)
+      dose2_est <- biodosetools::project_yield(
+        yield = mu2,
+        type = "estimate",
+        general_fit_coeffs = general_fit_coeffs,
+        general_var_cov_mat = NULL,
+        protracted_g_value = protracted_g_value,
+        conf_int = 0
+      )
     }
 
     frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
@@ -655,13 +685,55 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
       `row.names<-`(c("dose1", "dose2"))
 
     # Estimated received doses
-    dose1_est <- biodosetools::project_yield_estimate(yield1_est, general_fit_coeffs, protracted_g_value)
-    dose1_low <- biodosetools::project_yield_lower(yield1_low, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
-    dose1_upp <- biodosetools::project_yield_upper(yield1_upp, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
+    dose1_est <- biodosetools::project_yield(
+      yield = yield1_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+    dose1_low <- biodosetools::project_yield(
+      yield = yield1_low,
+      type = "lower",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = general_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+    dose1_upp <- biodosetools::project_yield(
+      yield = yield1_upp,
+      type = "upper",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = general_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
 
-    dose2_est <- biodosetools::project_yield_estimate(yield2_est, general_fit_coeffs, protracted_g_value)
-    dose2_low <- biodosetools::project_yield_lower(yield2_low, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
-    dose2_upp <- biodosetools::project_yield_upper(yield2_upp, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
+    dose2_est <- biodosetools::project_yield(
+      yield = yield2_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+    dose2_low <- biodosetools::project_yield(
+      yield = yield2_low,
+      type = "lower",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = general_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+    dose2_upp <- biodosetools::project_yield(
+      yield = yield2_upp,
+      type = "upper",
+      general_fit_coeffs = general_fit_coeffs,
+      general_var_cov_mat = general_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
 
     est_doses <- data.frame(
       dose1 = c(dose1_low, dose1_est, dose1_upp),
