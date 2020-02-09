@@ -18,8 +18,9 @@ protracted_g_function <- function(time, time_0) {
 # Generalized curves ----
 #' Title
 #'
-#' @param d
-#' @param G
+#' @param dose
+#' @param general_fit_coeffs
+#' @param protracted_g_value
 #'
 #' @return
 #' @export
@@ -35,6 +36,7 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 #' Title
 #'
 #' @param conf_int
+#' @param general_fit_coeffs
 #'
 #' @return
 #' @export
@@ -47,14 +49,21 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 
 #' Title
 #'
-#' @param d
-#' @param G
+#' @param dose
+#' @param general_var_cov_mat
+#' @param protracted_g_value
 #'
 #' @return
 #' @export
 #'
 #' @examples
-yield_error_fun <- function(dose, general_var_cov_mat, protracted_g_value) {
+yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value) {
+  # Special case for yield estimate
+  if (is.null(general_var_cov_mat)) {
+    return(0)
+  }
+
+  # Calculation for lower and upper yields
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * dose^2 +
     general_var_cov_mat[["β", "β"]] * dose^4 * protracted_g_value^2 +
@@ -68,25 +77,52 @@ yield_error_fun <- function(dose, general_var_cov_mat, protracted_g_value) {
   }
 }
 
-# Correct conf_int_yield if simple method is required
 #' Title
 #'
+#' @param dose Dose
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param protracted_g_value
 #' @param conf_int
-#' @param G
-#' @param type
-#' @param d
 #'
 #' @return
 #' @export
 #'
 #' @examples
-correct_conf_int <- function(conf_int, general_var_cov_mat, G, type, d = seq(0, 10, 0.2)) {
+calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+  # Calculate factor per type
+  type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
+
+  # Calculate yield
+  yield <- biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) +
+    type_factor *
+      biodosetools::R_factor(general_fit_coeffs, conf_int) *
+      biodosetools::yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
+
+  return(yield)
+}
+
+# Correct conf_int_yield if simple method is required
+#' Title
+#'
+#' @param conf_int
+#' @param protracted_g_value
+#' @param type
+#' @param dose
+#' @param general_var_cov_mat
+#'
+#' @return
+#' @export
+#'
+#' @examples
+correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["C", "C"]] +
-    general_var_cov_mat[["α", "α"]] * d^2 +
-    general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
-    2 * general_var_cov_mat[["C", "α"]] * d +
-    2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
-    2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+    general_var_cov_mat[["α", "α"]] * dose^2 +
+    general_var_cov_mat[["β", "β"]] * dose^4 * protracted_g_value^2 +
+    2 * general_var_cov_mat[["C", "α"]] * dose +
+    2 * general_var_cov_mat[["C", "β"]] * dose^2 * protracted_g_value +
+    2 * general_var_cov_mat[["α", "β"]] * dose^3 * protracted_g_value
   if (sum(res <= 0) > 1) {
     if (type == "curve") {
       conf_int <- 0
@@ -103,6 +139,8 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, G, type, d = seq(0, 
 #' Title
 #'
 #' @param yield
+#' @param general_fit_coeffs
+#' @param protracted_g_value
 #'
 #' @return
 #' @export
@@ -124,6 +162,9 @@ project_yield_estimate <- function(yield, general_fit_coeffs, protracted_g_value
 #'
 #' @param yield
 #' @param conf_int
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param protracted_g_value
 #'
 #' @return
 #' @export
@@ -145,6 +186,9 @@ project_yield_lower <- function(yield, general_fit_coeffs, general_var_cov_mat, 
 #'
 #' @param yield
 #' @param conf_int
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param protracted_g_value
 #'
 #' @return
 #' @export
@@ -187,10 +231,22 @@ correct_negative_vals <- function(x) {
 #' @export
 #'
 #' @examples
-correct_yield <- function(yield) {
-  yield_name <- deparse(substitute(yield))
-  suffix <- stringr::str_extract(yield_name, "est|low|upp")
-  yield_inf <- get(paste("yield", suffix, "inf", sep = "_"))
+correct_yield <- function(yield, yield_inf) {
+  # TODO: fix this shit
+  # yield_name <- deparse(substitute(yield))
+  # suffix <- stringr::str_extract(yield_name, "est|low|upp")
+  # yield_inf <- get(paste("yield", suffix, "inf", sep = "_"))
+  # if (suffix == "est") {
+  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1)
+  # } else if (suffix == "low") {
+  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) +
+  #     biodosetools::R_factor(general_fit_coeffs, conf_int) *
+  #     biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
+  # } else if (suffix == "upp") {
+  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) -
+  #     biodosetools::R_factor(general_fit_coeffs, conf_int) *
+  #     biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
+  # }
 
   if (yield < yield_inf) {
     yield <- 0
@@ -226,6 +282,13 @@ correct_boundary <- function(x) {
 #' @param protracted_g_value
 #' @param conf_int_yield
 #' @param conf_int_curve
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param conf_int_text_whole
+#' @param conf_int_text_partial
+#' @param conf_int_text_hetero
+#' @param aberr_module
+#' @param input
 #'
 #' @return
 #' @export
