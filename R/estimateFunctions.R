@@ -42,6 +42,9 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param conf_int_yield
 #' @param conf_int_curve
 #' @param protracted_g_value
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param aberr_module
 #'
 #' @return
 #' @export
@@ -77,10 +80,22 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   yield_low <- correct_yield(yield_low)
   yield_upp <- correct_yield(yield_upp)
 
+  message("corrected yields \n")
+
   # Calculate projections
-  dose_est <- biodosetools::project_yield_estimate(yield_est, general_fit_coeffs, protracted_g_value)
-  dose_low <- biodosetools::project_yield_lower(yield_low, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
-  dose_upp <- biodosetools::project_yield_upper(yield_upp, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
+  message("about to project yields \n")
+  dose_est <- biodosetools::project_yield_estimate(
+    yield_est, general_fit_coeffs, protracted_g_value
+  )
+  message("proj est yield \n")
+  dose_low <- biodosetools::project_yield_lower(
+    yield_low, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve
+  )
+  message("proj low yield \n")
+  dose_upp <- biodosetools::project_yield_upper(
+    yield_upp, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve
+  )
+  message("proj upp yield \n")
 
   # Whole-body estimation results
   est_doses <- data.frame(
@@ -113,6 +128,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' @param conf_int
 #' @param protracted_g_value
 #' @param cov
+#' @param aberr_module
 #'
 #' @return
 #' @export
@@ -235,6 +251,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @param conf_int
 #' @param protracted_g_value
 #' @param cov
+#' @param aberr_module
+#' @param input
 #'
 #' @return
 #' @export
@@ -460,6 +478,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' @param conf_int_yield
 #' @param conf_int_curve
 #' @param protracted_g_value
+#' @param input
 #'
 #' @return
 #' @export
