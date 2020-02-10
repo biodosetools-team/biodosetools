@@ -641,8 +641,6 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   data <- reactive({
-    # Source auxiliary dose estimation functions
-    # source("calcs/estimateAuxFunctions.R", local = TRUE)
 
     # Calcs: get variables ----
     input$button_estimate
@@ -837,9 +835,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
     # Calculations ----
 
-    # Source dose estimation calculation functions
-    # source("calcs/estimateFunctions.R", local = TRUE)
-
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       results_whole <- biodosetools::estimate_whole_body(
@@ -849,8 +844,9 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
     } else if (error_method == "delta") {
       results_whole <- biodosetools::estimate_whole_body_delta(
+
         case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_delta, protracted_g_value,
+        conf_int_delta, protracted_g_value, cov = TRUE,
         aberr_module
       )
     }
@@ -1217,7 +1213,6 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
       localReport <- paste0("reports/", aberr_module, "-estimate-report-",
                             stringr::str_replace(input$save_report_format, '.', ''), ".Rmd")
-      cat(localReport)
 
       file.copy(localReport, tempReport, overwrite = TRUE)
 
