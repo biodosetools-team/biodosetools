@@ -96,7 +96,7 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
 
   # Calculate yield
   yield <- biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) +
-    type_factor *
+    as.numeric(type_factor) *
       biodosetools::R_factor(general_fit_coeffs, conf_int) *
       biodosetools::yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
 
