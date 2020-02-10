@@ -2,16 +2,16 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{correct_negative_vals}
 \alias{correct_negative_vals}
-\title{Title}
+\title{Correct negative values}
 \usage{
 correct_negative_vals(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{Numeric value}
 }
 \value{
-
+Numeric value corrected to zero if negative
 }
 \description{
-Title
+Correct negative values
 }

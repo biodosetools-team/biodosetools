@@ -7,7 +7,11 @@
 yield_fun(dose, general_fit_coeffs, protracted_g_value)
 }
 \arguments{
-\item{protracted_g_value}{}
+\item{dose}{Dose}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{protracted_g_value}{Protracted G(x) value}
 }
 \value{
 

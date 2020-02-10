@@ -7,7 +7,11 @@
 yield_error_fun(dose, general_var_cov_mat = NULL, protracted_g_value)
 }
 \arguments{
-\item{protracted_g_value}{}
+\item{dose}{Dose}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{protracted_g_value}{Protracted G(x) value}
 }
 \value{
 

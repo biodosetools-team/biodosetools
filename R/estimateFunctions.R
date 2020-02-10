@@ -1,13 +1,13 @@
 # AIC and logLik from data ----
-#' Title
+#' Calculate AIC (Akaike's ‘An Information Criterion’)
 #'
-#' @param general_fit_coeffs
-#' @param data
-#' @param dose_var
-#' @param yield_var
-#' @param fit_link
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param data Data (dose, yield) to calculate AIC from
+#' @param dose_var Name of the dose variable (enquoted)
+#' @param yield_var Name of the yield variable (enquoted)
+#' @param fit_link A specification for the model link function
 #'
-#' @return
+#' @return Numeric value with the corresponding AIC
 #' @export
 AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
 
@@ -38,13 +38,13 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 # Calcs: whole-body estimation
 #' Title
 #'
-#' @param case_data
-#' @param conf_int_yield
-#' @param conf_int_curve
-#' @param protracted_g_value
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param aberr_module
+#' @param case_data Case data in data frame form
+#' @param conf_int_yield Confidence interval of the yield
+#' @param conf_int_curve Confidence interval of the curve
+#' @param protracted_g_value Protracted G(x) value
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param aberr_module Aberration module Aberration module
 #'
 #' @return
 #' @export
@@ -133,21 +133,19 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 # Calcs: whole-body estimation
 #' Title
 #'
-#' @param case_data
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param conf_int
-#' @param protracted_g_value
-#' @param cov
-#' @param aberr_module
+#' @param case_data Case data in data frame form
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param conf_int Confidenve interval
+#' @param protracted_g_value Protracted G(x) value
+#' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
+#' @param aberr_module Aberration module
 #'
 #' @return
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
                                       conf_int, protracted_g_value, cov = TRUE,
                                       aberr_module) {
-  # cov: TRUE if the covariances of the regression coefficients should be considered,
-  #      otherwise only the diagonal of the covariance matrix is used
 
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
@@ -255,23 +253,21 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 # Calcs: partial dose estimation
 #' Title
 #'
-#' @param case_data
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param fraction_coeff
-#' @param conf_int
-#' @param protracted_g_value
-#' @param cov
-#' @param aberr_module
-#' @param input
+#' @param case_data Case data in data frame form
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param fraction_coeff Fraction coefficient, can be "gamma" or "d0" (to be updated)
+#' @param conf_int Confidence interval
+#' @param protracted_g_value Protracted G(x) value
+#' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
+#' @param aberr_module Aberration module
+#' @param input UI inputs (to be fixed and parametrized)
 #'
 #' @return
 #' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                      conf_int, protracted_g_value, cov = TRUE,
                                      aberr_module, input) {
-  # cov: TRUE if the covariances of the regression coefficients should be considered,
-  #      otherwise only the diagonal of the covariance matrix is used
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -482,14 +478,14 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 # Calcs: heterogeneous dose estimation
 #' Title
 #'
-#' @param case_data
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param fraction_coeff
-#' @param conf_int_yield
-#' @param conf_int_curve
-#' @param protracted_g_value
-#' @param input
+#' @param case_data Case data in data frame form
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param fraction_coeff Fraction coefficient, can be "gamma" or "d0" (to be updated)
+#' @param conf_int_yield Confidence interval of the yield
+#' @param conf_int_curve Confidence interval of the curve
+#' @param protracted_g_value Protracted G(x) value
+#' @param input UI inputs (to be fixed and parametrized)
 #'
 #' @return
 #' @export

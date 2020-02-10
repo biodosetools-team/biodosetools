@@ -15,7 +15,19 @@ estimate_whole_body_delta(
 )
 }
 \arguments{
-\item{aberr_module}{}
+\item{case_data}{Case data in data frame form}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{conf_int}{Confidenve interval}
+
+\item{protracted_g_value}{Protracted G(x) value}
+
+\item{cov}{Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used}
+
+\item{aberr_module}{Aberration module}
 }
 \value{
 

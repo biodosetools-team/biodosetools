@@ -2,16 +2,16 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{correct_boundary}
 \alias{correct_boundary}
-\title{Title}
+\title{Correct boundary of irradiated fractions to be bounded by 0 and 1}
 \usage{
 correct_boundary(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{Numeric value}
 }
 \value{
-
+Numeric value in [0, 1] range
 }
 \description{
-Title
+Correct boundary of irradiated fractions to be bounded by 0 and 1
 }

@@ -15,7 +15,19 @@ estimate_whole_body(
 )
 }
 \arguments{
-\item{aberr_module}{}
+\item{case_data}{Case data in data frame form}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{conf_int_yield}{Confidence interval of the yield}
+
+\item{conf_int_curve}{Confidence interval of the curve}
+
+\item{protracted_g_value}{Protracted G(x) value}
+
+\item{aberr_module}{Aberration module Aberration module}
 }
 \value{
 

@@ -13,7 +13,15 @@ correct_conf_int(
 )
 }
 \arguments{
-\item{general_var_cov_mat}{}
+\item{conf_int}{Confidence interval}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{protracted_g_value}{Protracted G(x) value}
+
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+
+\item{dose}{Dose}
 }
 \value{
 

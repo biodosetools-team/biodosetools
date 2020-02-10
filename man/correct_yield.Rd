@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{correct_yield}
 \alias{correct_yield}
-\title{Title}
+\title{Correct yields if they are below the curve}
 \usage{
 correct_yield(
   yield,
@@ -13,11 +13,19 @@ correct_yield(
 )
 }
 \arguments{
-\item{conf_int}{}
+\item{yield}{Yield}
+
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{conf_int}{Confidence interval}
 }
 \value{
 
 }
 \description{
-Title
+Correct yields if they are below the curve
 }

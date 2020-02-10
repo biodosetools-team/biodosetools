@@ -19,7 +19,27 @@ get_estimated_dose_curve(
 )
 }
 \arguments{
-\item{input}{}
+\item{est_full_doses}{Data frame with yields and dose estimations. It requires dose, yield, type, level columns}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{protracted_g_value}{Protracted G(x) value}
+
+\item{conf_int_yield}{Confidence interval of the yield}
+
+\item{conf_int_curve}{Confidence interval of the curve}
+
+\item{conf_int_text_whole}{Text to display confidence interval for whole-body estimation}
+
+\item{conf_int_text_partial}{Text to display confidence interval for partial-body estimation}
+
+\item{conf_int_text_hetero}{Text to display confidence interval for heterogeneous estimation}
+
+\item{aberr_module}{Aberration module}
+
+\item{input}{UI inputs (to be fixed and parametrized)}
 }
 \value{
 

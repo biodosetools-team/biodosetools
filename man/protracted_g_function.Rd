@@ -7,7 +7,9 @@
 protracted_g_function(time, time_0)
 }
 \arguments{
-\item{time_0}{}
+\item{time}{Time over which the irradiation occurred}
+
+\item{time_0}{The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours}
 }
 \value{
 

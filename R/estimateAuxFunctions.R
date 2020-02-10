@@ -2,8 +2,8 @@
 
 #' Title
 #'
-#' @param time
-#' @param time_0
+#' @param time Time over which the irradiation occurred
+#' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours
 #'
 #' @return
 #' @export
@@ -19,9 +19,9 @@ protracted_g_function <- function(time, time_0) {
 # Generalized curves ----
 #' Title
 #'
-#' @param dose
-#' @param general_fit_coeffs
-#' @param protracted_g_value
+#' @param dose Dose
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param protracted_g_value Protracted G(x) value
 #'
 #' @return
 #' @export
@@ -38,8 +38,8 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 # R factor depeding on selected CI
 #' Title
 #'
-#' @param conf_int
-#' @param general_fit_coeffs
+#' @param conf_int Confidence interval
+#' @param general_fit_coeffs Generalized fit coefficients matrix
 #'
 #' @return
 #' @export
@@ -54,9 +54,9 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 
 #' Title
 #'
-#' @param dose
-#' @param general_var_cov_mat
-#' @param protracted_g_value
+#' @param dose Dose
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param protracted_g_value Protracted G(x) value
 #'
 #' @return
 #' @export
@@ -86,10 +86,10 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #'
 #' @param dose Dose
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param protracted_g_value
-#' @param conf_int
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param protracted_g_value Protracted G(x) value
+#' @param conf_int Confidence interval
 #'
 #' @return
 #' @export
@@ -111,9 +111,9 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
 #' Title
 #'
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param conf_int
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param conf_int Confidence interval
 #'
 #' @return
 #' @export
@@ -132,11 +132,11 @@ calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, gener
 # Correct conf_int_yield if simple method is required
 #' Title
 #'
-#' @param conf_int
-#' @param protracted_g_value
-#' @param type
-#' @param dose
-#' @param general_var_cov_mat
+#' @param conf_int Confidence interval
+#' @param protracted_g_value Protracted G(x) value
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
+#' @param dose Dose
+#' @param general_var_cov_mat Generalized variance-covariance matrix
 #'
 #' @return
 #' @export
@@ -164,12 +164,12 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 
 #' Title
 #'
-#' @param yield
-#' @param type
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param protracted_g_value
-#' @param conf_int
+#' @param yield Yield to be projected
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param protracted_g_value Protracted G(x) value
+#' @param conf_int Confidence interval
 #'
 #' @return
 #' @export
@@ -192,29 +192,26 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 
 # Correction functions ----
 
-# Correct negative values
-#' Title
+#' Correct negative values
 #'
-#' @param x
+#' @param x Numeric value
 #'
-#' @return
+#' @return Numeric value corrected to zero if negative
 #' @export
-#'
-#' @examples
 correct_negative_vals <- function(x) {
   x_corrected <- ifelse(x < 0, 0, x)
 
   return(x_corrected)
 }
 
-# Correct yields if they are below the curve
-#' Title
+
+#' Correct yields if they are below the curve
 #'
-#' @param yield
-#' @param type
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param conf_int
+#' @param yield Yield
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param conf_int Confidence interval
 #'
 #' @return
 #' @export
@@ -231,15 +228,12 @@ correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
   return(yield)
 }
 
-# Function to make sure F is bounded by 0 and 1
-#' Title
+#' Correct boundary of irradiated fractions to be bounded by 0 and 1
 #'
-#' @param x
+#' @param x Numeric value
 #'
-#' @return
+#' @return Numeric value in [0, 1] range
 #' @export
-#'
-#' @examples
 correct_boundary <- function(x) {
   if (x > 1) {
     return(1)
@@ -253,17 +247,17 @@ correct_boundary <- function(x) {
 # Curve function ----
 #' Title
 #'
-#' @param est_full_doses
-#' @param protracted_g_value
-#' @param conf_int_yield
-#' @param conf_int_curve
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param conf_int_text_whole
-#' @param conf_int_text_partial
-#' @param conf_int_text_hetero
-#' @param aberr_module
-#' @param input
+#' @param est_full_doses Data frame with yields and dose estimations. It requires dose, yield, type, level columns
+#' @param protracted_g_value Protracted G(x) value
+#' @param conf_int_yield Confidence interval of the yield
+#' @param conf_int_curve Confidence interval of the curve
+#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param conf_int_text_whole Text to display confidence interval for whole-body estimation
+#' @param conf_int_text_partial Text to display confidence interval for partial-body estimation
+#' @param conf_int_text_hetero Text to display confidence interval for heterogeneous estimation
+#' @param aberr_module Aberration module
+#' @param input UI inputs (to be fixed and parametrized)
 #'
 #' @return
 #' @export

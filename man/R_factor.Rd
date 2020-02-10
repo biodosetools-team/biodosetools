@@ -7,7 +7,9 @@
 R_factor(general_fit_coeffs, conf_int = 0.95)
 }
 \arguments{
-\item{general_fit_coeffs}{}
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{conf_int}{Confidence interval}
 }
 \value{
 

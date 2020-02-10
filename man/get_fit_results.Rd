@@ -13,7 +13,7 @@ get_fit_results(
 )
 }
 \arguments{
-\item{count_data}{Count data}
+\item{count_data}{Count data in data frame form}
 
 \item{model_formula}{Model formula}
 

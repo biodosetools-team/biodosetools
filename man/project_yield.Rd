@@ -14,7 +14,17 @@ project_yield(
 )
 }
 \arguments{
-\item{conf_int}{}
+\item{yield}{Yield to be projected}
+
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+
+\item{protracted_g_value}{Protracted G(x) value}
+
+\item{conf_int}{Confidence interval}
 }
 \value{
 

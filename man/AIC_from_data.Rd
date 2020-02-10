@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateFunctions.R
 \name{AIC_from_data}
 \alias{AIC_from_data}
-\title{Title}
+\title{Calculate AIC (Akaike's ‘An Information Criterion’)}
 \usage{
 AIC_from_data(
   general_fit_coeffs,
@@ -13,11 +13,19 @@ AIC_from_data(
 )
 }
 \arguments{
-\item{fit_link}{}
+\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+
+\item{data}{Data (dose, yield) to calculate AIC from}
+
+\item{dose_var}{Name of the dose variable (enquoted)}
+
+\item{yield_var}{Name of the yield variable (enquoted)}
+
+\item{fit_link}{A specification for the model link function}
 }
 \value{
-
+Numeric value with the corresponding AIC
 }
 \description{
-Title
+Calculate AIC (Akaike's ‘An Information Criterion’)
 }

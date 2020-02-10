@@ -158,7 +158,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 
 #' Perform GLM (Generalized Linear Model) fitting
 #'
-#' @param count_data Count data
+#' @param count_data Count data in data frame form
 #' @param model_formula Model formula
 #' @param model_family Model family
 #' @param fit_link Family link
@@ -592,7 +592,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 #'
 #' Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions
 #'
-#' @param count_data Count data
+#' @param count_data Count data in data frame form
 #' @param model_formula Model formula
 #' @param model_family Model family
 #' @param fit_link Family link
