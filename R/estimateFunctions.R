@@ -108,7 +108,6 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     protracted_g_value = protracted_g_value,
     conf_int = conf_int_curve
   )
-  message("proj upp yield \n")
 
   # Whole-body estimation results
   est_doses <- data.frame(
