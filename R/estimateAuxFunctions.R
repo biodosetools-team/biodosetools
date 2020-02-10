@@ -100,10 +100,10 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
   type_factor <- switch(type, "estimate" = 0, "lower" = 1, "upper" = -1)
 
   # Calculate yield
-  yield <- biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) +
+  yield <- yield_fun(dose, general_fit_coeffs, protracted_g_value) +
     as.numeric(type_factor) *
-      biodosetools::R_factor(general_fit_coeffs, conf_int) *
-      biodosetools::yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
+      R_factor(general_fit_coeffs, conf_int) *
+      yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
 
   return(yield)
 }
@@ -226,7 +226,7 @@ correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
   if (yield < yield_inf) {
     yield <- 0
   }
-  yield <- biodosetools::correct_negative_vals(yield)
+  yield <- correct_negative_vals(yield)
 
   return(yield)
 }
@@ -303,7 +303,7 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
     ggplot2::stat_function(
       data = data.frame(x = c(0, max_dose)),
       mapping = ggplot2::aes(x = .data$x),
-      fun = function(x) biodosetools::yield_fun(.data$x, general_fit_coeffs, protracted_g_value),
+      fun = function(x) yield_fun(x, general_fit_coeffs, protracted_g_value),
       linetype = "dashed"
     ) +
     # Confidence bands (Merkle, 1983)

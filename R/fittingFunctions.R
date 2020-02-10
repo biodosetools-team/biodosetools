@@ -257,7 +257,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   fit_coeffs_vec <- stats::coef(fit_results)
 
   # Model-specific statistics
-  fit_model_statistics <- biodosetools::get_model_statistics(
+  fit_model_statistics <- get_model_statistics(
     model_data, fit_coeffs_vec, fit_results, fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     NULL, NULL, NULL, NULL
@@ -504,7 +504,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
   # Model-specific statistics
-  fit_model_statistics <- biodosetools::get_model_statistics(
+  fit_model_statistics <- get_model_statistics(
     data_aggr, fit_coeffs_vec, fit_results, fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y, mu, n, npar
@@ -603,7 +603,7 @@ get_fit_results <- function(count_data, model_formula, model_family, fit_link = 
   tryCatch(
     {
       # Perform fitting
-      fit_results_list <- biodosetools::get_fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
+      fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
 
       # Return results
       return(fit_results_list)
@@ -612,8 +612,8 @@ get_fit_results <- function(count_data, model_formula, model_family, fit_link = 
       message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
 
       # Perform fitting
-      prepared_data <- biodosetools::prepare_maxlik_count_data(count_data, model_formula, aberr_module)
-      fit_results_list <- biodosetools::get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
+      prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
+      fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link)
       fit_results_list[["fit_raw_data"]] <- count_data %>% as.matrix()
 
       # Return results
