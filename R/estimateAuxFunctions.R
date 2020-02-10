@@ -11,8 +11,9 @@
 #' @examples
 protracted_g_function <- function(time, time_0) {
   x <- time / time_0
-  g <- (2 / x^2) * (x - 1 + exp(-x))
-  return(g)
+  g_value <- (2 / x^2) * (x - 1 + exp(-x))
+
+  return(g_value)
 }
 
 # Generalized curves ----
@@ -27,9 +28,11 @@ protracted_g_function <- function(time, time_0) {
 #'
 #' @examples
 yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
-  general_fit_coeffs[[1]] +
+  yield <- general_fit_coeffs[[1]] +
     general_fit_coeffs[[2]] * dose +
     general_fit_coeffs[[3]] * dose^2 * protracted_g_value
+
+  return(yield)
 }
 
 # R factor depeding on selected CI
@@ -44,7 +47,9 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 #' @examples
 R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
-  sqrt(stats::qchisq(conf_int, df = chisq_df))
+  r_factor <- sqrt(stats::qchisq(conf_int, df = chisq_df))
+
+  return(r_factor)
 }
 
 #' Title
@@ -174,12 +179,14 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
   if (yield >= yield_inf) {
-    stats::uniroot(function(dose) {
+    projected_dose <- stats::uniroot(function(dose) {
       calculate_yield(dose, type, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) - yield
     }, c(1e-16, 100))$root
   } else {
-    0
+    projected_dose <- 0
   }
+
+  return(projected_dose)
 }
 
 
@@ -195,7 +202,9 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 #'
 #' @examples
 correct_negative_vals <- function(x) {
-  ifelse(x < 0, 0, x)
+  x_corrected <- ifelse(x < 0, 0, x)
+
+  return(x_corrected)
 }
 
 # Correct yields if they are below the curve

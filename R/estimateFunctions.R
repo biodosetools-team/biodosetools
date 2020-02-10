@@ -80,10 +80,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   yield_low <- correct_yield(yield_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
   yield_upp <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
 
-  message("corrected yields \n")
-
   # Calculate projections
-  message("about to project yields \n")
   dose_est <- biodosetools::project_yield(
     yield = yield_est,
     type = "estimate",
@@ -93,7 +90,6 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     conf_int = 0
   )
 
-  message("proj est yield \n")
   dose_low <- biodosetools::project_yield(
     yield = yield_low,
     type = "lower",
@@ -102,7 +98,6 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     protracted_g_value = protracted_g_value,
     conf_int = conf_int_curve
   )
-  message("proj low yield \n")
   dose_upp <- biodosetools::project_yield(
     yield = yield_upp,
     type = "upper",
