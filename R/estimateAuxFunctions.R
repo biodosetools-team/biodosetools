@@ -92,7 +92,7 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #' @examples
 calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   # Calculate factor per type
-  type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
+  type_factor <- switch(type, "estimate" = 0, "lower" = 1, "upper" = -1)
 
   # Calculate yield
   yield <- biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) +
