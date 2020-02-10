@@ -2,20 +2,20 @@
 % Please edit documentation in R/fittingFunctions.R
 \name{prepare_maxlik_count_data}
 \alias{prepare_maxlik_count_data}
-\title{Title}
+\title{Prepare count data for max-likelihood optimization fitting}
 \usage{
 prepare_maxlik_count_data(count_data, model_formula, aberr_module)
 }
 \arguments{
-\item{count_data}{Count data in dataframe form}
+\item{count_data}{Count data in data frame form}
 
 \item{model_formula}{Formula}
 
 \item{aberr_module}{Aberration module}
 }
 \value{
-Parsed count data
+Parsed count data (data frame)
 }
 \description{
-Title
+Prepare count data for max-likelihood optimization fitting
 }

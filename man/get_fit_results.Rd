@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingFunctions.R
 \name{get_fit_results}
 \alias{get_fit_results}
-\title{Title}
+\title{Perform fitting algorithm}
 \usage{
 get_fit_results(
   count_data,
@@ -24,8 +24,8 @@ get_fit_results(
 \item{aberr_module}{Aberration module}
 }
 \value{
-Fit results either using GLM or maxLik optimization
+List object containing fit results either using GLM or maxLik optimization
 }
 \description{
-Title
+Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions
 }

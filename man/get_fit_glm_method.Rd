@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingFunctions.R
 \name{get_fit_glm_method}
 \alias{get_fit_glm_method}
-\title{Title}
+\title{Perform GLM (Generalized Linear Model) fitting}
 \usage{
 get_fit_glm_method(
   count_data,
@@ -24,8 +24,8 @@ get_fit_glm_method(
 \item{aberr_module}{Aberration module}
 }
 \value{
-Fit using GLM
+List object containing GLM fit results
 }
 \description{
-Title
+Perform GLM (Generalized Linear Model) fitting
 }

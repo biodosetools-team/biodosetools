@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingAuxFunctions.R
 \name{get_decision_threshold}
 \alias{get_decision_threshold}
-\title{Title}
+\title{Calculate decision thresholds}
 \usage{
 get_decision_threshold(
   fit_results_list,
@@ -27,5 +27,5 @@ get_decision_threshold(
 A vector with aberr_test and dose_est
 }
 \description{
-Title
+Calculate decision thresholds
 }

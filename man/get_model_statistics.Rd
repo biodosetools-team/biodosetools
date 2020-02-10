@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingFunctions.R
 \name{get_model_statistics}
 \alias{get_model_statistics}
-\title{Title}
+\title{Calculate model statistics}
 \usage{
 get_model_statistics(
   model_data,
@@ -42,8 +42,8 @@ get_model_statistics(
 \item{npar}{number of parameters (used in constraint-maxlik-optimization)}
 }
 \value{
-Model statistics
+Model statistics data frame
 }
 \description{
-Title
+Calculate model statistics
 }

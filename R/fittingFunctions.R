@@ -1,4 +1,4 @@
-#' Title
+#' Calculate model statistics
 #'
 #' @param model_data Data of the model
 #' @param fit_coeffs_vec Vector of fitting coefficients
@@ -12,7 +12,7 @@
 #' @param n number of parameters (used in constraint-maxlik-optimization)
 #' @param npar number of parameters (used in constraint-maxlik-optimization)
 #'
-#' @return Model statistics
+#' @return Model statistics data frame
 #' @export
 get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_algorithm,
                                  response = "yield", link = "identity", type = "theory",
@@ -86,13 +86,13 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
   return(fit_model_statistics)
 }
 
-#' Title
+#' Prepare count data for max-likelihood optimization fitting
 #'
-#' @param count_data Count data in dataframe form
+#' @param count_data Count data in data frame form
 #' @param model_formula Formula
 #' @param aberr_module Aberration module
 #'
-#' @return Parsed count data
+#' @return Parsed count data (data frame)
 #' @export
 #' @importFrom rlang .data
 prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
@@ -156,7 +156,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   return(parsed_data)
 }
 
-#' Title
+#' Perform GLM (Generalized Linear Model) fitting
 #'
 #' @param count_data Count data
 #' @param model_formula Model formula
@@ -164,7 +164,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #' @param fit_link Family link
 #' @param aberr_module Aberration module
 #'
-#' @return Fit using GLM
+#' @return List object containing GLM fit results
 #' @export
 get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
 
@@ -330,14 +330,14 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   return(fit_results_list)
 }
 
-#' Title
+#' Perform max-likelihood optimization fitting
 #'
 #' @param data Count data
 #' @param model_formula Model formula
 #' @param model_family Model family
 #' @param fit_link Family link
 #'
-#' @return maxLik fit results
+#' @return List object containing maxLik fit results
 #' @export
 get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   # type can be "poisson", "quasipoisson" or "automatic"
@@ -588,7 +588,9 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   return(fit_results_list)
 }
 
-#' Title
+#' Perform fitting algorithm
+#'
+#' Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions
 #'
 #' @param count_data Count data
 #' @param model_formula Model formula
@@ -596,7 +598,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 #' @param fit_link Family link
 #' @param aberr_module Aberration module
 #'
-#' @return Fit results either using GLM or maxLik optimization
+#' @return List object containing fit results either using GLM or maxLik optimization
 #' @export
 get_fit_results <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
   # If glm produces an error, constraint ML maximization is performed

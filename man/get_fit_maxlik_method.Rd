@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingFunctions.R
 \name{get_fit_maxlik_method}
 \alias{get_fit_maxlik_method}
-\title{Title}
+\title{Perform max-likelihood optimization fitting}
 \usage{
 get_fit_maxlik_method(data, model_formula, model_family, fit_link)
 }
@@ -16,8 +16,8 @@ get_fit_maxlik_method(data, model_formula, model_family, fit_link)
 \item{fit_link}{Family link}
 }
 \value{
-maxLik fit results
+List object containing maxLik fit results
 }
 \description{
-Title
+Perform max-likelihood optimization fitting
 }

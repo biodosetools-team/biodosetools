@@ -2,7 +2,7 @@
 % Please edit documentation in R/fittingAuxFunctions.R
 \name{get_fit_dose_curve}
 \alias{get_fit_dose_curve}
-\title{Title}
+\title{Get fit dose curve}
 \usage{
 get_fit_dose_curve(fit_results_list, aberr_module, input)
 }
@@ -17,5 +17,5 @@ get_fit_dose_curve(fit_results_list, aberr_module, input)
 ggplot object
 }
 \description{
-Title
+Get fit dose curve
 }

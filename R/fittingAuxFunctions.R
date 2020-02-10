@@ -1,4 +1,4 @@
-#' Title
+#' Get fit dose curve
 #'
 #' @param fit_results_list List of fit results
 #' @param aberr_module Aberration module
@@ -108,7 +108,7 @@ get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
   return(gg_curve)
 }
 
-#' Title
+#' Calculate decision thresholds
 #'
 #' @param fit_results_list List of fit results
 #' @param cells N
