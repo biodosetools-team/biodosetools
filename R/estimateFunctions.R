@@ -76,9 +76,9 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   # TODO: possible modification IAEA§9.7.3
 
   # Correct "unrootable" yields
-  yield_est <- correct_yield(yield_est)
-  yield_low <- correct_yield(yield_low)
-  yield_upp <- correct_yield(yield_upp)
+  yield_est <- correct_yield(yield_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+  yield_low <- correct_yield(yield_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+  yield_upp <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
 
   message("corrected yields \n")
 
@@ -661,13 +661,13 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
     yield2_upp <- yield2_est + std_estim[3]
 
     # Correct "unrootable" yields
-    yield1_est <- correct_yield(yield1_est)
-    yield1_low <- correct_yield(yield1_low)
-    yield1_upp <- correct_yield(yield1_upp)
+    yield1_est <- correct_yield(yield1_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield1_low <- correct_yield(yield1_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield1_upp <- correct_yield(yield1_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
 
-    yield2_est <- correct_yield(yield2_est)
-    yield2_low <- correct_yield(yield2_low)
-    yield2_upp <- correct_yield(yield2_upp)
+    yield2_est <- correct_yield(yield2_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield2_low <- correct_yield(yield2_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield2_upp <- correct_yield(yield2_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
 
     est_yields <- data.frame(
       yield1 = c(yield1_low, yield1_est, yield1_upp),

@@ -105,11 +105,9 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
 
 #' Title
 #'
-#' @param dose Dose
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs
 #' @param general_var_cov_mat
-#' @param protracted_g_value
 #' @param conf_int
 #'
 #' @return
@@ -121,10 +119,7 @@ calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, gener
   type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
 
   # Calculate yield
-  yield <- biodosetools::yield_fun(0, general_fit_coeffs, 1) +
-    type_factor *
-    biodosetools::R_factor(general_fit_coeffs, conf_int) *
-    biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
+  yield <- calculate_yield(0, type = "estimate", general_fit_coeffs, general_var_cov_mat, 1, conf_int)
 
   return(yield)
 }
@@ -165,67 +160,22 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 #' Title
 #'
 #' @param yield
-#' @param general_fit_coeffs
-#' @param protracted_g_value
-#'
-#' @return
-#' @export
-#'
-#' @examples
-project_yield_estimate <- function(yield, general_fit_coeffs, protracted_g_value) {
-  yield_est_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1)
-
-  if (yield >= yield_est_inf) {
-    stats::uniroot(function(dose) {
-      biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) - yield
-    }, c(1e-16, 100))$root
-  } else {
-    0
-  }
-}
-
-#' Title
-#'
-#' @param yield
-#' @param conf_int
+#' @param type
 #' @param general_fit_coeffs
 #' @param general_var_cov_mat
 #' @param protracted_g_value
-#'
-#' @return
-#' @export
-#'
-#' @examples
-project_yield_lower <- function(yield, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) {
-  yield_low_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) + biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
-
-  if (yield >= yield_low_inf) {
-    stats::uniroot(function(dose) {
-      biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) + biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(dose, general_var_cov_mat, protracted_g_value) - yield
-    }, c(1e-16, 100))$root
-  } else {
-    0
-  }
-}
-
-#' Title
-#'
-#' @param yield
 #' @param conf_int
-#' @param general_fit_coeffs
-#' @param general_var_cov_mat
-#' @param protracted_g_value
 #'
 #' @return
 #' @export
 #'
 #' @examples
-project_yield_upper <- function(yield, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) {
-  yield_upp_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) - biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
+project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
-  if (yield >= yield_upp_inf) {
+  if (yield >= yield_inf) {
     stats::uniroot(function(dose) {
-      biodosetools::yield_fun(dose, general_fit_coeffs, protracted_g_value) - biodosetools::R_factor(general_fit_coeffs, conf_int) * biodosetools::yield_error_fun(dose, general_var_cov_mat, protracted_g_value) - yield
+      calculate_yield(dose, type, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) - yield
     }, c(1e-16, 100))$root
   } else {
     0
@@ -252,27 +202,17 @@ correct_negative_vals <- function(x) {
 #' Title
 #'
 #' @param yield
+#' @param type
+#' @param general_fit_coeffs
+#' @param general_var_cov_mat
+#' @param conf_int
 #'
 #' @return
 #' @export
 #'
 #' @examples
-correct_yield <- function(yield, yield_inf) {
-  # TODO: fix this shit
-  # yield_name <- deparse(substitute(yield))
-  # suffix <- stringr::str_extract(yield_name, "est|low|upp")
-  # yield_inf <- get(paste("yield", suffix, "inf", sep = "_"))
-  # if (suffix == "est") {
-  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1)
-  # } else if (suffix == "low") {
-  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) +
-  #     biodosetools::R_factor(general_fit_coeffs, conf_int) *
-  #     biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
-  # } else if (suffix == "upp") {
-  #   yield_inf <- biodosetools::yield_fun(0, general_fit_coeffs, 1) -
-  #     biodosetools::R_factor(general_fit_coeffs, conf_int) *
-  #     biodosetools::yield_error_fun(0, general_var_cov_mat, 1)
-  # }
+correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat, conf_int) {
+  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
   if (yield < yield_inf) {
     yield <- 0
@@ -332,9 +272,9 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
   # Plot data from curves
   curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
     dplyr::mutate(
-      yield = biodosetools::yield_fun(.data$dose, general_fit_coeffs, protracted_g_value),
-      yield_low = biodosetools::yield_fun(.data$dose, general_fit_coeffs, protracted_g_value) - biodosetools::R_factor(general_fit_coeffs, conf_int_curve) * biodosetools::yield_error_fun(.data$dose, general_var_cov_mat, protracted_g_value),
-      yield_upp = biodosetools::yield_fun(.data$dose, general_fit_coeffs, protracted_g_value) + biodosetools::R_factor(general_fit_coeffs, conf_int_curve) * biodosetools::yield_error_fun(.data$dose, general_var_cov_mat, protracted_g_value)
+      yield = calculate_yield(.data$dose, type = "estimate", general_fit_coeffs, NULL, protracted_g_value, 0),
+      yield_low = calculate_yield(.data$dose, type = "lower", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve),
+      yield_upp = calculate_yield(.data$dose, type = "upper", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
     )
 
   # Name of the aberration to use in the y-axis
