@@ -1,4 +1,5 @@
 # AIC and logLik from data ----
+
 #' Calculate AIC (Akaike's ‘An Information Criterion’)
 #'
 #' @param general_fit_coeffs Generalized fit coefficients matrix
@@ -35,8 +36,9 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 
 # Dose estimation functions ----
 
-# Calcs: whole-body estimation
-#' Title
+#' Whole-body dose estimation
+#'
+#' Whole-body dose estimation using Merkle's method.
 #'
 #' @param case_data Case data in data frame form
 #' @param conf_int_yield Confidence interval of the yield
@@ -46,7 +48,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param general_var_cov_mat Generalized variance-covariance matrix
 #' @param aberr_module Aberration module Aberration module
 #'
-#' @return
+#' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, aberr_module) {
   aberr <- case_data[["X"]]
@@ -130,8 +132,9 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   return(results_list)
 }
 
-# Calcs: whole-body estimation
-#' Title
+#' Whole-body dose estimation
+#'
+#' Whole-body dose estimation using Delta method.
 #'
 #' @param case_data Case data in data frame form
 #' @param general_fit_coeffs Generalized fit coefficients matrix
@@ -141,12 +144,11 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param aberr_module Aberration module
 #'
-#' @return
+#' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
                                       conf_int, protracted_g_value, cov = TRUE,
                                       aberr_module) {
-
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
@@ -250,8 +252,9 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
   return(results_list)
 }
 
-# Calcs: partial dose estimation
-#' Title
+#' Partial-body dose estimation
+#'
+#' Partial-body dose estimation using Dolphin method.
 #'
 #' @param case_data Case data in data frame form
 #' @param general_fit_coeffs Generalized fit coefficients matrix
@@ -263,7 +266,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @param aberr_module Aberration module
 #' @param input UI inputs (to be fixed and parametrized)
 #'
-#' @return
+#' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                      conf_int, protracted_g_value, cov = TRUE,
@@ -475,8 +478,9 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
   return(results_list)
 }
 
-# Calcs: heterogeneous dose estimation
-#' Title
+#' Heterogeneous dose estimation
+#'
+#' Heterogeneous dose estimation.
 #'
 #' @param case_data Case data in data frame form
 #' @param general_fit_coeffs Generalized fit coefficients matrix
@@ -487,7 +491,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' @param protracted_g_value Protracted G(x) value
 #' @param input UI inputs (to be fixed and parametrized)
 #'
-#' @return
+#' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
 estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                             conf_int_yield, conf_int_curve, protracted_g_value, input) {

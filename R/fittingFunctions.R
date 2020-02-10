@@ -7,10 +7,10 @@
 #' @param response Type of response
 #' @param link Fit link
 #' @param type Theoretical or raw glm model statistics
-#' @param Y Y response (used in constraint-maxlik-optimization)
-#' @param mu mu response (used in constraint-maxlik-optimization)
-#' @param n number of parameters (used in constraint-maxlik-optimization)
-#' @param npar number of parameters (used in constraint-maxlik-optimization)
+#' @param Y Y response (required in constraint-maxlik-optimization)
+#' @param mu mu response required in constraint-maxlik-optimization)
+#' @param n number of parameters (required in constraint-maxlik-optimization)
+#' @param npar number of parameters (required in constraint-maxlik-optimization)
 #'
 #' @return Model statistics data frame
 #' @export
@@ -590,7 +590,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
 
 #' Perform fitting algorithm
 #'
-#' Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions
+#' Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions.
 #'
 #' @param count_data Count data in data frame form
 #' @param model_formula Model formula

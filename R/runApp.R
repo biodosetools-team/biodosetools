@@ -1,9 +1,8 @@
 #' Biodose Tools
 #'
-#' Function to run Biodose Tools
+#' Function to run Biodose Tools.
 #'
 #' @export
-#'
 runApp <- function() {
   appDir <- system.file("app", package = "biodosetools")
   if (appDir == "") {

@@ -1,14 +1,12 @@
 # Protracted function ----
 
-#' Title
+#' Calculate protracted function G(x)
 #'
 #' @param time Time over which the irradiation occurred
 #' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours
 #'
-#' @return
+#' @return G(x) numeric value
 #' @export
-#'
-#' @examples
 protracted_g_function <- function(time, time_0) {
   x <- time / time_0
   g_value <- (2 / x^2) * (x - 1 + exp(-x))
@@ -17,16 +15,15 @@ protracted_g_function <- function(time, time_0) {
 }
 
 # Generalized curves ----
-#' Title
+
+#' Calculate yield
 #'
 #' @param dose Dose
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #' @param protracted_g_value Protracted G(x) value
 #'
-#' @return
+#' @return Yield
 #' @export
-#'
-#' @examples
 yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
   yield <- general_fit_coeffs[[1]] +
     general_fit_coeffs[[2]] * dose +
@@ -35,16 +32,15 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
   return(yield)
 }
 
-# R factor depeding on selected CI
-#' Title
+#' Calculate R regression confidence factor
+#'
+#' Calculate R regression confidence factor depeding on selected confidence interval and type of fit.
 #'
 #' @param conf_int Confidence interval
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #'
-#' @return
+#' @return R regression confidence factor
 #' @export
-#'
-#' @examples
 R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
   r_factor <- sqrt(stats::qchisq(conf_int, df = chisq_df))
@@ -52,16 +48,16 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
   return(r_factor)
 }
 
-#' Title
+#' Calculate yield error
+#'
+#' Calculate yield error using Merkle's method
 #'
 #' @param dose Dose
 #' @param general_var_cov_mat Generalized variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #'
-#' @return
+#' @return Yield error
 #' @export
-#'
-#' @examples
 yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value) {
   # Special case for yield estimate
   if (is.null(general_var_cov_mat)) {
@@ -82,7 +78,7 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
   }
 }
 
-#' Title
+#' Calculate yield from dose
 #'
 #' @param dose Dose
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
@@ -91,10 +87,8 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
-#' @return
+#' @return Yield
 #' @export
-#'
-#' @examples
 calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   # Calculate factor per type
   type_factor <- switch(type, "estimate" = 0, "lower" = 1, "upper" = -1)
@@ -108,17 +102,15 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
   return(yield)
 }
 
-#' Title
+#' Calculate theoretical yield infimum
 #'
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #' @param general_var_cov_mat Generalized variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
-#' @return
+#' @return Yield infimum
 #' @export
-#'
-#' @examples
 calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
   # Calculate factor per type
   type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
@@ -129,8 +121,9 @@ calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, gener
   return(yield)
 }
 
-# Correct conf_int_yield if simple method is required
-#' Title
+#' Correct yield confidence interval
+#'
+#' Correct yield confidence interval if simple method is required.
 #'
 #' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
@@ -138,10 +131,8 @@ calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, gener
 #' @param dose Dose
 #' @param general_var_cov_mat Generalized variance-covariance matrix
 #'
-#' @return
+#' @return Corrected confidence interval
 #' @export
-#'
-#' @examples
 correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["C", "C"]] +
     general_var_cov_mat[["α", "α"]] * dose^2 +
@@ -162,7 +153,7 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 
 # Projection functions ----
 
-#' Title
+#' Project yield into dose-effect fitting curve
 #'
 #' @param yield Yield to be projected
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
@@ -171,10 +162,8 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
-#' @return
+#' @return Numeric value of projected dose
 #' @export
-#'
-#' @examples
 project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
@@ -213,10 +202,8 @@ correct_negative_vals <- function(x) {
 #' @param general_var_cov_mat Generalized variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
-#' @return
+#' @return Numeric value of corrected yield
 #' @export
-#'
-#' @examples
 correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat, conf_int) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
@@ -245,7 +232,8 @@ correct_boundary <- function(x) {
 }
 
 # Curve function ----
-#' Title
+
+#' Get dose estimation curve
 #'
 #' @param est_full_doses Data frame with yields and dose estimations. It requires dose, yield, type, level columns
 #' @param protracted_g_value Protracted G(x) value
@@ -259,10 +247,8 @@ correct_boundary <- function(x) {
 #' @param aberr_module Aberration module
 #' @param input UI inputs (to be fixed and parametrized)
 #'
-#' @return
+#' @return ggplot object
 #' @export
-#'
-#' @examples
 get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general_var_cov_mat,
                                      protracted_g_value, conf_int_yield, conf_int_curve,
                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,

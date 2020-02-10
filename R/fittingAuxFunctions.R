@@ -6,7 +6,6 @@
 #'
 #' @return ggplot object
 #' @export
-#'
 get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
   # Read objects from fit results list
   count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
@@ -118,7 +117,6 @@ get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
 #'
 #' @return A vector with aberr_test and dose_est
 #' @export
-#'
 get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, aberr_module, input) {
 
   # Use measured translocation frequency fit
