@@ -4,10 +4,10 @@
 \alias{yield_fun}
 \title{Title}
 \usage{
-yield_fun(d, G)
+yield_fun(dose, general_fit_coeffs, protracted_g_value)
 }
 \arguments{
-\item{G}{}
+\item{protracted_g_value}{}
 }
 \value{
 

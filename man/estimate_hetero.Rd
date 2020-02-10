@@ -11,11 +11,12 @@ estimate_hetero(
   fraction_coeff,
   conf_int_yield,
   conf_int_curve,
-  protracted_g_value
+  protracted_g_value,
+  input
 )
 }
 \arguments{
-\item{protracted_g_value}{}
+\item{input}{}
 }
 \value{
 

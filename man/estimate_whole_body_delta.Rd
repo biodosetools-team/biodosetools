@@ -10,11 +10,12 @@ estimate_whole_body_delta(
   general_var_cov_mat,
   conf_int,
   protracted_g_value,
-  cov = TRUE
+  cov = TRUE,
+  aberr_module
 )
 }
 \arguments{
-\item{cov}{}
+\item{aberr_module}{}
 }
 \value{
 

@@ -11,11 +11,13 @@ estimate_partial_dolphin(
   fraction_coeff,
   conf_int,
   protracted_g_value,
-  cov = TRUE
+  cov = TRUE,
+  aberr_module,
+  input
 )
 }
 \arguments{
-\item{cov}{}
+\item{input}{}
 }
 \value{
 

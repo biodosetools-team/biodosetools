@@ -4,10 +4,10 @@
 \alias{R_factor}
 \title{Title}
 \usage{
-R_factor(conf_int = 0.95)
+R_factor(general_fit_coeffs, conf_int = 0.95)
 }
 \arguments{
-\item{conf_int}{}
+\item{general_fit_coeffs}{}
 }
 \value{
 

@@ -4,10 +4,10 @@
 \alias{yield_error_fun}
 \title{Title}
 \usage{
-yield_error_fun(d, G)
+yield_error_fun(dose, general_var_cov_mat = NULL, protracted_g_value)
 }
 \arguments{
-\item{G}{}
+\item{protracted_g_value}{}
 }
 \value{
 

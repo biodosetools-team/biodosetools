@@ -6,13 +6,16 @@
 \usage{
 estimate_whole_body(
   case_data,
+  general_fit_coeffs,
+  general_var_cov_mat,
   conf_int_yield,
   conf_int_curve,
-  protracted_g_value
+  protracted_g_value,
+  aberr_module
 )
 }
 \arguments{
-\item{protracted_g_value}{}
+\item{aberr_module}{}
 }
 \value{
 

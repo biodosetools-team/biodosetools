@@ -6,13 +6,20 @@
 \usage{
 get_estimated_dose_curve(
   est_full_doses,
+  general_fit_coeffs,
+  general_var_cov_mat,
   protracted_g_value,
   conf_int_yield,
-  conf_int_curve
+  conf_int_curve,
+  conf_int_text_whole,
+  conf_int_text_partial,
+  conf_int_text_hetero,
+  aberr_module,
+  input
 )
 }
 \arguments{
-\item{conf_int_curve}{}
+\item{input}{}
 }
 \value{
 

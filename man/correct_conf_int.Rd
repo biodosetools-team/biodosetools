@@ -4,10 +4,16 @@
 \alias{correct_conf_int}
 \title{Title}
 \usage{
-correct_conf_int(conf_int, G, type, d = seq(0, 10, 0.2))
+correct_conf_int(
+  conf_int,
+  general_var_cov_mat,
+  protracted_g_value,
+  type,
+  dose = seq(0, 10, 0.2)
+)
 }
 \arguments{
-\item{d}{}
+\item{general_var_cov_mat}{}
 }
 \value{
 
