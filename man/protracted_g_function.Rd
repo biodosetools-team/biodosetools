@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{protracted_g_function}
 \alias{protracted_g_function}
-\title{Title}
+\title{Calculate protracted function G(x)}
 \usage{
 protracted_g_function(time, time_0)
 }
@@ -12,8 +12,8 @@ protracted_g_function(time, time_0)
 \item{time_0}{The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours}
 }
 \value{
-
+G(x) numeric value
 }
 \description{
-Title
+Calculate protracted function G(x)
 }

@@ -24,7 +24,7 @@ correct_yield(
 \item{conf_int}{Confidence interval}
 }
 \value{
-
+Numeric value of corrected yield
 }
 \description{
 Correct yields if they are below the curve

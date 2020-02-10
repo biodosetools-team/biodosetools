@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateFunctions.R
 \name{estimate_whole_body_delta}
 \alias{estimate_whole_body_delta}
-\title{Title}
+\title{Whole-body dose estimation}
 \usage{
 estimate_whole_body_delta(
   case_data,
@@ -30,8 +30,8 @@ estimate_whole_body_delta(
 \item{aberr_module}{Aberration module}
 }
 \value{
-
+List containing estimated doses data frame and AIC
 }
 \description{
-Title
+Whole-body dose estimation using Delta method.
 }

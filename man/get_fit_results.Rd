@@ -27,5 +27,5 @@ get_fit_results(
 List object containing fit results either using GLM or maxLik optimization
 }
 \description{
-Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions
+Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{calculate_yield_infimum}
 \alias{calculate_yield_infimum}
-\title{Title}
+\title{Calculate theoretical yield infimum}
 \usage{
 calculate_yield_infimum(
   type = "estimate",
@@ -21,8 +21,8 @@ calculate_yield_infimum(
 \item{conf_int}{Confidence interval}
 }
 \value{
-
+Yield infimum
 }
 \description{
-Title
+Calculate theoretical yield infimum
 }

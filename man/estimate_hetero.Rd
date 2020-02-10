@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateFunctions.R
 \name{estimate_hetero}
 \alias{estimate_hetero}
-\title{Title}
+\title{Heterogeneous dose estimation}
 \usage{
 estimate_hetero(
   case_data,
@@ -33,8 +33,8 @@ estimate_hetero(
 \item{input}{UI inputs (to be fixed and parametrized)}
 }
 \value{
-
+List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 }
 \description{
-Title
+Heterogeneous dose estimation.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{calculate_yield}
 \alias{calculate_yield}
-\title{Title}
+\title{Calculate yield from dose}
 \usage{
 calculate_yield(
   dose,
@@ -27,8 +27,8 @@ calculate_yield(
 \item{conf_int}{Confidence interval}
 }
 \value{
-
+Yield
 }
 \description{
-Title
+Calculate yield from dose
 }

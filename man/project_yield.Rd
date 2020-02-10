@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{project_yield}
 \alias{project_yield}
-\title{Title}
+\title{Project yield into dose-effect fitting curve}
 \usage{
 project_yield(
   yield,
@@ -27,8 +27,8 @@ project_yield(
 \item{conf_int}{Confidence interval}
 }
 \value{
-
+Numeric value of projected dose
 }
 \description{
-Title
+Project yield into dose-effect fitting curve
 }

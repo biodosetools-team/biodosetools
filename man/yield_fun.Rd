@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{yield_fun}
 \alias{yield_fun}
-\title{Title}
+\title{Calculate yield}
 \usage{
 yield_fun(dose, general_fit_coeffs, protracted_g_value)
 }
@@ -14,8 +14,8 @@ yield_fun(dose, general_fit_coeffs, protracted_g_value)
 \item{protracted_g_value}{Protracted G(x) value}
 }
 \value{
-
+Yield
 }
 \description{
-Title
+Calculate yield
 }

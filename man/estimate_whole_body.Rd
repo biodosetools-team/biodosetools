@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateFunctions.R
 \name{estimate_whole_body}
 \alias{estimate_whole_body}
-\title{Title}
+\title{Whole-body dose estimation}
 \usage{
 estimate_whole_body(
   case_data,
@@ -30,8 +30,8 @@ estimate_whole_body(
 \item{aberr_module}{Aberration module Aberration module}
 }
 \value{
-
+List containing estimated doses data frame and AIC
 }
 \description{
-Title
+Whole-body dose estimation using Merkle's method.
 }

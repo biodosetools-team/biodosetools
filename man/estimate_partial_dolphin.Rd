@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateFunctions.R
 \name{estimate_partial_dolphin}
 \alias{estimate_partial_dolphin}
-\title{Title}
+\title{Partial-body dose estimation}
 \usage{
 estimate_partial_dolphin(
   case_data,
@@ -36,8 +36,8 @@ estimate_partial_dolphin(
 \item{input}{UI inputs (to be fixed and parametrized)}
 }
 \value{
-
+List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 }
 \description{
-Title
+Partial-body dose estimation using Dolphin method.
 }

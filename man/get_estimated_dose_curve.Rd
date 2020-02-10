@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{get_estimated_dose_curve}
 \alias{get_estimated_dose_curve}
-\title{Title}
+\title{Get dose estimation curve}
 \usage{
 get_estimated_dose_curve(
   est_full_doses,
@@ -42,8 +42,8 @@ get_estimated_dose_curve(
 \item{input}{UI inputs (to be fixed and parametrized)}
 }
 \value{
-
+ggplot object
 }
 \description{
-Title
+Get dose estimation curve
 }

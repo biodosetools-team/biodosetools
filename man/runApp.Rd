@@ -7,5 +7,5 @@
 runApp()
 }
 \description{
-Function to run Biodose Tools
+Function to run Biodose Tools.
 }

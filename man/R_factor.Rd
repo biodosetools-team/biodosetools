@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{R_factor}
 \alias{R_factor}
-\title{Title}
+\title{Calculate R regression confidence factor}
 \usage{
 R_factor(general_fit_coeffs, conf_int = 0.95)
 }
@@ -12,8 +12,8 @@ R_factor(general_fit_coeffs, conf_int = 0.95)
 \item{conf_int}{Confidence interval}
 }
 \value{
-
+R regression confidence factor
 }
 \description{
-Title
+Calculate R regression confidence factor depeding on selected confidence interval and type of fit.
 }

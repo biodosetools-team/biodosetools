@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{correct_conf_int}
 \alias{correct_conf_int}
-\title{Title}
+\title{Correct yield confidence interval}
 \usage{
 correct_conf_int(
   conf_int,
@@ -24,8 +24,8 @@ correct_conf_int(
 \item{dose}{Dose}
 }
 \value{
-
+Corrected confidence interval
 }
 \description{
-Title
+Correct yield confidence interval if simple method is required.
 }

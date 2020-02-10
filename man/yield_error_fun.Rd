@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAuxFunctions.R
 \name{yield_error_fun}
 \alias{yield_error_fun}
-\title{Title}
+\title{Calculate yield error}
 \usage{
 yield_error_fun(dose, general_var_cov_mat = NULL, protracted_g_value)
 }
@@ -14,8 +14,8 @@ yield_error_fun(dose, general_var_cov_mat = NULL, protracted_g_value)
 \item{protracted_g_value}{Protracted G(x) value}
 }
 \value{
-
+Yield error
 }
 \description{
-Title
+Calculate yield error using Merkle's method
 }

@@ -33,13 +33,13 @@ get_model_statistics(
 
 \item{type}{Theoretical or raw glm model statistics}
 
-\item{Y}{Y response (used in constraint-maxlik-optimization)}
+\item{Y}{Y response (required in constraint-maxlik-optimization)}
 
-\item{mu}{mu response (used in constraint-maxlik-optimization)}
+\item{mu}{mu response required in constraint-maxlik-optimization)}
 
-\item{n}{number of parameters (used in constraint-maxlik-optimization)}
+\item{n}{number of parameters (required in constraint-maxlik-optimization)}
 
-\item{npar}{number of parameters (used in constraint-maxlik-optimization)}
+\item{npar}{number of parameters (required in constraint-maxlik-optimization)}
 }
 \value{
 Model statistics data frame
