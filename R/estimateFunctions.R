@@ -46,11 +46,12 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param protracted_g_value Protracted G(x) value
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param genome_fraction Genomic fraction used in translocations, else 1
 #' @param aberr_module Aberration module Aberration module
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, aberr_module) {
+estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = NULL, aberr_module) {
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
 
@@ -62,9 +63,6 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   if (aberr_module == "translocations") {
     aberr <- aberr - case_data[["Xc"]]
     yield_est <- case_data[["Fg"]]
-    genome_fraction <- genome_fraction$genome_fraction()
-  } else {
-    genome_fraction <- 1
   }
 
   # Calculate CI using Exact Poisson tests
@@ -262,6 +260,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
+#' @param genome_fraction Genomic fraction used in translocations, else 1
 #' @param aberr_module Aberration module
 #' @param input UI inputs (to be fixed and parametrized)
 #'
@@ -269,7 +268,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                      conf_int, protracted_g_value, cov = TRUE,
-                                     aberr_module, input) {
+                                     genome_fraction, aberr_module, input) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {

@@ -12,6 +12,7 @@ estimate_partial_dolphin(
   conf_int,
   protracted_g_value,
   cov = TRUE,
+  genome_fraction,
   aberr_module,
   input
 )
@@ -30,6 +31,8 @@ estimate_partial_dolphin(
 \item{protracted_g_value}{Protracted G(x) value}
 
 \item{cov}{Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used}
+
+\item{genome_fraction}{Genomic fraction used in translocations, else 1}
 
 \item{aberr_module}{Aberration module}
 

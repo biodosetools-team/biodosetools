@@ -11,6 +11,7 @@ estimate_whole_body(
   conf_int_yield,
   conf_int_curve,
   protracted_g_value,
+  genome_fraction = NULL,
   aberr_module
 )
 }
@@ -26,6 +27,8 @@ estimate_whole_body(
 \item{conf_int_curve}{Confidence interval of the curve}
 
 \item{protracted_g_value}{Protracted G(x) value}
+
+\item{genome_fraction}{Genomic fraction used in translocations, else 1}
 
 \item{aberr_module}{Aberration module Aberration module}
 }

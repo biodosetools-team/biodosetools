@@ -835,12 +835,19 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
     # Calculations ----
 
+    # Parse genome fraction
+    if (aberr_module == "translocations") {
+      parsed_genome_fraction <- genome_fraction$genome_fraction()
+    } else {
+      parsed_genome_fraction <- 1
+    }
+
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       results_whole <- biodosetools::estimate_whole_body(
         case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_yield, conf_int_curve, protracted_g_value,
-        aberr_module
+        parsed_genome_fraction, aberr_module
       )
     } else if (error_method == "delta") {
       results_whole <- biodosetools::estimate_whole_body_delta(
@@ -860,7 +867,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       results_partial <- biodosetools::estimate_partial_dolphin(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_dolphin, protracted_g_value,
-        aberr_module, input
+        parsed_genome_fraction, aberr_module, input
       )
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
