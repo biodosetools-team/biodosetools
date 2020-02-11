@@ -11,7 +11,7 @@ estimate_whole_body(
   conf_int_yield,
   conf_int_curve,
   protracted_g_value,
-  genome_fraction = NULL,
+  genome_fraction = 1,
   aberr_module
 )
 }

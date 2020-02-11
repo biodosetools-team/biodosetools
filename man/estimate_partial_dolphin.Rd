@@ -12,7 +12,7 @@ estimate_partial_dolphin(
   conf_int,
   protracted_g_value,
   cov = TRUE,
-  genome_fraction,
+  genome_fraction = 1,
   aberr_module,
   input
 )

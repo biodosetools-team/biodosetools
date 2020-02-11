@@ -51,7 +51,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = NULL, aberr_module) {
+estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = 1, aberr_module) {
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
 
@@ -268,7 +268,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @export
 estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
                                      conf_int, protracted_g_value, cov = TRUE,
-                                     genome_fraction, aberr_module, input) {
+                                     genome_fraction = 1, aberr_module, input) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
