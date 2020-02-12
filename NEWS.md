@@ -1,4 +1,4 @@
-# Biodose Tools 3.2.0 (2020-02-10)
+# Biodose Tools 3.2.0 (2020-02-11)
 
 All calculations functions previously provided in `inst/app/calcs` have been made proper functions on the package.
 
@@ -32,6 +32,7 @@ All calculations functions previously provided in `inst/app/calcs` have been mad
 * `estimate_whole_body_delta()`.
 * `estimate_whole_body()`.
 
+
 # Biodose Tools 3.1.0 (2019-10-26)
 
 Unofficial release (didn't change version on `DESCRIPTION` file). This includes some of the changes I discussed with David in Stockholm.
@@ -44,7 +45,7 @@ Unofficial release (didn't change version on `DESCRIPTION` file). This includes 
 ## Fixes
 
 * Added additional package dependencies to `DESCRIPTION` file.
-* Following the ISO, Detection limits -> Decision thereshold.
+* Following the ISO, renamed detection limits to decision thereshold.
 
 ## Changes
 
@@ -59,18 +60,52 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 ## New functions
 
 * `runApp()` for launching Biodose Tools.
-* `pipe()`/`%>%` imported from `magrittr`.
+* `%>%` imported from `magrittr`.
 
 ## Fixes
 
 * Fixed variance calculation for count data.
 * Provide fallback method for NB2 when using constraint-maxlik-optimization.
 
+
+# Biodose Tools 2019.07.27-beta
+
+## New features
+
+* Initial implementation of micronuclei, adding support in UI and server functions.
+* Implemented negative binomial fitting calculation for micronuclei count data.
+* Initial detection limit implementation for translocations.
+* Added DOCX support for dicentrics and translocations.
+
+## New functions
+
+* New `bs4MyTabPanel()` widget to remove unnecessary padding on `tabCards`' panels.
+
+## Fixes
+
+* Fixed colwidths for detection limits.
+* Fixed unnecessary recalculation of num_cols for chromosome tables in translocations modules.
+* New subdirectory structure for help dialogues.
+* Added buttons and example tables in help dialogues.
+* Updated documentation link.
+
+## Improvements
+
+* Added `button_fit` dependency for detection limits calculation.
+* Updated fitting reports (new hot structures & dynamic widths).
+* Moved calculation functions from fitting and estimation modules to their own files in a new `calcs` directory.
+* Translocations reports are complete now.
+
+## Changes
+
+* Disable sourcing translations.R for now (until `shiny-i18n` is implemented).
+
+
 # Biodose Tools 2019.05.24-beta
 
 First public beta for laboratories and research centers.
 
-## Features
+## New features
 
 * Complete implementation of Dicentrics analysis.
 * Experimental fitting on Translocations.
@@ -78,6 +113,7 @@ First public beta for laboratories and research centers.
 # Biodose Tools 2019.04.03-alpha
 
 Version presented in second Team Meeting at Munich.
+
 
 # Biodose Tools 2018.11.29-alpha
 
