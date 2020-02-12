@@ -101,6 +101,18 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 * Disable sourcing translations.R for now (until `shiny-i18n` is implemented).
 
 
+# Biodose Tools 2019.07.17-beta
+
+
+# Biodose Tools 2019.06.25-beta
+
+
+# Biodose Tools 2019.06.15-beta
+
+
+# Biodose Tools 2019.06.04-beta
+
+
 # Biodose Tools 2019.05.24-beta
 
 First public beta for laboratories and research centers.
