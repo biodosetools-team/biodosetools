@@ -190,6 +190,9 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   model_data <- list(C = C, α = α, β = β, aberr = aberr)
   weights <- 1 / disp
 
+  # Correct biased estimates
+  weights[is.na(weights)] <- 1
+
   # Select model formula
   if (model_formula == "lin-quad") {
     fit_formula_raw <- "aberr ~ -1 + C + α + β"
