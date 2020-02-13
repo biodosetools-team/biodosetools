@@ -1,11 +1,6 @@
----
-title: 'Bug report'
-labels: bug
-assignees: aldomann
----
-
 ### Bug report/feedback
 
+- Version:
 - Assessment:
 - Module:
 
