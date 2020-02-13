@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: Shiny App To Be Used By Biological Dosimetry Laboratories
-Version: 3.2.0
+Version: 3.2.1
 Authors@R: 
     person(given = "Alfredo",
            family = "Hernández",
@@ -21,6 +21,7 @@ Imports:
     maxLik,
     mixtools,
     msm,
+    pander,
     purrr,
     rhandsontable,
     rlang,
