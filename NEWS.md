@@ -1,3 +1,9 @@
+# Biodose Tools 3.2.1 (2020-02-13)
+
+## Bug fixes
+
+* Added required `pander` package to generate DOCX reports.
+
 # Biodose Tools 3.2.0 (2020-02-11)
 
 All calculations functions previously provided in `inst/app/calcs` have been made proper functions on the package.
