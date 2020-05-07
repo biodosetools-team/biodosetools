@@ -1,17 +1,14 @@
 
-# Biodose Tools <img src="man/figures/logo.png" align="right" width="120" />
+# Biodose Tools <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
+
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
 
 <!-- badges: end -->
 
 ## Overview
-
-<p align="center">
-
-<img src="inst/app/www/home.svg" alt="drawing" style="max-width: 500px; width: 70%;"/>
-
-</p>
 
 This project in an app to be used by biological dosimetry laboratories.
 Biodose Tools is an open-source project that aims to be a tool to
