@@ -8,3 +8,6 @@
 ^deploy_shinyapp\.R$
 ^test-scripts$
 ^help_template\.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
