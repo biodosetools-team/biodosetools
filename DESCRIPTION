@@ -30,10 +30,15 @@ Imports:
     shinyBS,
     shinydashboard,
     shinyjs,
-    shinyWidgets (== 0.4.9),
+    shinyWidgets (>= 0.4.9),
     stringr,
     tidyr (>= 1.0.0),
-    xtable
+    xtable,
+    attempt,
+    DT,
+    glue,
+    golem,
+    htmltools
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
