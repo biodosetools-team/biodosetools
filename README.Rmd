@@ -12,9 +12,9 @@ knitr::opts_chunk$set(
 # Biodose Tools <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
-`r badgecreatr::badge_lifecycle("maturing")`
-`r badgecreatr::badge_cran("biodosetools")`
-
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
+[![pkgdown Workflow Status](https://github.com/biodosimetry-uab/biodosetools/workflows/pkgdown/badge.svg)](https://biodosimetry-uab.github.io/biodosetools/)
 <!-- badges: end -->
 
 ## Overview
@@ -30,14 +30,13 @@ The project is initially developed by <a href="http://www.reneb.net">RENEB</a> a
 <!-- You can install the released version of <package> from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
-<!-- install.packages("mariokart") -->
+<!-- install.packages("biodosetools") -->
 <!-- ``` -->
 
 <!-- And  -->
-The development version from [GitHub](https://github.com/) with:
+The development version can be installed from [GitHub](https://github.com/) with:
 
 ```r
-# install.packages("devtools")
 devtools::install_github("biodosimetry-uab/biodosetools")
 ```
 <!-- ## Examples -->

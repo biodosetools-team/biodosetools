@@ -5,7 +5,8 @@
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
-
+[![pkgdown Workflow
+Status](https://github.com/biodosimetry-uab/biodosetools/workflows/pkgdown/badge.svg)](https://biodosimetry-uab.github.io/biodosetools/)
 <!-- badges: end -->
 
 ## Overview
@@ -34,16 +35,16 @@ are always welcome.
 
 <!-- ``` r -->
 
-<!-- install.packages("mariokart") -->
+<!-- install.packages("biodosetools") -->
 
 <!-- ``` -->
 
 <!-- And  -->
 
-The development version from [GitHub](https://github.com/) with:
+The development version can be installed from
+[GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
 devtools::install_github("biodosimetry-uab/biodosetools")
 ```
 
