@@ -96,8 +96,8 @@ calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general
   # Calculate yield
   yield <- yield_fun(dose, general_fit_coeffs, protracted_g_value) +
     as.numeric(type_factor) *
-    R_factor(general_fit_coeffs, conf_int) *
-    yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
+      R_factor(general_fit_coeffs, conf_int) *
+      yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
 
   return(yield)
 }

@@ -115,9 +115,10 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
-                       dose_var = "dose", yield_var = "yield", fit_link = "identity"
-  )
+AIC <- AIC_from_data(
+  general_fit_coeffs, est_doses["estimate", ],
+  dose_var = "dose", yield_var = "yield", fit_link = "identity"
+)
 
 
   # Return objects
@@ -235,8 +236,9 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-  AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
-                       dose_var = "dose", yield_var = "yield", fit_link = "identity"
+  AIC <- AIC_from_data(
+    general_fit_coeffs, est_doses["estimate", ],
+    dose_var = "dose", yield_var = "yield", fit_link = "identity"
   )
 
 
@@ -423,8 +425,9 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
       `row.names<-`(c("lower", "estimate", "upper"))
 
     # Calculate AIC as a GOF indicator
-    AIC <- AIC_from_data(general_fit_coeffs, est_doses["estimate", ],
-                         dose_var = "dose", yield_var = "yield", fit_link = "identity"
+    AIC <- AIC_from_data(
+      general_fit_coeffs, est_doses["estimate", ],
+      dose_var = "dose", yield_var = "yield", fit_link = "identity"
     )
 
 
@@ -754,8 +757,9 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
       yield = est_yields["estimate", ] %>% as.numeric()
     )
 
-    AIC <- AIC_from_data(general_fit_coeffs, est_doses_AIC,
-                         dose_var = "dose", yield_var = "yield", fit_link = "identity"
+    AIC <- AIC_from_data(
+      general_fit_coeffs, est_doses_AIC,
+      dose_var = "dose", yield_var = "yield", fit_link = "identity"
     )
 
     # WIP: This is not requiered yet
