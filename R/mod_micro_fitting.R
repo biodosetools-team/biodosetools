@@ -4,7 +4,7 @@ microFittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4TabItem(
+  bs4Dash::bs4TabItem(
     tabName = label,
     h2("Micronuclei: Dose-effect fitting"),
 
@@ -17,7 +17,7 @@ microFittingUI <- function(id, label) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_count_data"),
             label = "",
             icon = icon("question"),
@@ -32,7 +32,7 @@ microFittingUI <- function(id, label) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_count_data_option"),
               label = NULL,
               choices = c(
@@ -117,7 +117,7 @@ microFittingUI <- function(id, label) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_fitting_options"),
             label = "",
             icon = icon("question"),
@@ -132,7 +132,7 @@ microFittingUI <- function(id, label) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_fitting_options_option"),
               label = NULL,
               choices = c(
@@ -299,7 +299,7 @@ microFittingUI <- function(id, label) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_fit_data_save"),
               label = "",
               icon = icon("question"),
@@ -314,7 +314,7 @@ microFittingUI <- function(id, label) {
               size = "large",
 
               # Option selection
-              radioGroupButtons(
+              shinyWidgets::radioGroupButtons(
                 inputId = ns("help_fit_data_save_option"),
                 label = NULL,
                 choices = c(

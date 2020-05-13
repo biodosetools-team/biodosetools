@@ -1,12 +1,12 @@
 # Dose Estimation Modules -------------------------------------------
 
-microEstimateUI <- function(id, label) { #, locale = i18n) {
+dicentEstimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4TabItem(
+  bs4Dash::bs4TabItem(
     tabName = label,
-    h2("Micronuclei: Dose estimation"),
+    h2("Dicentrics: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
@@ -18,7 +18,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_fit_data"),
             label = "",
             icon = icon("question"),
@@ -33,7 +33,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_fit_data_option"),
               label = NULL,
               choices = c(
@@ -113,6 +113,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               ),
               br()
             ),
+
             # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
@@ -184,7 +185,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_cases_data"),
             label = "",
             icon = icon("question"),
@@ -199,7 +200,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_cases_data_option"),
               label = NULL,
               choices = c(
@@ -238,7 +239,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "!input.load_case_data_check",
               ns = ns,
               # numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_aberrs"), "Maximum number of micronuclei per cell", value = 5)
+              numericInput(ns("num_aberrs"), "Maximum number of dicentrics per cell", value = 5)
             ),
             conditionalPanel(
               condition = "input.load_case_data_check",
@@ -283,7 +284,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_estimate_options"),
               label = "",
               icon = icon("question"),
@@ -298,7 +299,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Option selection
-              radioGroupButtons(
+              shinyWidgets::radioGroupButtons(
                 inputId = ns("help_estimate_options_option"),
                 label = NULL,
                 choices = c(
@@ -324,7 +325,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
                 withMathJax(includeMarkdown("help/estimate/dose_error.md")),
-                withMathJax(includeMarkdown("help/micro/dose_error_methods.md"))
+                withMathJax(includeMarkdown("help/dicent/dose_error_methods.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
@@ -359,8 +360,9 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               label = "Assessment",
               width = "175px",
               choices = list(
-                "Whole-body"    = "whole-body"
-                # "Partial-body"  = "partial-body",
+                "Whole-body"    = "whole-body",
+                "Partial-body"  = "partial-body",
+                "Heterogeneous" = "hetero"
               ),
               selected = "whole-body"
             )
@@ -377,8 +379,8 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               label = "Whole-body error method",
               width = "250px",
               choices = list(
-                # "Merkle's method (83%-83%)" = "merkle-83",
-                # "Merkle's method (95%-95%)" = "merkle-95",
+                "Merkle's method (83%-83%)" = "merkle-83",
+                "Merkle's method (95%-95%)" = "merkle-95",
                 "Delta method (95%)"        = "delta"
               ),
               selected = "merkle-83"
@@ -401,6 +403,26 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
                   "Dolphin (95%)" = "dolphin"
                 ),
                 selected = "dolphin"
+              )
+            )
+          ),
+
+          # Heterogeneous error method selection
+          div(
+            class = "side-widget-tall",
+            conditionalPanel(
+              condition = "input.assessment_select == 'hetero'",
+              ns = ns,
+
+              selectInput(
+                ns("error_method_hetero_select"),
+                label = "Heterogeneous error method",
+                width = "250px",
+                choices = list(
+                  "Merkle's method (83%-83%)" = "merkle-83",
+                  "Merkle's method (95%-95%)" = "merkle-95"
+                ),
+                selected = "merkle-83"
               )
             )
           ),
@@ -537,7 +559,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_fit_data_save"),
               label = "",
               icon = icon("question"),

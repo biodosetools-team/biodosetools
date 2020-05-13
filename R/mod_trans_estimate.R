@@ -1,12 +1,12 @@
 # Dose Estimation Modules -------------------------------------------
 
-dicentEstimateUI <- function(id, label) { #, locale = i18n) {
+transEstimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4TabItem(
+  bs4Dash::bs4TabItem(
     tabName = label,
-    h2("Dicentrics: Dose estimation"),
+    h2("Translocations: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
@@ -18,7 +18,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_fit_data"),
             label = "",
             icon = icon("question"),
@@ -33,7 +33,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_fit_data_option"),
               label = NULL,
               choices = c(
@@ -52,7 +52,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
               withMathJax(includeMarkdown("help/estimate/fit_data_load.md"))
-            )
+            ),
+            withMathJax(includeMarkdown("help/trans/fit_data_estimate.md"))
           )
         ),
 
@@ -82,11 +83,41 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   selected = "lin-quad"
                 )
               ),
+
               div(class = "widget-sep", br()),
               actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
               br(),
+              selectInput(
+                ns("frequency_select"),
+                label = "Translocation frequency",
+                choices = list(
+                  "Measured by FISH" = "measured_freq",
+                  "Full genome"      = "full_gen_freq"
+                ),
+                selected = "measured_freq"
+              )
+            ),
+
+            conditionalPanel(
+              condition = "!input.load_fit_data_check & input.frequency_select == 'measured_freq'",
+              ns = ns,
+
+              numericInput(
+                ns("fit_genome_fraction"),
+                "Genomic conversion factor",
+                value = NA,
+                min = 0,
+                max = 1,
+                step = 0.001
+              )
+            ),
+
+            conditionalPanel(
+              condition = "!input.load_fit_data_check",
+              ns = ns,
+
               widgetLabel("Coefficients"),
               div(
                 class = "hot-improved",
@@ -141,7 +172,12 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          h6("Coefficients"),
+          br(),
+          h6("Translocation frequency"),
+          uiOutput(ns("fit_trans_frequency_message")),
+
+          br(),
+          h6("Full genome coefficients"),
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_coeffs"))
@@ -164,7 +200,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_cor_mat"))
-            ),
+          ),
 
           br(),
           h6("Variance-covariance matrix"),
@@ -177,6 +213,157 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
+      # Card: Stains color options ----
+      bs4MyCard(
+        width = 6,
+        title = "Stains color options",
+        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+        topButton = div(
+          # Help button
+          shinyBS::bsButton(
+            ns("help_colors"),
+            label = "",
+            icon = icon("question"),
+            style = "default", size = "default"
+          ),
+
+          # Help modal
+          bs4MyModal(
+            id = ns("help_colors_dialog"),
+            title = "Help: Stain color data input",
+            trigger = ns("help_colors"),
+            size = "large",
+
+            withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("help_chromosome_hot"))
+            ),
+            withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
+
+          )
+        ),
+
+        fluidRow(
+          column(
+            width = 12,
+
+            fluidRow(
+              innerColumn(
+                width = 6,
+
+                awesomeRadio(
+                  inputId = ns("trans_sex"),
+                  status = "warning",
+                  label = "Sex",
+                  choices = c(
+                    "Male"   = "male",
+                    "Female" = "female"
+                  ),
+                  selected = "male"
+                ),
+
+                selectizeInput(
+                  inputId = ns("trans_chromosome_select"),
+                  label = "Chromosomes",
+                  choices = c( 1:21, "X", "Y"),
+                  options = list(
+                    placeholder = 'Select stained chromosomes'
+                  ),
+                  multiple = TRUE
+                )
+              ),
+
+              innerColumn(
+                width = 6,
+
+                widgetLabel("Stain color scheme"),
+                mySwitchInput(
+                  inputId = ns("trans_m_fish_scheme"),
+                  size = "mini",
+                  onStatus = "options",
+                  sideLabel = "Use M-Fish",
+                  value = FALSE
+                ),
+
+                conditionalPanel(
+                  condition = "!input.trans_m_fish_scheme",
+                  ns = ns,
+                  selectizeInput(
+                    inputId = ns("trans_color_select"),
+                    label = "Stain colors",
+                    choices = c(
+                      "Red",
+                      "Green",
+                      "Yellow",
+                      "Orange",
+                      "Purple",
+                      "Magenta",
+                      "Cyan"
+                    ),
+                    options = list(
+                      placeholder = 'Select observed colors'#,
+                      # maxItems = 5
+                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                    ),
+                    multiple = TRUE
+                  )
+                )
+              )
+            ),
+
+            br(),
+            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+          )
+        )
+      ),
+
+      column(
+        width = 6,
+
+        # Card: Chromosome-color table ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Chromosome data",
+          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(outputId = ns("chromosome_table"))
+              )
+            ),
+            div(
+              style = "padding-left: 7.5px; padding-top: 23px;",
+              actionButton(ns("button_calc_genome_fraction"), class = "inputs-button", "Calculate fraction")
+            )
+          )
+        ),
+
+        # Card: Conversion factor to full genome ----
+        bs4MyCard(
+          width = 12,
+          noPadding = TRUE,
+          title = "Genomic conversion factor",
+          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          fluidRow(
+            column(
+              width = 12,
+
+              uiOutput(ns("genome_fraction"))
+
+            )
+          )
+        )
+
+      )
+    ),
+
+    fluidRow(
       # Card: Data input options ----
       bs4MyCard(
         width = 5,
@@ -185,7 +372,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_cases_data"),
             label = "",
             icon = icon("question"),
@@ -200,31 +387,46 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_cases_data_option"),
               label = NULL,
               choices = c(
                 "Manual input" = "manual",
-                "Load data"    = "load"
+                "Load data"    = "load",
+                "Confounders"  = "confounders"
               )
             ),
             # Contents
             conditionalPanel(
               condition = "input.help_cases_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/cases_data_input.md"))
+              withMathJax(includeMarkdown("help/trans/cases_data_input.md"))
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/cases_data_load.md"))
+              withMathJax(includeMarkdown("help/trans/cases_data_load.md"))
+            ),
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'confounders'",
+              ns = ns,
+              withMathJax(includeMarkdown("help/trans/cases_data_confounders.md"))
             )
+
           )
         ),
 
         fluidRow(
           column(
             width = 12,
+
+            # Name of translocations
+            textInput(
+              inputId = ns("trans_name"),
+              label = "Name of translocations",
+              placeholder = "Input type of translocations"
+            ),
+
             # Load data from file
             mySwitchInput(
               inputId = ns("load_case_data_check"),
@@ -239,24 +441,49 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "!input.load_case_data_check",
               ns = ns,
               # numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_aberrs"), "Maximum number of dicentrics per cell", value = 5)
+              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
             ),
             conditionalPanel(
               condition = "input.load_case_data_check",
               ns = ns,
               fileInput(ns("load_case_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
             ),
+
+            # Confounders selection
+            widgetLabel("Confounders"),
+            mySwitchInput(
+              inputId = ns("trans_confounders"),
+              size = "mini",
+              onStatus = "options",
+              sideLabel = "Use confounders",
+              value = FALSE
+            ),
+            conditionalPanel(
+              condition = "input.trans_confounders",
+              ns = ns,
+              selectInput(
+                inputId = ns("trans_confounders_type"),
+                label = NULL,
+                choices = c(
+                  "Using Sigurdson" = "sigurdson",
+                  "Using own data" = "manual"
+                ),
+                selected = "sigurdson"
+              )
+            ),
+
             # Case description
             textAreaInput(
               inputId = ns("case_description"),
               label = "Case description",
               placeholder = "Short summary of the case"),
+
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           )
         )
       ),
-      # Card: hot Cases input ----
+      # Card: hot Cases & confounders input ----
       column(
         width = 7,
         bs4MyCard(
@@ -265,7 +492,104 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           title = "Data input",
           status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          # Cases table
+          # Confounders ----
+          conditionalPanel(
+            condition = "input.trans_confounders & input.trans_confounders_type == 'sigurdson'",
+            ns = ns,
+            div(
+              class = "side-widget",
+              style = "padding-right: 10px;",
+
+              numericInput(
+                ns("trans_confounder_age"),
+                width = 75,
+                "Age",
+                value = 25,
+                min = 0,
+                step = 1
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "max-width: 140px; margin-right: -40px;",
+              widgetLabel("Sex", 14),
+              mySwitchInput(
+                ns("trans_confounder_sex"),
+                onStatus = "inputs",
+                value = FALSE
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "max-width: 140px; margin-right: -40px;",
+              widgetLabel("Smoker", 14),
+              switchInput(
+                ns("trans_confounder_smoke"),
+                onStatus = "inputs",
+                value = FALSE
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "padding-right: 10px;",
+              selectInput(
+                ns("trans_confounder_ethnicity"),
+                label = "Ethnicity",
+                width = "150px",
+                choices = list(
+                  "Ethnicities" = c(
+                    "White"  = "white",
+                    "Asian"  = "asian",
+                    "Black"  = "black",
+                    "Others" = "other"
+                  ),
+                  "None" = c(
+                    "Not specified" = "none"
+                  )
+                ),
+                selected = "none"
+              )
+            ),
+
+            div(
+              class = "side-widget",
+              style = "padding-right: 10px;",
+              selectInput(
+                ns("trans_confounder_region"),
+                label = "Lab region",
+                width = "180px",
+                choices = list(
+                  "Regions" = c(
+                    "North America"  = "n-america",
+                    "Western Europe" = "w-europe",
+                    "Central Europe" = "c-europe",
+                    "Eastern Europe" = "e-europe",
+                    "Asia"           = "asia"
+                  ),
+                  "None" = c(
+                    "Not specified"  = "none"
+                  )
+                ),
+                selected = "none"
+              )
+            )
+          ),
+
+          conditionalPanel(
+            condition = "input.trans_confounders & input.trans_confounders_type == 'manual'",
+            ns = ns,
+            numericInput(
+              ns("trans_expected_aberr_value"),
+              label = "Translocation frequency per cell",
+              value = 0.00339,
+              step = 0.00001
+            )
+          ),
+
+          # Cases table ----
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("case_data_hot"))
@@ -284,7 +608,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_estimate_options"),
               label = "",
               icon = icon("question"),
@@ -299,7 +623,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Option selection
-              radioGroupButtons(
+              shinyWidgets::radioGroupButtons(
                 inputId = ns("help_estimate_options_option"),
                 label = NULL,
                 choices = c(
@@ -325,7 +649,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
                 withMathJax(includeMarkdown("help/estimate/dose_error.md")),
-                withMathJax(includeMarkdown("help/dicent/dose_error_methods.md"))
+                withMathJax(includeMarkdown("help/trans/dose_error_methods.md"))
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
@@ -344,8 +668,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               width = "175px",
               choices = list(
                 "Acute"      = "acute",
-                "Protracted" = "protracted",
-                "Highly protracted" = "protracted_high"
+                "Protracted" = "protracted"
               ),
               selected = "acute"
             )
@@ -361,13 +684,11 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               width = "175px",
               choices = list(
                 "Whole-body"    = "whole-body",
-                "Partial-body"  = "partial-body",
-                "Heterogeneous" = "hetero"
+                "Partial-body"  = "partial-body"
               ),
               selected = "whole-body"
             )
           ),
-
           br(),
           br(),
 
@@ -403,26 +724,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   "Dolphin (95%)" = "dolphin"
                 ),
                 selected = "dolphin"
-              )
-            )
-          ),
-
-          # Heterogeneous error method selection
-          div(
-            class = "side-widget-tall",
-            conditionalPanel(
-              condition = "input.assessment_select == 'hetero'",
-              ns = ns,
-
-              selectInput(
-                ns("error_method_hetero_select"),
-                label = "Heterogeneous error method",
-                width = "250px",
-                choices = list(
-                  "Merkle's method (83%-83%)" = "merkle-83",
-                  "Merkle's method (95%-95%)" = "merkle-95"
-                ),
-                selected = "merkle-83"
               )
             )
           ),
@@ -559,7 +860,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_fit_data_save"),
               label = "",
               icon = icon("question"),

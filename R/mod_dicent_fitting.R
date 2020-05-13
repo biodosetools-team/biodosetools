@@ -1,163 +1,12 @@
 # Fitting Modules ---------------------------------
 
-transFittingUI <- function(id, label) {
+dicentFittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4TabItem(
+  bs4Dash::bs4TabItem(
     tabName = label,
-    h2("Translocations: Dose-effect fitting"),
-
-    fluidRow(
-      # Card: Stains color options ----
-      bs4MyCard(
-        width = 6,
-        title = "Stains color options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-        topButton = div(
-          # Help button
-          bsButton(
-            ns("help_colors"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_colors_dialog"),
-            title = "Help: Stain color data input",
-            trigger = ns("help_colors"),
-            size = "large",
-
-            withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
-            div(
-              class = "hot-improved",
-              rHandsontableOutput(ns("help_chromosome_hot"))
-            ),
-            withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
-
-          )
-        ),
-
-        fluidRow(
-          column(
-            width = 12,
-
-            fluidRow(
-              innerColumn(
-                width = 6,
-
-                awesomeRadio(
-                  inputId = ns("trans_sex"),
-                  status = "warning",
-                  label = "Sex",
-                  choices = c(
-                    "Male"   = "male",
-                    "Female" = "female"
-                  ),
-                  selected = "male"
-                ),
-
-                selectizeInput(
-                  inputId = ns("trans_chromosome_select"),
-                  label = "Chromosomes",
-                  choices = c( 1:21, "X", "Y"),
-                  options = list(
-                    placeholder = 'Select stained chromosomes'
-                  ),
-                  multiple = TRUE
-                )
-              ),
-
-              innerColumn(
-                width = 6,
-
-                widgetLabel("Stain color scheme"),
-                mySwitchInput(
-                  inputId = ns("trans_m_fish_scheme"),
-                  size = "mini",
-                  onStatus = "options",
-                  sideLabel = "Use M-Fish",
-                  value = FALSE
-                ),
-
-                conditionalPanel(
-                  condition = "!input.trans_m_fish_scheme",
-                  ns = ns,
-                  selectizeInput(
-                    inputId = ns("trans_color_select"),
-                    label = "Stain colors",
-                    choices = c(
-                      "Red",
-                      "Green",
-                      "Yellow",
-                      "Orange",
-                      "Purple",
-                      "Magenta",
-                      "Cyan"
-                    ),
-                    options = list(
-                      placeholder = 'Select observed colors'#,
-                      # maxItems = 5
-                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
-                    ),
-                    multiple = TRUE
-                  )
-                )
-              )
-            ),
-
-            br(),
-            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
-          )
-        )
-      ),
-
-      column(
-        width = 6,
-
-        # Card: Chromosome-color table ----
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Chromosome data",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          fluidRow(
-            column(
-              width = 12,
-
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(outputId = ns("chromosome_table"))
-              )
-            ),
-            div(
-              style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(ns("button_calc_genome_fraction"), class = "inputs-button", "Calculate fraction")
-            )
-          )
-        ),
-
-        # Card: Conversion factor to full genome ----
-        bs4MyCard(
-          width = 12,
-          noPadding = TRUE,
-          title = "Genomic conversion factor",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-          fluidRow(
-            column(
-              width = 12,
-
-              uiOutput(ns("genome_fraction"))
-
-            )
-          )
-        )
-
-      )
-    ),
+    h2("Dicentrics: Dose-effect fitting"),
 
     fluidRow(
       # Card: Data input options ----
@@ -168,7 +17,7 @@ transFittingUI <- function(id, label) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_count_data"),
             label = "",
             icon = icon("question"),
@@ -183,7 +32,7 @@ transFittingUI <- function(id, label) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_count_data_option"),
               label = NULL,
               choices = c(
@@ -214,14 +63,6 @@ transFittingUI <- function(id, label) {
         fluidRow(
           column(
             width = 12,
-
-            # Name of translocations
-            textInput(
-              inputId = ns("trans_name"),
-              label = "Name of translocations",
-              placeholder = "Input type of translocations"
-            ),
-
             # Load file checkbox
             mySwitchInput(
               inputId = ns("load_count_data_check"),
@@ -237,7 +78,7 @@ transFittingUI <- function(id, label) {
               size = "mini",
               onStatus = "options",
               width = "100%",
-              sideLabel = "Only provide total number of translocations",
+              sideLabel = "Only provide total number of dicentrics",
               value = FALSE
             ),
 
@@ -250,7 +91,7 @@ transFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_count_data_check & !input.use_aggr_count_data_check",
               ns = ns,
-              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
+              numericInput(ns("num_aberrs"), "Maximum number of dicentrics per cell", value = 5)
             ),
             # Load from file ----
             conditionalPanel(
@@ -276,7 +117,7 @@ transFittingUI <- function(id, label) {
 
         topButton = div(
           # Help button
-          bsButton(
+          shinyBS::bsButton(
             ns("help_fitting_options"),
             label = "",
             icon = icon("question"),
@@ -291,7 +132,7 @@ transFittingUI <- function(id, label) {
             size = "large",
 
             # Option selection
-            radioGroupButtons(
+            shinyWidgets::radioGroupButtons(
               inputId = ns("help_fitting_options_option"),
               label = NULL,
               choices = c(
@@ -314,7 +155,7 @@ transFittingUI <- function(id, label) {
             # conditionalPanel(
             #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
             #   ns = ns,
-            #   withMathJax(includeMarkdown("help/trans/fitting_options_decision_thresholds.md"))
+            #   withMathJax(includeMarkdown("help/fitting/fitting_options_decision_thresholds.md"))
             # )
           )
         ),
@@ -379,23 +220,8 @@ transFittingUI <- function(id, label) {
             selected = ".csv"
           )
         ),
-        div(style = "height: 10px;", br()),
-        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting"),
-        div(
-          class = "side-widget-tall",
-          # Translocation frequency
-          selectInput(
-            ns("frequency_select"),
-            # label = "Translocation frequency",
-            label = NULL,
-            width = "180px",
-            choices = list(
-              "Measured by FISH" = "measured_freq",
-              "Full genome"      = "full_gen_freq"
-            ),
-            selected = "measured_freq"
-          )
-        )
+        div(class = "widget-sep", br()),
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
       )
     ),
 
@@ -472,7 +298,7 @@ transFittingUI <- function(id, label) {
 
           topButton = div(
             # Help button
-            bsButton(
+            shinyBS::bsButton(
               ns("help_fit_data_save"),
               label = "",
               icon = icon("question"),
@@ -487,7 +313,7 @@ transFittingUI <- function(id, label) {
               size = "large",
 
               # Option selection
-              radioGroupButtons(
+              shinyWidgets::radioGroupButtons(
                 inputId = ns("help_fit_data_save_option"),
                 label = NULL,
                 choices = c(
@@ -534,6 +360,7 @@ transFittingUI <- function(id, label) {
               selected = ".html"
             )
           )
+
         )
       ),
       column(
