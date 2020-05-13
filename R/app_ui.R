@@ -16,7 +16,7 @@ app_ui <- function(request) {
 
   # Random stuff ----
 
-  app_version <- "3.2.0"
+  app_version <- utils::packageVersion(pkg = "biodosetools")
 
   # Custom theme ---------------------------------------------
 
@@ -339,7 +339,10 @@ app_ui <- function(request) {
       trigger = "contributors",
       size = "large",
 
-      includeMarkdown("www/contributors_app.md")
+      shiny::includeMarkdown(
+        # "www/contributors_app.md"
+        system.file("app/www/contributors_app.md", package = "biodosetools")
+      )
     )
   )
 
