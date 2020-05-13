@@ -46,14 +46,14 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_fit_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/fit_data_input.md"))
+              include_help("help/estimate/fit_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/estimate/fit_data_load.md"))
+              include_help("help/estimate/fit_data_load.md")
             ),
-            withMathJax(includeMarkdown("help/trans/fit_data_estimate.md"))
+            include_help("help/trans/fit_data_estimate.md")
           )
         ),
 
@@ -235,12 +235,12 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             trigger = ns("help_colors"),
             size = "large",
 
-            withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
+            include_help("help/trans/colors_data_input.md"),
             div(
               class = "hot-improved",
               rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
             ),
-            withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
+            include_help("help/trans/colors_data_input_b.md")
 
           )
         ),
@@ -400,17 +400,17 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_cases_data_option == 'manual'",
               ns = ns,
-              withMathJax(includeMarkdown("help/trans/cases_data_input.md"))
+              include_help("help/trans/cases_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
-              withMathJax(includeMarkdown("help/trans/cases_data_load.md"))
+              include_help("help/trans/cases_data_load.md")
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'confounders'",
               ns = ns,
-              withMathJax(includeMarkdown("help/trans/cases_data_confounders.md"))
+              include_help("help/trans/cases_data_confounders.md")
             )
 
           )
@@ -638,23 +638,23 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'exposure'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/estimate/dose_exposure.md"))
+                include_help("help/estimate/dose_exposure.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'assess'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/estimate/dose_assessment.md"))
+                include_help("help/estimate/dose_assessment.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/estimate/dose_error.md")),
-                withMathJax(includeMarkdown("help/trans/dose_error_methods.md"))
+                include_help("help/estimate/dose_error.md"),
+                include_help("help/trans/dose_error_methods.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
                 ns = ns,
-                withMathJax(includeMarkdown("help/estimate/fraction_coeff_select.md"))
+                include_help("help/estimate/fraction_coeff_select.md")
               )
             )
           ),
@@ -875,7 +875,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Contents
-              withMathJax(includeMarkdown("help/save/estimate_data_save_report.md"))
+              include_help("help/save/estimate_data_save_report.md")
             )
           ),
 
