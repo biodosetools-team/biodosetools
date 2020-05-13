@@ -7,11 +7,10 @@
 #' @noRd
 #'
 #' @examples
-#' list_to_li(c("a","b"))
-#'
+#' list_to_li(c("a", "b"))
 #' @importFrom htmltools tags tagAppendAttributes tagList
-list_to_li <- function(list, class = NULL){
-  if (is.null(class)){
+list_to_li <- function(list, class = NULL) {
+  if (is.null(class)) {
     tagList(
       lapply(
         list,
@@ -34,12 +33,11 @@ list_to_li <- function(list, class = NULL){
     )
     tagList(res)
   }
-
 }
 
 #' @importFrom htmltools tags tagAppendAttributes tagList
-list_to_p <- function(list, class = NULL){
-  if (is.null(class)){
+list_to_p <- function(list, class = NULL) {
+  if (is.null(class)) {
     tagList(
       lapply(
         list,
@@ -62,14 +60,13 @@ list_to_p <- function(list, class = NULL){
     )
     tagList(res)
   }
-
 }
 
 #' @importFrom htmltools tags tagAppendAttributes tagList
-named_to_li <- function(list, class = NULL){
-  if(is.null(class)){
+named_to_li <- function(list, class = NULL) {
+  if (is.null(class)) {
     res <- mapply(
-      function(x, y){
+      function(x, y) {
         tags$li(
           HTML(
             sprintf("<b>%s:</b> %s", y, x)
@@ -83,7 +80,7 @@ named_to_li <- function(list, class = NULL){
     tagList(res)
   } else {
     res <- mapply(
-      function(x, y){
+      function(x, y) {
         tags$li(
           HTML(
             sprintf("<b>%s:</b> %s", y, x)
@@ -121,7 +118,7 @@ named_to_li <- function(list, class = NULL){
 tagRemoveAttributes <- function(tag, ...) {
   attrs <- as.character(list(...))
   for (i in seq_along(attrs)) {
-    tag$attribs[[ attrs[i] ]] <- NULL
+    tag$attribs[[attrs[i]]] <- NULL
   }
   tag
 }
@@ -139,13 +136,12 @@ tagRemoveAttributes <- function(tag, ...) {
 #' undisplay(a)
 #' b <- shiny::actionButton("go_filter", "go")
 #' undisplay(b)
-#'
 #' @importFrom htmltools tagList
 undisplay <- function(tag) {
   # if not already hidden
   if (
     !is.null(tag$attribs$style) &&
-    !grepl("display:\\s+none", tag$attribs$style)
+      !grepl("display:\\s+none", tag$attribs$style)
   ) {
     tag$attribs$style <- paste(
       "display: none;",
@@ -161,7 +157,7 @@ undisplay <- function(tag) {
 display <- function(tag) {
   if (
     !is.null(tag$attribs$style) &&
-    grepl("display:\\s+none", tag$attribs$style)
+      grepl("display:\\s+none", tag$attribs$style)
   ) {
     tag$attribs$style <- gsub(
       "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
@@ -195,7 +191,6 @@ jq_hide <- function(id) {
 #'
 #' @examples
 #' with_red_star("Enter your name here")
-#'
 #' @importFrom htmltools tags HTML
 with_red_star <- function(text) {
   htmltools::tags$span(
@@ -221,7 +216,6 @@ with_red_star <- function(text) {
 #'
 #' @examples
 #' rep_br(5)
-#'
 #' @importFrom htmltools HTML
 rep_br <- function(times = 1) {
   HTML(rep("<br/>", times = times))
@@ -237,9 +231,8 @@ rep_br <- function(times = 1) {
 #'
 #' @examples
 #' enurl("https://www.thinkr.fr", "ThinkR")
-#'
 #' @importFrom htmltools tags
-enurl <- function(url, text){
+enurl <- function(url, text) {
   tags$a(href = url, text)
 }
 
@@ -251,46 +244,46 @@ enurl <- function(url, text){
 #' @noRd
 #'
 #' @importFrom shiny column
-col_12 <- function(...){
+col_12 <- function(...) {
   column(12, ...)
 }
 
 #' @importFrom shiny column
-col_10 <- function(...){
+col_10 <- function(...) {
   column(10, ...)
 }
 
 #' @importFrom shiny column
-col_8 <- function(...){
+col_8 <- function(...) {
   column(8, ...)
 }
 
 #' @importFrom shiny column
-col_6 <- function(...){
+col_6 <- function(...) {
   column(6, ...)
 }
 
 
 #' @importFrom shiny column
-col_4 <- function(...){
+col_4 <- function(...) {
   column(4, ...)
 }
 
 
 #' @importFrom shiny column
-col_3 <- function(...){
+col_3 <- function(...) {
   column(3, ...)
 }
 
 
 #' @importFrom shiny column
-col_2 <- function(...){
+col_2 <- function(...) {
   column(2, ...)
 }
 
 
 #' @importFrom shiny column
-col_1 <- function(...){
+col_1 <- function(...) {
   column(1, ...)
 }
 
@@ -305,18 +298,17 @@ col_1 <- function(...){
 #' @importFrom rmarkdown render
 #' @importFrom markdown markdownToHTML
 #' @importFrom htmltools HTML
-includeRMarkdown <- function(path){
+includeRMarkdown <- function(path) {
+  md <- tempfile(fileext = ".md")
 
-  md <- tempfile(fileext = '.md')
-
-  on.exit(unlink(md),add = TRUE)
+  on.exit(unlink(md), add = TRUE)
 
   rmarkdown::render(
     path,
-    output_format = 'md_document',
+    output_format = "md_document",
     output_dir = tempdir(),
-    output_file = md,quiet = TRUE
-    )
+    output_file = md, quiet = TRUE
+  )
 
   html <- markdown::markdownToHTML(md, fragment.only = TRUE)
 
