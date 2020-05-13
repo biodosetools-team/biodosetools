@@ -292,6 +292,8 @@ col_1 <- function(...) {
 #'
 #' Load rendered RMarkdown from a file and turn into HTML.
 #'
+#' @param path Path of the input file to be rendered.
+#'
 #' @rdname includeRMarkdown
 #' @export
 #'

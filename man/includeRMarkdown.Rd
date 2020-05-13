@@ -6,6 +6,9 @@
 \usage{
 includeRMarkdown(path)
 }
+\arguments{
+\item{path}{Path of the input file to be rendered.}
+}
 \description{
 Load rendered RMarkdown from a file and turn into HTML.
 }
