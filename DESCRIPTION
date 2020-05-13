@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: Shiny App To Be Used By Biological Dosimetry Laboratories
-Version: 3.2.1
+Version: 3.3.0.900
 Authors@R: 
     person(given = "Alfredo",
            family = "Hernández",
@@ -38,7 +38,9 @@ Imports:
     DT,
     glue,
     golem,
-    htmltools
+    htmltools,
+    markdown,
+    config
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
