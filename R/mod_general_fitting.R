@@ -77,12 +77,12 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
       }
     } else {
       if (!use_aggr_count_data) {
-        full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+        full_data <- utils::read.csv(count_data$datapath, header = TRUE) %>%
           # Force column naming
           `colnames<-`(c("D", paste0("C", seq(0, ncol(.) - 2, 1)))) %>%
-          dplyr::mutate_at(vars(starts_with("C")), as.integer)
+          dplyr::mutate_at(dplyr::vars(dplyr::starts_with("C")), as.integer)
       } else {
-        full_data <- read.csv(count_data$datapath, header = TRUE) %>%
+        full_data <- utils::read.csv(count_data$datapath, header = TRUE) %>%
           # Force column naming
           `colnames<-`(c("D", "N", "X")) %>%
           dplyr::mutate_at(c("N", "X"), as.integer)
@@ -124,7 +124,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
               DI = 0,
               u = 0
             ) %>%
-            dplyr::select(D, N, X, everything()) %>%
+            dplyr::select(D, N, X, dplyr::everything()) %>%
             dplyr::mutate(
               D = as.numeric(D)
             ) %>%
@@ -135,7 +135,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
         }
         return(mytable)
       } else if (!identical(previous(), input$count_data_hot)) {
-        mytable <- as.data.frame(hot_to_r(input$count_data_hot))
+        mytable <- as.data.frame(rhandsontable::hot_to_r(input$count_data_hot))
 
         if (!use_aggr_count_data) {
           # Expected u-value for assessment
@@ -163,7 +163,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
             ) %>%
             # dplyr::select(-X2, -var, -mean) %>%
             dplyr::select(-X2) %>%
-            dplyr::select(D, N, X, everything())
+            dplyr::select(D, N, X, dplyr::everything())
         } else {
           mytable <- mytable %>%
             dplyr::mutate(
@@ -177,22 +177,22 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
   })
 
   # Output ----
-  output$count_data_hot <- renderRHandsontable({
+  output$count_data_hot <- rhandsontable::renderRHandsontable({
     num_cols <- as.numeric(ncol(changed_data()))
     col_headers <- colnames(changed_data())
     col_headers[1] <- paste(col_headers[1], "(Gy)")
 
     hot <- changed_data() %>%
-      rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
-      hot_cols(colWidths = 50) %>%
-      hot_col(c(1), format = "0.000", colWidths = 60) %>%
-      hot_col(c(2), colWidths = 60) %>%
-      hot_table(highlightCol = TRUE, highlightRow = TRUE)
+      rhandsontable::rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+      rhandsontable::hot_cols(colWidths = 50) %>%
+      rhandsontable::hot_col(c(1), format = "0.000", colWidths = 60) %>%
+      rhandsontable::hot_col(c(2), colWidths = 60) %>%
+      rhandsontable::hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (num_cols > 3) {
       hot <- hot %>%
-        hot_col(c(2, 3, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
-        hot_col(num_cols, renderer = "
+        rhandsontable::hot_col(c(2, 3, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+        rhandsontable::hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -215,7 +215,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     input$button_fit
 
     isolate({
-      count_data <- hot_to_r(input$count_data_hot)
+      count_data <- rhandsontable::hot_to_r(input$count_data_hot)
 
       model_formula <- input$formula_select
       model_family <- input$family_select
@@ -225,7 +225,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
     if (aberr_module == "translocations") {
       frequency_select <- input$frequency_select
-      chromosome_table <- hot_to_r(input$chromosome_table)
+      chromosome_table <- rhandsontable::hot_to_r(input$chromosome_table)
       genome_fraction <- genome_fraction$genome_fraction()
 
       # Modify N for translocations using full genome frequency
@@ -250,7 +250,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
 
       # Make list of results to return
       results_list <- fit_results_list
-      results_list[["fit_raw_data"]] <- hot_to_r(input$count_data_hot)
+      results_list[["fit_raw_data"]] <- rhandsontable::hot_to_r(input$count_data_hot)
       results_list[["gg_curve"]] <- gg_curve
 
       # Additional results if using translocations
@@ -301,18 +301,18 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     data()[["fit_model_summary"]]
   })
 
-  output$fit_model_statistics <- renderRHandsontable({
+  output$fit_model_statistics <- rhandsontable::renderRHandsontable({
     # Model-level statistics
     if (input$button_fit <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
 
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (num_cols * 70), height = "100%") %>%
-      hot_cols(colWidths = 70)
+      rhandsontable::rhandsontable(width = (num_cols * 70), height = "100%") %>%
+      rhandsontable::hot_cols(colWidths = 70)
   })
 
-  output$fit_coeffs <- renderRHandsontable({
+  output$fit_coeffs <- rhandsontable::renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_fit <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
@@ -323,12 +323,12 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       # dplyr::select(-statistic) %>%
       # as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      hot_cols(colWidths = 100) %>%
-      hot_cols(halign = "htRight")
+      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable::hot_cols(colWidths = 100) %>%
+      rhandsontable::hot_cols(halign = "htRight")
   })
 
-  output$fit_var_cov_mat <- renderRHandsontable({
+  output$fit_var_cov_mat <- rhandsontable::renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_fit <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
@@ -336,24 +336,24 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      hot_cols(colWidths = 100) %>%
-      hot_cols(halign = "htRight")
+      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable::hot_cols(colWidths = 100) %>%
+      rhandsontable::hot_cols(halign = "htRight")
   })
 
-  output$fit_cor_mat <- renderRHandsontable({
+  output$fit_cor_mat <- rhandsontable::renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_fit <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      hot_cols(colWidths = 100) %>%
-      hot_cols(format = "0.000")
+      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable::hot_cols(colWidths = 100) %>%
+      rhandsontable::hot_cols(format = "0.000")
   })
 
-  # output$fit_decision_thresh <- renderRHandsontable({
+  # output$fit_decision_thresh <- rhandsontable::renderRHandsontable({
   #   # Decision thresholds
   #   if (input$button_fit <= 0) return(NULL)
   #
@@ -364,10 +364,10 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
   #
   #   decision_thresh %>%
   #     # Convert to hot and format table
-  #     rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
-  #     hot_col(c(1), readOnly = TRUE) %>%
-  #     hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
-  #     hot_cols(colWidths = 50)
+  #     rhandsontable::rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+  #     rhandsontable::hot_col(c(1), readOnly = TRUE) %>%
+  #     rhandsontable::hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
+  #     rhandsontable::hot_cols(colWidths = 50)
   # })
 
   output$plot <- renderPlot(
@@ -385,9 +385,9 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
     },
     content = function(file) {
       if (input$save_count_data_format == ".csv") {
-        write.csv(hot_to_r(input$count_data_hot), file, row.names = FALSE)
+        utils::write.csv(rhandsontable::hot_to_r(input$count_data_hot), file, row.names = FALSE)
       } else if (input$save_count_data_format == ".tex") {
-        print(xtable::xtable(hot_to_r(input$count_data_hot)), type = "latex", file)
+        print(xtable::xtable(rhandsontable::hot_to_r(input$count_data_hot)), type = "latex", file)
       }
     }
   )
@@ -412,7 +412,7 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       paste(aberr_module, "-fitting-curve-", Sys.Date(), input$save_plot_format, sep = "")
     },
     content = function(file) {
-      ggsave(
+      ggplot2::ggsave(
         plot = data()[["gg_curve"]], filename = file,
         width = 6, height = 4.5, dpi = 96,
         device = gsub("\\.", "", input$save_plot_format)

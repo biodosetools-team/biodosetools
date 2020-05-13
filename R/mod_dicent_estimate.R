@@ -90,7 +90,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               widgetLabel("Coefficients"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_coeffs_hot"))
+                rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
@@ -109,7 +109,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
               widgetLabel("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_var_cov_mat_hot"))
+                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
               ),
               br()
             ),
@@ -144,7 +144,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Coefficients"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_coeffs"))
+            rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
         bs4MyTabPanel(
@@ -155,7 +155,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             h6("Model-level statistics"),
             div(
               class = "hot-improved",
-              rHandsontableOutput(ns("fit_model_statistics"))
+              rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
             ),
             br()
           ),
@@ -163,14 +163,14 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Correlation matrix"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_cor_mat"))
+            rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
             ),
 
           br(),
           h6("Variance-covariance matrix"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_var_cov_mat"))
+            rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
           )
         )
       )
@@ -268,7 +268,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           # Cases table
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("case_data_hot"))
+            rhandsontable::rHandsontableOutput(ns("case_data_hot"))
           ),
           # Button
           br(),

@@ -31,19 +31,19 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
   })
 
   # Output ----
-  output$chromosome_table <- renderRHandsontable({
+  output$chromosome_table <- rhandsontable::renderRHandsontable({
     if (input$button_upd_chrom_table <= 0) return(NULL)
 
     num_cols <- as.numeric(ncol(table()))
 
     hot <- table() %>%
-      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
-      hot_col(1, colWidths = 115, readOnly = TRUE) %>%
-      hot_cols(halign = "htCenter")
+      rhandsontable::rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+      rhandsontable::hot_col(1, colWidths = 115, readOnly = TRUE) %>%
+      rhandsontable::hot_cols(halign = "htCenter")
 
     if(num_cols > 1) {
       hot <- hot %>%
-        hot_col(2:num_cols, colWidths = 85)
+        rhandsontable::hot_col(2:num_cols, colWidths = 85)
     }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
@@ -64,7 +64,7 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
     isolate({
       dna_table <- data.table::fread("libs/dna-content-fractions.csv")
       color_scheme <- input$trans_m_fish_scheme
-      chromosome_table <- hot_to_r(input$chromosome_table)
+      chromosome_table <- rhandsontable::hot_to_r(input$chromosome_table)
       sex <- input$trans_sex
     })
 
@@ -100,7 +100,7 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
         )
 
       # Full table
-      full_table <- inner_join(color_table, dna_table, by = "chromosome") %>%
+      full_table <- dplyr::inner_join(color_table, dna_table, by = "chromosome") %>%
         dplyr::group_by(color) %>%
         dplyr::summarise(genome_fraction = sum(get(paste0("fraction_", sex))))
 
@@ -114,7 +114,7 @@ transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFacto
       # Calculate second sum
       if (nrow(full_table) >= 2) {
         cross_sum <- full_table[["genome_fraction"]] %>%
-          combn(2) %>%
+          utils::combn(2) %>%
           t() %>%
           as.data.frame() %>%
           dplyr::summarise(sum(V1 * V2)) %>%

@@ -34,7 +34,7 @@ transFittingUI <- function(id, label) {
             withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
             div(
               class = "hot-improved",
-              rHandsontableOutput(ns("help_chromosome_hot"))
+              rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
             ),
             withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
 
@@ -49,7 +49,7 @@ transFittingUI <- function(id, label) {
               innerColumn(
                 width = 6,
 
-                awesomeRadio(
+                shinyWidgets::awesomeRadio(
                   inputId = ns("trans_sex"),
                   status = "warning",
                   label = "Sex",
@@ -130,7 +130,7 @@ transFittingUI <- function(id, label) {
 
               div(
                 class = "hot-improved",
-                rHandsontableOutput(outputId = ns("chromosome_table"))
+                rhandsontable::rHandsontableOutput(outputId = ns("chromosome_table"))
               )
             ),
             div(
@@ -355,7 +355,7 @@ transFittingUI <- function(id, label) {
         status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
         div(
           class = "hot-improved",
-          rHandsontableOutput(ns("count_data_hot"))
+          rhandsontable::rHandsontableOutput(ns("count_data_hot"))
         ),
         # Buttons
         br(),
@@ -407,7 +407,7 @@ transFittingUI <- function(id, label) {
         div(
           # Ugly fix for inner fluidRow() padding
           style = "margin-left: -7.5px; margin-right: -7.5px",
-          bs4TabCard(
+          bs4Dash::bs4TabCard(
             id = ns("fit_results_tabs"),
             width = 12,
             side = "left",
@@ -427,7 +427,7 @@ transFittingUI <- function(id, label) {
               h6("Coefficients"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_coeffs"))
+                rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
               )
             ),
             bs4MyTabPanel(
@@ -435,21 +435,21 @@ transFittingUI <- function(id, label) {
               h6("Model-level statistics"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_model_statistics"))
+                rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
               ),
 
               br(),
               h6("Correlation matrix"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_cor_mat"))
+                rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
               ),
 
               br(),
               h6("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_var_cov_mat"))
+                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
               )
             )#,
             # bs4MyTabPanel(
@@ -457,7 +457,7 @@ transFittingUI <- function(id, label) {
             #   h6("Decision thresholds"),
             #   div(
             #     class = "hot-improved",
-            #     rHandsontableOutput(ns("fit_decision_thresh"))
+            #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
             #   )
             # )
           )

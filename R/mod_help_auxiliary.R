@@ -11,15 +11,15 @@ helpChromosomeHotTable <- function(input, output, session, stringsAsFactors) {
   ) %>%
     dplyr::mutate_at("Chromosome", as.integer)
 
-  output$help_chromosome_hot <- renderRHandsontable({
+  output$help_chromosome_hot <- rhandsontable::renderRHandsontable({
     num_cols <- as.numeric(ncol(data))
 
     # Convert to hot and format table
     hot <- data %>%
-      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
-      hot_col(1, colWidths = 115, readOnly = TRUE) %>%
-      hot_col(2:ncol(data), colWidths = 85) %>%
-      hot_cols(halign = "htCenter")
+      rhandsontable::rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+      rhandsontable::hot_col(1, colWidths = 115, readOnly = TRUE) %>%
+      rhandsontable::hot_col(2:ncol(data), colWidths = 85) %>%
+      rhandsontable::hot_cols(halign = "htCenter")
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)

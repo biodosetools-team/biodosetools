@@ -121,7 +121,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               widgetLabel("Coefficients"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_coeffs_hot"))
+                rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
@@ -140,7 +140,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               widgetLabel("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
-                rHandsontableOutput(ns("fit_var_cov_mat_hot"))
+                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
               ),
               br()
             ),
@@ -180,7 +180,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Full genome coefficients"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_coeffs"))
+            rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
         bs4MyTabPanel(
@@ -191,7 +191,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             h6("Model-level statistics"),
             div(
               class = "hot-improved",
-              rHandsontableOutput(ns("fit_model_statistics"))
+              rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
             ),
             br()
           ),
@@ -199,14 +199,14 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           h6("Correlation matrix"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_cor_mat"))
+            rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
           ),
 
           br(),
           h6("Variance-covariance matrix"),
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("fit_var_cov_mat"))
+            rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
           )
         )
       )
@@ -238,7 +238,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             withMathJax(includeMarkdown("help/trans/colors_data_input.md")),
             div(
               class = "hot-improved",
-              rHandsontableOutput(ns("help_chromosome_hot"))
+              rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
             ),
             withMathJax(includeMarkdown("help/trans/colors_data_input_b.md"))
 
@@ -253,7 +253,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               innerColumn(
                 width = 6,
 
-                awesomeRadio(
+                shinyWidgets::awesomeRadio(
                   inputId = ns("trans_sex"),
                   status = "warning",
                   label = "Sex",
@@ -334,7 +334,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
 
               div(
                 class = "hot-improved",
-                rHandsontableOutput(outputId = ns("chromosome_table"))
+                rhandsontable::rHandsontableOutput(outputId = ns("chromosome_table"))
               )
             ),
             div(
@@ -525,7 +525,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               class = "side-widget",
               style = "max-width: 140px; margin-right: -40px;",
               widgetLabel("Smoker", 14),
-              switchInput(
+              shinyWidgets::switchInput(
                 ns("trans_confounder_smoke"),
                 onStatus = "inputs",
                 value = FALSE
@@ -592,7 +592,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           # Cases table ----
           div(
             class = "hot-improved",
-            rHandsontableOutput(ns("case_data_hot"))
+            rhandsontable::rHandsontableOutput(ns("case_data_hot"))
           ),
           # Button
           br(),
