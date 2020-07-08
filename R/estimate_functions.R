@@ -189,11 +189,19 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
     deriv_β <- 0
   }
 
-  # Get variance of lambda assuming Poisson
-  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-    lambda_est_sd <- case_data[["y_err"]]
-  } else if (aberr_module == "translocations") {
-    lambda_est_sd <- case_data[["Fg_err"]]
+  # Calculate variance of lambda
+  disp <- case_data[["DI"]]
+
+  if (disp >= 1) {
+    # Use empirical error sqrt(var / N) if disp >= 1
+    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+      lambda_est_sd <- case_data[["y_err"]]
+    } else if (aberr_module == "translocations") {
+      lambda_est_sd <- case_data[["Fg_err"]]
+    }
+  } else {
+    # Use Poisson error if disp < 1
+    lambda_est_sd <- sqrt(case_data[["X"]]) / case_data[["N"]]
   }
 
   # Get confidence interval of lambda estimates
