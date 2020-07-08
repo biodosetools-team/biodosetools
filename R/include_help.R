@@ -10,7 +10,7 @@
 include_help <- function(...) {
   withMathJax(
     includeMarkdown(
-      system.file(..., package = "biodosetools")
+      system.file("app/help", ..., package = "biodosetools")
       )
     )
 

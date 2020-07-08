@@ -1043,7 +1043,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
-            include_help("help/estimate/dose_mixed_yields.md")
+            include_help("estimate/dose_mixed_yields.md")
           )
         ),
 
@@ -1092,7 +1092,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
-            include_help("help/estimate/dose_mixed_yields.md")
+            include_help("estimate/dose_mixed_yields.md")
           )
         ),
 
@@ -1168,7 +1168,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
             title = "Help: Heterogeneous exposures",
             trigger = session$ns("help_dose_mixed_yields"),
             size = "large",
-            include_help("help/estimate/dose_mixed_yields.md")
+            include_help("estimate/dose_mixed_yields.md")
           )
         ),
 

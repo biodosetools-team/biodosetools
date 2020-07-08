@@ -31,12 +31,12 @@ transFittingUI <- function(id, label) {
             trigger = ns("help_colors"),
             size = "large",
 
-            include_help("help/trans/colors_data_input.md"),
+            include_help("trans/colors_data_input.md"),
             div(
               class = "hot-improved",
               rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
             ),
-            include_help("help/trans/colors_data_input_b.md")
+            include_help("trans/colors_data_input_b.md")
 
           )
         ),
@@ -196,17 +196,17 @@ transFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.help_count_data_option == 'manual'",
               ns = ns,
-              include_help("help/fitting/count_data_input.md")
+              include_help("fitting/count_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_count_data_option == 'load'",
               ns = ns,
-              include_help("help/fitting/count_data_load.md")
+              include_help("fitting/count_data_load.md")
             ),
             conditionalPanel(
               condition = "input.help_count_data_option == 'aggr'",
               ns = ns,
-              include_help("help/fitting/count_data_aggregated.md")
+              include_help("fitting/count_data_aggregated.md")
             )
           )
         ),
@@ -304,17 +304,17 @@ transFittingUI <- function(id, label) {
             conditionalPanel(
               condition = "input.help_fitting_options_option == 'formula'",
               ns = ns,
-              include_help("help/fitting/fitting_options_formula.md")
+              include_help("fitting/fitting_options_formula.md")
             ),
             conditionalPanel(
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
-              include_help("help/fitting/fitting_options_model.md")
+              include_help("fitting/fitting_options_model.md")
             )#,
             # conditionalPanel(
             #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
             #   ns = ns,
-            #   include_help("help/trans/fitting_options_decision_thresholds.md")
+            #   include_help("trans/fitting_options_decision_thresholds.md")
             # )
           )
         ),
@@ -499,12 +499,12 @@ transFittingUI <- function(id, label) {
               conditionalPanel(
                 condition = "input.help_fit_data_save_option == 'data'",
                 ns = ns,
-                include_help("help/save/fit_data_save.md")
+                include_help("save/fit_data_save.md")
               ),
               conditionalPanel(
                 condition = "input.help_fit_data_save_option == 'report'",
                 ns = ns,
-                include_help("help/save/fit_data_save_report.md")
+                include_help("save/fit_data_save_report.md")
               )
             )
           ),

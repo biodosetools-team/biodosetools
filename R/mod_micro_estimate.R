@@ -46,12 +46,12 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_fit_data_option == 'manual'",
               ns = ns,
-              include_help("help/estimate/fit_data_input.md")
+              include_help("estimate/fit_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
-              include_help("help/estimate/fit_data_load.md")
+              include_help("estimate/fit_data_load.md")
             )
           )
         ),
@@ -211,12 +211,12 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.help_cases_data_option == 'manual'",
               ns = ns,
-              include_help("help/estimate/cases_data_input.md")
+              include_help("estimate/cases_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_cases_data_option == 'load'",
               ns = ns,
-              include_help("help/estimate/cases_data_load.md")
+              include_help("estimate/cases_data_load.md")
             )
           )
         ),
@@ -313,23 +313,23 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'exposure'",
                 ns = ns,
-                include_help("help/estimate/dose_exposure.md")
+                include_help("estimate/dose_exposure.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'assess'",
                 ns = ns,
-                include_help("help/estimate/dose_assessment.md")
+                include_help("estimate/dose_assessment.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'error'",
                 ns = ns,
-                include_help("help/estimate/dose_error.md"),
-                include_help("help/micro/dose_error_methods.md")
+                include_help("estimate/dose_error.md"),
+                include_help("micro/dose_error_methods.md")
               ),
               conditionalPanel(
                 condition = "input.help_estimate_options_option == 'surv_coeff'",
                 ns = ns,
-                include_help("help/estimate/fraction_coeff_select.md")
+                include_help("estimate/fraction_coeff_select.md")
               )
             )
           ),
@@ -552,7 +552,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
               size = "large",
 
               # Contents
-              include_help("help/save/estimate_data_save_report.md")
+              include_help("save/estimate_data_save_report.md")
             )
           ),
 
