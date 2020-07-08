@@ -158,7 +158,7 @@ app_ui <- function(request) {
     title = "Biodose Tools",
     brandColor = "biodose-tools",
     url = NULL,
-    src = "icon_small.svg",
+    src = "www/icon_small.svg",
     elevation = 1,
     opacity = 1,
 
