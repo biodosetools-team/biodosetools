@@ -14,7 +14,8 @@ app_ui <- function(request) {
     tags$link(rel = "icon", sizes = "192x192", href = "favicon-highres.png")
   )
 
-  # Random stuff ----
+
+  # App Version ----------------------------------------------
 
   app_version <- utils::packageVersion(pkg = "biodosetools")
 
@@ -102,12 +103,10 @@ app_ui <- function(request) {
   # UI elements ----
 
   # Navbar
-
-  navbar <- bs4DashMyNavbar(
-    skin = "dark",
+  navbar <- bs4Dash::bs4DashNavbar(
+    skin = "light",
     status = "white",
 
-    # TODO: Fix sidebar when using this
     div(
       style = "margin-bottom: -20px;",
       selectInput(
@@ -133,7 +132,7 @@ app_ui <- function(request) {
     #   bookmarkButton()
     # ),
 
-    div(
+    rightUi = div(
       style = "margin-bottom: 2px; margin-left: 10px; ",
       actionButton(
         inputId = "github_link", label = "Give feedback",
@@ -141,17 +140,11 @@ app_ui <- function(request) {
         class = "results-button",
         onclick = "window.open('https://github.com/biodosimetry-uab/biodosetools/issues/new', '_blank')"
       )
-    ),
-
-
-
-    # Right UI
-    rightUi = NULL
+    )
   )
 
 
   # Sidebar
-
   sidebar <- bs4DashMySidebar(
     skin = "light",
     status = "primary",
@@ -169,7 +162,7 @@ app_ui <- function(request) {
         icon = "home"
       ),
 
-      # Modules
+      # Modules header
       bs4Dash::bs4SidebarHeader("Modules"),
 
       # Dicentrics
@@ -232,7 +225,6 @@ app_ui <- function(request) {
         icon = "calculator"
       ) # ,
 
-
       # Language selector
       # bs4SidebarHeader("Language"),
       #
@@ -264,7 +256,6 @@ app_ui <- function(request) {
       style = "padding-bottom: 20px;",
       h2("About this project", style = "margin-left: 10%;"),
       shiny::includeMarkdown(
-        # "www/about_body.md"
         system.file("app/www/about_body.md", package = "biodosetools")
       ),
 
@@ -327,6 +318,7 @@ app_ui <- function(request) {
     )
   )
 
+  # Footer
 
   footer <- bs4Dash::bs4DashFooter(
     copyrights = a(paste("Version", app_version), href = "https://github.com/biodosimetry-uab/biodosetools/blob/master/NEWS.md"),
@@ -340,7 +332,6 @@ app_ui <- function(request) {
       size = "large",
 
       shiny::includeMarkdown(
-        # "www/contributors_app.md"
         system.file("app/www/contributors_app.md", package = "biodosetools")
       )
     )
@@ -350,9 +341,11 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+
     # List the first level UI elements here
     bs4Dash::bs4DashPage(
       sidebar_collapsed = TRUE,
+      sidebar_mini = TRUE,
       navbar = navbar,
       sidebar = sidebar,
       body = body,
