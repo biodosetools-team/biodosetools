@@ -180,7 +180,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
   output$count_data_hot <- rhandsontable::renderRHandsontable({
     num_cols <- as.numeric(ncol(changed_data()))
     col_headers <- colnames(changed_data())
-    col_headers[1] <- paste(col_headers[1], "(Gy)")
+    # col_headers[1] <- paste(col_headers[1], "(Gy)")
 
     hot <- changed_data() %>%
       rhandsontable::rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
