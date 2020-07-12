@@ -3,7 +3,7 @@
 #'
 #'
 #' @return HTML code. Theme for a shinydashboard application.
-
+#'
 bs4DashSidebarColor <- function(back_color) {
 
   htmltools::tags$head(
@@ -56,7 +56,7 @@ bs4DashSidebarColor <- function(back_color) {
 #'
 #'
 #' @return HTML code. Theme for a shinydashboard application.
-
+#'
 bs4DashCardsStatus <- function(options_color, inputs_color, results_color, export_color) {
 
   htmltools::tags$head(
@@ -159,7 +159,7 @@ bs4DashCardsStatus <- function(options_color, inputs_color, results_color, expor
 #'
 #'
 #' @return HTML code. Theme for a shinydashboard application.
-
+#'
 bs4DashButtonsStatus <- function(home_color, home_color_hover, home_color_border,
                                  options_color, options_color_hover, options_color_border,
                                  inputs_color, inputs_color_hover, inputs_color_border,
