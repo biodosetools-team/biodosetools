@@ -1,37 +1,94 @@
 # Function: bs4DashMySidebar ----
 
-bs4DashMySidebar <- function(..., title = NULL, skin = "dark", status = "primary",
-                             brandColor = NULL, url = NULL, src = NULL, elevation = 4,
-                             opacity = 0.8) {
+bs4DashMySidebar <- function(..., inputId = NULL, disable = FALSE,
+                           title = NULL, skin = "dark", status = "primary",
+                           brandColor = NULL, url = NULL, src = NULL,
+                           elevation = 4, opacity = .8, expand_on_hover = TRUE,
+                           brandElevation = 0, brandTextColor = "white") {
+
+  # brand logo
   brandTag <- if (!is.null(title)) {
-    shiny::tags$a(class = if (!is.null(brandColor)) {
-      paste0("brand-link bg-", brandColor)
-    } else {
-      "brand-link"
-    }, href = url, shiny::tags$img(
-      src = src,
-      class = "brand-image img-circle elevation-0", style = paste0(
-        "opacity: ",
-        opacity
-      )
-    ), shiny::tags$span(
-      class = "brand-text font-weight-bold text-white",
-      title
-    ))
+    shiny::tags$a(
+      class = if (!is.null(brandColor)) paste0("brand-link bg-", brandColor) else "brand-link",
+      href = url,
+      shiny::tags$img(
+        src = src,
+        class = paste0("brand-image img-circle elevation-", brandElevation),
+        style = paste0("opacity: ", opacity)
+      ),
+      shiny::tags$span(class = paste0("brand-text font-weight-light ", "text-", brandTextColor), title)
+    )
   }
-  contentTag <- shiny::tags$div(class = "sidebar", shiny::tags$nav(
-    class = "mt-2",
-    ...
-  ))
-  sidebarTag <- shiny::tags$aside(class = paste0(
-    "main-sidebar sidebar-",
-    skin, "-", status, " elevation-", elevation
-  ))
-  sidebarTag <- shiny::tagAppendChildren(
-    sidebarTag, brandTag,
-    contentTag
+
+  # sidebar content
+  contentTag <- shiny::tags$div(
+    class = "sidebar",
+    shiny::tags$nav(
+      class = "mt-2",
+      ...
+    )
   )
+
+  sidebarTag <- shiny::tags$aside(
+    id = inputId,
+    class = paste0(
+      "main-sidebar sidebar-", skin, "-",
+      status, " elevation-", elevation,
+      if (expand_on_hover) NULL else " sidebar-no-expand"
+    ),
+    style = if (disable) "display: none;"
+  )
+
+  sidebarTag <- shiny::tagAppendChildren(sidebarTag, brandTag, contentTag)
   sidebarTag
+
+  customCSS <- shiny::singleton(
+    shiny::tags$style(
+      ".content-wrapper, .main-footer, .main-header {
+          margin-left: 0px;
+       }
+      "
+    )
+  )
+
+  if (disable) shiny::tagList(customCSS, sidebarTag) else sidebarTag
+
+
+  ## change sidebar width
+  #shiny::tagList(
+  #  shiny::singleton(
+  #    shiny::tags$head(
+  #      shiny::tags$style(
+  #        shiny::HTML(
+  #          paste0(
+  #            ".main-sidebar, .main-sidebar:before {
+  #              transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  #              width: ", width, "px;
+  #            }
+  #            .sidebar-mini.sidebar-collapse .main-sidebar:hover {
+  #                width: ", width, "px;
+  #            }
+  #            @media (min-width: 768px) {
+  #              .content-wrapper,
+  #              .main-footer,
+  #              .main-header {
+  #                transition: margin-left 0.3s ease-in-out;
+  #                margin-left: ", width, "px;
+  #                z-index: 3000;
+  #              }
+  #            }
+  #            .nav-sidebar:hover {
+  #              overflow: hidden;
+  #            }
+  #            "
+  #          )
+  #        )
+  #      )
+  #    )
+  #  ),
+  #  sidebarTag
+  #)
+
 }
 
 
