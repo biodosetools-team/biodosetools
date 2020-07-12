@@ -295,7 +295,6 @@ col_1 <- function(...) {
 #' @param path Path of the input file to be rendered.
 #'
 #' @rdname includeRMarkdown
-#' @export
 #'
 #' @importFrom rmarkdown render
 #' @importFrom markdown markdownToHTML
