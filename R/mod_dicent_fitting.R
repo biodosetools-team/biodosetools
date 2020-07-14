@@ -18,16 +18,13 @@ dicentFittingUI <- function(id, label) {
         width = 6,
         title = span(
           "Data input options",
-          shinyBS::bsButton(
-          class = "modal-help-button",
-          ns("help_count_data"),
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ) %>%
-          bsplus::bs_attach_modal(id_modal = ns("help_count_data_modal"))
+          help_modal_button(
+            ns("help_count_data"),
+            ns("help_count_data_modal")
+          )
         ),
-        status = "success", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        # status = "options",
+        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
         # Help modal
         bsplus::bs_modal(
@@ -120,17 +117,15 @@ dicentFittingUI <- function(id, label) {
         # title = "Fitting options",
         title = span(
           "Fitting options",
-        shinyBS::bsButton(
-          class = "modal-help-button",
-          ns("help_fitting_options"),
-          label = "",
-          icon = icon("question"),
-          style = "default", size = "default"
-        ) %>%
-          bsplus::bs_attach_modal(id_modal = ns("help_fitting_options_modal")),
-      ),
-        status = "success", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          help_modal_button(
+            ns("help_fitting_options"),
+            ns("help_fitting_options_modal")
+          )
+        ),
+        # status = "options",
+      solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
+      # Help modal
       bsplus::bs_modal(
           id = ns("help_fitting_options_modal"),
           title = "Help: Fitting options",
@@ -192,206 +187,207 @@ dicentFittingUI <- function(id, label) {
           )
         )
       )
-    )#,
+    ),
 
     # Card: hot Count data input ----
-    # fluidRow(
-    #   bs4MyCard(
-    #     width = 12,
-    #     title = "Data input",
-    #     status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-    #     div(
-    #       class = "hot-improved",
-    #       rhandsontable::rHandsontableOutput(ns("count_data_hot"))
-    #     ),
-    #     # Buttons
-    #     br(),
-    #     div(
-    #       style = "display: inline-block;",
-    #       conditionalPanel(
-    #         condition = "!input.use_aggr_count_data_check",
-    #         ns = ns,
-    #         actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
-    #         div(class = "widget-sep", br())
-    #       )
-    #     ),
-    #     downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
-    #     div(
-    #       class = "side-widget-tall",
-    #       selectInput(
-    #         ns("save_count_data_format"),
-    #         label = NULL,
-    #         width = "85px",
-    #         choices = list(".csv", ".tex"),
-    #         selected = ".csv"
-    #       )
-    #     ),
-    #     div(class = "widget-sep", br()),
-    #     actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
-    #   )
-    # ),
-    #
-    #
-    # fluidRow(
-    #   column(
-    #     width = 6,
-    #     # tabCard: Fit results ----
-    #     div(
-    #       # Ugly fix for inner fluidRow() padding
-    #       style = "margin-left: -7.5px; margin-right: -7.5px",
-    #       bs4Dash::bs4TabCard(
-    #         id = ns("fit_results_tabs"),
-    #         width = 12,
-    #         side = "left",
-    #         solidHeader = TRUE,
-    #         closable = FALSE,
-    #
-    #         bs4MyTabPanel(
-    #           tabName = "Result of curve fit",
-    #           active = TRUE,
-    #           h6("Fit formula"),
-    #           uiOutput(ns("fit_formula_tex")),
-    #
-    #           h6("Model"),
-    #           uiOutput(ns("fit_model_summary")),
-    #
-    #           br(),
-    #           h6("Coefficients"),
-    #           div(
-    #             class = "hot-improved",
-    #             rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
-    #           )
-    #         ),
-    #         bs4MyTabPanel(
-    #           tabName = "Summary statistics",
-    #           h6("Model-level statistics"),
-    #           div(
-    #             class = "hot-improved",
-    #             rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
-    #           ),
-    #
-    #           br(),
-    #           h6("Correlation matrix"),
-    #           div(
-    #             class = "hot-improved",
-    #             rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
-    #           ),
-    #
-    #           br(),
-    #           h6("Variance-covariance matrix"),
-    #           div(
-    #             class = "hot-improved",
-    #             rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
-    #           )
-    #         ) # ,
-    #         # bs4MyTabPanel(
-    #         #   tabName = "Decision thresholds",
-    #         #   h6("Decision thresholds"),
-    #         #   div(
-    #         #     class = "hot-improved",
-    #         #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
-    #         #   )
-    #         # )
-    #       )
-    #     ),
-    #
-    #     # Card: Export data and results ----
-    #     bs4MyCard(
-    #       width = 12,
-    #       noPadding = TRUE,
-    #       title = "Export results",
-    #       status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-    #
-    #       topButton = div(
-    #         # Help button
-    #         shinyBS::bsButton(
-    #           ns("help_fit_data_save"),
-    #           label = "",
-    #           icon = icon("question"),
-    #           style = "default", size = "default"
-    #         ),
-    #
-    #         # Help Modal
-    #         bs4MyModal(
-    #           id = ns("help_fit_data_save_dialog"),
-    #           title = "Help: Export results",
-    #           trigger = ns("help_fit_data_save"),
-    #           size = "large",
-    #
-    #           # Option selection
-    #           shinyWidgets::radioGroupButtons(
-    #             inputId = ns("help_fit_data_save_option"),
-    #             label = NULL,
-    #             choices = c(
-    #               "Fitting data" = "data",
-    #               "Report"       = "report"
-    #             )
-    #           ),
-    #           # Contents
-    #           conditionalPanel(
-    #             condition = "input.help_fit_data_save_option == 'data'",
-    #             ns = ns,
-    #             include_help("save/fit_data_save.md")
-    #           ),
-    #           conditionalPanel(
-    #             condition = "input.help_fit_data_save_option == 'report'",
-    #             ns = ns,
-    #             include_help("save/fit_data_save_report.md")
-    #           )
-    #         )
-    #       ),
-    #
-    #       # Download fit data & report
-    #       downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
-    #       div(
-    #         class = "side-widget-tall",
-    #         selectInput(
-    #           ns("save_fit_data_format"),
-    #           label = NULL,
-    #           width = "85px",
-    #           choices = list(".rds"),
-    #           selected = ".rds"
-    #         )
-    #       ),
-    #       # Download report
-    #       div(class = "widget-sep", br()),
-    #       downloadButton(ns("save_report"), class = "export-button", "Download report"),
-    #       div(
-    #         class = "side-widget-tall",
-    #         selectInput(
-    #           ns("save_report_format"),
-    #           label = NULL,
-    #           width = "85px",
-    #           choices = list(".html", ".docx"),
-    #           selected = ".html"
-    #         )
-    #       )
-    #     )
-    #   ),
-    #   column(
-    #     width = 6,
-    #     # Card: Plot box ----
-    #     bs4MyCard(
-    #       width = 12,
-    #       noPadding = TRUE,
-    #       title = "Curve plot",
-    #       status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-    #       # Plot
-    #       plotOutput(ns("plot")),
-    #       # Download plot
-    #       downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
-    #       div(
-    #         class = "side-widget-tall",
-    #         selectInput(
-    #           ns("save_plot_format"),
-    #           label = NULL,
-    #           width = "85px",
-    #           choices = list(".png", ".pdf"),
-    #           selected = ".png"
-    #         )
-    #       )
-    #     )
-    #   )
-    # )
+    fluidRow(
+      box(
+        width = 12,
+        title = "Data input",
+        # status = "inputs",
+        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        div(
+          class = "hot-improved",
+          rhandsontable::rHandsontableOutput(ns("count_data_hot"))
+        ),
+        # Buttons
+        br(),
+        div(
+          style = "display: inline-block;",
+          conditionalPanel(
+            condition = "!input.use_aggr_count_data_check",
+            ns = ns,
+            actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
+            div(class = "widget-sep", br())
+          )
+        ),
+        downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("save_count_data_format"),
+            label = NULL,
+            width = "85px",
+            choices = list(".csv", ".tex"),
+            selected = ".csv"
+          )
+        ),
+        div(class = "widget-sep", br()),
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
+      )
+    ),
+
+
+    fluidRow(
+      column(
+        width = 6,
+        # tabCard: Fit results ----
+        # div(
+        #   # Ugly fix for inner fluidRow() padding
+        #   style = "margin-left: -7.5px; margin-right: -7.5px",
+        #   bs4Dash::bs4TabCard(
+        #     id = ns("fit_results_tabs"),
+        #     width = 12,
+        #     side = "left",
+        #     solidHeader = TRUE,
+        #     closable = FALSE,
+        #
+        #     bs4MyTabPanel(
+        #       tabName = "Result of curve fit",
+        #       active = TRUE,
+        #       h6("Fit formula"),
+        #       uiOutput(ns("fit_formula_tex")),
+        #
+        #       h6("Model"),
+        #       uiOutput(ns("fit_model_summary")),
+        #
+        #       br(),
+        #       h6("Coefficients"),
+        #       div(
+        #         class = "hot-improved",
+        #         rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
+        #       )
+        #     ),
+        #     bs4MyTabPanel(
+        #       tabName = "Summary statistics",
+        #       h6("Model-level statistics"),
+        #       div(
+        #         class = "hot-improved",
+        #         rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
+        #       ),
+        #
+        #       br(),
+        #       h6("Correlation matrix"),
+        #       div(
+        #         class = "hot-improved",
+        #         rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
+        #       ),
+        #
+        #       br(),
+        #       h6("Variance-covariance matrix"),
+        #       div(
+        #         class = "hot-improved",
+        #         rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
+        #       )
+        #     ) # ,
+        #     # bs4MyTabPanel(
+        #     #   tabName = "Decision thresholds",
+        #     #   h6("Decision thresholds"),
+        #     #   div(
+        #     #     class = "hot-improved",
+        #     #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
+        #     #   )
+        #     # )
+        #   )
+        # ),
+
+        # Card: Export data and results ----
+        box(
+          width = 12,
+          # noPadding = TRUE,
+          title = span(
+            "Export results",
+            help_modal_button(
+              ns("help_fit_data_save"),
+              ns("help_fit_data_save_modal")
+            )
+          ),
+          # status = "export",
+          solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          # Help modal
+            bsplus::bs_modal(
+              id = ns("help_fit_data_save_modal"),
+              title = "Help: Export results",
+              size = "large",
+
+              body = tagList(
+              # Option selection
+              shinyWidgets::radioGroupButtons(
+                inputId = ns("help_fit_data_save_option"),
+                label = NULL,
+                choices = c(
+                  "Fitting data" = "data",
+                  "Report"       = "report"
+                )
+              ),
+              # Contents
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'data'",
+                ns = ns,
+                include_help("save/fit_data_save.md")
+              ),
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'report'",
+                ns = ns,
+                include_help("save/fit_data_save_report.md")
+              )
+            )
+            ),
+
+          # Download fit data & report
+          downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_fit_data_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".rds"),
+              selected = ".rds"
+            )
+          ),
+          # Download report
+          div(class = "widget-sep", br()),
+          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_report_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".html", ".docx"),
+              selected = ".html"
+            )
+          )
+        )
+      ),
+      column(
+        width = 6,
+        # Card: Plot box ----
+        box(
+          width = 12,
+          noPadding = TRUE,
+          title = "Curve plot",
+          # status = "results",
+          solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+
+          # Plot
+          plotOutput(ns("plot")),
+          # Download plot
+          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+          div(
+            class = "side-widget-tall",
+            selectInput(
+              ns("save_plot_format"),
+              label = NULL,
+              width = "85px",
+              choices = list(".png", ".pdf"),
+              selected = ".png"
+            )
+          )
+        )
+      )
+    )
   )
 }
