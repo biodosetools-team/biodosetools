@@ -107,21 +107,21 @@ dashboard_header <- function() {
 #' @noRd
 dashboard_sidebar <- function() {
   dashboardSidebar(
-    selectInput(
-      inputId = "experiment_select",
-      label = NULL,
-      width = 175,
-      choices = c(
-        "Dicentrics"            = "dicent",
-        "Translocations"        = "trans",
-        "Micronuclei"           = "micro" # ,
-        # "H2AX"                  = "h2ax",
-        # "Intercomparison Tests" = "intercomp"
-      ),
-      selected = "Dicentrics",
-      multiple = FALSE,
-      selectize = TRUE
-    ),
+    # selectInput(
+    #   inputId = "experiment_select",
+    #   label = NULL,
+    #   width = 175,
+    #   choices = c(
+    #     "Dicentrics"            = "dicent",
+    #     "Translocations"        = "trans",
+    #     "Micronuclei"           = "micro" # ,
+    #     # "H2AX"                  = "h2ax",
+    #     # "Intercomparison Tests" = "intercomp"
+    #   ),
+    #   selected = "Dicentrics",
+    #   multiple = FALSE,
+    #   selectize = TRUE
+    # ),
 
     sidebarMenu(
       menuItem(
@@ -136,10 +136,12 @@ dashboard_sidebar <- function() {
         "Dicentrics",
         tabName = "dicent_main",
         icon = icon("dashboard"),
+        startExpanded = TRUE,
         # Dicentrics
         menuSubItem(
           "Fitting",
           tabName = "tab-dicent-fitting",
+          selected = TRUE,
           icon = icon("cog")
         ),
         menuSubItem(
