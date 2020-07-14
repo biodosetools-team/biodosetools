@@ -26,7 +26,6 @@ Imports:
     rlang (>= 0.4.0),
     rmarkdown,
     shiny,
-    shinyBS,
     shinydashboard,
     shinyWidgets (>= 0.4.9),
     stringr,
@@ -35,7 +34,8 @@ Imports:
     golem,
     htmltools,
     markdown,
-    config
+    config,
+    bsplus
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
