@@ -1,7 +1,16 @@
+/* Tweak modal help buttons */
 .modal-help-button {
   right: 40px;
   position: absolute;
   padding: 4px 10px;
   border: 0;
   top: 5px;
+}
+
+/* Improve rhandsontable overflow */
+.hot-improved {
+  height: auto;
+  max-width: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
