@@ -13,7 +13,7 @@ dicentFittingUI <- function(id, label) {
     h2("Dicentrics: Dose-effect fitting"),
 
     fluidRow(
-      # Card: Data input options ----
+      # Box: Data input options ----
       box(
         width = 6,
         title = span(
@@ -106,12 +106,11 @@ dicentFittingUI <- function(id, label) {
 
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
-
           )
         )
       ),
 
-      # Card: Fitting options ----
+      # Box: Fitting options ----
       box(
         width = 6,
         # title = "Fitting options",
@@ -123,41 +122,41 @@ dicentFittingUI <- function(id, label) {
           )
         ),
         # status = "options",
-      solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-      # Help modal
-      bsplus::bs_modal(
+        # Help modal
+        bsplus::bs_modal(
           id = ns("help_fitting_options_modal"),
           title = "Help: Fitting options",
           size = "large",
 
           body = tagList(
-          # Option selection
-          shinyWidgets::radioGroupButtons(
-            inputId = ns("help_fitting_options_option"),
-            label = NULL,
-            choices = c(
-              "Fitting formula"  = "formula",
-              "Fitting model"    = "model" # ,
-              # "Decision thresholds" = "decision_thresholds"
-            )
-          ),
-          # Contents
-          conditionalPanel(
-            condition = "input.help_fitting_options_option == 'formula'",
-            ns = ns,
-            include_help("fitting/fitting_options_formula.md")
-          ),
-          conditionalPanel(
-            condition = "input.help_fitting_options_option == 'model'",
-            ns = ns,
-            include_help("fitting/fitting_options_model.md")
-          ) # ,
-          # conditionalPanel(
-          #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
-          #   ns = ns,
-          #   include_help("fitting/fitting_options_decision_thresholds.md")
-          # )
+            # Option selection
+            shinyWidgets::radioGroupButtons(
+              inputId = ns("help_fitting_options_option"),
+              label = NULL,
+              choices = c(
+                "Fitting formula"  = "formula",
+                "Fitting model"    = "model" # ,
+                # "Decision thresholds" = "decision_thresholds"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'formula'",
+              ns = ns,
+              include_help("fitting/fitting_options_formula.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'model'",
+              ns = ns,
+              include_help("fitting/fitting_options_model.md")
+            ) # ,
+            # conditionalPanel(
+            #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
+            #   ns = ns,
+            #   include_help("fitting/fitting_options_decision_thresholds.md")
+            # )
           )
         ),
 
@@ -189,7 +188,7 @@ dicentFittingUI <- function(id, label) {
       )
     ),
 
-    # Card: hot Count data input ----
+    # Box: hot Count data input ----
     fluidRow(
       box(
         width = 12,
@@ -231,67 +230,70 @@ dicentFittingUI <- function(id, label) {
     fluidRow(
       column(
         width = 6,
-        # tabCard: Fit results ----
-        # div(
-        #   # Ugly fix for inner fluidRow() padding
-        #   style = "margin-left: -7.5px; margin-right: -7.5px",
-        #   bs4Dash::bs4TabCard(
-        #     id = ns("fit_results_tabs"),
-        #     width = 12,
-        #     side = "left",
-        #     solidHeader = TRUE,
-        #     closable = FALSE,
-        #
-        #     bs4MyTabPanel(
-        #       tabName = "Result of curve fit",
-        #       active = TRUE,
-        #       h6("Fit formula"),
-        #       uiOutput(ns("fit_formula_tex")),
-        #
-        #       h6("Model"),
-        #       uiOutput(ns("fit_model_summary")),
-        #
-        #       br(),
-        #       h6("Coefficients"),
-        #       div(
-        #         class = "hot-improved",
-        #         rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
-        #       )
-        #     ),
-        #     bs4MyTabPanel(
-        #       tabName = "Summary statistics",
-        #       h6("Model-level statistics"),
-        #       div(
-        #         class = "hot-improved",
-        #         rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
-        #       ),
-        #
-        #       br(),
-        #       h6("Correlation matrix"),
-        #       div(
-        #         class = "hot-improved",
-        #         rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
-        #       ),
-        #
-        #       br(),
-        #       h6("Variance-covariance matrix"),
-        #       div(
-        #         class = "hot-improved",
-        #         rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
-        #       )
-        #     ) # ,
-        #     # bs4MyTabPanel(
-        #     #   tabName = "Decision thresholds",
-        #     #   h6("Decision thresholds"),
-        #     #   div(
-        #     #     class = "hot-improved",
-        #     #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
-        #     #   )
-        #     # )
-        #   )
-        # ),
+        # tabBox: Fit results ----
+        div(
+          # Ugly fix for inner fluidRow() padding
+          style = "margin-left: -7.5px; margin-right: -7.5px",
 
-        # Card: Export data and results ----
+          tabBox(
+            id = ns("fit_results_tabs"),
+            width = 12,
+            side = "left",
+            # solidHeader = TRUE,
+            # closable = FALSE,
+
+            tabPanel(
+              tabName = "Result of curve fit",
+              active = TRUE,
+              h6("Fit formula"),
+              uiOutput(ns("fit_formula_tex")),
+
+              h6("Model"),
+              uiOutput(ns("fit_model_summary")),
+
+              br(),
+              h6("Coefficients"),
+              div(
+                class = "hot-improved",
+                rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
+              )
+            ),
+
+            tabPanel(
+              tabName = "Summary statistics",
+              h6("Model-level statistics"),
+              div(
+                class = "hot-improved",
+                rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
+              ),
+
+              br(),
+              h6("Correlation matrix"),
+              div(
+                class = "hot-improved",
+                rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
+              ),
+
+              br(),
+              h6("Variance-covariance matrix"),
+              div(
+                class = "hot-improved",
+                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
+              )
+            ) # ,
+
+            # tabPanel(
+            #   tabName = "Decision thresholds",
+            #   h6("Decision thresholds"),
+            #   div(
+            #     class = "hot-improved",
+            #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
+            #   )
+            # )
+          )
+        ),
+
+        # Box: Export data and results ----
         box(
           width = 12,
           # noPadding = TRUE,
@@ -306,12 +308,12 @@ dicentFittingUI <- function(id, label) {
           solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
           # Help modal
-            bsplus::bs_modal(
-              id = ns("help_fit_data_save_modal"),
-              title = "Help: Export results",
-              size = "large",
+          bsplus::bs_modal(
+            id = ns("help_fit_data_save_modal"),
+            title = "Help: Export results",
+            size = "large",
 
-              body = tagList(
+            body = tagList(
               # Option selection
               shinyWidgets::radioGroupButtons(
                 inputId = ns("help_fit_data_save_option"),
@@ -333,7 +335,7 @@ dicentFittingUI <- function(id, label) {
                 include_help("save/fit_data_save_report.md")
               )
             )
-            ),
+          ),
 
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
@@ -364,7 +366,7 @@ dicentFittingUI <- function(id, label) {
       ),
       column(
         width = 6,
-        # Card: Plot box ----
+        # Box: Plot box ----
         box(
           width = 12,
           noPadding = TRUE,
