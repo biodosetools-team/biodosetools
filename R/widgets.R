@@ -1,4 +1,5 @@
 # Function: mySwitchInput ----
+
 mySwitchInput <- function(inputId, label = NULL, value = FALSE, onLabel = "ON",
                           offLabel = "OFF", onStatus = NULL, offStatus = NULL, size = "default",
                           labelWidth = "auto", handleWidth = "auto", disabled = FALSE,

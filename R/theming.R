@@ -2,7 +2,7 @@
 #'
 #'
 #' @return HTML code. Theme for a shinydashboard application.
-#'
+#' @noRd
 theme_button_status <- function(home_color, home_color_hover, home_color_border,
                                 options_color, options_color_hover, options_color_border,
                                 inputs_color, inputs_color_hover, inputs_color_border,
