@@ -5,7 +5,6 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # List the first level callModules here
 
   # Dicentrics Modules ----
 
@@ -141,5 +140,4 @@ app_server <- function(input, output, session) {
     module = generalEstimateResults,
     aberr_module = "micronuclei"
   )
-
 }
