@@ -1,10 +1,27 @@
+#' Help modal trigger button
+#'
+#' @param inputId id of the button
+#' @param id_modal id of the modal dialogue
+#'
+#' @noRd
+help_modal_button <- function(inputId, id_modal) {
+  shinyBS::bsButton(
+    class = "modal-help-button",
+    inputId,
+    label = "",
+    icon = icon("question"),
+    style = "default", size = "default"
+  ) %>%
+    bsplus::bs_attach_modal(id_modal)
+}
+
 # Function: mySwitchInput ----
 
 mySwitchInput <- function(inputId, label = NULL, value = FALSE, onLabel = "ON",
                           offLabel = "OFF", onStatus = NULL, offStatus = NULL, size = "default",
                           labelWidth = "auto", handleWidth = "auto", disabled = FALSE,
                           inline = FALSE, width = NULL, sideLabel = NULL) {
-  dropNulls <- function (x) {
+  dropNulls <- function(x) {
     x[!vapply(x, is.null, FUN.VALUE = logical(1))]
   }
 
@@ -63,7 +80,7 @@ mySwitchInput <- function(inputId, label = NULL, value = FALSE, onLabel = "ON",
 
 # Function: innerColumn ----
 innerColumn <- function(width, ..., offset = 0) {
-  if (!is.numeric(width)) {#|| (width < 1) || (width > 12)) {
+  if (!is.numeric(width)) { #|| (width < 1) || (width > 12)) {
     stop("column width must be between 1 and 12")
   }
   colClass <- paste0("col-inner-", width)
@@ -104,7 +121,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "selectPicker",
           version = "1.13.3",
-          src = c(href="shinyWidgets/selectPicker"),
+          src = c(href = "shinyWidgets/selectPicker"),
           script = "js/bootstrap-select.min.js",
           stylesheet = "css/bootstrap-select.min.css"
         )
@@ -126,7 +143,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "bootstrap-switch",
           version = "3.3.4",
-          src = c(href="shinyWidgets/switchInput/bootstrap-switch-3.3.4"),
+          src = c(href = "shinyWidgets/switchInput/bootstrap-switch-3.3.4"),
           script = "bootstrap-switch.min.js",
           stylesheet = "bootstrap-switch.min.css"
         )
@@ -137,7 +154,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "sweetAlert",
           version = "0.2.0",
-          src = c(href="shinyWidgets/sweetAlert"),
+          src = c(href = "shinyWidgets/sweetAlert"),
           script = c("sweetalert.min.js", "sweetalert-bindings.js")
         )
       )
@@ -147,7 +164,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "multi",
           version = "1.4.0",
-          src = c(href="shinyWidgets/multi"),
+          src = c(href = "shinyWidgets/multi"),
           script = "multi.min.js",
           stylesheet = c("multi.min.css")
         )
@@ -158,8 +175,10 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "jquery-knob", version = "1.2.13",
           src = c(href = "shinyWidgets/jquery-knob"),
-          script = c("jquery.knob.min.js",
-                     "knob-input-binding.js")
+          script = c(
+            "jquery.knob.min.js",
+            "knob-input-binding.js"
+          )
         )
       )
     } else if (widget == "dropdown") {
@@ -168,7 +187,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "dropdown-patch",
           version = version,
-          src = c(href="shinyWidgets/dropdown"),
+          src = c(href = "shinyWidgets/dropdown"),
           script = "dropdown-click.js"
         )
       )
@@ -178,7 +197,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "sw-dropdown",
           version = version,
-          src = c(href="shinyWidgets/sw-dropdown"),
+          src = c(href = "shinyWidgets/sw-dropdown"),
           script = "sw-dropdown.js",
           stylesheet = "sw-dropdown.css"
         )
@@ -189,7 +208,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "animate",
           version = version,
-          src = c(href="shinyWidgets/animate"),
+          src = c(href = "shinyWidgets/animate"),
           stylesheet = "animate.min.css"
         )
       )
@@ -199,7 +218,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "bttn",
           version = version,
-          src = c(href="shinyWidgets/bttn"),
+          src = c(href = "shinyWidgets/bttn"),
           stylesheet = "bttn.min.css"
         )
       )
@@ -209,7 +228,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "spectrum",
           version = version,
-          src = c(href="shinyWidgets/spectrum"),
+          src = c(href = "shinyWidgets/spectrum"),
           script = c("spectrum.min.js"),
           stylesheet = c("spectrum.min.css", "sw-spectrum.css")
         )
@@ -220,7 +239,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "pretty",
           version = "3.0.3",
-          src = c(href="shinyWidgets/pretty-checkbox"),
+          src = c(href = "shinyWidgets/pretty-checkbox"),
           stylesheet = "pretty-checkbox.min.css"
         )
       )
@@ -230,7 +249,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "nouislider",
           version = "11.0.3",
-          src = c(href="shinyWidgets/nouislider"),
+          src = c(href = "shinyWidgets/nouislider"),
           script = c("nouislider.min.js", "wNumb.js"),
           stylesheet = "nouislider.min.css"
         )
@@ -241,7 +260,7 @@ attachShinyWidgetsDep <- function(tag, widget = NULL) {
         htmltools::htmlDependency(
           name = "air-datepicker",
           version = "2.2.3",
-          src = c(href="shinyWidgets/air-datepicker"),
+          src = c(href = "shinyWidgets/air-datepicker"),
           script = c("datepicker.min.js", "datepicker-bindings.js"),
           stylesheet = "datepicker.min.css"
         )
