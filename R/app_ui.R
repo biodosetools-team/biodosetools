@@ -2,7 +2,7 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @import shiny
+#' @import shiny shinydashboard
 #' @noRd
 app_ui <- function(request) {
   # Custom theme ----
@@ -70,7 +70,7 @@ app_ui <- function(request) {
     ),
 
     # dashboardPage ----
-    shinydashboard::dashboardPage(
+    dashboardPage(
       title = "Biodose Tools",
       skin = "purple",
       header = dashboard_header(),
@@ -82,9 +82,10 @@ app_ui <- function(request) {
 
 #' The dashboard header
 #'
+#' @import shiny shinydashboard
 #' @noRd
 dashboard_header <- function() {
-  shinydashboard::dashboardHeader(
+  dashboardHeader(
     # title = "Biodose Tools"
     title = span(img(src = "www/icon_small.svg", height = 35), "Biodose Tools"),
     tags$li(
@@ -102,10 +103,11 @@ dashboard_header <- function() {
 
 #' The dashboard sidebar
 #'
+#' @import shiny shinydashboard
 #' @noRd
 dashboard_sidebar <- function() {
-  shinydashboard::dashboardSidebar(
-    shiny::selectInput(
+  dashboardSidebar(
+    selectInput(
       inputId = "experiment_select",
       label = NULL,
       width = 175,
@@ -121,30 +123,36 @@ dashboard_sidebar <- function() {
       selectize = TRUE
     ),
 
-    shinydashboard::sidebarMenu(
-      shinydashboard::menuItem(
+    sidebarMenu(
+      menuItem(
         "About this app",
         tabName = "home",
         icon = icon("home")
       )
     ),
 
-    shinydashboard::sidebarMenu(
-      shinydashboard::menuItem(
+    sidebarMenu(
+      menuItem(
         "Dicentrics",
         tabName = "dicent_main",
         icon = icon("dashboard"),
-        shinydashboard::menuSubItem(
+        # Dicentrics
+        menuSubItem(
+          "Fitting",
+          tabName = "tab-dicent-fitting",
+          icon = icon("cog")
+        ),
+        menuSubItem(
           "Something",
           tabName = "tab-dicent-fitting",
           icon = icon("cog")
         )
       ),
-      shinydashboard::menuItem(
+      menuItem(
         "Translocations",
         tabName = "trans_main",
         icon = icon("dashboard"),
-        shinydashboard::menuSubItem(
+        menuSubItem(
           "Something",
           tabName = "dashboard",
           icon = icon("blind")
@@ -156,14 +164,15 @@ dashboard_sidebar <- function() {
 
 #' The dashboard home page
 #'
+#' @import shiny shinydashboard
 #' @noRd
 dashboard_home <- function() {
-  shinydashboard::tabItem(
+  tabItem(
     tabName = "home",
     div(
       style = "padding-bottom: 20px;",
       h2("About this project", style = "margin-left: 10%;"),
-      shiny::includeMarkdown(
+      includeMarkdown(
         system.file("app/www/about_body.md", package = "biodosetools")
       ),
 
@@ -172,7 +181,7 @@ dashboard_home <- function() {
         style = "margin-left: 10%;",
 
         # GitHub icon
-        shiny::actionButton(
+        actionButton(
           inputId = "github_link", label = "Source code",
           icon = icon("github"),
           class = "home-button",
@@ -181,7 +190,7 @@ dashboard_home <- function() {
         div(class = "widget-sep", br()),
 
         # Wiki/Documentation icon
-        shiny::actionButton(
+        actionButton(
           inputId = "wiki_link", label = "Documentation",
           icon = icon("book"),
           class = "home-button",
@@ -194,16 +203,19 @@ dashboard_home <- function() {
 
 #' The dashboard body
 #'
+#' @import shiny shinydashboard
 #' @noRd
 dashboard_body <- function() {
-  shinydashboard::dashboardBody(
-    shinydashboard::tabItems(
+  dashboardBody(
+    tabItems(
       dashboard_home(),
 
-      shinydashboard::tabItem(
+      tabItem(
         tabName = "dashboard",
         h2("Dashboard tab content")
-      )
+      ),
+
+      dicentFittingUI(id = "dicent_fitting", label = "tab-dicent-fitting")
     )
   )
 }
