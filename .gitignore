@@ -3,9 +3,9 @@
 .RData
 .Ruserdata
 *.Rproj
-test-scripts/
-rsconnect/
-app_file_manifest.txt
-help_template.R
-deploy_shinyapp.R
-www/MathJax
+
+inst/extdata/*.rds
+inst/app/old
+inst/app/www_old
+R_old
+git-history.txt

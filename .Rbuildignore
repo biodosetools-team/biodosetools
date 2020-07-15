@@ -9,10 +9,9 @@ $run_dev.*
 ^LICENSE\.md$
 ^README\.Rmd$
 ^CONTRIBUTORS\.md$
-^app_file_manifest\.txt$
-^deploy_shinyapp\.R$
-^test-scripts$
-^help_template\.R$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+
+^git-history\.txt$
+^R_old$
