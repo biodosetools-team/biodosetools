@@ -13,29 +13,6 @@ theme_button_status <- function(home_color, home_color_hover, home_color_border,
       htmltools::HTML(
         paste0(
           "
-          /* Help buttons */
-          .rightAlign{
-            float:right;
-          }
-
-          /* Widgets */
-          .side-widget {
-            display: inline-block;
-            vertical-align: top;
-          }
-
-          .side-widget-tall {
-            display: inline-block;
-            vertical-align: bottom;
-            margin-bottom: -22px;
-          }
-
-          .widget-sep {
-            display: inline-block;
-            vertical-align: top;
-            width: 20px;
-          }
-
           /* File selector widget */
 
           .btn.btn-file {
@@ -150,117 +127,7 @@ theme_button_status <- function(home_color, home_color_hover, home_color_border,
           .export-button:hover {
             color: #fff;
             background-color: ", export_color_hover, ";
-            border-color:  ", export_color_border, ';
-          }
-
-          .small-action-button {
-            height: 25px;
-            line-height: 0;
-            padding: 0 8px 0 8px;
-          }
-
-          /* Custom shinyBS status colors */
-
-          /* Options Checkbox & Radio button */
-
-          .checkbox-bs-warning input[type="checkbox"]:checked + label::before, .checkbox-bs-warning input[type="radio"]:checked + label::before {
-            color: #fff;
-            background-color: ', options_color, ";
-            border-color:  ", options_color_border, ';
-          }
-
-          .radio-bs-warning input[type="radio"] + label::after {
-            background-color: ', options_color, ';
-          }
-
-          .radio-bs-warning input[type="radio"]:checked + label::after {
-            background-color: ', options_color, ';
-          }
-
-          .radio-bs-warning input[type="radio"]:checked + label::before {
-            border-color: ', options_color, ';
-          }
-
-          /* Inputs Checkbox & Radio button */
-
-          .checkbox-bs-primary input[type="checkbox"]:checked + label::before, .checkbox-bs-primary input[type="radio"]:checked + label::before {
-            color: #fff;
-            background-color: ', inputs_color, ";
-            border-color:  ", inputs_color_border, ';
-          }
-
-          .radio-bs-primary input[type="radio"] + label::after {
-            background-color: ', inputs_color, ';
-          }
-
-          .radio-bs-primary input[type="radio"]:checked + label::after {
-            background-color: ', inputs_color, ';
-          }
-
-          .radio-bs-primary input[type="radio"]:checked + label::before {
-            border-color: ', inputs_color, ';
-          }
-
-          /* Results Checkbox & Radio button */
-
-          .checkbox-bs-success input[type="checkbox"]:checked + label::before, .checkbox-bs-success input[type="radio"]:checked + label::before {
-            color: #fff;
-            background-color: ', results_color, ";
-            border-color:  ", results_color_border, ';
-          }
-
-          .radio-bs-success input[type="radio"] + label::after {
-            background-color: ', results_color, ';
-          }
-
-          .radio-bs-success input[type="radio"]:checked + label::after {
-            background-color: ', results_color, ';
-          }
-
-          .radio-bs-success input[type="radio"]:checked + label::before {
-            border-color: ', results_color, ';
-          }
-
-          /* Export Checkbox & Radio button */
-
-          .checkbox-bs-danger input[type="checkbox"]:checked + label::before, .checkbox-bs-danger input[type="radio"]:checked + label::before {
-            color: #fff;
-            background-color: ', export_color, ";
-            border-color:  ", export_color_border, ';
-          }
-
-          .radio-bs-danger input[type="radio"] + label::after {
-            background-color: ', export_color, ';
-          }
-
-          .radio-bs-danger input[type="radio"]:checked + label::after {
-            background-color: ', export_color, ';
-          }
-
-          .radio-bs-danger input[type="radio"]:checked + label::before {
-            border-color: ', export_color, ";
-          }
-
-          /* Custom shinyWidgets::switchInput colors */
-
-          .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-options {
-            background: ", options_color, ";
-            color: #fff;
-          }
-
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-inputs {
-            background: ", inputs_color, ";
-            color: #fff;
-          }
-
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-results {
-            background: ", results_color, ";
-            color: #fff;
-          }
-
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-export {
-            background: ", export_color, ";
-            color: #fff;
+            border-color:  ", export_color_border, ";
           }
 
           "
