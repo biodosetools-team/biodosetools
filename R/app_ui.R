@@ -131,36 +131,68 @@ dashboard_sidebar <- function() {
       )
     ),
 
+    p(class = "menu-title", "Assays"),
     sidebarMenu(
+      # Dicentrics
       menuItem(
         "Dicentrics",
-        tabName = "dicent_main",
-        icon = icon("dashboard"),
+        tabName = "dicent-menu-item",
+        icon = icon("dna"),
         startExpanded = TRUE,
-        # Dicentrics
-        menuSubItem(
+        # Modules
+        menuItem(
           "Fitting",
           tabName = "tab-dicent-fitting",
           selected = TRUE,
           icon = icon("cog")
         ),
-        menuSubItem(
-          "Something",
-          tabName = "tab-dicent-fitting",
-          icon = icon("cog")
+        menuItem(
+          "Dose estimation",
+          tabName = "tab-dicent-estimate",
+          icon = icon("calculator")
         )
       ),
+      # Translocations
       menuItem(
         "Translocations",
-        tabName = "trans_main",
-        icon = icon("dashboard"),
+        tabName = "trans-menu-item",
+        icon = icon("palette"),
+        # Modules
         menuSubItem(
-          "Something",
-          tabName = "dashboard",
-          icon = icon("blind")
+          "Fitting",
+          tabName = "tab-trans-fitting",
+          icon = icon("cog")
+        ),
+        menuSubItem(
+          "Dose estimation",
+          tabName = "tab-trans-estimate",
+          icon = icon("calculator")
+        )
+      ),
+      # Micronuclei
+      menuItem(
+        "Micronuclei",
+        tabName = "micro-menu-item",
+        icon = icon("dot-circle"),
+        # Modules
+        menuItem(
+          "Fitting",
+          tabName = "tab-micro-fitting",
+          icon = icon("cog"),
+          badgeLabel = "wip",
+          badgeColor = "green"
+        ),
+        menuItem(
+          "Dose estimation",
+          tabName = "tab-micro-estimate",
+          icon = icon("calculator"),
+          badgeLabel = "wip",
+          badgeColor = "green"
         )
       )
-    )
+    ),
+
+    p(class = "menu-title", "Other tools")
   )
 }
 
