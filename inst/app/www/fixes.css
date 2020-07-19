@@ -1,3 +1,23 @@
+/* Widgets */
+.box {
+  border-top: 5px solid #d2d6de;
+}
+
+/* Checkboxes */
 .awesome-checkbox label {
   font-weight: 400;
+}
+
+.awesome-checkbox label::after {
+  font-weight: 700;
+}
+
+/*.sidebar-menu .treeview-menu>li.active {
+  margin: 0;
+  border-left: 3px solid;
+  border-left-color: #2EC27E;
+}*/
+
+.sidebar-menu .treeview-menu>.active .fa {
+  color: #2EC27E;
 }
