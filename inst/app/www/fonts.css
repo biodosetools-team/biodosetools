@@ -7,13 +7,20 @@ body {
 
 .main-header .logo {
   font-family: "Roboto Condensed", sans-serif;
-  font-weight: bold;
+  font-weight: 700;
   letter-spacing: -1px;
   font-size: 3rem;
   color: #ffffff;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
+}
+
+.menu-title {
+  padding-left: 18px;
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
 }
