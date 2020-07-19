@@ -14,3 +14,27 @@
   overflow-y: hidden;
   overflow-x: auto;
 }
+
+/* Custom Widget Classes */
+.side-widget {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.side-widget-tall {
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: -20px;
+}
+
+.widget-sep {
+  display: inline-block;
+  vertical-align: top;
+  width: 20px;
+}
+
+.small-action-button {
+  height: 25px;
+  line-height: 0;
+  padding: 0 8px 0 8px;
+}
