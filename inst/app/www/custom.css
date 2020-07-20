@@ -1,5 +1,6 @@
 /* Tweak modal help buttons */
 .modal-help-button {
+  background: transparent;
   right: 40px;
   position: absolute;
   padding: 4px 10px;
