@@ -8,7 +8,7 @@ dicentFittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  shinydashboard::tabItem(
+  tabItem(
     tabName = label,
     h2("Dicentrics: Dose-effect fitting"),
 
@@ -24,7 +24,7 @@ dicentFittingUI <- function(id, label) {
           )
         ),
         status = "info",
-        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
+        collapsible = TRUE,
 
         # Help modal
         bsplus::bs_modal(
@@ -34,7 +34,7 @@ dicentFittingUI <- function(id, label) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_count_data_option"),
               label = NULL,
               choices = c(
@@ -66,17 +66,17 @@ dicentFittingUI <- function(id, label) {
           column(
             width = 12,
             # Load file checkbox
-            shinyWidgets::awesomeCheckbox(
+            awesomeCheckbox(
               inputId = ns("load_count_data_check"),
-              # status = "options",
+              status = "info",
               label = "Load data from file",
               value = FALSE
             ),
 
             # Full/aggregated data checkbox
-            shinyWidgets::awesomeCheckbox(
+            awesomeCheckbox(
               inputId = ns("use_aggr_count_data_check"),
-              # status = "options",
+              status = "info",
               width = "100%",
               label = "Only provide total number of dicentrics",
               value = FALSE
@@ -122,7 +122,7 @@ dicentFittingUI <- function(id, label) {
           )
         ),
         status = "info",
-        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
+        collapsible = TRUE,
 
         # Help modal
         bsplus::bs_modal(
@@ -132,7 +132,7 @@ dicentFittingUI <- function(id, label) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_fitting_options_option"),
               label = NULL,
               choices = c(
@@ -194,7 +194,8 @@ dicentFittingUI <- function(id, label) {
         width = 12,
         title = "Data input",
         status = "primary",
-        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
+        collapsible = TRUE,
+
         div(
           class = "hot-improved",
           rhandsontable::rHandsontableOutput(ns("count_data_hot"))
@@ -237,8 +238,8 @@ dicentFittingUI <- function(id, label) {
           side = "left",
 
           tabPanel(
-            tabName = "Result of curve fit",
-            active = TRUE,
+            title = "Result of curve fit",
+            # active = TRUE,
             h5("Fit formula"),
             uiOutput(ns("fit_formula_tex")),
 
@@ -254,7 +255,7 @@ dicentFittingUI <- function(id, label) {
           ),
 
           tabPanel(
-            tabName = "Summary statistics",
+            title = "Summary statistics",
             h5("Model-level statistics"),
             div(
               class = "hot-improved",
@@ -277,7 +278,7 @@ dicentFittingUI <- function(id, label) {
           ) # ,
 
           # tabPanel(
-          #   tabName = "Decision thresholds",
+          #   title = "Decision thresholds",
           #   h5("Decision thresholds"),
           #   div(
           #     class = "hot-improved",
@@ -289,7 +290,6 @@ dicentFittingUI <- function(id, label) {
         # Box: Export data and results ----
         box(
           width = 12,
-          # noPadding = TRUE,
           title = span(
             "Export results",
             help_modal_button(
@@ -298,7 +298,7 @@ dicentFittingUI <- function(id, label) {
             )
           ),
           status = "warning",
-          solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
+          collapsible = TRUE,
 
           # Help modal
           bsplus::bs_modal(
@@ -308,7 +308,7 @@ dicentFittingUI <- function(id, label) {
 
             body = tagList(
               # Option selection
-              shinyWidgets::radioGroupButtons(
+              radioGroupButtons(
                 inputId = ns("help_fit_data_save_option"),
                 label = NULL,
                 choices = c(
@@ -362,10 +362,9 @@ dicentFittingUI <- function(id, label) {
         # Box: Plot box ----
         box(
           width = 12,
-          noPadding = TRUE,
           title = "Curve plot",
           status = "success",
-          solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
+          collapsible = TRUE,
 
           # Plot
           plotOutput(ns("plot")),
