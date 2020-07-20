@@ -23,8 +23,8 @@ dicentFittingUI <- function(id, label) {
             ns("help_count_data_modal")
           )
         ),
-        # status = "options",
-        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
 
         # Help modal
         bsplus::bs_modal(
@@ -68,7 +68,7 @@ dicentFittingUI <- function(id, label) {
             # Load file checkbox
             shinyWidgets::awesomeCheckbox(
               inputId = ns("load_count_data_check"),
-              # onStatus = "options",
+              # status = "options",
               label = "Load data from file",
               value = FALSE
             ),
@@ -76,7 +76,7 @@ dicentFittingUI <- function(id, label) {
             # Full/aggregated data checkbox
             shinyWidgets::awesomeCheckbox(
               inputId = ns("use_aggr_count_data_check"),
-              # onStatus = "options",
+              # status = "options",
               width = "100%",
               label = "Only provide total number of dicentrics",
               value = FALSE
@@ -121,8 +121,8 @@ dicentFittingUI <- function(id, label) {
             ns("help_fitting_options_modal")
           )
         ),
-        # status = "options",
-        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
 
         # Help modal
         bsplus::bs_modal(
@@ -193,8 +193,8 @@ dicentFittingUI <- function(id, label) {
       box(
         width = 12,
         title = "Data input",
-        # status = "inputs",
-        solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "primary",
+        solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
         div(
           class = "hot-improved",
           rhandsontable::rHandsontableOutput(ns("count_data_hot"))
@@ -239,7 +239,7 @@ dicentFittingUI <- function(id, label) {
             id = ns("fit_results_tabs"),
             width = 12,
             side = "left",
-            # solidHeader = TRUE,
+            # solidHeader = FALSE,
             # closable = FALSE,
 
             tabPanel(
@@ -304,8 +304,8 @@ dicentFittingUI <- function(id, label) {
               ns("help_fit_data_save_modal")
             )
           ),
-          # status = "export",
-          solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "warning",
+          solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
 
           # Help modal
           bsplus::bs_modal(
@@ -371,8 +371,8 @@ dicentFittingUI <- function(id, label) {
           width = 12,
           noPadding = TRUE,
           title = "Curve plot",
-          # status = "results",
-          solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          solidHeader = FALSE, collapsible = TRUE, closable = FALSE,
 
           # Plot
           plotOutput(ns("plot")),

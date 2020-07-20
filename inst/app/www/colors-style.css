@@ -115,6 +115,22 @@
 
 /* Boxes */
 .box.box-primary {
+  border-top-color: #5B5EA8;
+}
+
+.box.box-success {
+  border-top-color: #2db77d;
+}
+
+.box.box-warning {
+  border-top-color: #F6A945;
+}
+
+.box.box-danger {
+  border-top-color: #F6A945;
+}
+
+.box.box-info {
   border-top-color: #2B7C9A;
 }
 

@@ -1,4 +1,20 @@
 /* Boxes */
 .box.box-primary {
-    border-top-color: $options_color;
+  border-top-color: $primary;
+}
+
+.box.box-success {
+  border-top-color: $success;
+}
+
+.box.box-warning {
+  border-top-color: $warning;
+}
+
+.box.box-danger {
+  border-top-color: $danger;
+}
+
+.box.box-info {
+  border-top-color: $info;
 }
