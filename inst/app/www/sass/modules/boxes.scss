@@ -18,3 +18,14 @@
 .box.box-info {
   border-top-color: $info;
 }
+
+/* tabBoxes */
+.nav-tabs-custom > .nav-tabs > li.active {
+  border-top: 5px solid;
+  border-radius: 3px;
+  border-top-color: $results-color;
+}
+
+.nav-tabs-custom {
+  box-shadow: 0 lightgrey;
+}
