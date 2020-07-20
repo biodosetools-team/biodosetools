@@ -231,66 +231,59 @@ dicentFittingUI <- function(id, label) {
       column(
         width = 6,
         # tabBox: Fit results ----
-        div(
-          # Ugly fix for inner fluidRow() padding
-          style = "margin-left: -7.5px; margin-right: -7.5px",
+        tabBox(
+          id = ns("fit_results_tabs"),
+          width = 12,
+          side = "left",
 
-          tabBox(
-            id = ns("fit_results_tabs"),
-            width = 12,
-            side = "left",
-            # solidHeader = FALSE,
-            # closable = FALSE,
+          tabPanel(
+            tabName = "Result of curve fit",
+            active = TRUE,
+            h5("Fit formula"),
+            uiOutput(ns("fit_formula_tex")),
 
-            tabPanel(
-              tabName = "Result of curve fit",
-              active = TRUE,
-              h6("Fit formula"),
-              uiOutput(ns("fit_formula_tex")),
+            h5("Model"),
+            uiOutput(ns("fit_model_summary")),
 
-              h6("Model"),
-              uiOutput(ns("fit_model_summary")),
+            br(),
+            h5("Coefficients"),
+            div(
+              class = "hot-improved",
+              rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
+            )
+          ),
 
-              br(),
-              h6("Coefficients"),
-              div(
-                class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
-              )
+          tabPanel(
+            tabName = "Summary statistics",
+            h5("Model-level statistics"),
+            div(
+              class = "hot-improved",
+              rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
             ),
 
-            tabPanel(
-              tabName = "Summary statistics",
-              h6("Model-level statistics"),
-              div(
-                class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
-              ),
+            br(),
+            h5("Correlation matrix"),
+            div(
+              class = "hot-improved",
+              rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
+            ),
 
-              br(),
-              h6("Correlation matrix"),
-              div(
-                class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
-              ),
+            br(),
+            h5("Variance-covariance matrix"),
+            div(
+              class = "hot-improved",
+              rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
+            )
+          ) # ,
 
-              br(),
-              h6("Variance-covariance matrix"),
-              div(
-                class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
-              )
-            ) # ,
-
-            # tabPanel(
-            #   tabName = "Decision thresholds",
-            #   h6("Decision thresholds"),
-            #   div(
-            #     class = "hot-improved",
-            #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
-            #   )
-            # )
-          )
+          # tabPanel(
+          #   tabName = "Decision thresholds",
+          #   h5("Decision thresholds"),
+          #   div(
+          #     class = "hot-improved",
+          #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
+          #   )
+          # )
         ),
 
         # Box: Export data and results ----
