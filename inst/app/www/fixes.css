@@ -11,13 +11,3 @@
 .awesome-checkbox label::after {
   font-weight: 700;
 }
-
-/*.sidebar-menu .treeview-menu>li.active {
-  margin: 0;
-  border-left: 3px solid;
-  border-left-color: #2EC27E;
-}*/
-
-.sidebar-menu .treeview-menu>.active .fa {
-  color: #2EC27E;
-}

@@ -124,6 +124,15 @@ section.sidebar .shiny-bound-input.action-link {
   color: white;
 }
 
+/*.sidebar-menu .treeview-menu>li.active {
+  margin: 0;
+  border-left: 3px solid;
+  border-left-color: #2EC27E;
+}*/
+.sidebar-menu .treeview-menu > .active .fa {
+  color: #2EC27E;
+}
+
 /* File selector widget */
 .btn.btn-file {
   border-top-right-radius: 0;
