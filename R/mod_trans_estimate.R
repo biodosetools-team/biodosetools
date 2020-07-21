@@ -4,68 +4,68 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4Dash::bs4TabItem(
+  tabItem(
     tabName = label,
     h2("Translocations: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # Card: Curve fitting options ----
-      bs4MyCard(
+      # Box: Curve fitting options ----
+      box(
         width = 5,
         title = "Curve fitting data options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_fit_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_fit_data_dialog"),
-            title = "Help: Fitting data input",
-            trigger = ns("help_fit_data"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_fit_data_option"),
-              label = NULL,
-              choices = c(
-                "Manual input" = "manual",
-                "Load data"    = "load"
-              ),
-              selected = "load"
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_fit_data_option == 'manual'",
-              ns = ns,
-              include_help("estimate/fit_data_input.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_fit_data_option == 'load'",
-              ns = ns,
-              include_help("estimate/fit_data_load.md")
-            ),
-            include_help("trans/fit_data_estimate.md")
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_fit_data"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_fit_data_dialog"),
+        #     title = "Help: Fitting data input",
+        #     trigger = ns("help_fit_data"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_fit_data_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Manual input" = "manual",
+        #         "Load data"    = "load"
+        #       ),
+        #       selected = "load"
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_fit_data_option == 'manual'",
+        #       ns = ns,
+        #       include_help("estimate/fit_data_input.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_fit_data_option == 'load'",
+        #       ns = ns,
+        #       include_help("estimate/fit_data_load.md")
+        #     ),
+        #     include_help("trans/fit_data_estimate.md")
+        #   )
+        # ),
 
         fluidRow(
           column(
             width = 12,
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load fit data from RDS file",
+              status = "info",
+              label = "Load fit data from RDS file",
               value = TRUE
             ),
 
@@ -85,7 +85,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               ),
 
               div(class = "widget-sep", br()),
-              actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
+              actionButton(
+                ns("button_gen_table"),
+                class = "options-button",
+                style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"
+              ),
 
               br(),
               br(),
@@ -118,18 +122,17 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "!input.load_fit_data_check",
               ns = ns,
 
-              widgetLabel("Coefficients"),
+              widget_label("Coefficients"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
-              mySwitchInput(
+              awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
-                size = "mini",
-                onStatus = "options",
-                sideLabel = "Provide variance-covariance matrix",
+                status = "info",
+                label = "Provide variance-covariance matrix",
                 value = FALSE
               )
             ),
@@ -137,7 +140,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.use_var_cov_matrix",
               ns = ns,
-              widgetLabel("Variance-covariance matrix"),
+              widget_label("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
@@ -157,38 +160,36 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # tabCard: Curve fitting overview ----
+      # tabBox: Curve fitting overview ----
 
-      bs4MyTabCard(
+      tabBox(
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
 
-        bs4MyTabPanel(
-          tabName = "Result of curve fit",
+        tabPanel(
+          title = "Result of curve fit",
           active = TRUE,
-          h6("Fit formula"),
+          h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
           br(),
-          h6("Translocation frequency"),
+          h5("Translocation frequency"),
           uiOutput(ns("fit_trans_frequency_message")),
 
           br(),
-          h6("Full genome coefficients"),
+          h5("Full genome coefficients"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
-        bs4MyTabPanel(
-          tabName = "Summary statistics",
+        tabPanel(
+          title = "Summary statistics",
           conditionalPanel(
             condition = "input.load_fit_data_check",
             ns = ns,
-            h6("Model-level statistics"),
+            h5("Model-level statistics"),
             div(
               class = "hot-improved",
               rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
@@ -196,14 +197,14 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             br()
           ),
 
-          h6("Correlation matrix"),
+          h5("Correlation matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
           ),
 
           br(),
-          h6("Variance-covariance matrix"),
+          h5("Variance-covariance matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
@@ -213,49 +214,50 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # Card: Stains color options ----
-      bs4MyCard(
+      # Box: Stains color options ----
+      box(
         width = 6,
         title = "Stains color options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_colors"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_colors_dialog"),
-            title = "Help: Stain color data input",
-            trigger = ns("help_colors"),
-            size = "large",
-
-            include_help("trans/colors_data_input.md"),
-            div(
-              class = "hot-improved",
-              rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
-            ),
-            include_help("trans/colors_data_input_b.md")
-
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_colors"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_colors_dialog"),
+        #     title = "Help: Stain color data input",
+        #     trigger = ns("help_colors"),
+        #     size = "large",
+        #
+        #     include_help("trans/colors_data_input.md"),
+        #     div(
+        #       class = "hot-improved",
+        #       rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
+        #     ),
+        #     include_help("trans/colors_data_input_b.md")
+        #
+        #   )
+        # ),
 
         fluidRow(
           column(
             width = 12,
 
             fluidRow(
-              innerColumn(
+              inner_column(
                 width = 6,
 
                 shinyWidgets::awesomeRadio(
                   inputId = ns("trans_sex"),
-                  status = "warning",
+                  status = "info",
                   label = "Sex",
                   choices = c(
                     "Male"   = "male",
@@ -275,15 +277,14 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                 )
               ),
 
-              innerColumn(
+              inner_column(
                 width = 6,
 
-                widgetLabel("Stain color scheme"),
-                mySwitchInput(
+                widget_label("Stain color scheme"),
+                awesomeCheckbox(
                   inputId = ns("trans_m_fish_scheme"),
-                  size = "mini",
-                  onStatus = "options",
-                  sideLabel = "Use M-Fish",
+                  status = "info",
+                  label = "Use M-Fish",
                   value = FALSE
                 ),
 
@@ -322,12 +323,13 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
       column(
         width = 6,
 
-        # Card: Chromosome-color table ----
-        bs4MyCard(
+        # Box: Chromosome-color table ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Chromosome data",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "primary",
+          collapsible = TRUE,
+
           fluidRow(
             column(
               width = 12,
@@ -339,23 +341,28 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
             div(
               style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(ns("button_calc_genome_fraction"), class = "inputs-button", "Calculate fraction")
+              actionButton(
+                ns("button_calc_genome_fraction"),
+                class = "inputs-button",
+                "Calculate fraction"
+              )
             )
           )
         ),
 
-        # Card: Conversion factor to full genome ----
-        bs4MyCard(
+        # Box: Conversion factor to full genome ----
+        box(
           width = 12,
-          noPadding = TRUE,
+
           title = "Genomic conversion factor",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          collapsible = TRUE,
+
           fluidRow(
             column(
               width = 12,
 
               uiOutput(ns("genome_fraction"))
-
             )
           )
         )
@@ -364,57 +371,58 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # Card: Data input options ----
-      bs4MyCard(
+      # Box: Data input options ----
+      box(
         width = 5,
         title = "Data input options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_cases_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_cases_data_dialog"),
-            title = "Help: Cases data input",
-            trigger = ns("help_cases_data"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_cases_data_option"),
-              label = NULL,
-              choices = c(
-                "Manual input" = "manual",
-                "Load data"    = "load",
-                "Confounders"  = "confounders"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_cases_data_option == 'manual'",
-              ns = ns,
-              include_help("trans/cases_data_input.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_cases_data_option == 'load'",
-              ns = ns,
-              include_help("trans/cases_data_load.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_cases_data_option == 'confounders'",
-              ns = ns,
-              include_help("trans/cases_data_confounders.md")
-            )
-
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_cases_data"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_cases_data_dialog"),
+        #     title = "Help: Cases data input",
+        #     trigger = ns("help_cases_data"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_cases_data_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Manual input" = "manual",
+        #         "Load data"    = "load",
+        #         "Confounders"  = "confounders"
+        #       )
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_cases_data_option == 'manual'",
+        #       ns = ns,
+        #       include_help("trans/cases_data_input.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_cases_data_option == 'load'",
+        #       ns = ns,
+        #       include_help("trans/cases_data_load.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_cases_data_option == 'confounders'",
+        #       ns = ns,
+        #       include_help("trans/cases_data_confounders.md")
+        #     )
+        #
+        #   )
+        # ),
 
         fluidRow(
           column(
@@ -428,11 +436,10 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
 
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_case_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load data from file",
+              status = "info",
+              label = "Load data from file",
               value = FALSE
             ),
 
@@ -450,12 +457,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             ),
 
             # Confounders selection
-            widgetLabel("Confounders"),
-            mySwitchInput(
+            widget_label("Confounders"),
+            awesomeCheckbox(
               inputId = ns("trans_confounders"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Use confounders",
+              status = "info",
+              label = "Use confounders",
               value = FALSE
             ),
             conditionalPanel(
@@ -483,14 +489,15 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # Card: hot Cases & confounders input ----
+
+      # Box: hot Cases & confounders input ----
       column(
         width = 7,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Data input",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "primary",
+          collapsible = TRUE,
 
           # Confounders ----
           conditionalPanel(
@@ -513,10 +520,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             div(
               class = "side-widget",
               style = "max-width: 140px; margin-right: -40px;",
-              widgetLabel("Sex", 14),
-              mySwitchInput(
-                ns("trans_confounder_sex"),
-                onStatus = "inputs",
+              widget_label("Sex", 14),
+              awesomeCheckbox(
+                inputId = ns("trans_confounder_sex"),
+                label = "Sex",
+                status = "primary",
                 value = FALSE
               )
             ),
@@ -524,10 +532,10 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             div(
               class = "side-widget",
               style = "max-width: 140px; margin-right: -40px;",
-              widgetLabel("Smoker", 14),
+              widget_label("Smoker", 14),
               shinyWidgets::switchInput(
                 ns("trans_confounder_smoke"),
-                onStatus = "inputs",
+                onStatus = "primary",
                 value = FALSE
               )
             ),
@@ -599,65 +607,65 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
         ),
 
-        # Card: Estimation options ----
-        bs4MyCard(
+        # Box: Estimation options ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Dose estimation options",
-          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "info",
+          collapsible = TRUE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
-              ns("help_estimate_options"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-            # Help modal
-            bs4MyModal(
-              id = ns("help_estimate_options_dialog"),
-              title = "Help: Dose estimation options",
-              trigger = ns("help_estimate_options"),
-              size = "large",
-
-              # Option selection
-              shinyWidgets::radioGroupButtons(
-                inputId = ns("help_estimate_options_option"),
-                label = NULL,
-                choices = c(
-                  "Exposure"             = "exposure",
-                  "Assessment"           = "assess",
-                  "Error calculation"    = "error",
-                  "Survival coefficient" = "surv_coeff"
-                )
-
-              ),
-              # Contents
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'exposure'",
-                ns = ns,
-                include_help("estimate/dose_exposure.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'assess'",
-                ns = ns,
-                include_help("estimate/dose_assessment.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'error'",
-                ns = ns,
-                include_help("estimate/dose_error.md"),
-                include_help("trans/dose_error_methods.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'surv_coeff'",
-                ns = ns,
-                include_help("estimate/fraction_coeff_select.md")
-              )
-            )
-          ),
+          # topButton = div(
+          #   # Help button
+          #   shinyBS::bsButton(
+          #     ns("help_estimate_options"),
+          #     label = "",
+          #     icon = icon("question"),
+          #     style = "default", size = "default"
+          #   ),
+          #
+          #   # Help modal
+          #   bsplus::bs_modal(
+          #     id = ns("help_estimate_options_dialog"),
+          #     title = "Help: Dose estimation options",
+          #     trigger = ns("help_estimate_options"),
+          #     size = "large",
+          #
+          #     # Option selection
+          #     shinyWidgets::radioGroupButtons(
+          #       inputId = ns("help_estimate_options_option"),
+          #       label = NULL,
+          #       choices = c(
+          #         "Exposure"             = "exposure",
+          #         "Assessment"           = "assess",
+          #         "Error calculation"    = "error",
+          #         "Survival coefficient" = "surv_coeff"
+          #       )
+          #
+          #     ),
+          #     # Contents
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'exposure'",
+          #       ns = ns,
+          #       include_help("estimate/dose_exposure.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'assess'",
+          #       ns = ns,
+          #       include_help("estimate/dose_assessment.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'error'",
+          #       ns = ns,
+          #       include_help("estimate/dose_error.md"),
+          #       include_help("trans/dose_error_methods.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'surv_coeff'",
+          #       ns = ns,
+          #       include_help("estimate/fraction_coeff_select.md")
+          #     )
+          #   )
+          # ),
 
           # Type of exposure selection
           div(
@@ -848,36 +856,36 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
     fluidRow(
       column(
         width = 6,
-        # tabCard: Estimation results ----
+        # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
-        # Card: Export data and results ----
-        bs4MyCard(
+        # Box: Export data and results ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Save results",
-          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "warning",
+          collapsible = TRUE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
-              ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-            # Help Modal
-            bs4MyModal(
-              id = ns("help_fit_data_save_dialog"),
-              title = "Help: Export results",
-              trigger = ns("help_fit_data_save"),
-              size = "large",
-
-              # Contents
-              include_help("save/estimate_data_save_report.md")
-            )
-          ),
+          # topButton = div(
+          #   # Help button
+          #   shinyBS::bsButton(
+          #     ns("help_fit_data_save"),
+          #     label = "",
+          #     icon = icon("question"),
+          #     style = "default", size = "default"
+          #   ),
+          #
+          #   # Help Modal
+          #   bsplus::bs_modal(
+          #     id = ns("help_fit_data_save_dialog"),
+          #     title = "Help: Export results",
+          #     trigger = ns("help_fit_data_save"),
+          #     size = "large",
+          #
+          #     # Contents
+          #     include_help("save/estimate_data_save_report.md")
+          #   )
+          # ),
 
           # Case description
           textAreaInput(
@@ -900,14 +908,15 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # Card: Plot curves ----
+      # Box: Plot curves ----
       column(
         width = 6,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Curve plot",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          collapsible = TRUE,
+
           # Plot
           plotOutput(ns("plot")),
           # Download plot

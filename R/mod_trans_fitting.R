@@ -4,54 +4,55 @@ transFittingUI <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4Dash::bs4TabItem(
+  tabItem(
     tabName = label,
     h2("Translocations: Dose-effect fitting"),
 
     fluidRow(
-      # Card: Stains color options ----
-      bs4MyCard(
+      # Box: Stains color options ----
+      box(
         width = 6,
         title = "Stains color options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_colors"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_colors_dialog"),
-            title = "Help: Stain color data input",
-            trigger = ns("help_colors"),
-            size = "large",
-
-            include_help("trans/colors_data_input.md"),
-            div(
-              class = "hot-improved",
-              rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
-            ),
-            include_help("trans/colors_data_input_b.md")
-
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_colors"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_colors_dialog"),
+        #     title = "Help: Stain color data input",
+        #     trigger = ns("help_colors"),
+        #     size = "large",
+        #
+        #     include_help("trans/colors_data_input.md"),
+        #     div(
+        #       class = "hot-improved",
+        #       rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
+        #     ),
+        #     include_help("trans/colors_data_input_b.md")
+        #
+        #   )
+        # ),
 
         fluidRow(
           column(
             width = 12,
 
             fluidRow(
-              innerColumn(
+              inner_column(
                 width = 6,
 
                 shinyWidgets::awesomeRadio(
                   inputId = ns("trans_sex"),
-                  status = "warning",
+                  status = "info",
                   label = "Sex",
                   choices = c(
                     "Male"   = "male",
@@ -63,23 +64,23 @@ transFittingUI <- function(id, label) {
                 selectizeInput(
                   inputId = ns("trans_chromosome_select"),
                   label = "Chromosomes",
-                  choices = c( 1:21, "X", "Y"),
+                  choices = c(1:21, "X", "Y"),
                   options = list(
-                    placeholder = 'Select stained chromosomes'
+                    placeholder = "Select stained chromosomes"
                   ),
                   multiple = TRUE
                 )
               ),
 
-              innerColumn(
+              inner_column(
                 width = 6,
 
-                widgetLabel("Stain color scheme"),
-                mySwitchInput(
+                widget_label("Stain color scheme"),
+                awesomeCheckbox(
                   inputId = ns("trans_m_fish_scheme"),
-                  size = "mini",
-                  onStatus = "options",
-                  sideLabel = "Use M-Fish",
+
+                  status = "info",
+                  label = "Use M-Fish",
                   value = FALSE
                 ),
 
@@ -99,7 +100,7 @@ transFittingUI <- function(id, label) {
                       "Cyan"
                     ),
                     options = list(
-                      placeholder = 'Select observed colors'#,
+                      placeholder = "Select observed colors" # ,
                       # maxItems = 5
                       # TODO: use renderUI to force maxItems ot be length(trans_color_select)
                     ),
@@ -118,12 +119,13 @@ transFittingUI <- function(id, label) {
       column(
         width = 6,
 
-        # Card: Chromosome-color table ----
-        bs4MyCard(
+        # Box: Chromosome-color table ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Chromosome data",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "primary",
+          collapsible = TRUE,
+
           fluidRow(
             column(
               width = 12,
@@ -140,76 +142,76 @@ transFittingUI <- function(id, label) {
           )
         ),
 
-        # Card: Conversion factor to full genome ----
-        bs4MyCard(
+        # Box: Conversion factor to full genome ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Genomic conversion factor",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          collapsible = TRUE,
+
           fluidRow(
             column(
               width = 12,
 
               uiOutput(ns("genome_fraction"))
-
             )
           )
         )
-
       )
     ),
 
     fluidRow(
-      # Card: Data input options ----
-      bs4MyCard(
+      # Box: Data input options ----
+      box(
         width = 6,
         title = "Data input options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_count_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_count_data_dialog"),
-            title = "Help: Count data input",
-            trigger = ns("help_count_data"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_count_data_option"),
-              label = NULL,
-              choices = c(
-                "Manual input"    = "manual",
-                "Load data"       = "load",
-                "Aggregated data" = "aggr"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_count_data_option == 'manual'",
-              ns = ns,
-              include_help("fitting/count_data_input.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_count_data_option == 'load'",
-              ns = ns,
-              include_help("fitting/count_data_load.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_count_data_option == 'aggr'",
-              ns = ns,
-              include_help("fitting/count_data_aggregated.md")
-            )
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_count_data"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_count_data_dialog"),
+        #     title = "Help: Count data input",
+        #     trigger = ns("help_count_data"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_count_data_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Manual input"    = "manual",
+        #         "Load data"       = "load",
+        #         "Aggregated data" = "aggr"
+        #       )
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_count_data_option == 'manual'",
+        #       ns = ns,
+        #       include_help("fitting/count_data_input.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_count_data_option == 'load'",
+        #       ns = ns,
+        #       include_help("fitting/count_data_load.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_count_data_option == 'aggr'",
+        #       ns = ns,
+        #       include_help("fitting/count_data_aggregated.md")
+        #     )
+        #   )
+        # ),
 
         fluidRow(
           column(
@@ -223,21 +225,21 @@ transFittingUI <- function(id, label) {
             ),
 
             # Load file checkbox
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_count_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load data from file",
+
+              status = "info",
+              label = "Load data from file",
               value = FALSE
             ),
 
             # Full/aggregated data checkbox
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("use_aggr_count_data_check"),
-              size = "mini",
-              onStatus = "options",
+
+              status = "info",
               width = "100%",
-              sideLabel = "Only provide total number of translocations",
+              label = "Only provide total number of translocations",
               value = FALSE
             ),
 
@@ -268,56 +270,57 @@ transFittingUI <- function(id, label) {
         )
       ),
 
-      # Card: Fitting options ----
-      bs4MyCard(
+      # Box: Fitting options ----
+      box(
         width = 6,
         title = "Fitting options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_fitting_options"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help Modal
-          bs4MyModal(
-            id = ns("help_fitting_options_dialog"),
-            title = "Help: Fitting options",
-            trigger = ns("help_fitting_options"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_fitting_options_option"),
-              label = NULL,
-              choices = c(
-                "Fitting formula"  = "formula",
-                "Fitting model"    = "model"#,
-                # "Decision thresholds" = "decision_thresholds"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_fitting_options_option == 'formula'",
-              ns = ns,
-              include_help("fitting/fitting_options_formula.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_fitting_options_option == 'model'",
-              ns = ns,
-              include_help("fitting/fitting_options_model.md")
-            )#,
-            # conditionalPanel(
-            #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
-            #   ns = ns,
-            #   include_help("trans/fitting_options_decision_thresholds.md")
-            # )
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_fitting_options"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help Modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_fitting_options_dialog"),
+        #     title = "Help: Fitting options",
+        #     trigger = ns("help_fitting_options"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_fitting_options_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Fitting formula"  = "formula",
+        #         "Fitting model"    = "model"#,
+        #         # "Decision thresholds" = "decision_thresholds"
+        #       )
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_fitting_options_option == 'formula'",
+        #       ns = ns,
+        #       include_help("fitting/fitting_options_formula.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_fitting_options_option == 'model'",
+        #       ns = ns,
+        #       include_help("fitting/fitting_options_model.md")
+        #     )#,
+        #     # conditionalPanel(
+        #     #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
+        #     #   ns = ns,
+        #     #   include_help("trans/fitting_options_decision_thresholds.md")
+        #     # )
+        #   )
+        # ),
 
         fluidRow(
           column(
@@ -339,7 +342,7 @@ transFittingUI <- function(id, label) {
                 "Quasipoisson" = "quasipoisson"
               ),
               selected = "automatic"
-            )#,
+            ) # ,
             # Decision thresholds
             # textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
@@ -347,16 +350,19 @@ transFittingUI <- function(id, label) {
       )
     ),
 
-    # Card: hot Count data input ----
+    # Box: hot Count data input ----
     fluidRow(
-      bs4MyCard(
+      box(
         width = 12,
         title = "Data input",
-        status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "primary",
+        collapsible = TRUE,
+
         div(
           class = "hot-improved",
           rhandsontable::rHandsontableOutput(ns("count_data_hot"))
         ),
+
         # Buttons
         br(),
         div(
@@ -403,58 +409,57 @@ transFittingUI <- function(id, label) {
     fluidRow(
       column(
         width = 6,
-        # tabCard: Fit results ----
+        # tabBox: Fit results ----
         div(
           # Ugly fix for inner fluidRow() padding
           style = "margin-left: -7.5px; margin-right: -7.5px",
-          bs4Dash::bs4TabCard(
+          tabBox(
             id = ns("fit_results_tabs"),
             width = 12,
             side = "left",
-            solidHeader = TRUE,
-            closable = FALSE,
 
-            bs4MyTabPanel(
-              tabName = "Result of curve fit",
-              active = TRUE,
-              h6("Fit formula"),
+            tabPanel(
+              title = "Result of curve fit",
+              # active = TRUE,
+              h5("Fit formula"),
               uiOutput(ns("fit_formula_tex")),
 
-              h6("Model"),
+              h5("Model"),
               uiOutput(ns("fit_model_summary")),
 
               br(),
-              h6("Coefficients"),
+              h5("Coefficients"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
               )
             ),
-            bs4MyTabPanel(
-              tabName = "Summary statistics",
-              h6("Model-level statistics"),
+
+            tabPanel(
+              title = "Summary statistics",
+              h5("Model-level statistics"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
               ),
 
               br(),
-              h6("Correlation matrix"),
+              h5("Correlation matrix"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
               ),
 
               br(),
-              h6("Variance-covariance matrix"),
+              h5("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
               )
-            )#,
-            # bs4MyTabPanel(
+            ) # ,
+            # tabPanel(
             #   tabName = "Decision thresholds",
-            #   h6("Decision thresholds"),
+            #   h5("Decision thresholds"),
             #   div(
             #     class = "hot-improved",
             #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
@@ -463,51 +468,51 @@ transFittingUI <- function(id, label) {
           )
         ),
 
-        # Card: Export data and results ----
-        bs4MyCard(
+        # Box: Export data and results ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Export results",
-          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "warning",
+          collapsible = TRUE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
-              ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-            # Help Modal
-            bs4MyModal(
-              id = ns("help_fit_data_save_dialog"),
-              title = "Help: Export results",
-              trigger = ns("help_fit_data_save"),
-              size = "large",
-
-              # Option selection
-              shinyWidgets::radioGroupButtons(
-                inputId = ns("help_fit_data_save_option"),
-                label = NULL,
-                choices = c(
-                  "Fitting data" = "data",
-                  "Report"       = "report"
-                )
-              ),
-              # Contents
-              conditionalPanel(
-                condition = "input.help_fit_data_save_option == 'data'",
-                ns = ns,
-                include_help("save/fit_data_save.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_fit_data_save_option == 'report'",
-                ns = ns,
-                include_help("save/fit_data_save_report.md")
-              )
-            )
-          ),
+          # topButton = div(
+          #   # Help button
+          #   shinyBS::bsButton(
+          #     ns("help_fit_data_save"),
+          #     label = "",
+          #     icon = icon("question"),
+          #     style = "default", size = "default"
+          #   ),
+          #
+          #   # Help Modal
+          #   bsplus::bs_modal(
+          #     id = ns("help_fit_data_save_dialog"),
+          #     title = "Help: Export results",
+          #     trigger = ns("help_fit_data_save"),
+          #     size = "large",
+          #
+          #     # Option selection
+          #     shinyWidgets::radioGroupButtons(
+          #       inputId = ns("help_fit_data_save_option"),
+          #       label = NULL,
+          #       choices = c(
+          #         "Fitting data" = "data",
+          #         "Report"       = "report"
+          #       )
+          #     ),
+          #     # Contents
+          #     conditionalPanel(
+          #       condition = "input.help_fit_data_save_option == 'data'",
+          #       ns = ns,
+          #       include_help("save/fit_data_save.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_fit_data_save_option == 'report'",
+          #       ns = ns,
+          #       include_help("save/fit_data_save_report.md")
+          #     )
+          #   )
+          # ),
 
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
@@ -521,6 +526,7 @@ transFittingUI <- function(id, label) {
               selected = ".rds"
             )
           ),
+
           # Download report
           div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
@@ -536,14 +542,16 @@ transFittingUI <- function(id, label) {
           )
         )
       ),
+
       column(
         width = 6,
-        # Card: Plot box ----
-        bs4MyCard(
+        # Box: Plot box ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Curve plot",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          collapsible = TRUE,
+
           # Plot
           plotOutput(ns("plot")),
           # Download plot
