@@ -1,12 +1,12 @@
 # Dose Estimation Modules -------------------------------------------
 
-transEstimateUI <- function(id, label) { #, locale = i18n) {
+mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
   tabItem(
     tabName = label,
-    h2("Translocations: Dose estimation"),
+    h2("Micronuclei: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
@@ -53,8 +53,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         #       condition = "input.help_fit_data_option == 'load'",
         #       ns = ns,
         #       include_help("estimate/fit_data_load.md")
-        #     ),
-        #     include_help("trans/fit_data_estimate.md")
+        #     )
         #   )
         # ),
 
@@ -83,45 +82,11 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
                   selected = "lin-quad"
                 )
               ),
-
               div(class = "widget-sep", br()),
-              actionButton(
-                ns("button_gen_table"),
-                class = "options-button",
-                style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"
-              ),
+              actionButton(ns("button_gen_table"), class = "options-button", style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"),
 
               br(),
               br(),
-              selectInput(
-                ns("frequency_select"),
-                label = "Translocation frequency",
-                choices = list(
-                  "Measured by FISH" = "measured_freq",
-                  "Full genome"      = "full_gen_freq"
-                ),
-                selected = "measured_freq"
-              )
-            ),
-
-            conditionalPanel(
-              condition = "!input.load_fit_data_check & input.frequency_select == 'measured_freq'",
-              ns = ns,
-
-              numericInput(
-                ns("fit_genome_fraction"),
-                "Genomic conversion factor",
-                value = NA,
-                min = 0,
-                max = 1,
-                step = 0.001
-              )
-            ),
-
-            conditionalPanel(
-              condition = "!input.load_fit_data_check",
-              ns = ns,
-
               widget_label("Coefficients"),
               div(
                 class = "hot-improved",
@@ -131,6 +96,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               br(),
               awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
+
                 status = "info",
                 label = "Provide variance-covariance matrix",
                 value = FALSE
@@ -147,7 +113,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               ),
               br()
             ),
-
             # Load from file ----
             conditionalPanel(
               condition = "input.load_fit_data_check",
@@ -173,12 +138,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          br(),
-          h5("Translocation frequency"),
-          uiOutput(ns("fit_trans_frequency_message")),
-
-          br(),
-          h5("Full genome coefficients"),
+          h5("Coefficients"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
@@ -201,7 +161,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
-          ),
+            ),
 
           br(),
           h5("Variance-covariance matrix"),
@@ -210,163 +170,6 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
             rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
           )
         )
-      )
-    ),
-
-    fluidRow(
-      # Box: Stains color options ----
-      box(
-        width = 6,
-        title = "Stains color options",
-        status = "info",
-        collapsible = TRUE,
-
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_colors"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_colors_dialog"),
-        #     title = "Help: Stain color data input",
-        #     trigger = ns("help_colors"),
-        #     size = "large",
-        #
-        #     include_help("trans/colors_data_input.md"),
-        #     div(
-        #       class = "hot-improved",
-        #       rhandsontable::rHandsontableOutput(ns("help_chromosome_hot"))
-        #     ),
-        #     include_help("trans/colors_data_input_b.md")
-        #
-        #   )
-        # ),
-
-        fluidRow(
-          column(
-            width = 12,
-
-            fluidRow(
-              inner_column(
-                width = 6,
-
-                shinyWidgets::awesomeRadio(
-                  inputId = ns("trans_sex"),
-                  status = "info",
-                  label = "Sex",
-                  choices = c(
-                    "Male"   = "male",
-                    "Female" = "female"
-                  ),
-                  selected = "male"
-                ),
-
-                selectizeInput(
-                  inputId = ns("trans_chromosome_select"),
-                  label = "Chromosomes",
-                  choices = c( 1:21, "X", "Y"),
-                  options = list(
-                    placeholder = 'Select stained chromosomes'
-                  ),
-                  multiple = TRUE
-                )
-              ),
-
-              inner_column(
-                width = 6,
-
-                widget_label("Stain color scheme"),
-                awesomeCheckbox(
-                  inputId = ns("trans_m_fish_scheme"),
-                  status = "info",
-                  label = "Use M-Fish",
-                  value = FALSE
-                ),
-
-                conditionalPanel(
-                  condition = "!input.trans_m_fish_scheme",
-                  ns = ns,
-                  selectizeInput(
-                    inputId = ns("trans_color_select"),
-                    label = "Stain colors",
-                    choices = c(
-                      "Red",
-                      "Green",
-                      "Yellow",
-                      "Orange",
-                      "Purple",
-                      "Magenta",
-                      "Cyan"
-                    ),
-                    options = list(
-                      placeholder = 'Select observed colors'#,
-                      # maxItems = 5
-                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
-                    ),
-                    multiple = TRUE
-                  )
-                )
-              )
-            ),
-
-            br(),
-            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
-          )
-        )
-      ),
-
-      column(
-        width = 6,
-
-        # Box: Chromosome-color table ----
-        box(
-          width = 12,
-          title = "Chromosome data",
-          status = "primary",
-          collapsible = TRUE,
-
-          fluidRow(
-            column(
-              width = 12,
-
-              div(
-                class = "hot-improved",
-                rhandsontable::rHandsontableOutput(outputId = ns("chromosome_table"))
-              )
-            ),
-            div(
-              style = "padding-left: 7.5px; padding-top: 23px;",
-              actionButton(
-                ns("button_calc_genome_fraction"),
-                class = "inputs-button",
-                "Calculate fraction"
-              )
-            )
-          )
-        ),
-
-        # Box: Conversion factor to full genome ----
-        box(
-          width = 12,
-
-          title = "Genomic conversion factor",
-          status = "success",
-          collapsible = TRUE,
-
-          fluidRow(
-            column(
-              width = 12,
-
-              uiOutput(ns("genome_fraction"))
-            )
-          )
-        )
-
       )
     ),
 
@@ -400,44 +203,30 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         #       label = NULL,
         #       choices = c(
         #         "Manual input" = "manual",
-        #         "Load data"    = "load",
-        #         "Confounders"  = "confounders"
+        #         "Load data"    = "load"
         #       )
         #     ),
         #     # Contents
         #     conditionalPanel(
         #       condition = "input.help_cases_data_option == 'manual'",
         #       ns = ns,
-        #       include_help("trans/cases_data_input.md")
+        #       include_help("estimate/cases_data_input.md")
         #     ),
         #     conditionalPanel(
         #       condition = "input.help_cases_data_option == 'load'",
         #       ns = ns,
-        #       include_help("trans/cases_data_load.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_cases_data_option == 'confounders'",
-        #       ns = ns,
-        #       include_help("trans/cases_data_confounders.md")
+        #       include_help("estimate/cases_data_load.md")
         #     )
-        #
         #   )
         # ),
 
         fluidRow(
           column(
             width = 12,
-
-            # Name of translocations
-            textInput(
-              inputId = ns("trans_name"),
-              label = "Name of translocations",
-              placeholder = "Input type of translocations"
-            ),
-
             # Load data from file
             awesomeCheckbox(
               inputId = ns("load_case_data_check"),
+
               status = "info",
               label = "Load data from file",
               value = FALSE
@@ -448,156 +237,33 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               condition = "!input.load_case_data_check",
               ns = ns,
               # numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
+              numericInput(ns("num_aberrs"), "Maximum number of micronuclei per cell", value = 5)
             ),
             conditionalPanel(
               condition = "input.load_case_data_check",
               ns = ns,
               fileInput(ns("load_case_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
             ),
-
-            # Confounders selection
-            widget_label("Confounders"),
-            awesomeCheckbox(
-              inputId = ns("trans_confounders"),
-              status = "info",
-              label = "Use confounders",
-              value = FALSE
-            ),
-            conditionalPanel(
-              condition = "input.trans_confounders",
-              ns = ns,
-              selectInput(
-                inputId = ns("trans_confounders_type"),
-                label = NULL,
-                choices = c(
-                  "Using Sigurdson" = "sigurdson",
-                  "Using own data" = "manual"
-                ),
-                selected = "sigurdson"
-              )
-            ),
-
             # Case description
             textAreaInput(
               inputId = ns("case_description"),
               label = "Case description",
               placeholder = "Short summary of the case"),
-
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           )
         )
       ),
-
-      # Box: hot Cases & confounders input ----
+      # Box: hot Cases input ----
       column(
         width = 7,
         box(
           width = 12,
+
           title = "Data input",
-          status = "primary",
-          collapsible = TRUE,
+          status = "primary", collapsible = TRUE,
 
-          # Confounders ----
-          conditionalPanel(
-            condition = "input.trans_confounders & input.trans_confounders_type == 'sigurdson'",
-            ns = ns,
-            div(
-              class = "side-widget",
-              style = "padding-right: 10px;",
-
-              numericInput(
-                ns("trans_confounder_age"),
-                width = 75,
-                "Age",
-                value = 25,
-                min = 0,
-                step = 1
-              )
-            ),
-
-            div(
-              class = "side-widget",
-              style = "max-width: 140px; margin-right: -40px;",
-              widget_label("Sex", 14),
-              awesomeCheckbox(
-                inputId = ns("trans_confounder_sex"),
-                label = "Sex",
-                status = "primary",
-                value = FALSE
-              )
-            ),
-
-            div(
-              class = "side-widget",
-              style = "max-width: 140px; margin-right: -40px;",
-              widget_label("Smoker", 14),
-              shinyWidgets::switchInput(
-                ns("trans_confounder_smoke"),
-                onStatus = "primary",
-                value = FALSE
-              )
-            ),
-
-            div(
-              class = "side-widget",
-              style = "padding-right: 10px;",
-              selectInput(
-                ns("trans_confounder_ethnicity"),
-                label = "Ethnicity",
-                width = "150px",
-                choices = list(
-                  "Ethnicities" = c(
-                    "White"  = "white",
-                    "Asian"  = "asian",
-                    "Black"  = "black",
-                    "Others" = "other"
-                  ),
-                  "None" = c(
-                    "Not specified" = "none"
-                  )
-                ),
-                selected = "none"
-              )
-            ),
-
-            div(
-              class = "side-widget",
-              style = "padding-right: 10px;",
-              selectInput(
-                ns("trans_confounder_region"),
-                label = "Lab region",
-                width = "180px",
-                choices = list(
-                  "Regions" = c(
-                    "North America"  = "n-america",
-                    "Western Europe" = "w-europe",
-                    "Central Europe" = "c-europe",
-                    "Eastern Europe" = "e-europe",
-                    "Asia"           = "asia"
-                  ),
-                  "None" = c(
-                    "Not specified"  = "none"
-                  )
-                ),
-                selected = "none"
-              )
-            )
-          ),
-
-          conditionalPanel(
-            condition = "input.trans_confounders & input.trans_confounders_type == 'manual'",
-            ns = ns,
-            numericInput(
-              ns("trans_expected_aberr_value"),
-              label = "Translocation frequency per cell",
-              value = 0.00339,
-              step = 0.00001
-            )
-          ),
-
-          # Cases table ----
+          # Cases table
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("case_data_hot"))
@@ -657,7 +323,7 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
           #       condition = "input.help_estimate_options_option == 'error'",
           #       ns = ns,
           #       include_help("estimate/dose_error.md"),
-          #       include_help("trans/dose_error_methods.md")
+          #       include_help("micro/dose_error_methods.md")
           #     ),
           #     conditionalPanel(
           #       condition = "input.help_estimate_options_option == 'surv_coeff'",
@@ -676,7 +342,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               width = "175px",
               choices = list(
                 "Acute"      = "acute",
-                "Protracted" = "protracted"
+                "Protracted" = "protracted",
+                "Highly protracted" = "protracted_high"
               ),
               selected = "acute"
             )
@@ -691,12 +358,13 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               label = "Assessment",
               width = "175px",
               choices = list(
-                "Whole-body"    = "whole-body",
-                "Partial-body"  = "partial-body"
+                "Whole-body"    = "whole-body"
+                # "Partial-body"  = "partial-body",
               ),
               selected = "whole-body"
             )
           ),
+
           br(),
           br(),
 
@@ -708,8 +376,8 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
               label = "Whole-body error method",
               width = "250px",
               choices = list(
-                "Merkle's method (83%-83%)" = "merkle-83",
-                "Merkle's method (95%-95%)" = "merkle-95",
+                # "Merkle's method (83%-83%)" = "merkle-83",
+                # "Merkle's method (95%-95%)" = "merkle-95",
                 "Delta method (95%)"        = "delta"
               ),
               selected = "merkle-83"
@@ -913,10 +581,9 @@ transEstimateUI <- function(id, label) { #, locale = i18n) {
         width = 6,
         box(
           width = 12,
-          title = "Curve plot",
-          status = "success",
-          collapsible = TRUE,
 
+          title = "Curve plot",
+          status = "success", collapsible = TRUE,
           # Plot
           plotOutput(ns("plot")),
           # Download plot

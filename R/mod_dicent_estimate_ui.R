@@ -1,6 +1,6 @@
 # Dose Estimation Modules -------------------------------------------
 
-dicentEstimateUI <- function(id, label) { # , locale = i18n) {
+mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 

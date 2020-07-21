@@ -1,10 +1,10 @@
 # Fitting Modules ---------------------------------
 
-#' dicentFittingUI
+#' mod_dicent_fitting_ui
 #'
 #' @import shiny shinydashboard shinyWidgets
 #' @noRd
-dicentFittingUI <- function(id, label) {
+mod_dicent_fitting_ui <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
