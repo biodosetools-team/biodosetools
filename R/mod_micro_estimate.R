@@ -4,67 +4,67 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4Dash::bs4TabItem(
+  tabItem(
     tabName = label,
     h2("Micronuclei: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # Card: Curve fitting options ----
-      bs4MyCard(
+      # Box: Curve fitting options ----
+      box(
         width = 5,
         title = "Curve fitting data options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_fit_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_fit_data_dialog"),
-            title = "Help: Fitting data input",
-            trigger = ns("help_fit_data"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_fit_data_option"),
-              label = NULL,
-              choices = c(
-                "Manual input" = "manual",
-                "Load data"    = "load"
-              ),
-              selected = "load"
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_fit_data_option == 'manual'",
-              ns = ns,
-              include_help("estimate/fit_data_input.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_fit_data_option == 'load'",
-              ns = ns,
-              include_help("estimate/fit_data_load.md")
-            )
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_fit_data"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_fit_data_dialog"),
+        #     title = "Help: Fitting data input",
+        #     trigger = ns("help_fit_data"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_fit_data_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Manual input" = "manual",
+        #         "Load data"    = "load"
+        #       ),
+        #       selected = "load"
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_fit_data_option == 'manual'",
+        #       ns = ns,
+        #       include_help("estimate/fit_data_input.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_fit_data_option == 'load'",
+        #       ns = ns,
+        #       include_help("estimate/fit_data_load.md")
+        #     )
+        #   )
+        # ),
 
         fluidRow(
           column(
             width = 12,
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load fit data from RDS file",
+              status = "info",
+              label = "Load fit data from RDS file",
               value = TRUE
             ),
 
@@ -87,18 +87,18 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
 
               br(),
               br(),
-              widgetLabel("Coefficients"),
+              widget_label("Coefficients"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
-              mySwitchInput(
+              awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
-                size = "mini",
-                onStatus = "options",
-                sideLabel = "Provide variance-covariance matrix",
+
+                status = "info",
+                label = "Provide variance-covariance matrix",
                 value = FALSE
               )
             ),
@@ -106,7 +106,7 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.use_var_cov_matrix",
               ns = ns,
-              widgetLabel("Variance-covariance matrix"),
+              widget_label("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
@@ -125,33 +125,31 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # tabCard: Curve fitting overview ----
+      # tabBox: Curve fitting overview ----
 
-      bs4MyTabCard(
+      tabBox(
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
 
-        bs4MyTabPanel(
-          tabName = "Result of curve fit",
+        tabPanel(
+          title = "Result of curve fit",
           active = TRUE,
-          h6("Fit formula"),
+          h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          h6("Coefficients"),
+          h5("Coefficients"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
-        bs4MyTabPanel(
-          tabName = "Summary statistics",
+        tabPanel(
+          title = "Summary statistics",
           conditionalPanel(
             condition = "input.load_fit_data_check",
             ns = ns,
-            h6("Model-level statistics"),
+            h5("Model-level statistics"),
             div(
               class = "hot-improved",
               rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
@@ -159,14 +157,14 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
             br()
           ),
 
-          h6("Correlation matrix"),
+          h5("Correlation matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
             ),
 
           br(),
-          h6("Variance-covariance matrix"),
+          h5("Variance-covariance matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
@@ -176,60 +174,61 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # Card: Data input options ----
-      bs4MyCard(
+      # Box: Data input options ----
+      box(
         width = 5,
         title = "Data input options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+        status = "info",
+        collapsible = TRUE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            ns("help_cases_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-
-          # Help modal
-          bs4MyModal(
-            id = ns("help_cases_data_dialog"),
-            title = "Help: Cases data input",
-            trigger = ns("help_cases_data"),
-            size = "large",
-
-            # Option selection
-            shinyWidgets::radioGroupButtons(
-              inputId = ns("help_cases_data_option"),
-              label = NULL,
-              choices = c(
-                "Manual input" = "manual",
-                "Load data"    = "load"
-              )
-            ),
-            # Contents
-            conditionalPanel(
-              condition = "input.help_cases_data_option == 'manual'",
-              ns = ns,
-              include_help("estimate/cases_data_input.md")
-            ),
-            conditionalPanel(
-              condition = "input.help_cases_data_option == 'load'",
-              ns = ns,
-              include_help("estimate/cases_data_load.md")
-            )
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     ns("help_cases_data"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = ns("help_cases_data_dialog"),
+        #     title = "Help: Cases data input",
+        #     trigger = ns("help_cases_data"),
+        #     size = "large",
+        #
+        #     # Option selection
+        #     shinyWidgets::radioGroupButtons(
+        #       inputId = ns("help_cases_data_option"),
+        #       label = NULL,
+        #       choices = c(
+        #         "Manual input" = "manual",
+        #         "Load data"    = "load"
+        #       )
+        #     ),
+        #     # Contents
+        #     conditionalPanel(
+        #       condition = "input.help_cases_data_option == 'manual'",
+        #       ns = ns,
+        #       include_help("estimate/cases_data_input.md")
+        #     ),
+        #     conditionalPanel(
+        #       condition = "input.help_cases_data_option == 'load'",
+        #       ns = ns,
+        #       include_help("estimate/cases_data_load.md")
+        #     )
+        #   )
+        # ),
 
         fluidRow(
           column(
             width = 12,
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_case_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load data from file",
+
+              status = "info",
+              label = "Load data from file",
               value = FALSE
             ),
 
@@ -255,14 +254,14 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # Card: hot Cases input ----
+      # Box: hot Cases input ----
       column(
         width = 7,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
+
           title = "Data input",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "primary", collapsible = TRUE,
 
           # Cases table
           div(
@@ -274,65 +273,65 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
           actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
         ),
 
-        # Card: Estimation options ----
-        bs4MyCard(
+        # Box: Estimation options ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Dose estimation options",
-          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "info",
+          collapsible = TRUE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
-              ns("help_estimate_options"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-            # Help modal
-            bs4MyModal(
-              id = ns("help_estimate_options_dialog"),
-              title = "Help: Dose estimation options",
-              trigger = ns("help_estimate_options"),
-              size = "large",
-
-              # Option selection
-              shinyWidgets::radioGroupButtons(
-                inputId = ns("help_estimate_options_option"),
-                label = NULL,
-                choices = c(
-                  "Exposure"             = "exposure",
-                  "Assessment"           = "assess",
-                  "Error calculation"    = "error",
-                  "Survival coefficient" = "surv_coeff"
-                )
-
-              ),
-              # Contents
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'exposure'",
-                ns = ns,
-                include_help("estimate/dose_exposure.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'assess'",
-                ns = ns,
-                include_help("estimate/dose_assessment.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'error'",
-                ns = ns,
-                include_help("estimate/dose_error.md"),
-                include_help("micro/dose_error_methods.md")
-              ),
-              conditionalPanel(
-                condition = "input.help_estimate_options_option == 'surv_coeff'",
-                ns = ns,
-                include_help("estimate/fraction_coeff_select.md")
-              )
-            )
-          ),
+          # topButton = div(
+          #   # Help button
+          #   shinyBS::bsButton(
+          #     ns("help_estimate_options"),
+          #     label = "",
+          #     icon = icon("question"),
+          #     style = "default", size = "default"
+          #   ),
+          #
+          #   # Help modal
+          #   bsplus::bs_modal(
+          #     id = ns("help_estimate_options_dialog"),
+          #     title = "Help: Dose estimation options",
+          #     trigger = ns("help_estimate_options"),
+          #     size = "large",
+          #
+          #     # Option selection
+          #     shinyWidgets::radioGroupButtons(
+          #       inputId = ns("help_estimate_options_option"),
+          #       label = NULL,
+          #       choices = c(
+          #         "Exposure"             = "exposure",
+          #         "Assessment"           = "assess",
+          #         "Error calculation"    = "error",
+          #         "Survival coefficient" = "surv_coeff"
+          #       )
+          #
+          #     ),
+          #     # Contents
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'exposure'",
+          #       ns = ns,
+          #       include_help("estimate/dose_exposure.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'assess'",
+          #       ns = ns,
+          #       include_help("estimate/dose_assessment.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'error'",
+          #       ns = ns,
+          #       include_help("estimate/dose_error.md"),
+          #       include_help("micro/dose_error_methods.md")
+          #     ),
+          #     conditionalPanel(
+          #       condition = "input.help_estimate_options_option == 'surv_coeff'",
+          #       ns = ns,
+          #       include_help("estimate/fraction_coeff_select.md")
+          #     )
+          #   )
+          # ),
 
           # Type of exposure selection
           div(
@@ -525,36 +524,36 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
     fluidRow(
       column(
         width = 6,
-        # tabCard: Estimation results ----
+        # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
-        # Card: Export data and results ----
-        bs4MyCard(
+        # Box: Export data and results ----
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Save results",
-          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "warning",
+          collapsible = TRUE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
-              ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
-
-            # Help Modal
-            bs4MyModal(
-              id = ns("help_fit_data_save_dialog"),
-              title = "Help: Export results",
-              trigger = ns("help_fit_data_save"),
-              size = "large",
-
-              # Contents
-              include_help("save/estimate_data_save_report.md")
-            )
-          ),
+          # topButton = div(
+          #   # Help button
+          #   shinyBS::bsButton(
+          #     ns("help_fit_data_save"),
+          #     label = "",
+          #     icon = icon("question"),
+          #     style = "default", size = "default"
+          #   ),
+          #
+          #   # Help Modal
+          #   bsplus::bs_modal(
+          #     id = ns("help_fit_data_save_dialog"),
+          #     title = "Help: Export results",
+          #     trigger = ns("help_fit_data_save"),
+          #     size = "large",
+          #
+          #     # Contents
+          #     include_help("save/estimate_data_save_report.md")
+          #   )
+          # ),
 
           # Case description
           textAreaInput(
@@ -577,14 +576,14 @@ microEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # Card: Plot curves ----
+      # Box: Plot curves ----
       column(
         width = 6,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
+
           title = "Curve plot",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success", collapsible = TRUE,
           # Plot
           plotOutput(ns("plot")),
           # Download plot
