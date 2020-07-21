@@ -183,12 +183,13 @@ dashboard_body <- function() {
     tabItems(
       dashboard_home(),
 
-      tabItem(
-        tabName = "dashboard",
-        h2("Dashboard tab content")
-      ),
-
-      dicentFittingUI(id = "dicent_fitting", label = "tab-dicent-fitting")
+      # Modules
+      mod_dicent_fitting_ui(id = "dicent_fitting", label = "tab-dicent-fitting"),
+      mod_dicent_estimate_ui(id = "dicent_estimate", label = "tab-dicent-estimate"),
+      mod_trans_fitting_ui(id = "trans_fitting", label = "tab-trans-fitting"),
+      mod_trans_estimate_ui(id = "trans_estimate", label = "tab-trans-estimate"),
+      mod_micro_fitting_ui(id = "micro_fitting", label = "tab-micro-fitting"),
+      mod_micro_estimate_ui(id = "micro_estimate", label = "tab-micro-estimate")
     )
   )
 }
