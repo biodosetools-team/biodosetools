@@ -1,6 +1,6 @@
 # General Fitting Modules ----------------------------------
 
-generalFittingCountsHotTable <- function(input, output, session, stringsAsFactors, aberr_module) {
+mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFactors, aberr_module) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -206,7 +206,7 @@ generalFittingCountsHotTable <- function(input, output, session, stringsAsFactor
   })
 }
 
-generalFittingResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_fitting_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   # Calculations ----
 
@@ -431,8 +431,13 @@ generalFittingResults <- function(input, output, session, stringsAsFactors, aber
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
       tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- paste0("reports/", aberr_module, "-fitting-report-",
-                            stringr::str_replace(input$save_report_format, '.', ''), ".Rmd")
+      localReport <- load_rmd_report(
+        paste0(
+          aberr_module,
+          "-fitting-report-",
+          stringr::str_replace(input$save_report_format, '.', ''), ".Rmd"
+        )
+      )
 
       file.copy(localReport, tempReport, overwrite = TRUE)
 

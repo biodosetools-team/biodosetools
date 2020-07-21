@@ -1,6 +1,6 @@
 # Auxiliary help tables ------------------------------------
 
-helpChromosomeHotTable <- function(input, output, session, stringsAsFactors) {
+mod_help_chromosome_hot_server <- function(input, output, session, stringsAsFactors) {
 
   # Tables ----
   data <- data.frame(

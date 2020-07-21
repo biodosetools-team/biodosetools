@@ -1,6 +1,6 @@
 # General Estimate Modules ---------------------------------
 
-generalEstimateFittingCurveHotTables <- function(input, output, session, stringsAsFactors) {
+mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsFactors) {
 
   # Reset tables ----
   table_reset <- reactiveValues(value = 0)
@@ -143,7 +143,7 @@ generalEstimateFittingCurveHotTables <- function(input, output, session, strings
 }
 
 
-generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors, aberr_module) {
+mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFactors, aberr_module) {
 
   # Calculations ----
   data <- reactive({
@@ -390,7 +390,7 @@ generalEstimateFittingCurve <- function(input, output, session, stringsAsFactors
   })
 }
 
-generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -638,7 +638,7 @@ generalEstimateCaseHotTable <- function(input, output, session, stringsAsFactors
 }
 
 
-generalEstimateResults <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimate_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   data <- reactive({
 
@@ -1012,7 +1012,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
   # Results outputs ----
 
   # Estimate results tabCard
-  # source("modules/generalEstimateResultsRenderUI.R", local = TRUE)
+  # source("modules/mod_estimate_results_serverRenderUI.R", local = TRUE)
 
   # PREVIOUSLY SOURCED BEGIN
 
@@ -1022,35 +1022,37 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
 
     # Whole-body ----
     if (assessment == "whole-body") {
-      bs4MyTabCard(
+      tabBox(
         id = "estimate_results_tabs",
         width = 12,
-        noPadding = TRUE,
         side = "left",
-        solidHeader = TRUE, closable = FALSE,
+        # solidHeader = FALSE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            session$ns("help_dose_mixed_yields"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-          # Help modal
-          bs4MyModal(
-            id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Heterogeneous exposures",
-            trigger = session$ns("help_dose_mixed_yields"),
-            size = "large",
-            include_help("estimate/dose_mixed_yields.md")
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     session$ns("help_dose_mixed_yields"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = session$ns("help_dose_mixed_yields_dialog"),
+        #     title = "Help: Heterogeneous exposures",
+        #     # trigger = session$ns("help_dose_mixed_yields"),
+        #     size = "large",
+        #
+        #     body = tagList(
+        #       include_help("estimate/dose_mixed_yields.md")
+        #     )
+        # ),
 
-        bs4MyTabPanel(
-          tabName = "Whole-body",
-          active = TRUE,
-          h6("Whole-body exposure estimation"),
+        tabPanel(
+          title = "Whole-body",
+          # active = TRUE,
+          h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1062,7 +1064,7 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )#,
 
           # br(),
-          # h6("Relative quality of the estimation"),
+          # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
           #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
@@ -1071,35 +1073,34 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
       # Partial-body ----
     } else if (assessment == "partial-body") {
-      bs4MyTabCard(
+      tabBox(
         id = "estimate_results_tabs",
         width = 12,
-        noPadding = TRUE,
         side = "left",
-        solidHeader = TRUE, closable = FALSE,
+        # solidHeader = FALSE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            session$ns("help_dose_mixed_yields"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-          # Help modal
-          bs4MyModal(
-            id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Heterogeneous exposures",
-            trigger = session$ns("help_dose_mixed_yields"),
-            size = "large",
-            include_help("estimate/dose_mixed_yields.md")
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     session$ns("help_dose_mixed_yields"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = session$ns("help_dose_mixed_yields_dialog"),
+        #     title = "Help: Heterogeneous exposures",
+        #     trigger = session$ns("help_dose_mixed_yields"),
+        #     size = "large",
+        #     include_help("estimate/dose_mixed_yields.md")
+        #   )
+        # ),
 
-        bs4MyTabPanel(
-          tabName = "Whole-body",
-          active = TRUE,
-          h6("Whole-body exposure estimation"),
+        tabPanel(
+          title = "Whole-body",
+          # active = TRUE,
+          h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1111,15 +1112,15 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )#,
 
           # br(),
-          # h6("Relative quality of the estimation"),
+          # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
           #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
           # )
         ),
-        bs4MyTabPanel(
-          tabName = "Partial-body",
-          h6("Partial-body exposure estimation"),
+        tabPanel(
+          title = "Partial-body",
+          h5("Partial-body exposure estimation"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_yields_partial"))
@@ -1131,14 +1132,14 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           ),
 
           br(),
-          h6("Initial fraction of irradiated cells"),
+          h5("Initial fraction of irradiated cells"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_frac_partial"))
           )#,
 
           # br(),
-          # h6("Relative quality of the estimation"),
+          # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
           #   rhandsontable::rHandsontableOutput(session$ns("AIC_partial"))
@@ -1147,35 +1148,34 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
       )
       # Heterogeneous ----
     } else if (assessment == "hetero") {
-      bs4MyTabCard(
+      tabBox(
         id = "estimate_results_tabs",
         width = 12,
-        noPadding = TRUE,
         side = "left",
-        solidHeader = TRUE, closable = FALSE,
+        # solidHeader = FALSE,
 
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
-            session$ns("help_dose_mixed_yields"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
-          # Help modal
-          bs4MyModal(
-            id = session$ns("help_dose_mixed_yields_dialog"),
-            title = "Help: Heterogeneous exposures",
-            trigger = session$ns("help_dose_mixed_yields"),
-            size = "large",
-            include_help("estimate/dose_mixed_yields.md")
-          )
-        ),
+        # topButton = div(
+        #   # Help button
+        #   shinyBS::bsButton(
+        #     session$ns("help_dose_mixed_yields"),
+        #     label = "",
+        #     icon = icon("question"),
+        #     style = "default", size = "default"
+        #   ),
+        #   # Help modal
+        #   bsplus::bs_modal(
+        #     id = session$ns("help_dose_mixed_yields_dialog"),
+        #     title = "Help: Heterogeneous exposures",
+        #     trigger = session$ns("help_dose_mixed_yields"),
+        #     size = "large",
+        #     include_help("estimate/dose_mixed_yields.md")
+        #   )
+        # ),
 
-        bs4MyTabPanel(
-          tabName = "Whole-body",
-          active = TRUE,
-          h6("Whole-body exposure estimation"),
+        tabPanel(
+          title = "Whole-body",
+          # active = TRUE,
+          h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1187,22 +1187,22 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           )#,
 
           # br(),
-          # h6("Relative quality of the estimation"),
+          # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
           #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
           # )
         ),
-        bs4MyTabPanel(
-          tabName = "Heterogeneous",
-          h6("Observed fraction of irradiated cells and its yield"),
+        tabPanel(
+          title = "Heterogeneous",
+          h5("Observed fraction of irradiated cells and its yield"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
           ),
 
           br(),
-          h6("Heterogeneous exposure estimation"),
+          h5("Heterogeneous exposure estimation"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_yields_hetero"))
@@ -1214,14 +1214,14 @@ generalEstimateResults <- function(input, output, session, stringsAsFactors, abe
           ),
 
           br(),
-          h6("Initial fraction of irradiated cells"),
+          h5("Initial fraction of irradiated cells"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(session$ns("est_frac_hetero"))
           )#,
 
           # br(),
-          # h6("Relative quality of the estimation"),
+          # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
           #   rhandsontable::rHandsontableOutput(session$ns("AIC_hetero"))

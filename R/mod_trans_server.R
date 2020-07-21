@@ -1,6 +1,6 @@
 # General translocation Modules ----------------------------
 
-transChromosomeTable <- function(input, output, session, stringsAsFactors) {
+mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFactors) {
   table <- reactive({
     input$button_upd_chrom_table
 
@@ -52,7 +52,7 @@ transChromosomeTable <- function(input, output, session, stringsAsFactors) {
   })
 }
 
-transFractionToFullGenomeCalc <- function(input, output, session, stringsAsFactors) {
+mod_trans_fraction_to_full_genome_server <- function(input, output, session, stringsAsFactors) {
 
   # Calculate genomic fraction ----
 

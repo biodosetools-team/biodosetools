@@ -11,33 +11,33 @@ app_server <- function(input, output, session) {
   # Fitting
   callModule(
     id = "dicent_fitting",
-    module = generalFittingCountsHotTable,
+    module = mod_fitting_counts_hot_server,
     aberr_module = "dicentrics"
   )
   callModule(
     id = "dicent_fitting",
-    module = generalFittingResults,
+    module = mod_fitting_results_server,
     aberr_module = "dicentrics"
   )
 
   # Dose Estimation
   callModule(
     id = "dicent_estimate",
-    module = generalEstimateCaseHotTable,
+    module = mod_estimate_case_hot_server,
     aberr_module = "dicentrics"
   )
   callModule(
     id = "dicent_estimate",
-    module = generalEstimateFittingCurveHotTables
+    module = mod_estimate_fit_curve_hot_server
   )
   callModule(
     id = "dicent_estimate",
-    module = generalEstimateFittingCurve,
+    module = mod_estimate_fit_curve_server,
     aberr_module = "dicentrics"
   )
   callModule(
     id = "dicent_estimate",
-    module = generalEstimateResults,
+    module = mod_estimate_results_server,
     aberr_module = "dicentrics"
   )
 
@@ -46,30 +46,30 @@ app_server <- function(input, output, session) {
   # Help
   callModule(
     id = "trans_fitting",
-    module = helpChromosomeHotTable
+    module = mod_help_chromosome_hot_server
   )
   callModule(
     id = "trans_estimate",
-    module = helpChromosomeHotTable
+    module = mod_help_chromosome_hot_server
   )
 
   # Fitting
   callModule(
     id = "trans_fitting",
-    module = transChromosomeTable
+    module = mod_trans_chromosome_hot_server
   )
   callModule(
     id = "trans_fitting",
-    module = transFractionToFullGenomeCalc
+    module = mod_trans_fraction_to_full_genome_server
   ) -> transFittingFraction
   callModule(
     id = "trans_fitting",
-    module = generalFittingCountsHotTable,
+    module = mod_fitting_counts_hot_server,
     aberr_module = "translocations"
   )
   callModule(
     id = "trans_fitting",
-    module = generalFittingResults,
+    module = mod_fitting_results_server,
     aberr_module = "translocations",
     genome_fraction = transFittingFraction
   )
@@ -77,31 +77,31 @@ app_server <- function(input, output, session) {
   # Dose Estimation
   callModule(
     id = "trans_estimate",
-    module = transChromosomeTable
+    module = mod_trans_chromosome_hot_server
   )
   callModule(
     id = "trans_estimate",
-    module = transFractionToFullGenomeCalc
+    module = mod_trans_fraction_to_full_genome_server
   ) -> transEstimateFraction
   callModule(
     id = "trans_estimate",
-    module = generalEstimateCaseHotTable,
+    module = mod_estimate_case_hot_server,
     aberr_module = "translocations",
     genome_fraction = transEstimateFraction
   )
 
   callModule(
     id = "trans_estimate",
-    module = generalEstimateFittingCurveHotTables
+    module = mod_estimate_fit_curve_hot_server
   )
   callModule(
     id = "trans_estimate",
-    module = generalEstimateFittingCurve,
+    module = mod_estimate_fit_curve_server,
     aberr_module = "translocations"
   )
   callModule(
     id = "trans_estimate",
-    module = generalEstimateResults,
+    module = mod_estimate_results_server,
     aberr_module = "translocations",
     genome_fraction = transEstimateFraction
   )
@@ -111,33 +111,33 @@ app_server <- function(input, output, session) {
   # Fitting
   callModule(
     id = "micro_fitting",
-    module = generalFittingCountsHotTable,
+    module = mod_fitting_counts_hot_server,
     aberr_module = "micronuclei"
   )
   callModule(
     id = "micro_fitting",
-    module = generalFittingResults,
+    module = mod_fitting_results_server,
     aberr_module = "micronuclei"
   )
 
   # Dose Estimation
   callModule(
     id = "micro_estimate",
-    module = generalEstimateCaseHotTable,
+    module = mod_estimate_case_hot_server,
     aberr_module = "micronuclei"
   )
   callModule(
     id = "micro_estimate",
-    module = generalEstimateFittingCurveHotTables
+    module = mod_estimate_fit_curve_hot_server
   )
   callModule(
     id = "micro_estimate",
-    module = generalEstimateFittingCurve,
+    module = mod_estimate_fit_curve_server,
     aberr_module = "micronuclei"
   )
   callModule(
     id = "micro_estimate",
-    module = generalEstimateResults,
+    module = mod_estimate_results_server,
     aberr_module = "micronuclei"
   )
 }
