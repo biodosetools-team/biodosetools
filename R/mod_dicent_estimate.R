@@ -1,37 +1,35 @@
 # Dose Estimation Modules -------------------------------------------
 
-dicentEstimateUI <- function(id, label) { #, locale = i18n) {
+dicentEstimateUI <- function(id, label) { # , locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
-  bs4Dash::bs4TabItem(
+  tabItem(
     tabName = label,
     h2("Dicentrics: Dose estimation"),
     # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
-      # Card: Curve fitting options ----
-      bs4MyCard(
+      # Box: Curve fitting options ----
+      box(
         width = 5,
-        title = "Curve fitting data options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
+        title = span(
+          "Curve fitting data options",
+          help_modal_button(
             ns("help_fit_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
+            ns("help_fit_data_modal")
+          )
+        ),
+        status = "info",
+        collapsible = TRUE,
 
-          # Help modal
-          bs4MyModal(
-            id = ns("help_fit_data_dialog"),
-            title = "Help: Fitting data input",
-            trigger = ns("help_fit_data"),
-            size = "large",
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_fit_data_modal"),
+          title = "Help: Fitting data input",
+          size = "large",
 
+          body = tagList(
             # Option selection
             shinyWidgets::radioGroupButtons(
               inputId = ns("help_fit_data_option"),
@@ -60,11 +58,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           column(
             width = 12,
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load fit data from RDS file",
+              status = "info",
+              label = "Load fit data from RDS file",
               value = TRUE
             ),
 
@@ -87,18 +84,17 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
 
               br(),
               br(),
-              widgetLabel("Coefficients"),
+              widget_label("Coefficients"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
-              mySwitchInput(
+              awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
-                size = "mini",
-                onStatus = "options",
-                sideLabel = "Provide variance-covariance matrix",
+                status = "info",
+                label = "Provide variance-covariance matrix",
                 value = FALSE
               )
             ),
@@ -106,7 +102,7 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             conditionalPanel(
               condition = "input.use_var_cov_matrix",
               ns = ns,
-              widgetLabel("Variance-covariance matrix"),
+              widget_label("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
                 rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
@@ -126,33 +122,33 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # tabCard: Curve fitting overview ----
+      # tabBox: Curve fitting overview ----
 
-      bs4MyTabCard(
+      tabBox(
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        solidHeader = TRUE,
-        closable = FALSE,
+        # solidHeader = FALSE,
+        # closable = FALSE,
 
-        bs4MyTabPanel(
-          tabName = "Result of curve fit",
-          active = TRUE,
-          h6("Fit formula"),
+        tabPanel(
+          title = "Result of curve fit",
+          # active = TRUE,
+          h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
-          h6("Coefficients"),
+          h5("Coefficients"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
-        bs4MyTabPanel(
-          tabName = "Summary statistics",
+        tabPanel(
+          title = "Summary statistics",
           conditionalPanel(
             condition = "input.load_fit_data_check",
             ns = ns,
-            h6("Model-level statistics"),
+            h5("Model-level statistics"),
             div(
               class = "hot-improved",
               rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
@@ -160,14 +156,14 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             br()
           ),
 
-          h6("Correlation matrix"),
+          h5("Correlation matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
-            ),
+          ),
 
           br(),
-          h6("Variance-covariance matrix"),
+          h5("Variance-covariance matrix"),
           div(
             class = "hot-improved",
             rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
@@ -177,28 +173,26 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
     ),
 
     fluidRow(
-      # Card: Data input options ----
-      bs4MyCard(
+      # Box: Data input options ----
+      box(
         width = 5,
-        title = "Data input options",
-        status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-        topButton = div(
-          # Help button
-          shinyBS::bsButton(
+        title = span(
+          "Data input options",
+          help_modal_button(
             ns("help_cases_data"),
-            label = "",
-            icon = icon("question"),
-            style = "default", size = "default"
-          ),
+            ns("help_cases_data_modal")
+          )
+        ),
+        status = "info",
+        collapsible = TRUE,
 
-          # Help modal
-          bs4MyModal(
-            id = ns("help_cases_data_dialog"),
-            title = "Help: Cases data input",
-            trigger = ns("help_cases_data"),
-            size = "large",
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_cases_data_modal"),
+          title = "Help: Cases data input",
+          size = "large",
 
+          body = tagList(
             # Option selection
             shinyWidgets::radioGroupButtons(
               inputId = ns("help_cases_data_option"),
@@ -226,11 +220,10 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           column(
             width = 12,
             # Load data from file
-            mySwitchInput(
+            awesomeCheckbox(
               inputId = ns("load_case_data_check"),
-              size = "mini",
-              onStatus = "options",
-              sideLabel = "Load data from file",
+              status = "info",
+              label = "Load data from file",
               value = FALSE
             ),
 
@@ -250,20 +243,21 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
             textAreaInput(
               inputId = ns("case_description"),
               label = "Case description",
-              placeholder = "Short summary of the case"),
+              placeholder = "Short summary of the case"
+            ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           )
         )
       ),
-      # Card: hot Cases input ----
+      # Box: hot Cases input ----
       column(
         width = 7,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Data input",
-          status = "inputs", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "primary",
+          collapsible = TRUE,
 
           # Cases table
           div(
@@ -275,29 +269,27 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
         ),
 
-        # Card: Estimation options ----
-        bs4MyCard(
+        # Box: Estimation options ----
+        box(
           width = 12,
-          noPadding = TRUE,
-          title = "Dose estimation options",
-          status = "options", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
 
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
+          title = span(
+            "Dose estimation options",
+            help_modal_button(
               ns("help_estimate_options"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
+              ns("help_estimate_options_modal")
+            )
+          ),
+          status = "info",
+          collapsible = TRUE,
 
-            # Help modal
-            bs4MyModal(
-              id = ns("help_estimate_options_dialog"),
-              title = "Help: Dose estimation options",
-              trigger = ns("help_estimate_options"),
-              size = "large",
+          # Help modal
+          bsplus::bs_modal(
+            id = ns("help_estimate_options_modal"),
+            title = "Help: Dose estimation options",
+            size = "large",
 
+            body = tagList(
               # Option selection
               shinyWidgets::radioGroupButtons(
                 inputId = ns("help_estimate_options_option"),
@@ -308,7 +300,6 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
                   "Error calculation"    = "error",
                   "Survival coefficient" = "surv_coeff"
                 )
-
               ),
               # Contents
               conditionalPanel(
@@ -547,32 +538,29 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
     fluidRow(
       column(
         width = 6,
-        # tabCard: Estimation results ----
+        # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
-        # Card: Export data and results ----
-        bs4MyCard(
+        # Box: Export data and results ----
+        box(
           width = 12,
-          noPadding = TRUE,
-          title = "Save results",
-          status = "export", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
-
-          topButton = div(
-            # Help button
-            shinyBS::bsButton(
+          title = span(
+            "Save results",
+            help_modal_button(
               ns("help_fit_data_save"),
-              label = "",
-              icon = icon("question"),
-              style = "default", size = "default"
-            ),
+              ns("help_fit_data_save_modal")
+            )
+          ),
+          status = "warning",
+          collapsible = TRUE,
 
-            # Help Modal
-            bs4MyModal(
-              id = ns("help_fit_data_save_dialog"),
-              title = "Help: Export results",
-              trigger = ns("help_fit_data_save"),
-              size = "large",
+          # Help Modal
+          bsplus::bs_modal(
+            id = ns("help_fit_data_save_modal"),
+            title = "Help: Export results",
+            size = "large",
 
+            body = tagList(
               # Contents
               include_help("save/estimate_data_save_report.md")
             )
@@ -582,7 +570,8 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           textAreaInput(
             inputId = ns("results_comments"),
             label = "Comments",
-            placeholder = "Comments to be included on report"),
+            placeholder = "Comments to be included on report"
+          ),
 
           # Download report
           # div(class = "widget-sep", br()),
@@ -599,14 +588,15 @@ dicentEstimateUI <- function(id, label) { #, locale = i18n) {
           )
         )
       ),
-      # Card: Plot curves ----
+      # Box: Plot curves ----
       column(
         width = 6,
-        bs4MyCard(
+        box(
           width = 12,
-          noPadding = TRUE,
           title = "Curve plot",
-          status = "results", solidHeader = TRUE, collapsible = TRUE, closable = FALSE,
+          status = "success",
+          collapsible = TRUE,
+
           # Plot
           plotOutput(ns("plot")),
           # Download plot
