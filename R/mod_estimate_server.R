@@ -176,7 +176,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       if (type == "theory") {
         # Renormalize data if necessary
         if (response == "yield") {
-          model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] *  genome_fraction)
+          model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] * genome_fraction)
         }
 
         # Generalized variance-covariance matrix
@@ -190,7 +190,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
         # Predict yield / aberrations
         predict_eta <- function(data, coeffs) {
           coeffs[["C"]] * rep(1, nrow(data)) +
-            coeffs[["α"]] * data[["D"]]  +
+            coeffs[["α"]] * data[["D"]] +
             coeffs[["β"]] * data[["D"]] * data[["D"]]
         }
 
@@ -209,11 +209,11 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Calculate model-specific statistics
         fit_model_statistics <- cbind(
-          logLik =  logLik,
+          logLik = logLik,
           deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-          df =      num_data - num_params,
-          AIC =     2 * num_params - 2 * logLik,
-          BIC =     log(num_data) * num_params - 2 * logLik
+          df = num_data - num_params,
+          AIC = 2 * num_params - 2 * logLik,
+          BIC = log(num_data) * num_params - 2 * logLik
         )
       }
 
@@ -242,8 +242,8 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
           if (fit_results_list[["frequency_select"]] == "measured_freq") {
 
             # Update coefficients
-            fit_results_list[["fit_coeffs"]][,"estimate"] <- fit_results_list[["fit_coeffs"]][,"estimate"] / fit_genome_fraction
-            fit_results_list[["fit_coeffs"]][,"std.error"] <- fit_results_list[["fit_coeffs"]][,"std.error"] / fit_genome_fraction
+            fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_fraction
+            fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_fraction
 
             # Update variance-covariance matrix
             fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
@@ -251,7 +251,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
             # Update model-specific statistics
             fit_results_list[["fit_model_statistics"]] <- get_model_statistics(
               fit_results_list[["fit_raw_data"]],
-              fit_results_list[["fit_coeffs"]][,"estimate"],
+              fit_results_list[["fit_coeffs"]][, "estimate"],
               fit_genome_fraction
             )
           }
@@ -308,8 +308,8 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
             fit_genome_fraction <- input$fit_genome_fraction
 
             # Update coefficients
-            fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / fit_genome_fraction
-            fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / fit_genome_fraction
+            fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_fraction
+            fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_fraction
 
             # Update variance-covariance matrix
             fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
@@ -342,19 +342,25 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
   # Results outputs ----
   output$fit_formula_tex <- renderUI({
     # Fitting formula
-    if (input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) {
+      return(NULL)
+    }
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
   output$fit_trans_frequency_message <- renderUI({
     # Fitting formula
-    if (input$button_view_fit_data <= 0 | aberr_module != "translocations") return(NULL)
+    if (input$button_view_fit_data <= 0 | aberr_module != "translocations") {
+      return(NULL)
+    }
     data()[["fit_trans_frequency_message"]]
   })
 
   output$fit_model_statistics <- renderRHandsontable({
     # Model-level statistics
-    if (input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
 
     data()[["fit_model_statistics"]] %>%
@@ -365,7 +371,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
-    if (input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
 
     data()[["fit_coeffs"]] %>%
@@ -381,7 +389,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
   output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
-    if (input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
 
     data()[["fit_var_cov_mat"]] %>%
@@ -394,7 +404,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
   output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
-    if (input$button_view_fit_data <= 0) return(NULL)
+    if (input$button_view_fit_data <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
@@ -433,11 +445,11 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         as.data.frame(),
       ~ . *
         df %>%
-        .[grep(aberr_prefix, names(.))] %>%
-        names() %>%
-        stringr::str_extract("[0-9]") %>%
-        as.numeric() %>%
-        .^power
+          .[grep(aberr_prefix, names(.))] %>%
+          names() %>%
+          stringr::str_extract("[0-9]") %>%
+          as.numeric() %>%
+          .^power
     ) %>%
       t() %>%
       rowSums()
@@ -502,7 +514,6 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         )
       ) %>%
         `colnames<-`(paste0("C", seq(0, num_aberrs - 1, 1)))
-
     } else {
       full_data <- utils::read.csv(case_data$datapath, header = TRUE) %>%
         dplyr::mutate_at(
@@ -560,7 +571,6 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
               as.integer
             )
         }
-
       } else if (!identical(previous(), input$case_data_hot)) {
         mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
@@ -574,7 +584,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
             std_err = sqrt(.data$var / .data$N),
             mean = .data$X / .data$N,
             DI = .data$var / .data$mean,
-            u = (.data$var / .data$mean - 1) * sqrt( (.data$N - 1) / (2 * (1 - 1 / .data$N))),
+            u = (.data$var / .data$mean - 1) * sqrt((.data$N - 1) / (2 * (1 - 1 / .data$N))),
           ) %>%
           dplyr::mutate_at(
             c("X", "N", grep("C", names(.), value = TRUE)),
@@ -599,7 +609,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
               Fp = .data$mean,
               Fp_err = .data$std_err
             ) %>%
-            dplyr::select(-.data$mean, - .data$std_err) %>%
+            dplyr::select(-.data$mean, -.data$std_err) %>%
             dplyr::mutate(
               Xc = ifelse(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson",
@@ -636,7 +646,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
     hot <- changed_data() %>%
       rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
       hot_cols(colWidths = 50)
-      # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+    # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
       hot <- hot %>%
@@ -676,7 +686,6 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
 #' @importFrom rlang .data
 #' @noRd
 mod_estimate_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
-
   data <- reactive({
 
     # Calcs: get variables ----
@@ -717,8 +726,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         if (fit_results_list[["frequency_select"]] == "measured_freq") {
 
           # Update coefficients
-          fit_results_list[["fit_coeffs"]][,"estimate"] <- fit_results_list[["fit_coeffs"]][,"estimate"] / fit_genome_fraction
-          fit_results_list[["fit_coeffs"]][,"std.error"] <- fit_results_list[["fit_coeffs"]][,"std.error"] / fit_genome_fraction
+          fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_fraction
+          fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_fraction
 
           # Update variance-covariance matrix
           fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
@@ -768,8 +777,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           fit_genome_fraction <- input$fit_genome_fraction
 
           # Update coefficients
-          fit_coeffs[,"estimate"] <- fit_coeffs[,"estimate"] / fit_genome_fraction
-          fit_coeffs[,"std.error"] <- fit_coeffs[,"std.error"] / fit_genome_fraction
+          fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_fraction
+          fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_fraction
 
           # Update variance-covariance matrix
           fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
@@ -832,8 +841,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       conf_int_yield <- conf_int_curve
 
       # Parse CI text for plot legend
-      conf_int_text_whole <- paste0("(", round(100 * conf_int_curve, 0), "%",
-                                    "-" , round(100 * conf_int_yield, 0), "%", ")")
+      conf_int_text_whole <- paste0(
+        "(", round(100 * conf_int_curve, 0), "%",
+        "-", round(100 * conf_int_yield, 0), "%", ")"
+      )
     } else if (error_method == "delta") {
       conf_int_curve <- 0.83
       conf_int_yield <- conf_int_curve
@@ -853,7 +864,6 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
       # Parse CI text for plot legend
       conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
-
     } else if (assessment == "hetero") {
       conf_int_curve_hetero <- paste0("0.", gsub("\\D", "", error_method_hetero)) %>% as.numeric()
       conf_int_yield_hetero <- conf_int_curve_hetero
@@ -861,7 +871,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # Parse CI text for plot legend
       conf_int_text_hetero <- paste0(
         "(", round(100 * conf_int_curve_hetero, 0), "%",
-        "-" , round(100 * conf_int_yield_hetero, 0), "%", ")"
+        "-", round(100 * conf_int_yield_hetero, 0), "%", ")"
       )
     }
 
@@ -890,14 +900,15 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       results_whole <- biodosetools::estimate_whole_body_delta(
 
         case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_delta, protracted_g_value, cov = TRUE,
+        conf_int_delta, protracted_g_value,
+        cov = TRUE,
         aberr_module
       )
     }
 
     # Parse results
     est_doses_whole <- results_whole[["est_doses"]]
-    AIC_whole <-       results_whole[["AIC"]]
+    AIC_whole <- results_whole[["AIC"]]
 
     if (assessment == "partial-body") {
       # Calculate partial results
@@ -908,9 +919,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
-      est_frac_partial <-  results_partial[["est_frac"]]
-      AIC_partial <-       results_partial[["AIC"]]
-
+      est_frac_partial <- results_partial[["est_frac"]]
+      AIC_partial <- results_partial[["AIC"]]
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
       results_hetero <- biodosetools::estimate_hetero(
@@ -920,10 +930,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
-      est_yields_hetero <-      results_hetero[["est_yields"]]
-      est_doses_hetero <-       results_hetero[["est_doses"]]
-      est_frac_hetero <-        results_hetero[["est_frac"]]
-      AIC_hetero <-             results_hetero[["AIC"]]
+      est_yields_hetero <- results_hetero[["est_yields"]]
+      est_doses_hetero <- results_hetero[["est_doses"]]
+      est_frac_hetero <- results_hetero[["est_frac"]]
+      AIC_hetero <- results_hetero[["AIC"]]
     }
 
     # Make plot ----
@@ -938,14 +948,14 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     } else if (assessment == "partial-body") {
       est_full_doses <- data.frame(
-        dose = c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
+        dose = c(est_doses_whole[["dose"]], est_doses_partial[["dose"]]),
         yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
         type = c(rep("Whole-body", 3), rep("Partial-body", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 2)
       )
     } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
-        dose = c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
+        dose = c(est_doses_whole[["dose"]], est_doses_hetero[["dose1"]], est_doses_hetero[["dose2"]]),
         yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
         type = c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 3)
@@ -1002,8 +1012,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # AICs
       est_results_list[["AIC_partial"]] <- AIC_partial
       est_results_list[["AIC_hetero"]] <- NA
-
-    } else if (assessment == "hetero"){
+    } else if (assessment == "hetero") {
       # Heterogeneous
       est_results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
       est_results_list[["est_yields_hetero"]] <- est_yields_hetero
@@ -1058,7 +1067,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     assessment <- input$assessment_select
 
     if (assessment == "whole-body") {
-    # Whole-body
+      # Whole-body
       tabBox(
         id = "estimate_results_tabs",
         width = 12,
@@ -1098,7 +1107,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           div(
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
-          )#,
+          ) # ,
 
           # br(),
           # h5("Relative quality of the estimation"),
@@ -1146,7 +1155,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           div(
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
-          )#,
+          ) # ,
 
           # br(),
           # h5("Relative quality of the estimation"),
@@ -1173,7 +1182,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           div(
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_frac_partial"))
-          )#,
+          ) # ,
 
           # br(),
           # h5("Relative quality of the estimation"),
@@ -1221,7 +1230,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           div(
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_whole"))
-          )#,
+          ) # ,
 
           # br(),
           # h5("Relative quality of the estimation"),
@@ -1255,7 +1264,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           div(
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_frac_hetero"))
-          )#,
+          ) # ,
 
           # br(),
           # h5("Relative quality of the estimation"),
@@ -1276,7 +1285,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (whole-body)
   output$est_yields_whole <- renderRHandsontable({
-    if (input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) {
+      return(NULL)
+    }
     data()[["est_doses_whole"]] %>%
       dplyr::select(.data$yield) %>%
       t() %>%
@@ -1289,7 +1300,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (whole-body)
   output$est_doses_whole <- renderRHandsontable({
-    if (input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) {
+      return(NULL)
+    }
     data()[["est_doses_whole"]] %>%
       dplyr::select(.data$dose) %>%
       t() %>%
@@ -1302,7 +1315,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (partial-body)
   output$est_yields_partial <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
+      return(NULL)
+    }
     data()[["est_doses_partial"]] %>%
       dplyr::select(.data$yield) %>%
       t() %>%
@@ -1319,7 +1334,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (partial-body)
   output$est_doses_partial <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
+      return(NULL)
+    }
     data()[["est_doses_partial"]] %>%
       dplyr::select(.data$dose) %>%
       t() %>%
@@ -1336,7 +1353,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated fraction of irradiated blood for dose dose1 (partial-body)
   output$est_frac_partial <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
+      return(NULL)
+    }
     data()[["est_frac_partial"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1352,7 +1371,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated yields (heterogeneous)
   output$est_mixing_prop_hetero <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
+      return(NULL)
+    }
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
@@ -1367,7 +1388,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (heterogeneous)
   output$est_yields_hetero <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
+      return(NULL)
+    }
     data()[["est_yields_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1383,7 +1406,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated recieved doses (heterogeneous)
   output$est_doses_hetero <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
+      return(NULL)
+    }
     data()[["est_doses_hetero"]] %>%
       t() %>%
       as.data.frame() %>%
@@ -1399,7 +1424,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
   output$est_frac_hetero <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
+      return(NULL)
+    }
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate_if(is.logical, as.double) %>%
@@ -1413,7 +1440,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # AIC for estimated dose (whole)
   output$AIC_whole <- renderRHandsontable({
-    if (input$button_estimate <= 0) return(NULL)
+    if (input$button_estimate <= 0) {
+      return(NULL)
+    }
     data()[["AIC_whole"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
@@ -1424,7 +1453,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # AIC for estimated dose (partial-body)
   output$AIC_partial <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
+      return(NULL)
+    }
     data()[["AIC_partial"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
@@ -1435,7 +1466,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # AIC for estimated dose (heterogeneous)
   output$AIC_hetero <- renderRHandsontable({
-    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
+      return(NULL)
+    }
     data()[["AIC_hetero"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
@@ -1446,8 +1479,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Plot of the data and fitted curve
   output$plot <- renderPlot(
-    res = 120, {
-      if (input$button_estimate <= 0) return(NULL)
+    res = 120,
+    {
+      if (input$button_estimate <= 0) {
+        return(NULL)
+      }
       data()[["gg_curve"]]
     }
   )
@@ -1478,8 +1514,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
       tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- paste0("reports/", aberr_module, "-estimate-report-",
-                            stringr::str_replace(input$save_report_format, '.', ''), ".Rmd")
+      localReport <- paste0(
+        "reports/", aberr_module, "-estimate-report-",
+        stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+      )
 
       file.copy(localReport, tempReport, overwrite = TRUE)
 
@@ -1500,4 +1538,3 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
   )
 }
-

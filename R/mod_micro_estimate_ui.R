@@ -5,7 +5,7 @@
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
+mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -166,7 +166,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_cor_mat"))
-            ),
+          ),
 
           br(),
           h5("Variance-covariance matrix"),
@@ -253,7 +253,8 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
             textAreaInput(
               inputId = ns("case_description"),
               label = "Case description",
-              placeholder = "Short summary of the case"),
+              placeholder = "Short summary of the case"
+            ),
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
           )
@@ -564,7 +565,8 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
           textAreaInput(
             inputId = ns("results_comments"),
             label = "Comments",
-            placeholder = "Comments to be included on report"),
+            placeholder = "Comments to be included on report"
+          ),
 
           # Download report
           # div(class = "widget-sep", br()),

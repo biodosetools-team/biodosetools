@@ -10,10 +10,10 @@ mod_help_chromosome_hot_server <- function(input, output, session, stringsAsFact
 
   # Tables ----
   data <- data.frame(
-    Chromosome = c(1,4,12),
+    Chromosome = c(1, 4, 12),
     Red = c(FALSE, TRUE, FALSE),
     Green = c(TRUE, FALSE, FALSE),
-    Yellow = c( FALSE, FALSE, TRUE)
+    Yellow = c(FALSE, FALSE, TRUE)
   ) %>%
     dplyr::mutate(
       Chromosome = as.integer(.data$Chromosome)
@@ -33,4 +33,3 @@ mod_help_chromosome_hot_server <- function(input, output, session, stringsAsFact
     return(hot)
   })
 }
-

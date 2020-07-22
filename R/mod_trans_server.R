@@ -16,7 +16,7 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
     })
 
     # Modify table rendering depending on stain method
-    if(color_scheme) {
+    if (color_scheme) {
       data <- data.frame(
         Chromosome = chromosome_list
       )
@@ -38,7 +38,9 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
 
   # Output ----
   output$chromosome_table <- renderRHandsontable({
-    if (input$button_upd_chrom_table <= 0) return(NULL)
+    if (input$button_upd_chrom_table <= 0) {
+      return(NULL)
+    }
 
     num_cols <- as.numeric(ncol(table()))
 
@@ -47,7 +49,7 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
       hot_col(1, colWidths = 115, readOnly = TRUE) %>%
       hot_cols(halign = "htCenter")
 
-    if(num_cols > 1) {
+    if (num_cols > 1) {
       hot <- hot %>%
         hot_col(2:num_cols, colWidths = 85)
     }
@@ -107,9 +109,11 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
 
   # Output ----
   output$genome_fraction <- renderUI({
-    if (input$button_calc_genome_fraction <= 0) return(NULL)
+    if (input$button_calc_genome_fraction <= 0) {
+      return(NULL)
+    }
     genome_fraction_value <- genome_fraction()
-    genome_fraction_text <- paste0("The genomic conversion factor to full genome is ", genome_fraction_value %>% round(3) %>%  as.character(), ".")
+    genome_fraction_text <- paste0("The genomic conversion factor to full genome is ", genome_fraction_value %>% round(3) %>% as.character(), ".")
     return(genome_fraction_text)
   })
 

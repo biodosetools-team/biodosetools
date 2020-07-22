@@ -5,7 +5,6 @@
 #' @import shiny shinydashboard
 #' @noRd
 app_ui <- function(request) {
-
   tagList(
     golem_add_external_resources(),
 

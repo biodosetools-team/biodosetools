@@ -25,11 +25,11 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         as.data.frame(),
       ~ . *
         df %>%
-        .[grep(aberr_prefix, names(.))] %>%
-        names() %>%
-        stringr::str_extract("[0-9]") %>%
-        as.numeric() %>%
-        .^power
+          .[grep(aberr_prefix, names(.))] %>%
+          names() %>%
+          stringr::str_extract("[0-9]") %>%
+          as.numeric() %>%
+          .^power
     ) %>%
       t() %>%
       rowSums()
@@ -71,7 +71,6 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
           dplyr::mutate(
             D = as.numeric(.data$D)
           )
-
       } else {
         full_data <- data.frame(
           D = rep(0.0, num_doses),
@@ -123,7 +122,6 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
 
     isolate({
       if (is.null(input$count_data_hot) | isolate(table_reset$value == 1)) {
-
         table_reset$value <- 0
         mytable <- previous()
 
@@ -154,10 +152,10 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
 
         if (!use_aggr_count_data) {
           # Expected u-value for assessment
-          assessment_u = 1.00
+          assessment_u <- 1.00
 
-          if (aberr_module == "micronuclei" ) {
-            assessment_u = 1.17
+          if (aberr_module == "micronuclei") {
+            assessment_u <- 1.17
           }
 
 
@@ -170,7 +168,7 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
               mean = .data$X / .data$N,
               var = (.data$X2 - (.data$X^2) / .data$N) / (.data$N - 1),
               DI = .data$var / .data$mean,
-              u = (.data$var / .data$mean - assessment_u) * sqrt( (.data$N - 1) / (2 * (1 - 1 / .data$X)))
+              u = (.data$var / .data$mean - assessment_u) * sqrt((.data$N - 1) / (2 * (1 - 1 / .data$X)))
             ) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
@@ -245,7 +243,6 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       model_formula <- input$formula_select
       model_family <- input$family_select
       # decision_thresh_cells <- input$decision_thresh_cells
-
     })
 
     if (aberr_module == "translocations") {
@@ -316,19 +313,25 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   # Results outputs ----
   output$fit_formula_tex <- renderUI({
     # Fitting formula
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
   })
 
   output$fit_model_summary <- renderUI({
     # Fitting formula
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     data()[["fit_model_summary"]]
   })
 
   output$fit_model_statistics <- renderRHandsontable({
     # Model-level statistics
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
 
     data()[["fit_model_statistics"]] %>%
@@ -339,7 +342,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
   output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
 
     data()[["fit_coeffs"]] %>%
@@ -355,7 +360,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
   output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
 
     data()[["fit_var_cov_mat"]] %>%
@@ -368,7 +375,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
   output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
-    if (input$button_fit <= 0) return(NULL)
+    if (input$button_fit <= 0) {
+      return(NULL)
+    }
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
@@ -397,8 +406,11 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
   output$plot <- renderPlot(
     # Plot of the data and fitted curve
-    res = 120, {
-      if (input$button_fit <= 0) return(NULL)
+    res = 120,
+    {
+      if (input$button_fit <= 0) {
+        return(NULL)
+      }
       data()[["gg_curve"]]
     }
   )
@@ -460,7 +472,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         paste0(
           aberr_module,
           "-fitting-report-",
-          stringr::str_replace(input$save_report_format, '.', ''), ".Rmd"
+          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
         )
       )
 

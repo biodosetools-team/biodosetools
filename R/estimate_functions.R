@@ -115,10 +115,10 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     `row.names<-`(c("lower", "estimate", "upper"))
 
   # Calculate AIC as a GOF indicator
-AIC <- AIC_from_data(
-  general_fit_coeffs, est_doses["estimate", ],
-  dose_var = "dose", yield_var = "yield", fit_link = "identity"
-)
+  AIC <- AIC_from_data(
+    general_fit_coeffs, est_doses["estimate", ],
+    dose_var = "dose", yield_var = "yield", fit_link = "identity"
+  )
 
 
   # Return objects
@@ -563,9 +563,9 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
     # Estimated mixing proportion
     est_mixing_prop <- data.frame(
       y_estimate = rep(NA, 2),
-      y_std_err =  rep(NA, 2),
+      y_std_err = rep(NA, 2),
       f_estimate = rep(NA, 2),
-      f_std_err =  rep(NA, 2)
+      f_std_err = rep(NA, 2)
     )
 
     # Estimated doses

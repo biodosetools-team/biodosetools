@@ -5,7 +5,7 @@
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
+mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -274,9 +274,9 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
                 selectizeInput(
                   inputId = ns("trans_chromosome_select"),
                   label = "Chromosomes",
-                  choices = c( 1:21, "X", "Y"),
+                  choices = c(1:21, "X", "Y"),
                   options = list(
-                    placeholder = 'Select stained chromosomes'
+                    placeholder = "Select stained chromosomes"
                   ),
                   multiple = TRUE
                 )
@@ -309,7 +309,7 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
                       "Cyan"
                     ),
                     options = list(
-                      placeholder = 'Select observed colors'#,
+                      placeholder = "Select observed colors" # ,
                       # maxItems = 5
                       # TODO: use renderUI to force maxItems ot be length(trans_color_select)
                     ),
@@ -371,7 +371,6 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
             )
           )
         )
-
       )
     ),
 
@@ -487,7 +486,8 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
             textAreaInput(
               inputId = ns("case_description"),
               label = "Case description",
-              placeholder = "Short summary of the case"),
+              placeholder = "Short summary of the case"
+            ),
 
             # Buttons
             actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
@@ -583,7 +583,7 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
                     "Asia"           = "asia"
                   ),
                   "None" = c(
-                    "Not specified"  = "none"
+                    "Not specified" = "none"
                   )
                 ),
                 selected = "none"
@@ -896,7 +896,8 @@ mod_trans_estimate_ui <- function(id, label) { #, locale = i18n) {
           textAreaInput(
             inputId = ns("results_comments"),
             label = "Comments",
-            placeholder = "Comments to be included on report"),
+            placeholder = "Comments to be included on report"
+          ),
 
           # Download report
           # div(class = "widget-sep", br()),

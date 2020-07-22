@@ -11,9 +11,9 @@
 get_genome_fraction <- function(dna_table, chromosome, color, sex) {
   # Construct color/chromosome table
   color_table <- cbind(
-      color,
-      chromosome
-    ) %>%
+    color,
+    chromosome
+  ) %>%
     as.data.frame() %>%
     dplyr::mutate(
       chromosome = as.character(chromosome)

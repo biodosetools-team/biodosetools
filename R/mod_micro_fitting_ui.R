@@ -186,7 +186,7 @@ mod_micro_fitting_ui <- function(id, label) {
                 "Negative binomial (NB2)" = "nb2"
               ),
               selected = "automatic"
-            )#,
+            ) # ,
             # Decision thresholds
             # textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
@@ -283,7 +283,7 @@ mod_micro_fitting_ui <- function(id, label) {
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_var_cov_mat"))
               )
-            )#,
+            ) # ,
             # tabPanel(
             #   tabName = "Decision thresholds",
             #   h5("Decision thresholds"),
@@ -366,7 +366,6 @@ mod_micro_fitting_ui <- function(id, label) {
               selected = ".html"
             )
           )
-
         )
       ),
       column(
