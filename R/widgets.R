@@ -5,12 +5,11 @@
 #'
 #' @noRd
 help_modal_button <- function(inputId, id_modal) {
-  shinyBS::bsButton(
-    class = "modal-help-button",
+  shiny::actionButton(
     inputId,
     label = "",
-    icon = icon("question"),
-    style = "default", size = "default"
+    class = "modal-help-button",
+    icon = icon("question")
   ) %>%
     bsplus::bs_attach_modal(id_modal)
 }
