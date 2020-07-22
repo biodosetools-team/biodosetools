@@ -133,8 +133,7 @@ dashboard_sidebar <- function() {
 
     p(class = "menu-title", "Other tools"),
 
-    p(class = "sticky-footer",
-      a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosimetry-uab/biodosetools/blob/master/NEWS.md"))
+    p(class = "sticky-footer", a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosimetry-uab/biodosetools/blob/master/NEWS.md"))
   )
 }
 
