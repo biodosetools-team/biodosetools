@@ -1,6 +1,6 @@
 ---
 title: "Dose estimation report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
 params:
@@ -8,14 +8,16 @@ params:
 ---
 
 ```{r include=FALSE}
-library(xfun)
-xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
 ```
 
 ```{r include=FALSE}
 embed_var <- function(x, ...) {
   # f = tempfile(fileext = '.rds')
-  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  f <- paste("fitting-data-", Sys.Date(), ".rds", sep = "")
   saveRDS(x, f)
   xfun::embed_file(f, ...)
 }
@@ -93,12 +95,12 @@ The analyzed blood sample comes from a `r trans_sex` individual.
 ```{r echo=FALSE}
 num_cols <- ncol(chromosome_table)
 
-chromosome_table <- chromosome_table %>% 
-  as.data.frame() 
+chromosome_table <- chromosome_table %>%
+  as.data.frame()
 
 if (num_cols > 1) {
-  chromosome_table <- chromosome_table %>% 
-    mutate_at(seq(2, num_cols , 1), function(x) {
+  chromosome_table <- chromosome_table %>%
+    mutate_at(seq(2, num_cols, 1), function(x) {
       case_when(
         is.na(x) ~ "",
         (x == "FALSE") ~ "",
@@ -107,7 +109,7 @@ if (num_cols > 1) {
     })
 }
 
-chromosome_table%>% 
+chromosome_table %>%
   pander::pander()
 ```
 
@@ -118,7 +120,7 @@ chromosome_table%>%
 ```{r echo=FALSE}
 case_data %>%
   pander::pander()
-  # TODO: Add u-value highlighting
+# TODO: Add u-value highlighting
 ```
 
 ### Confounders
@@ -135,26 +137,26 @@ if (!is.null(confounders) & length(confounders) > 1) {
     as.data.frame() %>%
     mutate(
       sex_bool = with(., case_when(
-        (sex_bool == TRUE)  ~ "Used", 
+        (sex_bool == TRUE) ~ "Used",
         (sex_bool == FALSE) ~ "Not used"
       )),
       smoker_bool = with(., case_when(
-        (smoker_bool == TRUE)  ~ "Yes", 
+        (smoker_bool == TRUE) ~ "Yes",
         (smoker_bool == FALSE) ~ "No"
       )),
       ethnicity_value = with(., case_when(
-        (ethnicity_value == "white") ~ "White", 
-        (ethnicity_value == "asian") ~ "Asian", 
-        (ethnicity_value == "black") ~ "Black", 
+        (ethnicity_value == "white") ~ "White",
+        (ethnicity_value == "asian") ~ "Asian",
+        (ethnicity_value == "black") ~ "Black",
         (ethnicity_value == "other") ~ "Others",
         TRUE ~ "Not specified"
       )),
       region_value = with(., case_when(
         (region_value == "n-america") ~ "North America",
-        (region_value == "w-europe")  ~ "Western Europe",
-        (region_value == "c-europe")  ~ "Central Europe",
-        (region_value == "e-europe")  ~ "Eastern Europe",
-        (region_value == "asia")      ~ "Asia",
+        (region_value == "w-europe") ~ "Western Europe",
+        (region_value == "c-europe") ~ "Central Europe",
+        (region_value == "e-europe") ~ "Eastern Europe",
+        (region_value == "asia") ~ "Asia",
         TRUE ~ "Not specified"
       ))
     ) %>%
@@ -176,9 +178,9 @@ if (TRUE) {
   est_doses_whole %>%
     dplyr::select(yield) %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (TRUE) {"####"}`
@@ -189,9 +191,9 @@ if (TRUE) {
     dplyr::select(dose) %>%
     t() %>%
     # as.data.frame() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 <!-- `r if (TRUE) {"#### Relative quality of the estimation"}` -->
@@ -213,30 +215,30 @@ if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(yield) %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("yield") %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"####"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial%>%
+  est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("dose (Gy)") %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
@@ -244,14 +246,14 @@ if (assessment == "partial-body") {
 if (assessment == "partial-body") {
   est_frac_partial %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("fraction") %>%
     pander::pander()
-} 
+}
 ```
 
 <!-- `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}` -->

@@ -1,6 +1,6 @@
 ---
 title: "Dose estimation report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
 params:
@@ -8,6 +8,9 @@ params:
 ---
 
 ```{r include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
 pander::panderOptions("table.style", "grid")
 ```
 
@@ -74,7 +77,7 @@ fit_coeffs %>%
 ```{r echo=FALSE}
 case_data %>%
   pander::pander()
-  # TODO: Add u-value highlighting
+# TODO: Add u-value highlighting
 ```
 
 ### Case description
@@ -90,9 +93,9 @@ if (TRUE) {
   est_doses_whole %>%
     dplyr::select(yield) %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (TRUE) {"####"}`
@@ -103,9 +106,9 @@ if (TRUE) {
     dplyr::select(dose) %>%
     t() %>%
     # as.data.frame() %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 <!-- `r if (TRUE) {"#### Relative quality of the estimation"}` -->
@@ -132,15 +135,15 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("yield") %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"####"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial%>%
+  est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
     as.data.frame() %>%
@@ -148,9 +151,9 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("dose (Gy)") %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
@@ -163,9 +166,9 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("fraction") %>%
-    formatC(format = "f", digits = 3) %>% 
+    formatC(format = "f", digits = 3) %>%
     pander::pander()
-} 
+}
 ```
 
 <!-- `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}` -->
@@ -189,7 +192,7 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>% 
+    as.matrix() %>%
     formatC(format = "f", digits = 3) %>%
     pander::pander()
 }
@@ -234,7 +237,7 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("estimate", "std.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>% 
+    as.matrix() %>%
     formatC(format = "f", digits = 3) %>%
     pander::pander()
 }

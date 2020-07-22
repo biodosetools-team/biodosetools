@@ -1,13 +1,16 @@
 ---
 title: "Curve fitting report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
 params:
   fit_results_list: NA
 ---
 
-```{r include=FALSE} 
+```{r include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
 pander::panderOptions("table.style", "grid")
 ```
 
@@ -35,12 +38,12 @@ The analyzed blood sample comes from a `r trans_sex` individual.
 ```{r echo=FALSE}
 num_cols <- ncol(chromosome_table)
 
-chromosome_table <- chromosome_table %>% 
-  as.data.frame() 
+chromosome_table <- chromosome_table %>%
+  as.data.frame()
 
 if (num_cols > 1) {
-  chromosome_table <- chromosome_table %>% 
-    mutate_at(seq(2, num_cols , 1), function(x) {
+  chromosome_table <- chromosome_table %>%
+    mutate_at(seq(2, num_cols, 1), function(x) {
       case_when(
         is.na(x) ~ "",
         (x == "FALSE") ~ "",
@@ -49,17 +52,17 @@ if (num_cols > 1) {
     })
 }
 
-chromosome_table%>% 
+chromosome_table %>%
   pander::pander()
 ```
 
 ## Count data used
 ```{r echo=FALSE}
-count_data %>% 
-  dplyr::rename(`D (Gy)` = D) %>% 
+count_data %>%
+  dplyr::rename(`D (Gy)` = D) %>%
   pander::pander()
-  # TODO:  hot_col(c(1), format = "0.000", colWidths = 60)
-  # TODO: Add u-value highlighting
+# TODO:  hot_col(c(1), format = "0.000", colWidths = 60)
+# TODO: Add u-value highlighting
 ```
 
 ## Results

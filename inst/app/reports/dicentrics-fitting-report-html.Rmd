@@ -1,6 +1,6 @@
 ---
 title: "Curve fitting report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
   # prettydoc::html_pretty:
@@ -12,15 +12,17 @@ params:
   fit_results_list: NA
 ---
 
-```{r include=FALSE}
-library(xfun)
-xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
 ```
 
 ```{r include=FALSE}
 embed_var <- function(x, ...) {
   # f = tempfile(fileext = '.rds')
-  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  f <- paste("fitting-data-", Sys.Date(), ".rds", sep = "")
   saveRDS(x, f)
   xfun::embed_file(f, ...)
 }
