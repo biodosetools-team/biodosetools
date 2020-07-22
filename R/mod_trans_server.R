@@ -62,7 +62,7 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     input$button_calc_genome_fraction
 
     isolate({
-      dna_table <- data.table::fread("libs/dna-content-fractions.csv")
+      dna_table <- dna_content_fractions
       color_scheme <- input$trans_m_fish_scheme
       chromosome_table <- rhandsontable::hot_to_r(input$chromosome_table)
       sex <- input$trans_sex
@@ -79,52 +79,11 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
           names_to = "Stain",
           values_to = "Bool"
         )
-
       chromosome_table_clean <- chromosome_table_melt %>%
         dplyr::filter(Bool == TRUE)
 
       chromosome <- chromosome_table_clean[["Chromosome"]] %>% as.character()
       color <- chromosome_table_clean[["Stain"]]
-    }
-
-    get_genome_fraction <- function(dna_table, chromosome, color, sex) {
-      # Construct color/chromosome table
-      color_table <-
-        cbind(
-          color,
-          chromosome
-        ) %>%
-        as.data.frame() %>%
-        dplyr::mutate(
-          chromosome = as.character(chromosome)
-        )
-
-      # Full table
-      full_table <- dplyr::inner_join(color_table, dna_table, by = "chromosome") %>%
-        dplyr::group_by(color) %>%
-        dplyr::summarise(genome_fraction = sum(get(paste0("fraction_", sex))))
-
-      # Calculate first sum
-      single_sum <- full_table %>%
-        dplyr::select(genome_fraction) %>%
-        dplyr::summarise(sum(genome_fraction * (1 - genome_fraction))) %>%
-        unname() %>%
-        unlist()
-
-      # Calculate second sum
-      if (nrow(full_table) >= 2) {
-        cross_sum <- full_table[["genome_fraction"]] %>%
-          utils::combn(2) %>%
-          t() %>%
-          as.data.frame() %>%
-          dplyr::summarise(sum(V1 * V2)) %>%
-          unname() %>%
-          unlist()
-      } else {
-        cross_sum <- 0
-      }
-
-      return(2 / 0.974 * (single_sum - cross_sum))
     }
 
     return(get_genome_fraction(dna_table, chromosome, color, sex))
