@@ -1514,9 +1514,12 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
       tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- paste0(
-        "reports/", aberr_module, "-estimate-report-",
-        stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+      localReport <- load_rmd_report(
+        paste0(
+          aberr_module,
+          "-estimate-report-",
+          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+        )
       )
 
       file.copy(localReport, tempReport, overwrite = TRUE)
