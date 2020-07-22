@@ -1,5 +1,12 @@
-# General Estimate Modules ---------------------------------
-
+#' Dose Estimation Fitting Curve Hottable Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#' @param aberr_module Aberration module.
+#' @param genome_fraction Genomic fraction used in translocations.
+#'
+#' @import shiny rhandsontable
+#' @noRd
 mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsFactors) {
 
   # Reset tables ----
@@ -84,9 +91,9 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
       table_reset$value <- 0
       return(previous_coeffs())
     } else if (!identical(previous_coeffs(), input$fit_coeffs_hot)) {
-      fit_coeffs_names <- row.names(rhandsontable::hot_to_r(input$fit_coeffs_hot))
+      fit_coeffs_names <- row.names(hot_to_r(input$fit_coeffs_hot))
 
-      mytable <- as.data.frame(rhandsontable::hot_to_r(input$fit_coeffs_hot)) %>%
+      mytable <- as.data.frame(hot_to_r(input$fit_coeffs_hot)) %>%
         dplyr::mutate_all(as.numeric) %>%
         `row.names<-`(fit_coeffs_names)
 
@@ -102,9 +109,9 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
       table_var_reset$value <- 0
       return(previous_var())
     } else if (!identical(previous_var(), input$fit_var_cov_mat_hot)) {
-      fit_coeffs_names <- row.names(rhandsontable::hot_to_r(input$fit_var_cov_mat_hot))
+      fit_coeffs_names <- row.names(hot_to_r(input$fit_var_cov_mat_hot))
 
-      mytable <- as.data.frame(rhandsontable::hot_to_r(input$fit_var_cov_mat_hot)) %>%
+      mytable <- as.data.frame(hot_to_r(input$fit_var_cov_mat_hot)) %>%
         dplyr::mutate_all(as.numeric) %>%
         `row.names<-`(fit_coeffs_names)
 
@@ -113,36 +120,44 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
   })
 
   # Output ----
-  output$fit_coeffs_hot <- rhandsontable::renderRHandsontable({
+  output$fit_coeffs_hot <- renderRHandsontable({
     # Read number of columns
     num_cols <- ncol(changed_coeffs_data())
 
     # Convert to hot and format table
     hot <- changed_coeffs_data() %>%
-      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 100) %>%
-      rhandsontable::hot_cols(format = "0.000000")
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(format = "0.000000")
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
   })
 
-  output$fit_var_cov_mat_hot <- rhandsontable::renderRHandsontable({
+  output$fit_var_cov_mat_hot <- renderRHandsontable({
     # Read number of columns
     num_cols <- ncol(changed_var_data())
 
     # Convert to hot and format table
     hot <- changed_var_data() %>%
-      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 100) %>%
-      rhandsontable::hot_cols(format = "0.00000000")
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(format = "0.00000000")
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
     return(hot)
   })
 }
 
-
+#' Dose Estimation Fitting Curve Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#' @param aberr_module Aberration module.
+#' @param genome_fraction Genomic fraction used in translocations.
+#'
+#' @import shiny rhandsontable
+#' @noRd
 mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFactors, aberr_module) {
 
   # Calculations ----
@@ -194,11 +209,11 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Calculate model-specific statistics
         fit_model_statistics <- cbind(
-          logLik =   logLik,
+          logLik =  logLik,
           deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-          df =       num_data - num_params,
-          AIC =      2 * num_params - 2 * logLik,
-          BIC =      log(num_data) * num_params - 2 * logLik
+          df =      num_data - num_params,
+          AIC =     2 * num_params - 2 * logLik,
+          BIC =     log(num_data) * num_params - 2 * logLik
         )
       }
 
@@ -256,13 +271,13 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
           fit_formula_tex <- "Y = \\alpha D"
         }
 
-        fit_coeffs_raw <- rhandsontable::hot_to_r(input$fit_coeffs_hot)
+        fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
         fit_coeffs <- fit_coeffs_raw %>%
           # cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
           as.matrix()
 
         if (input$use_var_cov_matrix) {
-          fit_var_cov_mat <- rhandsontable::hot_to_r(input$fit_var_cov_mat_hot) %>%
+          fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
             as.matrix()
         } else {
           # Calculate var-cov matrix when none is provided
@@ -337,18 +352,18 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
     data()[["fit_trans_frequency_message"]]
   })
 
-  output$fit_model_statistics <- rhandsontable::renderRHandsontable({
+  output$fit_model_statistics <- renderRHandsontable({
     # Model-level statistics
     if (input$button_view_fit_data <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_model_statistics"]]))
 
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = (num_cols * 70), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 70)
+      rhandsontable(width = (num_cols * 70), height = "100%") %>%
+      hot_cols(colWidths = 70)
   })
 
-  output$fit_coeffs <- rhandsontable::renderRHandsontable({
+  output$fit_coeffs <- renderRHandsontable({
     # Coefficients 'fit_coeffs'
     if (input$button_view_fit_data <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_coeffs"]]))
@@ -359,12 +374,12 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       # dplyr::select(-statistic) %>%
       # as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 100) %>%
-      rhandsontable::hot_cols(halign = "htRight")
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(halign = "htRight")
   })
 
-  output$fit_var_cov_mat <- rhandsontable::renderRHandsontable({
+  output$fit_var_cov_mat <- renderRHandsontable({
     # Variance-covariance matrix 'var_cov_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_var_cov_mat"]]))
@@ -372,24 +387,34 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 100) %>%
-      rhandsontable::hot_cols(halign = "htRight")
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(halign = "htRight")
   })
 
-  output$fit_cor_mat <- rhandsontable::renderRHandsontable({
+  output$fit_cor_mat <- renderRHandsontable({
     # Correlation matrix 'cor_mat'
     if (input$button_view_fit_data <= 0) return(NULL)
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 100) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      hot_cols(colWidths = 100) %>%
+      hot_cols(format = "0.000")
   })
 }
 
+#' Dose Estimation Case Hottable Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#' @param aberr_module Aberration module.
+#' @param genome_fraction Genomic fraction used in translocations.
+#'
+#' @import shiny rhandsontable
+#' @importFrom rlang .data
+#' @noRd
 mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   # Reset table ----
@@ -480,7 +505,10 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
 
     } else {
       full_data <- utils::read.csv(case_data$datapath, header = TRUE) %>%
-        dplyr::mutate_at(dplyr::vars(dplyr::starts_with("C")), as.integer)
+        dplyr::mutate_at(
+          dplyr::vars(dplyr::starts_with("C")),
+          as.integer
+        )
     }
 
     return(full_data)
@@ -508,7 +536,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
               DI = 0,
               u = 0
             ) %>%
-            dplyr::select(N, X, dplyr::everything()) %>%
+            dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
@@ -526,7 +554,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
               Fg = 0,
               Fg_err = 0
             ) %>%
-            dplyr::select(N, X, dplyr::everything()) %>%
+            dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
@@ -534,7 +562,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         }
 
       } else if (!identical(previous(), input$case_data_hot)) {
-        mytable <- as.data.frame(rhandsontable::hot_to_r(input$case_data_hot))
+        mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
         # Calculated columns
         mytable <- mytable %>%
@@ -542,41 +570,41 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
             N = as.integer(rowSums(.[grep("C", names(.))])),
             X = aberr_calc(mytable, power = 1),
             X2 = aberr_calc(mytable, power = 2),
-            var = (X2 - (X^2) / N) / (N - 1),
-            std_err = sqrt(var / N),
-            mean = X / N,
-            DI = var / mean,
-            u = (var / mean - 1) * sqrt( (N - 1) / (2 * (1 - 1 / N))),
+            var = (.data$X2 - (.data$X^2) / .data$N) / (.data$N - 1),
+            std_err = sqrt(.data$var / .data$N),
+            mean = .data$X / .data$N,
+            DI = .data$var / .data$mean,
+            u = (.data$var / .data$mean - 1) * sqrt( (.data$N - 1) / (2 * (1 - 1 / .data$N))),
           ) %>%
           dplyr::mutate_at(
             c("X", "N", grep("C", names(.), value = TRUE)),
             as.integer
           ) %>%
-          dplyr::select(-X2, -var) %>%
-          dplyr::select(N, X, dplyr::everything())
+          dplyr::select(-.data$X2, -.data$var) %>%
+          dplyr::select(.data$N, .data$X, dplyr::everything())
 
         # Rename mean and std_err depending on aberration module
         if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
           mytable <- mytable %>%
             dplyr::mutate(
-              y = mean,
-              y_err = std_err
+              y = .data$mean,
+              y_err = .data$std_err
             ) %>%
-            dplyr::select(-mean, -std_err)
+            dplyr::select(-.data$mean, -.data$std_err)
         } else if (aberr_module == "translocations") {
           genome_fraction <- genome_fraction$genome_fraction()
 
           mytable <- mytable %>%
             dplyr::mutate(
-              Fp = mean,
-              Fp_err = std_err
+              Fp = .data$mean,
+              Fp_err = .data$std_err
             ) %>%
-            dplyr::select(-mean, - std_err) %>%
+            dplyr::select(-.data$mean, - .data$std_err) %>%
             dplyr::mutate(
               Xc = ifelse(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson",
                 get_translocation_rate(
-                  N, genome_fraction,
+                  .data$N, genome_fraction,
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
                   smoker_bool = input$trans_confounder_smoke,
@@ -585,12 +613,12 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
                 ),
                 ifelse(
                   input$trans_confounders & input$trans_confounders_type == "manual",
-                  input$trans_expected_aberr_value * N * genome_fraction,
+                  input$trans_expected_aberr_value * .data$N * genome_fraction,
                   0
                 )
               ),
-              Fg = (X - Xc) / (N * genome_fraction),
-              Fg_err = Fp_err / sqrt(genome_fraction)
+              Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
+              Fg_err = .data$Fp_err / sqrt(genome_fraction)
             )
         }
 
@@ -600,20 +628,20 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
   })
 
   # Output ----
-  output$case_data_hot <- rhandsontable::renderRHandsontable({
+  output$case_data_hot <- renderRHandsontable({
     # Read number of columns
     num_cols <- as.numeric(ncol(changed_data()))
 
     # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable::rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 50)
-      # rhandsontable::hot_table(highlightCol = TRUE, highlightRow = TRUE)
+      rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
+      hot_cols(colWidths = 50)
+      # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
     if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
       hot <- hot %>%
-        rhandsontable::hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
-        rhandsontable::hot_col(num_cols, renderer = "
+        hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -622,8 +650,8 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
            }")
     } else if (aberr_module == "translocations") {
       hot <- hot %>%
-        rhandsontable::hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
-        rhandsontable::hot_col(num_cols - 3, renderer = "
+        hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
+        hot_col(num_cols - 3, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -637,7 +665,16 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
   })
 }
 
-
+#' Dose Estimation Results Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#' @param aberr_module Aberration module.
+#' @param genome_fraction Genomic fraction used in translocations.
+#'
+#' @import shiny rhandsontable
+#' @importFrom rlang .data
+#' @noRd
 mod_estimate_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   data <- reactive({
@@ -653,7 +690,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       assessment <- input$assessment_select
 
       # Cases data
-      case_data <- rhandsontable::hot_to_r(input$case_data_hot)
+      case_data <- hot_to_r(input$case_data_hot)
 
       # Coefficient input selection
       fraction_coeff <- input$fraction_coeff_select
@@ -702,13 +739,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         fit_formula_tex <- "Y = \\alpha D"
       }
 
-      fit_coeffs_raw <- rhandsontable::hot_to_r(input$fit_coeffs_hot)
+      fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
       fit_coeffs <- fit_coeffs_raw %>%
         cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
         as.matrix()
 
       if (input$use_var_cov_matrix) {
-        fit_var_cov_mat <- rhandsontable::hot_to_r(input$fit_var_cov_mat_hot) %>%
+        fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
           as.matrix()
       } else {
         # Calculate var-cov matrix when none is provided
@@ -894,23 +931,23 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     # Data set for dose plotting
     if (assessment == "whole-body") {
       est_full_doses <- data.frame(
-        dose =  c(est_doses_whole[["dose"]]),
+        dose = c(est_doses_whole[["dose"]]),
         yield = c(est_doses_whole[["yield"]]),
-        type =  c(rep("Whole-body", 3)),
+        type = c(rep("Whole-body", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 1)
       )
     } else if (assessment == "partial-body") {
       est_full_doses <- data.frame(
-        dose =  c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
+        dose = c(est_doses_whole[["dose"]],  est_doses_partial[["dose"]]),
         yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
-        type =  c(rep("Whole-body", 3), rep("Partial-body", 3)),
+        type = c(rep("Whole-body", 3), rep("Partial-body", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 2)
       )
     } else if (assessment == "hetero") {
       est_full_doses <- data.frame(
-        dose =  c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
+        dose = c(est_doses_whole[["dose"]],  est_doses_hetero[["dose1"]],  est_doses_hetero[["dose2"]]),
         yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
-        type =  c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
+        type = c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
         level = rep(c("Lower", "Estimate", "Upper"), 3)
       )
     }
@@ -988,7 +1025,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     # Additional results if using translocations
     if (aberr_module == "translocations") {
       est_results_list[["genome_fraction"]] <- genome_fraction$genome_fraction()
-      est_results_list[["chromosome_table"]] <- rhandsontable::hot_to_r(input$chromosome_table)
+      est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
       est_results_list[["trans_sex"]] <- input$trans_sex
 
       if (!input$trans_confounders) {
@@ -1020,8 +1057,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   output$estimate_results_ui <- renderUI({
     assessment <- input$assessment_select
 
-    # Whole-body ----
     if (assessment == "whole-body") {
+    # Whole-body
       tabBox(
         id = "estimate_results_tabs",
         width = 12,
@@ -1055,24 +1092,24 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
+            rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_doses_whole"))
+            rHandsontableOutput(session$ns("est_doses_whole"))
           )#,
 
           # br(),
           # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
-          #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
+          #   rHandsontableOutput(session$ns("AIC_whole"))
           # )
         )
       )
-      # Partial-body ----
     } else if (assessment == "partial-body") {
+      # Partial-body
       tabBox(
         id = "estimate_results_tabs",
         width = 12,
@@ -1103,19 +1140,19 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
+            rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_doses_whole"))
+            rHandsontableOutput(session$ns("est_doses_whole"))
           )#,
 
           # br(),
           # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
-          #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
+          #   rHandsontableOutput(session$ns("AIC_whole"))
           # )
         ),
         tabPanel(
@@ -1123,31 +1160,31 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           h5("Partial-body exposure estimation"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_yields_partial"))
+            rHandsontableOutput(session$ns("est_yields_partial"))
           ),
           br(),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_doses_partial"))
+            rHandsontableOutput(session$ns("est_doses_partial"))
           ),
 
           br(),
           h5("Initial fraction of irradiated cells"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_frac_partial"))
+            rHandsontableOutput(session$ns("est_frac_partial"))
           )#,
 
           # br(),
           # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
-          #   rhandsontable::rHandsontableOutput(session$ns("AIC_partial"))
+          #   rHandsontableOutput(session$ns("AIC_partial"))
           # )
         )
       )
-      # Heterogeneous ----
     } else if (assessment == "hetero") {
+      # Heterogeneous
       tabBox(
         id = "estimate_results_tabs",
         width = 12,
@@ -1178,19 +1215,19 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_yields_whole"))
+            rHandsontableOutput(session$ns("est_yields_whole"))
           ),
           br(),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_doses_whole"))
+            rHandsontableOutput(session$ns("est_doses_whole"))
           )#,
 
           # br(),
           # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
-          #   rhandsontable::rHandsontableOutput(session$ns("AIC_whole"))
+          #   rHandsontableOutput(session$ns("AIC_whole"))
           # )
         ),
         tabPanel(
@@ -1198,33 +1235,33 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
           h5("Observed fraction of irradiated cells and its yield"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
+            rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
           ),
 
           br(),
           h5("Heterogeneous exposure estimation"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_yields_hetero"))
+            rHandsontableOutput(session$ns("est_yields_hetero"))
           ),
           br(),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_doses_hetero"))
+            rHandsontableOutput(session$ns("est_doses_hetero"))
           ),
 
           br(),
           h5("Initial fraction of irradiated cells"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(session$ns("est_frac_hetero"))
+            rHandsontableOutput(session$ns("est_frac_hetero"))
           )#,
 
           # br(),
           # h5("Relative quality of the estimation"),
           # div(
           #   class = "hot-improved",
-          #   rhandsontable::rHandsontableOutput(session$ns("AIC_hetero"))
+          #   rHandsontableOutput(session$ns("AIC_hetero"))
           # )
         )
       )
@@ -1238,36 +1275,36 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
 
   # Estimated recieved doses (whole-body)
-  output$est_yields_whole <- rhandsontable::renderRHandsontable({
+  output$est_yields_whole <- renderRHandsontable({
     if (input$button_estimate <= 0) return(NULL)
     data()[["est_doses_whole"]] %>%
-      dplyr::select(yield) %>%
+      dplyr::select(.data$yield) %>%
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated recieved doses (whole-body)
-  output$est_doses_whole <- rhandsontable::renderRHandsontable({
+  output$est_doses_whole <- renderRHandsontable({
     if (input$button_estimate <= 0) return(NULL)
     data()[["est_doses_whole"]] %>%
-      dplyr::select(dose) %>%
+      dplyr::select(.data$dose) %>%
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated recieved doses (partial-body)
-  output$est_yields_partial <- rhandsontable::renderRHandsontable({
+  output$est_yields_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
-      dplyr::select(yield) %>%
+      dplyr::select(.data$yield) %>%
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
@@ -1275,16 +1312,16 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated recieved doses (partial-body)
-  output$est_doses_partial <- rhandsontable::renderRHandsontable({
+  output$est_doses_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_doses_partial"]] %>%
-      dplyr::select(dose) %>%
+      dplyr::select(.data$dose) %>%
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
@@ -1292,13 +1329,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose (Gy)") %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated fraction of irradiated blood for dose dose1 (partial-body)
-  output$est_frac_partial <- rhandsontable::renderRHandsontable({
+  output$est_frac_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["est_frac_partial"]] %>%
       t() %>%
@@ -1308,13 +1345,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated yields (heterogeneous)
-  output$est_mixing_prop_hetero <- rhandsontable::renderRHandsontable({
+  output$est_mixing_prop_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
@@ -1323,13 +1360,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated recieved doses (heterogeneous)
-  output$est_yields_hetero <- rhandsontable::renderRHandsontable({
+  output$est_yields_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_yields_hetero"]] %>%
       t() %>%
@@ -1339,13 +1376,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated recieved doses (heterogeneous)
-  output$est_doses_hetero <- rhandsontable::renderRHandsontable({
+  output$est_doses_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_doses_hetero"]] %>%
       t() %>%
@@ -1355,13 +1392,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
-  output$est_frac_hetero <- rhandsontable::renderRHandsontable({
+  output$est_frac_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
@@ -1369,42 +1406,42 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("estimate", "std.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable::rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # AIC for estimated dose (whole)
-  output$AIC_whole <- rhandsontable::renderRHandsontable({
+  output$AIC_whole <- renderRHandsontable({
     if (input$button_estimate <= 0) return(NULL)
     data()[["AIC_whole"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable::rhandsontable(width = 80, height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 80, height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # AIC for estimated dose (partial-body)
-  output$AIC_partial <- rhandsontable::renderRHandsontable({
+  output$AIC_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") return(NULL)
     data()[["AIC_partial"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable::rhandsontable(width = 80, height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 80, height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # AIC for estimated dose (heterogeneous)
-  output$AIC_hetero <- rhandsontable::renderRHandsontable({
+  output$AIC_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") return(NULL)
     data()[["AIC_hetero"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable::rhandsontable(width = 80, height = "100%") %>%
-      rhandsontable::hot_cols(colWidths = 80) %>%
-      rhandsontable::hot_cols(format = "0.000")
+      rhandsontable(width = 80, height = "100%") %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
   })
 
   # Plot of the data and fitted curve

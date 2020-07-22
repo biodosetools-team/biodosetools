@@ -1,5 +1,11 @@
-# General translocation Modules ----------------------------
-
+#' Translocations Chromosome Hottable Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#'
+#' @import shiny rhandsontable
+#' @importFrom rlang .data
+#' @noRd
 mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFactors) {
   table <- reactive({
     input$button_upd_chrom_table
@@ -31,19 +37,19 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
   })
 
   # Output ----
-  output$chromosome_table <- rhandsontable::renderRHandsontable({
+  output$chromosome_table <- renderRHandsontable({
     if (input$button_upd_chrom_table <= 0) return(NULL)
 
     num_cols <- as.numeric(ncol(table()))
 
     hot <- table() %>%
-      rhandsontable::rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
-      rhandsontable::hot_col(1, colWidths = 115, readOnly = TRUE) %>%
-      rhandsontable::hot_cols(halign = "htCenter")
+      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+      hot_col(1, colWidths = 115, readOnly = TRUE) %>%
+      hot_cols(halign = "htCenter")
 
     if(num_cols > 1) {
       hot <- hot %>%
-        rhandsontable::hot_col(2:num_cols, colWidths = 85)
+        hot_col(2:num_cols, colWidths = 85)
     }
 
     hot$x$contextMenu <- list(items = c("remove_row", "---------", "undo", "redo"))
@@ -52,6 +58,14 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
   })
 }
 
+#' Translocations Fraction to Full Genome Server Module
+#'
+#' @param input,output,session Internal parameters for {shiny}.
+#' @param stringsAsFactors stringsAsFactors.
+#'
+#' @import shiny rhandsontable
+#' @importFrom rlang .data
+#' @noRd
 mod_trans_fraction_to_full_genome_server <- function(input, output, session, stringsAsFactors) {
 
   # Calculate genomic fraction ----
@@ -62,9 +76,9 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     input$button_calc_genome_fraction
 
     isolate({
-      dna_table <- dna_content_fractions
+      dna_table <- biodosetools::dna_content_fractions
       color_scheme <- input$trans_m_fish_scheme
-      chromosome_table <- rhandsontable::hot_to_r(input$chromosome_table)
+      chromosome_table <- hot_to_r(input$chromosome_table)
       sex <- input$trans_sex
     })
 
@@ -75,18 +89,20 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     } else {
       chromosome_table_melt <- chromosome_table %>%
         tidyr::pivot_longer(
-          cols = -Chromosome,
+          cols = -.data$Chromosome,
           names_to = "Stain",
           values_to = "Bool"
         )
       chromosome_table_clean <- chromosome_table_melt %>%
-        dplyr::filter(Bool == TRUE)
+        dplyr::filter(.data$Bool == TRUE)
 
       chromosome <- chromosome_table_clean[["Chromosome"]] %>% as.character()
       color <- chromosome_table_clean[["Stain"]]
     }
 
-    return(get_genome_fraction(dna_table, chromosome, color, sex))
+    genome_fraction <- get_genome_fraction(dna_table, chromosome, color, sex)
+
+    return(genome_fraction)
   })
 
   # Output ----
