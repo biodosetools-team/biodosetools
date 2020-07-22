@@ -1,5 +1,10 @@
-# Fitting Modules ---------------------------------
-
+#' Micronuclei Fitting UI Module
+#'
+#' @param id Namespace for the {shiny} module.
+#' @param label Internal label of the {shiny} module.
+#'
+#' @import shiny shinydashboard shinyWidgets rhandsontable
+#' @noRd
 mod_micro_fitting_ui <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
@@ -199,7 +204,7 @@ mod_micro_fitting_ui <- function(id, label) {
 
         div(
           class = "hot-improved",
-          rhandsontable::rHandsontableOutput(ns("count_data_hot"))
+          rHandsontableOutput(ns("count_data_hot"))
         ),
         # Buttons
         br(),
@@ -254,7 +259,7 @@ mod_micro_fitting_ui <- function(id, label) {
               h5("Coefficients"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
+                rHandsontableOutput(ns("fit_coeffs"))
               )
             ),
             tabPanel(
@@ -262,21 +267,21 @@ mod_micro_fitting_ui <- function(id, label) {
               h5("Model-level statistics"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
+                rHandsontableOutput(ns("fit_model_statistics"))
               ),
 
               br(),
               h5("Correlation matrix"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
+                rHandsontableOutput(ns("fit_cor_mat"))
               ),
 
               br(),
               h5("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
+                rHandsontableOutput(ns("fit_var_cov_mat"))
               )
             )#,
             # tabPanel(
@@ -284,7 +289,7 @@ mod_micro_fitting_ui <- function(id, label) {
             #   h5("Decision thresholds"),
             #   div(
             #     class = "hot-improved",
-            #     rhandsontable::rHandsontableOutput(ns("fit_decision_thresh"))
+            #     rHandsontableOutput(ns("fit_decision_thresh"))
             #   )
             # )
           )

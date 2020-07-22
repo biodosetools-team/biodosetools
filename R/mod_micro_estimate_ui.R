@@ -1,5 +1,10 @@
-# Dose Estimation Modules -------------------------------------------
-
+#' Micronuclei Dose Estimation UI Module
+#'
+#' @param id Namespace for the {shiny} module.
+#' @param label Internal label of the {shiny} module.
+#'
+#' @import shiny shinydashboard shinyWidgets rhandsontable
+#' @noRd
 mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
@@ -90,7 +95,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
               widget_label("Coefficients"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_coeffs_hot"))
+                rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
 
               br(),
@@ -109,7 +114,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
               widget_label("Variance-covariance matrix"),
               div(
                 class = "hot-improved",
-                rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat_hot"))
+                rHandsontableOutput(ns("fit_var_cov_mat_hot"))
               ),
               br()
             ),
@@ -141,7 +146,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
           h5("Coefficients"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(ns("fit_coeffs"))
+            rHandsontableOutput(ns("fit_coeffs"))
           )
         ),
         tabPanel(
@@ -152,7 +157,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
             h5("Model-level statistics"),
             div(
               class = "hot-improved",
-              rhandsontable::rHandsontableOutput(ns("fit_model_statistics"))
+              rHandsontableOutput(ns("fit_model_statistics"))
             ),
             br()
           ),
@@ -160,14 +165,14 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
           h5("Correlation matrix"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(ns("fit_cor_mat"))
+            rHandsontableOutput(ns("fit_cor_mat"))
             ),
 
           br(),
           h5("Variance-covariance matrix"),
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(ns("fit_var_cov_mat"))
+            rHandsontableOutput(ns("fit_var_cov_mat"))
           )
         )
       )
@@ -266,7 +271,7 @@ mod_micro_estimate_ui <- function(id, label) { #, locale = i18n) {
           # Cases table
           div(
             class = "hot-improved",
-            rhandsontable::rHandsontableOutput(ns("case_data_hot"))
+            rHandsontableOutput(ns("case_data_hot"))
           ),
           # Button
           br(),
