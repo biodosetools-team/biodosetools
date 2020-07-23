@@ -20,6 +20,6 @@ dna_content_fractions_morton
 }
 \description{
 Normalised DNA Content of Human Chromosomes from
-"Parameters of the human genome", N. E. Morton (1991).
+Morton, N. E. (1991). Parameters of the human genome. Proceedings of the National Academy of Sciences, 88(17), 7474–7476.
 }
 \keyword{datasets}
