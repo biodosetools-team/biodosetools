@@ -3,9 +3,3 @@
 .RData
 .Ruserdata
 *.Rproj
-
-inst/extdata/*.rds
-inst/app/old
-inst/app/www_old
-R_old
-git-history.txt
