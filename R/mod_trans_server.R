@@ -78,7 +78,7 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     input$button_calc_genome_fraction
 
     isolate({
-      dna_table <- biodosetools::dna_content_fractions
+      dna_table <- biodosetools::dna_content_fractions_morton
       color_scheme <- input$trans_m_fish_scheme
       chromosome_table <- hot_to_r(input$chromosome_table)
       sex <- input$trans_sex
