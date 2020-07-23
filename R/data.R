@@ -11,9 +11,10 @@
 #' @source \url{https://doi.org/10.1093/biomet/46.3-4.441}
 "gardner_confidence_table"
 
-#' DNA Content Fractions of Human Chromosomes
+#' DNA Content Fractions of Human Chromosomes (Morton 1991)
 #'
-#' Normalised DNA Content of Human Chromosomes.
+#' Normalised DNA Content of Human Chromosomes from
+#' "Parameters of the human genome", N. E. Morton (1991).
 #'
 #' @format A data frame with 24 rows and 3 variables:
 #' \describe{
@@ -21,4 +22,21 @@
 #'   \item{fraction_male}{Normalised content of megabases on male human DNA.}
 #'   \item{fraction_female}{Normalised content of megabases on female human DNA.}
 #' }
-"dna_content_fractions"
+#' @source \url{https://doi.org/10.1073/pnas.88.17.7474}
+"dna_content_fractions_morton"
+
+#' DNA Content Fractions of Human Chromosomes (IHGSC)
+#'
+#' Normalised DNA Content of Human Chromosomes from
+#' the International Human Genome Sequencing Consortium.
+#'
+#' Last accessed in July 2020.
+#'
+#' @format A data frame with 24 rows and 3 variables:
+#' \describe{
+#'   \item{chromosome}{Chromosome.}
+#'   \item{fraction_male}{Normalised content of megabases on male human DNA.}
+#'   \item{fraction_female}{Normalised content of megabases on female human DNA.}
+#' }
+#' @source \url{https://www.ncbi.nlm.nih.gov/grc/human/data}
+"dna_content_fractions_ihgsc"
