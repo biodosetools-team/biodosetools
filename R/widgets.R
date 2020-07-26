@@ -1,14 +1,15 @@
 #' Help modal trigger button
 #'
-#' @param inputId id of the button
-#' @param id_modal id of the modal dialogue
+#' @param inputId id of the button.
+#' @param id_modal id of the modal dialogue.
+#' @param container Outer container of the modal, either box or tabbox.
 #'
 #' @noRd
-help_modal_button <- function(inputId, id_modal) {
+help_modal_button <- function(inputId, id_modal, container = "box") {
   shiny::actionButton(
     inputId,
     label = "",
-    class = "modal-help-button",
+    class = paste0(container, "-modal-help-button"),
     icon = icon("question")
   ) %>%
     bsplus::bs_attach_modal(id_modal)

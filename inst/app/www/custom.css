@@ -1,7 +1,16 @@
 /* Tweak modal help buttons */
-.modal-help-button {
+.box-modal-help-button {
   background: transparent;
   right: 40px;
+  position: absolute;
+  padding: 4px 10px;
+  border: 0;
+  top: 5px;
+}
+
+.tabbox-modal-help-button {
+  background: transparent;
+  right: 5px;
   position: absolute;
   padding: 4px 10px;
   border: 0;
