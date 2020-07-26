@@ -69,7 +69,7 @@ dashboard_sidebar <- function() {
       )
     ),
 
-    p(class = "menu-title", "Assays"),
+    p(class = "menu-title", "Aberration assays"),
     sidebarMenu(
       # Dicentrics
       menuItem(
