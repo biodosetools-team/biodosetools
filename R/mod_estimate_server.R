@@ -1057,47 +1057,48 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
   # Results outputs ----
 
-  # Estimate results tabCard
-  # source("modules/mod_estimate_results_serverRenderUI.R", local = TRUE)
-
-  # PREVIOUSLY SOURCED BEGIN
-
-  # renderUI: Estimate results tabCard ----
+  # renderUI: Estimate results tabBox ----
   output$estimate_results_ui <- renderUI({
     assessment <- input$assessment_select
 
+    # Help modal
+    hetero_modal <- bsplus::bs_modal(
+      id = session$ns("help_dose_mixed_yields_modal"),
+      title = "Help: Heterogeneous exposures",
+      size = "large",
+
+      body = tagList(
+        include_help("estimate/dose_mixed_yields.md")
+      )
+    )
+
     if (assessment == "whole-body") {
       # Whole-body
-      tabBox(
+      return_tabbox <- tabBox(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
-        # solidHeader = FALSE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     session$ns("help_dose_mixed_yields"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
+        title = span(help_modal_button(
+          container = "tabbox",
+          session$ns("help_dose_mixed_yields"),
+          session$ns("help_dose_mixed_yields_modal")
+        )
+
         #   # Help modal
         #   bsplus::bs_modal(
-        #     id = session$ns("help_dose_mixed_yields_dialog"),
+        #     id = session$ns("help_dose_mixed_yields_modal"),
         #     title = "Help: Heterogeneous exposures",
-        #     # trigger = session$ns("help_dose_mixed_yields"),
         #     size = "large",
         #
         #     body = tagList(
         #       include_help("estimate/dose_mixed_yields.md")
         #     )
-        # ),
+        # )
+        ),
 
         tabPanel(
           title = "Whole-body",
-          # active = TRUE,
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
@@ -1119,33 +1120,20 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     } else if (assessment == "partial-body") {
       # Partial-body
-      tabBox(
+      return_tabbox <- tabBox(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
-        # solidHeader = FALSE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     session$ns("help_dose_mixed_yields"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = session$ns("help_dose_mixed_yields_dialog"),
-        #     title = "Help: Heterogeneous exposures",
-        #     trigger = session$ns("help_dose_mixed_yields"),
-        #     size = "large",
-        #     include_help("estimate/dose_mixed_yields.md")
-        #   )
-        # ),
+        title = span(help_modal_button(
+          container = "tabbox",
+          session$ns("help_dose_mixed_yields"),
+          session$ns("help_dose_mixed_yields_modal")
+        )
+        ),
 
         tabPanel(
           title = "Whole-body",
-          # active = TRUE,
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
@@ -1194,33 +1182,20 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     } else if (assessment == "hetero") {
       # Heterogeneous
-      tabBox(
+      return_tabbox <- tabBox(
         id = "estimate_results_tabs",
         width = 12,
         side = "left",
-        # solidHeader = FALSE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     session$ns("help_dose_mixed_yields"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = session$ns("help_dose_mixed_yields_dialog"),
-        #     title = "Help: Heterogeneous exposures",
-        #     trigger = session$ns("help_dose_mixed_yields"),
-        #     size = "large",
-        #     include_help("estimate/dose_mixed_yields.md")
-        #   )
-        # ),
+        title = span(help_modal_button(
+          container = "tabbox",
+          session$ns("help_dose_mixed_yields"),
+          session$ns("help_dose_mixed_yields_modal")
+        )
+        ),
 
         tabPanel(
           title = "Whole-body",
-          # active = TRUE,
           h5("Whole-body exposure estimation"),
           div(
             class = "hot-improved",
@@ -1277,11 +1252,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     } else {
       return(NULL)
     }
+
+    return(tagList(return_tabbox, hetero_modal))
+
   })
-
-  # PREVIOUSLY SOURCED END
-
-
 
   # Estimated recieved doses (whole-body)
   output$est_yields_whole <- renderRHandsontable({
