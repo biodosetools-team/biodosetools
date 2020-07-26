@@ -14,8 +14,7 @@ get_estimated_dose_curve(
   conf_int_text_whole,
   conf_int_text_partial,
   conf_int_text_hetero,
-  aberr_module,
-  input
+  aberr_name
 )
 }
 \arguments{
@@ -37,9 +36,7 @@ get_estimated_dose_curve(
 
 \item{conf_int_text_hetero}{Text to display confidence interval for heterogeneous estimation}
 
-\item{aberr_module}{Aberration module}
-
-\item{input}{UI inputs (to be fixed and parametrized)}
+\item{aberr_name}{Name of the aberration to use in the y-axis}
 }
 \value{
 ggplot object

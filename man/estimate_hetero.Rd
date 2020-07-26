@@ -8,11 +8,11 @@ estimate_hetero(
   case_data,
   general_fit_coeffs,
   general_var_cov_mat,
-  fraction_coeff,
   conf_int_yield,
   conf_int_curve,
   protracted_g_value,
-  input
+  gamma,
+  gamma_error
 )
 }
 \arguments{
@@ -22,15 +22,15 @@ estimate_hetero(
 
 \item{general_var_cov_mat}{Generalized variance-covariance matrix}
 
-\item{fraction_coeff}{Fraction coefficient, can be "gamma" or "d0" (to be updated)}
-
 \item{conf_int_yield}{Confidence interval of the yield}
 
 \item{conf_int_curve}{Confidence interval of the curve}
 
 \item{protracted_g_value}{Protracted G(x) value}
 
-\item{input}{UI inputs (to be fixed and parametrized)}
+\item{gamma}{Survival coefficient of irradiated cells}
+
+\item{gamma_error}{Error of the survival coefficient of irradiated cells}
 }
 \value{
 List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC

@@ -8,13 +8,12 @@ estimate_partial_dolphin(
   case_data,
   general_fit_coeffs,
   general_var_cov_mat,
-  fraction_coeff,
   conf_int,
   protracted_g_value,
   cov = TRUE,
   genome_fraction = 1,
   aberr_module,
-  input
+  gamma
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ estimate_partial_dolphin(
 \item{general_fit_coeffs}{Generalized fit coefficients matrix}
 
 \item{general_var_cov_mat}{Generalized variance-covariance matrix}
-
-\item{fraction_coeff}{Fraction coefficient, can be "gamma" or "d0" (to be updated)}
 
 \item{conf_int}{Confidence interval}
 
@@ -36,7 +33,7 @@ estimate_partial_dolphin(
 
 \item{aberr_module}{Aberration module}
 
-\item{input}{UI inputs (to be fixed and parametrized)}
+\item{gamma}{Survival coefficient of irradiated cells}
 }
 \value{
 List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
