@@ -45,7 +45,10 @@ mod_trans_chromosome_hot_server <- function(input, output, session, stringsAsFac
     num_cols <- as.numeric(ncol(table()))
 
     hot <- table() %>%
-      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+      rhandsontable(
+        width = (80 + num_cols * 85),
+        height = "100%"
+      ) %>%
       hot_col(1, colWidths = 115, readOnly = TRUE) %>%
       hot_cols(halign = "htCenter")
 

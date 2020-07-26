@@ -126,7 +126,10 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
 
     # Convert to hot and format table
     hot <- changed_coeffs_data() %>%
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000000")
 
@@ -140,7 +143,10 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
 
     # Convert to hot and format table
     hot <- changed_var_data() %>%
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.00000000")
 
@@ -365,7 +371,10 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (num_cols * 70), height = "100%") %>%
+      rhandsontable(
+        width = (num_cols * 70),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 70)
   })
 
@@ -382,7 +391,10 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       # dplyr::select(-statistic) %>%
       # as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -397,7 +409,10 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -411,7 +426,10 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -644,7 +662,10 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
 
     # Convert to hot and format table
     hot <- changed_data() %>%
-      rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 50),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 50)
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
@@ -820,7 +841,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     if (exposure == "protracted") {
       protracted_time <- input$protracted_time
       protracted_life_time <- input$protracted_life_time
-      protracted_g_value <- biodosetools::protracted_g_function(protracted_time, protracted_life_time)
+      protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
     } else if (exposure == "protracted_high") {
       protracted_g_value <- 0
       # Used in report (dummy values)
@@ -876,9 +897,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     conf_int_curve <- conf_int_curve %>%
-      biodosetools::correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+      correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
     conf_int_yield <- conf_int_yield %>%
-      biodosetools::correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+      correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
 
     # Calculations ----
 
@@ -891,13 +912,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
-      results_whole <- biodosetools::estimate_whole_body(
+      results_whole <- estimate_whole_body(
         case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_yield, conf_int_curve, protracted_g_value,
         parsed_genome_fraction, aberr_module
       )
     } else if (error_method == "delta") {
-      results_whole <- biodosetools::estimate_whole_body_delta(
+      results_whole <- estimate_whole_body_delta(
 
         case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_delta, protracted_g_value,
@@ -912,7 +933,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     if (assessment == "partial-body") {
       # Calculate partial results
-      results_partial <- biodosetools::estimate_partial_dolphin(
+      results_partial <- estimate_partial_dolphin(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_dolphin, protracted_g_value,
         parsed_genome_fraction, aberr_module, input
@@ -923,7 +944,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       AIC_partial <- results_partial[["AIC"]]
     } else if (assessment == "hetero") {
       # Calculate heterogeneous result
-      results_hetero <- biodosetools::estimate_hetero(
+      results_hetero <- estimate_hetero(
         case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
         conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value,
         input
@@ -962,11 +983,20 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     }
 
-    gg_curve <- biodosetools::get_estimated_dose_curve(
+    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+      aberr_name <- stringr::str_to_title(aberr_module)
+    } else if (aberr_module == "translocations") {
+      if (nchar(input$trans_name) > 0) {
+        aberr_name <- input$trans_name
+      } else {
+        aberr_name <- stringr::str_to_title(aberr_module)
+      }
+    }
+    gg_curve <- get_estimated_dose_curve(
       est_full_doses, general_fit_coeffs, general_var_cov_mat,
       protracted_g_value, conf_int_yield, conf_int_curve,
       conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
-      aberr_module, input
+      aberr_name
     )
 
     # Return list ----
@@ -1252,7 +1282,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaderWidth = 80
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1267,7 +1301,12 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
-      rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaders = "dose (Gy)",
+        rowHeaderWidth = 80
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1286,7 +1325,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
-      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaderWidth = 80
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1305,7 +1348,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose (Gy)") %>%
       # Convert to hot and format table
-      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaderWidth = 80
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1323,7 +1370,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
-      rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaderWidth = 80
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1340,7 +1391,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
+      rhandsontable(
+        width = 405,
+        height = "100%",
+        rowHeaderWidth = 85
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1358,7 +1413,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+      rhandsontable(
+        width = 325,
+        height = "100%",
+        rowHeaderWidth = 85
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1376,7 +1435,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+      rhandsontable(
+        width = 325,
+        height = "100%",
+        rowHeaderWidth = 85
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1392,7 +1455,11 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       `colnames<-`(c("estimate", "std.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
-      rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
+      rhandsontable(
+        width = 245,
+        height = "100%",
+        rowHeaderWidth = 85
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1405,7 +1472,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     data()[["AIC_whole"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = 80, height = "100%") %>%
+      rhandsontable(
+        width = 80,
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1418,7 +1488,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     data()[["AIC_partial"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = 80, height = "100%") %>%
+      rhandsontable(
+        width = 80,
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })
@@ -1431,7 +1504,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     data()[["AIC_hetero"]] %>%
       matrix() %>%
       `colnames<-`(c("AIC")) %>%
-      rhandsontable(width = 80, height = "100%") %>%
+      rhandsontable(
+        width = 80,
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 80) %>%
       hot_cols(format = "0.000")
   })

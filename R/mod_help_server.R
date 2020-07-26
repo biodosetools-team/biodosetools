@@ -24,7 +24,10 @@ mod_help_chromosome_hot_server <- function(input, output, session, stringsAsFact
 
     # Convert to hot and format table
     hot <- data %>%
-      rhandsontable(width = (80 + num_cols * 85), height = "100%") %>%
+      rhandsontable(
+        width = (80 + num_cols * 85),
+        height = "100%"
+      ) %>%
       hot_col(1, colWidths = 115, readOnly = TRUE) %>%
       hot_col(2:ncol(data), colWidths = 85) %>%
       hot_cols(halign = "htCenter")

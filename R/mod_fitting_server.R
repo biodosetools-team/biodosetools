@@ -196,7 +196,11 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
     col_headers[1] <- paste(col_headers[1], "(Gy)")
 
     hot <- changed_data() %>%
-      rhandsontable(width = (70 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+      rhandsontable(
+        width = (70 + num_cols * 50),
+        height = "100%",
+        colHeaders = col_headers
+      ) %>%
       hot_cols(colWidths = 50) %>%
       hot_col(c(1), format = "0.000", colWidths = 60) %>%
       hot_col(c(2), colWidths = 60) %>%
@@ -267,8 +271,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     input$button_fit
 
     isolate({
-      fit_results_list <- biodosetools::get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
-      gg_curve <- biodosetools::get_fit_dose_curve(fit_results_list, aberr_module, input)
+      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
+      gg_curve <- get_fit_dose_curve(fit_results_list, aberr_module, input)
 
       # Make list of results to return
       results_list <- fit_results_list
@@ -294,10 +298,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # decision_thresh <- decision_thresh %>%
       #   dplyr::rowwise() %>%
       #   dplyr::mutate(
-      #     X95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[1],
-      #     D95 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[2] * 1000,
-      #     X83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[1],
-      #     D83 = biodosetools::get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[2] * 1000
+      #     X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[1],
+      #     D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[2] * 1000,
+      #     X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[1],
+      #     D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[2] * 1000
       #   ) %>%
       #   dplyr::mutate_at(
       #     c("N", grep("X", names(.), value = TRUE)),
@@ -336,7 +340,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_model_statistics"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (num_cols * 70), height = "100%") %>%
+      rhandsontable(
+        width = (num_cols * 70),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 70)
   })
 
@@ -353,7 +360,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # dplyr::select(-statistic) %>%
       # as.matrix() %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -368,7 +378,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
   })
@@ -382,7 +395,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_cor_mat"]] %>%
       # Convert to hot and format table
-      rhandsontable(width = (50 + num_cols * 100), height = "100%") %>%
+      rhandsontable(
+        width = (50 + num_cols * 100),
+        height = "100%"
+      ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
   })
@@ -398,7 +414,11 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   #
   #   decision_thresh %>%
   #     # Convert to hot and format table
-  #     rhandsontable(width = (100 + num_cols * 50), height = "100%", colHeaders = col_headers) %>%
+  #     rhandsontable(
+  #       width = (100 + num_cols * 50),
+  #       height = "100%",
+  #       colHeaders = col_headers
+  #     ) %>%
   #     hot_col(c(1), readOnly = TRUE) %>%
   #     hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
   #     hot_cols(colWidths = 50)
