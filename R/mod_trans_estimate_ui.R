@@ -18,50 +18,47 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
       # Box: Curve fitting options ----
       box(
         width = 5,
-        title = "Curve fitting data options",
+        title = span(
+          "Curve fitting data options",
+          help_modal_button(
+            ns("help_fit_data"),
+            ns("help_fit_data_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_fit_data"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_fit_data_dialog"),
-        #     title = "Help: Fitting data input",
-        #     trigger = ns("help_fit_data"),
-        #     size = "large",
-        #
-        #     # Option selection
-        #     shinyWidgets::radioGroupButtons(
-        #       inputId = ns("help_fit_data_option"),
-        #       label = NULL,
-        #       choices = c(
-        #         "Manual input" = "manual",
-        #         "Load data"    = "load"
-        #       ),
-        #       selected = "load"
-        #     ),
-        #     # Contents
-        #     conditionalPanel(
-        #       condition = "input.help_fit_data_option == 'manual'",
-        #       ns = ns,
-        #       include_help("estimate/fit_data_input.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_fit_data_option == 'load'",
-        #       ns = ns,
-        #       include_help("estimate/fit_data_load.md")
-        #     ),
-        #     include_help("trans/fit_data_estimate.md")
-        #   )
-        # ),
+          # Help modal
+          bsplus::bs_modal(
+            id = ns("help_fit_data_modal"),
+            title = "Help: Fitting data input",
+            size = "large",
+
+            body = tagList(
+            # Option selection
+            shinyWidgets::radioGroupButtons(
+              inputId = ns("help_fit_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input" = "manual",
+                "Load data"    = "load"
+              ),
+              selected = "load"
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fit_data_option == 'manual'",
+              ns = ns,
+              include_help("estimate/fit_data_input.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_fit_data_option == 'load'",
+              ns = ns,
+              include_help("estimate/fit_data_load.md")
+            ),
+            include_help("trans/fit_data_estimate.md")
+          )
+        ),
 
         fluidRow(
           column(
@@ -222,35 +219,31 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
       # Box: Stains color options ----
       box(
         width = 6,
-        title = "Stains color options",
+        title = span(
+          "Stains color options",
+          help_modal_button(
+            ns("help_colors_data"),
+            ns("help_colors_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_colors"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_colors_dialog"),
-        #     title = "Help: Stain color data input",
-        #     trigger = ns("help_colors"),
-        #     size = "large",
-        #
-        #     include_help("trans/colors_data_input.md"),
-        #     div(
-        #       class = "hot-improved",
-        #       rHandsontableOutput(ns("help_chromosome_hot"))
-        #     ),
-        #     include_help("trans/colors_data_input_b.md")
-        #
-        #   )
-        # ),
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_colors_modal"),
+          title = "Help: Stain color data input",
+          size = "large",
+
+          body = tagList(
+            include_help("trans/colors_data_input.md"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("help_chromosome_hot"))
+            ),
+            include_help("trans/colors_data_input_b.md")
+          )
+        ),
 
         fluidRow(
           column(
@@ -378,55 +371,51 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
       # Box: Data input options ----
       box(
         width = 5,
-        title = "Data input options",
+        title = span(
+          "Data input options",
+          help_modal_button(
+            ns("help_cases_data"),
+            ns("help_cases_data_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_cases_data"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_cases_data_dialog"),
-        #     title = "Help: Cases data input",
-        #     trigger = ns("help_cases_data"),
-        #     size = "large",
-        #
-        #     # Option selection
-        #     shinyWidgets::radioGroupButtons(
-        #       inputId = ns("help_cases_data_option"),
-        #       label = NULL,
-        #       choices = c(
-        #         "Manual input" = "manual",
-        #         "Load data"    = "load",
-        #         "Confounders"  = "confounders"
-        #       )
-        #     ),
-        #     # Contents
-        #     conditionalPanel(
-        #       condition = "input.help_cases_data_option == 'manual'",
-        #       ns = ns,
-        #       include_help("trans/cases_data_input.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_cases_data_option == 'load'",
-        #       ns = ns,
-        #       include_help("trans/cases_data_load.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_cases_data_option == 'confounders'",
-        #       ns = ns,
-        #       include_help("trans/cases_data_confounders.md")
-        #     )
-        #
-        #   )
-        # ),
+          # Help modal
+          bsplus::bs_modal(
+            id = ns("help_cases_data_modal"),
+            title = "Help: Cases data input",
+            size = "large",
+
+            body = tagList(
+            # Option selection
+            shinyWidgets::radioGroupButtons(
+              inputId = ns("help_cases_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input" = "manual",
+                "Load data"    = "load",
+                "Confounders"  = "confounders"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'manual'",
+              ns = ns,
+              include_help("trans/cases_data_input.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'load'",
+              ns = ns,
+              include_help("trans/cases_data_load.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_cases_data_option == 'confounders'",
+              ns = ns,
+              include_help("trans/cases_data_confounders.md")
+            )
+          )
+        ),
 
         fluidRow(
           column(
@@ -615,62 +604,58 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         # Box: Estimation options ----
         box(
           width = 12,
-          title = "Dose estimation options",
+          title = span(
+            "Dose estimation options",
+            help_modal_button(
+              ns("help_estimate_options"),
+              ns("help_estimate_options_modal")
+            )
+          ),
           status = "info",
           collapsible = TRUE,
 
-          # topButton = div(
-          #   # Help button
-          #   shinyBS::bsButton(
-          #     ns("help_estimate_options"),
-          #     label = "",
-          #     icon = icon("question"),
-          #     style = "default", size = "default"
-          #   ),
-          #
-          #   # Help modal
-          #   bsplus::bs_modal(
-          #     id = ns("help_estimate_options_dialog"),
-          #     title = "Help: Dose estimation options",
-          #     trigger = ns("help_estimate_options"),
-          #     size = "large",
-          #
-          #     # Option selection
-          #     shinyWidgets::radioGroupButtons(
-          #       inputId = ns("help_estimate_options_option"),
-          #       label = NULL,
-          #       choices = c(
-          #         "Exposure"             = "exposure",
-          #         "Assessment"           = "assess",
-          #         "Error calculation"    = "error",
-          #         "Survival coefficient" = "surv_coeff"
-          #       )
-          #
-          #     ),
-          #     # Contents
-          #     conditionalPanel(
-          #       condition = "input.help_estimate_options_option == 'exposure'",
-          #       ns = ns,
-          #       include_help("estimate/dose_exposure.md")
-          #     ),
-          #     conditionalPanel(
-          #       condition = "input.help_estimate_options_option == 'assess'",
-          #       ns = ns,
-          #       include_help("estimate/dose_assessment.md")
-          #     ),
-          #     conditionalPanel(
-          #       condition = "input.help_estimate_options_option == 'error'",
-          #       ns = ns,
-          #       include_help("estimate/dose_error.md"),
-          #       include_help("trans/dose_error_methods.md")
-          #     ),
-          #     conditionalPanel(
-          #       condition = "input.help_estimate_options_option == 'surv_coeff'",
-          #       ns = ns,
-          #       include_help("estimate/fraction_coeff_select.md")
-          #     )
-          #   )
-          # ),
+          # Help modal
+          bsplus::bs_modal(
+            id = ns("help_estimate_options_modal"),
+            title = "Help: Dose estimation options",
+            size = "large",
+
+            body = tagList(
+              # Option selection
+              shinyWidgets::radioGroupButtons(
+                inputId = ns("help_estimate_options_option"),
+                label = NULL,
+                choices = c(
+                  "Exposure"             = "exposure",
+                  "Assessment"           = "assess",
+                  "Error calculation"    = "error",
+                  "Survival coefficient" = "surv_coeff"
+                )
+              ),
+              # Contents
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'exposure'",
+                ns = ns,
+                include_help("estimate/dose_exposure.md")
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'assess'",
+                ns = ns,
+                include_help("estimate/dose_assessment.md")
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'error'",
+                ns = ns,
+                include_help("estimate/dose_error.md"),
+                include_help("dicent/dose_error_methods.md")
+              ),
+              conditionalPanel(
+                condition = "input.help_estimate_options_option == 'surv_coeff'",
+                ns = ns,
+                include_help("estimate/fraction_coeff_select.md")
+              )
+            )
+          ),
 
           # Type of exposure selection
           div(
@@ -867,30 +852,27 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         # Box: Export data and results ----
         box(
           width = 12,
-          title = "Save results",
+          title = span(
+            "Save results",
+            help_modal_button(
+              ns("help_fit_data_save"),
+              ns("help_fit_data_save_modal")
+            )
+          ),
           status = "warning",
           collapsible = TRUE,
 
-          # topButton = div(
-          #   # Help button
-          #   shinyBS::bsButton(
-          #     ns("help_fit_data_save"),
-          #     label = "",
-          #     icon = icon("question"),
-          #     style = "default", size = "default"
-          #   ),
-          #
-          #   # Help Modal
-          #   bsplus::bs_modal(
-          #     id = ns("help_fit_data_save_dialog"),
-          #     title = "Help: Export results",
-          #     trigger = ns("help_fit_data_save"),
-          #     size = "large",
-          #
-          #     # Contents
-          #     include_help("save/estimate_data_save_report.md")
-          #   )
-          # ),
+          # Help Modal
+          bsplus::bs_modal(
+            id = ns("help_fit_data_save_modal"),
+            title = "Help: Export results",
+            size = "large",
+
+            body = tagList(
+              # Contents
+              include_help("save/estimate_data_save_report.md")
+            )
+          ),
 
           # Case description
           textAreaInput(

@@ -17,35 +17,31 @@ mod_trans_fitting_ui <- function(id, label) {
       # Box: Stains color options ----
       box(
         width = 6,
-        title = "Stains color options",
+        title = span(
+          "Stains color options",
+          help_modal_button(
+            ns("help_colors_data"),
+            ns("help_colors_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_colors"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_colors_dialog"),
-        #     title = "Help: Stain color data input",
-        #     trigger = ns("help_colors"),
-        #     size = "large",
-        #
-        #     include_help("trans/colors_data_input.md"),
-        #     div(
-        #       class = "hot-improved",
-        #       rHandsontableOutput(ns("help_chromosome_hot"))
-        #     ),
-        #     include_help("trans/colors_data_input_b.md")
-        #
-        #   )
-        # ),
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_colors_modal"),
+          title = "Help: Stain color data input",
+          size = "large",
+
+          body = tagList(
+          include_help("trans/colors_data_input.md"),
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(ns("help_chromosome_hot"))
+          ),
+          include_help("trans/colors_data_input_b.md")
+          )
+        ),
 
         fluidRow(
           column(
@@ -169,54 +165,51 @@ mod_trans_fitting_ui <- function(id, label) {
       # Box: Data input options ----
       box(
         width = 6,
-        title = "Data input options",
+        title = span(
+          "Data input options",
+          help_modal_button(
+            ns("help_count_data"),
+            ns("help_count_data_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_count_data"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_count_data_dialog"),
-        #     title = "Help: Count data input",
-        #     trigger = ns("help_count_data"),
-        #     size = "large",
-        #
-        #     # Option selection
-        #     shinyWidgets::radioGroupButtons(
-        #       inputId = ns("help_count_data_option"),
-        #       label = NULL,
-        #       choices = c(
-        #         "Manual input"    = "manual",
-        #         "Load data"       = "load",
-        #         "Aggregated data" = "aggr"
-        #       )
-        #     ),
-        #     # Contents
-        #     conditionalPanel(
-        #       condition = "input.help_count_data_option == 'manual'",
-        #       ns = ns,
-        #       include_help("fitting/count_data_input.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_count_data_option == 'load'",
-        #       ns = ns,
-        #       include_help("fitting/count_data_load.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_count_data_option == 'aggr'",
-        #       ns = ns,
-        #       include_help("fitting/count_data_aggregated.md")
-        #     )
-        #   )
-        # ),
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_count_data_modal"),
+          title = "Help: Count data input",
+          size = "large",
+
+          body = tagList(
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_count_data_option"),
+              label = NULL,
+              choices = c(
+                "Manual input"    = "manual",
+                "Load data"       = "load",
+                "Aggregated data" = "aggr"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'manual'",
+              ns = ns,
+              include_help("fitting/count_data_input.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'load'",
+              ns = ns,
+              include_help("fitting/count_data_load.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_count_data_option == 'aggr'",
+              ns = ns,
+              include_help("fitting/count_data_aggregated.md")
+            )
+          )
+        ),
 
         fluidRow(
           column(
@@ -278,54 +271,51 @@ mod_trans_fitting_ui <- function(id, label) {
       # Box: Fitting options ----
       box(
         width = 6,
-        title = "Fitting options",
+        title = span(
+          "Fitting options",
+          help_modal_button(
+            ns("help_fitting_options"),
+            ns("help_fitting_options_modal")
+          )
+        ),
         status = "info",
         collapsible = TRUE,
 
-        # topButton = div(
-        #   # Help button
-        #   shinyBS::bsButton(
-        #     ns("help_fitting_options"),
-        #     label = "",
-        #     icon = icon("question"),
-        #     style = "default", size = "default"
-        #   ),
-        #
-        #   # Help Modal
-        #   bsplus::bs_modal(
-        #     id = ns("help_fitting_options_dialog"),
-        #     title = "Help: Fitting options",
-        #     trigger = ns("help_fitting_options"),
-        #     size = "large",
-        #
-        #     # Option selection
-        #     shinyWidgets::radioGroupButtons(
-        #       inputId = ns("help_fitting_options_option"),
-        #       label = NULL,
-        #       choices = c(
-        #         "Fitting formula"  = "formula",
-        #         "Fitting model"    = "model"#,
-        #         # "Decision thresholds" = "decision_thresholds"
-        #       )
-        #     ),
-        #     # Contents
-        #     conditionalPanel(
-        #       condition = "input.help_fitting_options_option == 'formula'",
-        #       ns = ns,
-        #       include_help("fitting/fitting_options_formula.md")
-        #     ),
-        #     conditionalPanel(
-        #       condition = "input.help_fitting_options_option == 'model'",
-        #       ns = ns,
-        #       include_help("fitting/fitting_options_model.md")
-        #     )#,
-        #     # conditionalPanel(
-        #     #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
-        #     #   ns = ns,
-        #     #   include_help("trans/fitting_options_decision_thresholds.md")
-        #     # )
-        #   )
-        # ),
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_fitting_options_modal"),
+          title = "Help: Fitting options",
+          size = "large",
+
+          body = tagList(
+            # Option selection
+            radioGroupButtons(
+              inputId = ns("help_fitting_options_option"),
+              label = NULL,
+              choices = c(
+                "Fitting formula"  = "formula",
+                "Fitting model"    = "model" # ,
+                # "Decision thresholds" = "decision_thresholds"
+              )
+            ),
+            # Contents
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'formula'",
+              ns = ns,
+              include_help("fitting/fitting_options_formula.md")
+            ),
+            conditionalPanel(
+              condition = "input.help_fitting_options_option == 'model'",
+              ns = ns,
+              include_help("fitting/fitting_options_model.md")
+            ) # ,
+            # conditionalPanel(
+            #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
+            #   ns = ns,
+            #   include_help("fitting/fitting_options_decision_thresholds.md")
+            # )
+          )
+        ),
 
         fluidRow(
           column(
@@ -476,48 +466,45 @@ mod_trans_fitting_ui <- function(id, label) {
         # Box: Export data and results ----
         box(
           width = 12,
-          title = "Export results",
+          title = span(
+            "Export results",
+            help_modal_button(
+              ns("help_fit_data_save"),
+              ns("help_fit_data_save_modal")
+            )
+          ),
           status = "warning",
           collapsible = TRUE,
 
-          # topButton = div(
-          #   # Help button
-          #   shinyBS::bsButton(
-          #     ns("help_fit_data_save"),
-          #     label = "",
-          #     icon = icon("question"),
-          #     style = "default", size = "default"
-          #   ),
-          #
-          #   # Help Modal
-          #   bsplus::bs_modal(
-          #     id = ns("help_fit_data_save_dialog"),
-          #     title = "Help: Export results",
-          #     trigger = ns("help_fit_data_save"),
-          #     size = "large",
-          #
-          #     # Option selection
-          #     shinyWidgets::radioGroupButtons(
-          #       inputId = ns("help_fit_data_save_option"),
-          #       label = NULL,
-          #       choices = c(
-          #         "Fitting data" = "data",
-          #         "Report"       = "report"
-          #       )
-          #     ),
-          #     # Contents
-          #     conditionalPanel(
-          #       condition = "input.help_fit_data_save_option == 'data'",
-          #       ns = ns,
-          #       include_help("save/fit_data_save.md")
-          #     ),
-          #     conditionalPanel(
-          #       condition = "input.help_fit_data_save_option == 'report'",
-          #       ns = ns,
-          #       include_help("save/fit_data_save_report.md")
-          #     )
-          #   )
-          # ),
+          # Help modal
+          bsplus::bs_modal(
+            id = ns("help_fit_data_save_modal"),
+            title = "Help: Export results",
+            size = "large",
+
+            body = tagList(
+              # Option selection
+              radioGroupButtons(
+                inputId = ns("help_fit_data_save_option"),
+                label = NULL,
+                choices = c(
+                  "Fitting data" = "data",
+                  "Report"       = "report"
+                )
+              ),
+              # Contents
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'data'",
+                ns = ns,
+                include_help("save/fit_data_save.md")
+              ),
+              conditionalPanel(
+                condition = "input.help_fit_data_save_option == 'report'",
+                ns = ns,
+                include_help("save/fit_data_save_report.md")
+              )
+            )
+          ),
 
           # Download fit data & report
           downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
