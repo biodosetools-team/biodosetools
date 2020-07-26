@@ -26,7 +26,7 @@ Imports:
     rmarkdown,
     shiny,
     shinydashboard,
-    shinyWidgets (>= 0.4.9),
+    shinyWidgets (>= 0.5.0),
     stringr,
     tidyr (>= 1.0.0),
     xtable,
