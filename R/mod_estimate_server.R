@@ -932,23 +932,41 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     AIC_whole <- results_whole[["AIC"]]
 
     if (assessment == "partial-body") {
+      # Input of the parameter gamma
+      if (fraction_coeff == "gamma") {
+        gamma <- input$gamma_coeff
+      } else if (fraction_coeff == "d0") {
+        gamma <- 1 / input$d0_coeff
+      }
+
       # Calculate partial results
       results_partial <- estimate_partial_dolphin(
-        case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-        conf_int_dolphin, protracted_g_value,
-        parsed_genome_fraction, aberr_module, input
+        case_data, general_fit_coeffs, general_var_cov_mat,
+        conf_int_dolphin, protracted_g_value, cov = TRUE,
+        parsed_genome_fraction, aberr_module, gamma
       )
+
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
       AIC_partial <- results_partial[["AIC"]]
     } else if (assessment == "hetero") {
+      # Input of the parameter gamma and its variance
+      if (fraction_coeff == "gamma") {
+        gamma <- input$gamma_coeff
+        gamma_error <- input$gamma_error
+      } else if (fraction_coeff == "d0") {
+        gamma <- 1 / input$d0_coeff
+        gamma_error <- 0
+      }
+
       # Calculate heterogeneous result
       results_hetero <- estimate_hetero(
-        case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
+        case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value,
-        input
+        gamma, gamma_error
       )
+
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
       est_yields_hetero <- results_hetero[["est_yields"]]
@@ -983,6 +1001,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     }
 
+    # Name of the aberration to use in the y-axis
     if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
       aberr_name <- stringr::str_to_title(aberr_module)
     } else if (aberr_module == "translocations") {
@@ -992,6 +1011,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         aberr_name <- stringr::str_to_title(aberr_module)
       }
     }
+
+    # Get dose estimation curve
     gg_curve <- get_estimated_dose_curve(
       est_full_doses, general_fit_coeffs, general_var_cov_mat,
       protracted_g_value, conf_int_yield, conf_int_curve,

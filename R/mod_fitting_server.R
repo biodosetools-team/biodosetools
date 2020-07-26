@@ -272,7 +272,20 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     isolate({
       fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
-      gg_curve <- get_fit_dose_curve(fit_results_list, aberr_module, input)
+
+      # Name of the aberration to use in the y-axis
+      if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+        aberr_name <- stringr::str_to_title(aberr_module)
+      } else if (aberr_module == "translocations") {
+        if (nchar(input$trans_name) > 0) {
+          aberr_name <- input$trans_name
+        } else {
+          aberr_name <- stringr::str_to_title(aberr_module)
+        }
+      }
+
+      # Get dose estimation curve
+      gg_curve <- get_fit_dose_curve(fit_results_list, aberr_name)
 
       # Make list of results to return
       results_list <- fit_results_list

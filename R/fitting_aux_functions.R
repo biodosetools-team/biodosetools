@@ -1,12 +1,11 @@
 #' Get fit dose curve
 #'
 #' @param fit_results_list List of fit results
-#' @param aberr_module Aberration module
-#' @param input UI input variable
+#' @param aberr_name Name of the aberration to use in the y-axis
 #'
 #' @return ggplot object
 #' @export
-get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
+get_fit_dose_curve <- function(fit_results_list, aberr_name) {
   # Read objects from fit results list
   count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
@@ -66,17 +65,6 @@ get_fit_dose_curve <- function(fit_results_list, aberr_module, input) {
       yield_low = yield_fun(.data$dose) - R_factor * yield_error_fun(.data$dose),
       yield_upp = yield_fun(.data$dose) + R_factor * yield_error_fun(.data$dose)
     )
-
-  # Name of the aberration to use in the y-axis
-  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-    aberr_name <- stringr::str_to_title(aberr_module)
-  } else if (aberr_module == "translocations") {
-    if (nchar(input$trans_name) > 0) {
-      aberr_name <- input$trans_name
-    } else {
-      aberr_name <- stringr::str_to_title(aberr_module)
-    }
-  }
 
   # Make plot
   gg_curve <- ggplot2::ggplot(plot_data) +

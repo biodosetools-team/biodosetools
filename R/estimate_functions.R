@@ -266,19 +266,18 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' @param case_data Case data in data frame form
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #' @param general_var_cov_mat Generalized variance-covariance matrix
-#' @param fraction_coeff Fraction coefficient, can be "gamma" or "d0" (to be updated)
 #' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param genome_fraction Genomic fraction used in translocations, else 1
 #' @param aberr_module Aberration module
-#' @param input UI inputs (to be fixed and parametrized)
+#' @param gamma Survival coefficient of irradiated cells
 #'
 #' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
+estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat,
                                      conf_int, protracted_g_value, cov = TRUE,
-                                     genome_fraction = 1, aberr_module, input) {
+                                     genome_fraction = 1, aberr_module, gamma) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -296,11 +295,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
   }
 
   # Input of the parameter gamma and its variance
-  if (fraction_coeff == "gamma") {
-    d0 <- 1 / input$gamma_coeff
-  } else if (fraction_coeff == "d0") {
-    d0 <- input$d0_coeff
-  }
+  d0 <- 1 / gamma
 
   # Get fitting model variables
   aberr <- case_data[["X"]]
@@ -494,16 +489,17 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' @param case_data Case data in data frame form
 #' @param general_fit_coeffs Generalized fit coefficients matrix
 #' @param general_var_cov_mat Generalized variance-covariance matrix
-#' @param fraction_coeff Fraction coefficient, can be "gamma" or "d0" (to be updated)
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
 #' @param protracted_g_value Protracted G(x) value
-#' @param input UI inputs (to be fixed and parametrized)
+#' @param gamma Survival coefficient of irradiated cells
+#' @param gamma_error Error of the survival coefficient of irradiated cells
 #'
 #' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, fraction_coeff,
-                            conf_int_yield, conf_int_curve, protracted_g_value, input) {
+estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
+                            conf_int_yield, conf_int_curve, protracted_g_value,
+                            gamma, gamma_error) {
 
   # Select translocation counts
   counts <- case_data[1, ] %>%
@@ -604,15 +600,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat, 
     sigma[2, 1] <- sigma[1, 2]
     sigma[3, 1] <- sigma[1, 3]
     sigma[3, 2] <- sigma[2, 3]
-
-    # Input of the parameter gamma and its variance
-    if (fraction_coeff == "gamma") {
-      gamma <- input$gamma_coeff
-      sigma[4, 4] <- input$gamma_error
-    } else if (fraction_coeff == "d0") {
-      gamma <- 1 / input$d0_coeff
-      sigma[4, 4] <- 0
-    }
+    sigma[4, 4] <- gamma_error
 
     # Calculate Maximum Likielihood Estimation
     MLE <- stats::optim(

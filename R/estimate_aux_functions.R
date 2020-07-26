@@ -244,38 +244,28 @@ correct_boundary <- function(x) {
 #' @param conf_int_text_whole Text to display confidence interval for whole-body estimation
 #' @param conf_int_text_partial Text to display confidence interval for partial-body estimation
 #' @param conf_int_text_hetero Text to display confidence interval for heterogeneous estimation
-#' @param aberr_module Aberration module
-#' @param input UI inputs (to be fixed and parametrized)
+#' @param aberr_name Name of the aberration to use in the y-axis
 #'
 #' @return ggplot object
 #' @export
 get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general_var_cov_mat,
                                      protracted_g_value, conf_int_yield, conf_int_curve,
                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
-                                     aberr_module, input) {
+                                     aberr_name) {
   # Rightmost limit of the plot
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
     max()
 
   # Plot data from curves
-  curves_data <- data.frame(dose = seq(0, max_dose, length.out = 100)) %>%
+  curves_data <- data.frame(
+      dose = seq(0, max_dose, length.out = 100)
+    ) %>%
     dplyr::mutate(
       yield = calculate_yield(.data$dose, type = "estimate", general_fit_coeffs, NULL, protracted_g_value, 0),
       yield_low = calculate_yield(.data$dose, type = "lower", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve),
       yield_upp = calculate_yield(.data$dose, type = "upper", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
     )
-
-  # Name of the aberration to use in the y-axis
-  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-    aberr_name <- stringr::str_to_title(aberr_module)
-  } else if (aberr_module == "translocations") {
-    if (nchar(input$trans_name) > 0) {
-      aberr_name <- input$trans_name
-    } else {
-      aberr_name <- stringr::str_to_title(aberr_module)
-    }
-  }
 
   # Make base plot
   gg_curve <- ggplot2::ggplot(curves_data) +
