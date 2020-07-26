@@ -104,7 +104,7 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 #' @param input UI input variable
 #'
 #' @return A vector with aberr_test and dose_est
-#' @export
+#' @noRd
 get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, aberr_module, input) {
 
   # Use measured translocation frequency fit
