@@ -1079,22 +1079,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         width = 12,
         side = "left",
 
-        title = span(help_modal_button(
-          container = "tabbox",
-          session$ns("help_dose_mixed_yields"),
-          session$ns("help_dose_mixed_yields_modal")
-        )
-
-        #   # Help modal
-        #   bsplus::bs_modal(
-        #     id = session$ns("help_dose_mixed_yields_modal"),
-        #     title = "Help: Heterogeneous exposures",
-        #     size = "large",
-        #
-        #     body = tagList(
-        #       include_help("estimate/dose_mixed_yields.md")
-        #     )
-        # )
+        title = help_modal_button(
+            container = "tabbox",
+            session$ns("help_dose_mixed_yields"),
+            session$ns("help_dose_mixed_yields_modal")
         ),
 
         tabPanel(
@@ -1125,11 +1113,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         width = 12,
         side = "left",
 
-        title = span(help_modal_button(
+        title = help_modal_button(
           container = "tabbox",
           session$ns("help_dose_mixed_yields"),
           session$ns("help_dose_mixed_yields_modal")
-        )
         ),
 
         tabPanel(
@@ -1187,11 +1174,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         width = 12,
         side = "left",
 
-        title = span(help_modal_button(
+        title = help_modal_button(
           container = "tabbox",
           session$ns("help_dose_mixed_yields"),
           session$ns("help_dose_mixed_yields_modal")
-        )
         ),
 
         tabPanel(
@@ -1254,7 +1240,6 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     return(tagList(return_tabbox, hetero_modal))
-
   })
 
   # Estimated recieved doses (whole-body)

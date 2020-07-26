@@ -34,12 +34,12 @@ mod_trans_fitting_ui <- function(id, label) {
           size = "large",
 
           body = tagList(
-          include_help("trans/colors_data_input.md"),
-          div(
-            class = "hot-improved",
-            rHandsontableOutput(ns("help_chromosome_hot"))
-          ),
-          include_help("trans/colors_data_input_b.md")
+            include_help("trans/colors_data_input.md"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("help_chromosome_hot"))
+            ),
+            include_help("trans/colors_data_input_b.md")
           )
         ),
 
@@ -415,7 +415,6 @@ mod_trans_fitting_ui <- function(id, label) {
 
             tabPanel(
               title = "Result of curve fit",
-              # active = TRUE,
               h5("Fit formula"),
               uiOutput(ns("fit_formula_tex")),
 

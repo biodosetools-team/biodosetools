@@ -136,7 +136,6 @@ mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
 
         tabPanel(
           title = "Result of curve fit",
-          active = TRUE,
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 

@@ -114,7 +114,6 @@ mod_dicent_fitting_ui <- function(id, label) {
       # Box: Fitting options ----
       box(
         width = 6,
-        # title = "Fitting options",
         title = span(
           "Fitting options",
           help_modal_button(
@@ -240,7 +239,6 @@ mod_dicent_fitting_ui <- function(id, label) {
 
           tabPanel(
             title = "Result of curve fit",
-            # active = TRUE,
             h5("Fit formula"),
             uiOutput(ns("fit_formula_tex")),
 

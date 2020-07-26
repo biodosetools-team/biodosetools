@@ -242,7 +242,6 @@ mod_micro_fitting_ui <- function(id, label) {
 
             tabPanel(
               title = "Result of curve fit",
-              # active = TRUE,
               h5("Fit formula"),
               uiOutput(ns("fit_formula_tex")),
 

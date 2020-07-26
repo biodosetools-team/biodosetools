@@ -133,12 +133,9 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-        # solidHeader = FALSE,
-        # closable = FALSE,
 
         tabPanel(
           title = "Result of curve fit",
-          # active = TRUE,
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
@@ -277,7 +274,6 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         # Box: Estimation options ----
         box(
           width = 12,
-
           title = span(
             "Dose estimation options",
             help_modal_button(

@@ -28,13 +28,13 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         status = "info",
         collapsible = TRUE,
 
-          # Help modal
-          bsplus::bs_modal(
-            id = ns("help_fit_data_modal"),
-            title = "Help: Fitting data input",
-            size = "large",
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_fit_data_modal"),
+          title = "Help: Fitting data input",
+          size = "large",
 
-            body = tagList(
+          body = tagList(
             # Option selection
             shinyWidgets::radioGroupButtons(
               inputId = ns("help_fit_data_option"),
@@ -171,7 +171,6 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
         tabPanel(
           title = "Result of curve fit",
-          active = TRUE,
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
 
@@ -381,13 +380,13 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         status = "info",
         collapsible = TRUE,
 
-          # Help modal
-          bsplus::bs_modal(
-            id = ns("help_cases_data_modal"),
-            title = "Help: Cases data input",
-            size = "large",
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_cases_data_modal"),
+          title = "Help: Cases data input",
+          size = "large",
 
-            body = tagList(
+          body = tagList(
             # Option selection
             shinyWidgets::radioGroupButtons(
               inputId = ns("help_cases_data_option"),
