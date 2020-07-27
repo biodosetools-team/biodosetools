@@ -12,6 +12,6 @@ $run_dev.*
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^rsconnect$
 
 ^git-history\.txt$
-^R_old$
