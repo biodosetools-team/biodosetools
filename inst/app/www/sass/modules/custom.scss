@@ -1,20 +1,28 @@
-/* Tweak modal help buttons */
-.box-modal-help-button {
+/* Custom modal help buttons */
+.modal-help-button {
   background: transparent;
-  right: 40px;
+  color: #444;
   position: absolute;
   padding: 4px 10px;
   border: 0;
   top: 5px;
 }
 
-.tabbox-modal-help-button {
+.modal-help-button:hover {
   background: transparent;
+  color: #606c84;
+}
+
+.modal-help-button:focus {
+  background: transparent;
+}
+
+.box-modal-help-button {
+  right: 40px;
+}
+
+.tabbox-modal-help-button {
   right: 5px;
-  position: absolute;
-  padding: 4px 10px;
-  border: 0;
-  top: 5px;
 }
 
 /* Improve rhandsontable overflow */
