@@ -1,3 +1,140 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700|Roboto+Condensed:700|Roboto+Slab:400,700");
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.main-header .logo {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 700;
+  letter-spacing: -1px;
+  font-size: 3rem;
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
+
+.menu-title {
+  padding-left: 18px;
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.box-header .box-title {
+  font-size: 16px;
+}
+
+/* Fix Widgets */
+.box {
+  border-top: 5px solid;
+}
+
+.awesome-checkbox label {
+  font-weight: 400;
+}
+
+.awesome-checkbox label::after {
+  font-weight: 700;
+}
+
+.btn-box-tool,
+.open .btn-box-tool {
+  color: #444;
+}
+
+/* Custom modal help buttons */
+.modal-help-button {
+  background: transparent;
+  color: #444;
+  position: absolute;
+  padding: 4px 10px;
+  border: 0;
+  top: 5px;
+}
+
+.modal-help-button:hover {
+  background: transparent;
+  color: #606c84;
+}
+
+.modal-help-button:focus {
+  background: transparent;
+}
+
+.box-modal-help-button {
+  right: 40px;
+}
+
+.tabbox-modal-help-button {
+  right: 5px;
+}
+
+/* Improve rhandsontable overflow */
+.hot-improved {
+  height: auto;
+  max-width: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+/* Custom Widget Classes */
+.side-widget {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.side-widget-tall {
+  display: inline-block;
+  vertical-align: bottom;
+  margin-bottom: -20px;
+}
+
+.widget-sep {
+  display: inline-block;
+  vertical-align: top;
+  width: 20px;
+}
+
+.small-action-button {
+  height: 25px;
+  line-height: 0;
+  padding: 0 8px 0 8px;
+}
+
+/* Custom cols for cards/boxes with innerColumn() function */
+.col-inner-4,
+.col-inner-6 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 7.5px;
+  padding-left: 7.5px;
+}
+
+@media (min-width: 900px) {
+  .col-inner-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+  .col-inner-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Sidebar */
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  padding-left: 18px;
+  z-index: 1000;
+}
+
+/* Navbar */
 .skin-purple .main-header .navbar {
   background-color: #2EC27E;
 }
@@ -373,6 +510,7 @@ section.sidebar .shiny-bound-input.action-link {
   border-color: #eb8a0b;
 }
 
+/* Primary Checkboxes */
 .checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before {
   background-color: #5B5EA8;
   border-color: #5B5EA8;
@@ -382,6 +520,7 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Info Checkboxes */
 .checkbox-info input[type="checkbox"]:checked + label::before, .checkbox-info input[type="radio"]:checked + label::before {
   background-color: #2B7C9A;
   border-color: #2B7C9A;
@@ -391,6 +530,7 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Success Checkboxes */
 .checkbox-success input[type="checkbox"]:checked + label::before, .checkbox-success input[type="radio"]:checked + label::before {
   background-color: #2db77d;
   border-color: #2db77d;
@@ -400,6 +540,7 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Warning Checkboxes */
 .checkbox-warning input[type="checkbox"]:checked + label::before, .checkbox-warning input[type="radio"]:checked + label::before {
   background-color: #F6A945;
   border-color: #F6A945;
@@ -409,6 +550,7 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Danger Checkboxes */
 .checkbox-danger input[type="checkbox"]:checked + label::before, .checkbox-danger input[type="radio"]:checked + label::before {
   background-color: #F6A945;
   border-color: #F6A945;
@@ -418,6 +560,72 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Primary Radiobuttons */
+.radio-primary input[type="radio"]:checked + label::before {
+  border-color: #5B5EA8;
+}
+
+.radio-primary input[type="radio"]:checked + label::after {
+  background-color: #5B5EA8;
+}
+
+.radio-primary input[type="radio"] + label::after {
+  background-color: #5B5EA8;
+}
+
+/* Info Radiobuttons */
+.radio-info input[type="radio"]:checked + label::before {
+  border-color: #2B7C9A;
+}
+
+.radio-info input[type="radio"]:checked + label::after {
+  background-color: #2B7C9A;
+}
+
+.radio-info input[type="radio"] + label::after {
+  background-color: #2B7C9A;
+}
+
+/* Success Radiobuttons */
+.radio-success input[type="radio"]:checked + label::before {
+  border-color: #2db77d;
+}
+
+.radio-success input[type="radio"]:checked + label::after {
+  background-color: #2db77d;
+}
+
+.radio-success input[type="radio"] + label::after {
+  background-color: #2db77d;
+}
+
+/* Warning Radiobuttons */
+.radio-warning input[type="radio"]:checked + label::before {
+  border-color: #F6A945;
+}
+
+.radio-warning input[type="radio"]:checked + label::after {
+  background-color: #F6A945;
+}
+
+.radio-warning input[type="radio"] + label::after {
+  background-color: #F6A945;
+}
+
+/* Danger Radiobuttons */
+.radio-danger input[type="radio"]:checked + label::before {
+  border-color: #F6A945;
+}
+
+.radio-danger input[type="radio"]:checked + label::after {
+  background-color: #F6A945;
+}
+
+.radio-danger input[type="radio"] + label::after {
+  background-color: #F6A945;
+}
+
+/* Modals */
 .modal-dialog {
   max-width: 1000px;
   border-radius: 5px;
@@ -438,6 +646,7 @@ section.sidebar .shiny-bound-input.action-link {
   border: 2px solid white;
 }
 
+/* Fontawesome Tweaks */
 .fa.fa-minus {
   margin-right: 4px;
   margin-left: 4px;
