@@ -36,7 +36,7 @@ mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_fit_data_option"),
               label = NULL,
               choices = c(
@@ -196,7 +196,7 @@ mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_cases_data_option"),
               label = NULL,
               choices = c(
@@ -293,7 +293,7 @@ mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
 
             body = tagList(
               # Option selection
-              shinyWidgets::radioGroupButtons(
+              radioGroupButtons(
                 inputId = ns("help_estimate_options_option"),
                 label = NULL,
                 choices = c(

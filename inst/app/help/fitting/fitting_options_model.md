@@ -1,4 +1,4 @@
-##### Fitting model
+#### Fitting model
 
 Normally the Automatic option should be used. 
 

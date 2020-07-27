@@ -1,4 +1,4 @@
-##### Available methods for dicentrics
+#### Available methods for dicentrics
 
 **Whole-body estimation**
 - Merkle's method (83%-83%).

@@ -1,4 +1,4 @@
-##### Data format
+#### Data format
 
 The only requirement for the data is to be in `.csv` (or `.txt`) format and two have the following structure:
 
