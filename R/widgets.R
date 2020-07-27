@@ -9,7 +9,7 @@ help_modal_button <- function(inputId, id_modal, container = "box") {
   shiny::actionButton(
     inputId,
     label = "",
-    class = paste0(container, "-modal-help-button"),
+    class = paste0("modal-help-button ", container, "-modal-help-button"),
     icon = icon("question")
   ) %>%
     bsplus::bs_attach_modal(id_modal)
