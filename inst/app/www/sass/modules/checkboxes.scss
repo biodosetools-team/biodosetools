@@ -1,3 +1,4 @@
+/* Primary Checkboxes */
 .checkbox-primary input[type="checkbox"]:checked+label::before, .checkbox-primary input[type="radio"]:checked+label::before {
   background-color: $primary;
   border-color: $primary;
@@ -7,6 +8,7 @@
   border-left-color: rgb(91, 192, 222);
 }
 
+/* Info Checkboxes */
 .checkbox-info input[type="checkbox"]:checked+label::before, .checkbox-info input[type="radio"]:checked+label::before {
   background-color: $info;
   border-color: $info;
@@ -16,6 +18,7 @@
   border-left-color: rgb(91, 192, 222);
 }
 
+/* Success Checkboxes */
 .checkbox-success input[type="checkbox"]:checked+label::before, .checkbox-success input[type="radio"]:checked+label::before {
   background-color: $success;
   border-color: $success;
@@ -25,6 +28,7 @@
   border-left-color: rgb(91, 192, 222);
 }
 
+/* Warning Checkboxes */
 .checkbox-warning input[type="checkbox"]:checked+label::before, .checkbox-warning input[type="radio"]:checked+label::before {
   background-color: $warning;
   border-color: $warning;
@@ -34,6 +38,7 @@
   border-left-color: rgb(91, 192, 222);
 }
 
+/* Danger Checkboxes */
 .checkbox-danger input[type="checkbox"]:checked+label::before, .checkbox-danger input[type="radio"]:checked+label::before {
   background-color: $danger;
   border-color: $danger;
