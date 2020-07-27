@@ -36,7 +36,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_fit_data_option"),
               label = NULL,
               choices = c(
@@ -217,7 +217,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
     fluidRow(
       # Box: Stains color options ----
       box(
-        width = 6,
+        width = 5,
         title = span(
           "Stains color options",
           help_modal_button(
@@ -248,66 +248,56 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
           column(
             width = 12,
 
-            fluidRow(
-              inner_column(
-                width = 6,
-
-                shinyWidgets::awesomeRadio(
-                  inputId = ns("trans_sex"),
-                  status = "info",
-                  label = "Sex",
-                  choices = c(
-                    "Male"   = "male",
-                    "Female" = "female"
-                  ),
-                  selected = "male"
-                ),
-
-                selectizeInput(
-                  inputId = ns("trans_chromosome_select"),
-                  label = "Chromosomes",
-                  choices = c(1:21, "X", "Y"),
-                  options = list(
-                    placeholder = "Select stained chromosomes"
-                  ),
-                  multiple = TRUE
-                )
+            awesomeRadio(
+              inputId = ns("trans_sex"),
+              status = "info",
+              label = "Sex",
+              choices = c(
+                "Male"   = "male",
+                "Female" = "female"
               ),
+              selected = "male"
+            ),
 
-              inner_column(
-                width = 6,
+            selectizeInput(
+              inputId = ns("trans_chromosome_select"),
+              label = "Chromosomes",
+              choices = c(1:21, "X", "Y"),
+              options = list(
+                placeholder = "Select stained chromosomes"
+              ),
+              multiple = TRUE
+            ),
 
-                widget_label("Stain color scheme"),
-                awesomeCheckbox(
-                  inputId = ns("trans_m_fish_scheme"),
-                  status = "info",
-                  label = "Use M-Fish",
-                  value = FALSE
+            widget_label("Stain color scheme"),
+            awesomeCheckbox(
+              inputId = ns("trans_m_fish_scheme"),
+              status = "info",
+              label = "Use M-Fish",
+              value = FALSE
+            ),
+
+            conditionalPanel(
+              condition = "!input.trans_m_fish_scheme",
+              ns = ns,
+              selectizeInput(
+                inputId = ns("trans_color_select"),
+                label = "Stain colors",
+                choices = c(
+                  "Red",
+                  "Green",
+                  "Yellow",
+                  "Orange",
+                  "Purple",
+                  "Magenta",
+                  "Cyan"
                 ),
-
-                conditionalPanel(
-                  condition = "!input.trans_m_fish_scheme",
-                  ns = ns,
-                  selectizeInput(
-                    inputId = ns("trans_color_select"),
-                    label = "Stain colors",
-                    choices = c(
-                      "Red",
-                      "Green",
-                      "Yellow",
-                      "Orange",
-                      "Purple",
-                      "Magenta",
-                      "Cyan"
-                    ),
-                    options = list(
-                      placeholder = "Select observed colors" # ,
-                      # maxItems = 5
-                      # TODO: use renderUI to force maxItems ot be length(trans_color_select)
-                    ),
-                    multiple = TRUE
-                  )
-                )
+                options = list(
+                  placeholder = "Select observed colors" # ,
+                  # maxItems = 5
+                  # TODO: use renderUI to force maxItems ot be length(trans_color_select)
+                ),
+                multiple = TRUE
               )
             ),
 
@@ -318,7 +308,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
       ),
 
       column(
-        width = 6,
+        width = 7,
 
         # Box: Chromosome-color table ----
         box(
@@ -334,10 +324,9 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
               div(
                 class = "hot-improved",
                 rHandsontableOutput(outputId = ns("chromosome_table"))
-              )
-            ),
-            div(
-              style = "padding-left: 7.5px; padding-top: 23px;",
+              ),
+
+              br(),
               actionButton(
                 ns("button_calc_genome_fraction"),
                 class = "inputs-button",
@@ -388,7 +377,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
           body = tagList(
             # Option selection
-            shinyWidgets::radioGroupButtons(
+            radioGroupButtons(
               inputId = ns("help_cases_data_option"),
               label = NULL,
               choices = c(
@@ -526,7 +515,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
               class = "side-widget",
               style = "max-width: 140px; margin-right: -40px;",
               widget_label("Smoker", 14),
-              shinyWidgets::switchInput(
+              switchInput(
                 ns("trans_confounder_smoke"),
                 onStatus = "primary",
                 value = FALSE
@@ -621,7 +610,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
             body = tagList(
               # Option selection
-              shinyWidgets::radioGroupButtons(
+              radioGroupButtons(
                 inputId = ns("help_estimate_options_option"),
                 label = NULL,
                 choices = c(
