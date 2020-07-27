@@ -3,7 +3,7 @@
 #' Shiny App To Be Used By Biological Dosimetry Laboratories
 #'
 #' See the README on
-#' \href{https://github.com/biodosimetry-uab/biodosetools/}{GitHub}
+#' \href{https://github.com/biodosetools-team/biodosetools/}{GitHub}
 #'
 #' @docType package
 #' @name biodosetools

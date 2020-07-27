@@ -30,7 +30,7 @@ dashboard_header <- function() {
       a(
         strong("About"),
         height = 40,
-        href = "https://github.com/biodosimetry-uab/biodosetools",
+        href = "https://github.com/biodosetools-team/biodosetools",
         title = "",
         target = "_blank"
       ),
@@ -132,7 +132,7 @@ dashboard_sidebar <- function() {
 
     p(class = "menu-title", "Other tools"),
 
-    p(class = "sticky-footer", a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosimetry-uab/biodosetools/blob/master/NEWS.md"))
+    p(class = "sticky-footer", a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md"))
   )
 }
 
@@ -159,7 +159,7 @@ dashboard_home <- function() {
           inputId = "github_link", label = "Source code",
           icon = icon("github"),
           class = "home-button",
-          onclick = "window.open('https://github.com/biodosimetry-uab/biodosetools/', '_blank')"
+          onclick = "window.open('https://github.com/biodosetools-team/biodosetools/', '_blank')"
         ),
         div(class = "widget-sep", br()),
 
@@ -168,7 +168,7 @@ dashboard_home <- function() {
           inputId = "wiki_link", label = "Documentation",
           icon = icon("book"),
           class = "home-button",
-          onclick = "window.open('https://biodosimetry-uab.github.io/documentation/', '_blank')"
+          onclick = "window.open('https://biodosetools-team.github.io/documentation/', '_blank')"
         )
       )
     )
