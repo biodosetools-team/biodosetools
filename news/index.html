@@ -99,7 +99,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/biodosetools-team/biodosetools/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -114,9 +119,230 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      
+      <small>Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="biodosetools-330-2020-07-27" class="section level1">
+<h1 class="page-header" data-toc-text="3.3.0">
+<a href="#biodosetools-330-2020-07-27" class="anchor"></a>biodosetools 3.3.0 (2020-07-27)</h1>
+</div>
+    <div id="biodosetools-321-2020-02-13" class="section level1">
+<h1 class="page-header" data-toc-text="3.2.1">
+<a href="#biodosetools-321-2020-02-13" class="anchor"></a>biodosetools 3.2.1 (2020-02-13)</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Added required <code>pander</code> package to generate DOCX reports.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-320-2020-02-11" class="section level1">
+<h1 class="page-header" data-toc-text="3.2.0">
+<a href="#biodosetools-320-2020-02-11" class="anchor"></a>biodosetools 3.2.0 (2020-02-11)</h1>
+<p>All calculations functions previously provided in <code>inst/app/calcs</code> have been made proper functions on the package.</p>
+<div id="new-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code><a href="../reference/calculate_yield.html">calculate_yield()</a></code> new wrapper of <code><a href="../reference/yield_fun.html">yield_fun()</a></code>, <code><a href="../reference/R_factor.html">R_factor()</a></code>, and <code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
+<li>
+<code><a href="../reference/calculate_yield_infimum.html">calculate_yield_infimum()</a></code> function to calculate infima of yields given a curve.</li>
+<li>
+<code><a href="../reference/project_yield.html">project_yield()</a></code> merged version of the <code>project_yield_estimate()</code>, <code>project_yield_lower()</code>, and <code>project_yield_upper()</code> functions.</li>
+</ul>
+</div>
+<div id="new-functions-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-1" class="anchor"></a>“New” functions</h2>
+<ul>
+<li>
+<code>get_decision_threshold()</code>.</li>
+<li>
+<code><a href="../reference/get_fit_dose_curve.html">get_fit_dose_curve()</a></code>.</li>
+<li>
+<code><a href="../reference/get_fit_glm_method.html">get_fit_glm_method()</a></code>.</li>
+<li>
+<code><a href="../reference/get_fit_maxlik_method.html">get_fit_maxlik_method()</a></code>.</li>
+<li>
+<code><a href="../reference/get_fit_results.html">get_fit_results()</a></code>.</li>
+<li>
+<code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code>.</li>
+<li>
+<code><a href="../reference/prepare_maxlik_count_data.html">prepare_maxlik_count_data()</a></code>.</li>
+<li>
+<code><a href="../reference/AIC_from_data.html">AIC_from_data()</a></code>.</li>
+<li>
+<code><a href="../reference/correct_boundary.html">correct_boundary()</a></code>.</li>
+<li>
+<code><a href="../reference/correct_conf_int.html">correct_conf_int()</a></code>.</li>
+<li>
+<code><a href="../reference/correct_negative_vals.html">correct_negative_vals()</a></code>.</li>
+<li>
+<code><a href="../reference/correct_yield.html">correct_yield()</a></code>.</li>
+<li>
+<code><a href="../reference/get_estimated_dose_curve.html">get_estimated_dose_curve()</a></code>.</li>
+<li>
+<code><a href="../reference/protracted_g_function.html">protracted_g_function()</a></code>.</li>
+<li>
+<code><a href="../reference/R_factor.html">R_factor()</a></code>.</li>
+<li>
+<code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
+<li>
+<code><a href="../reference/yield_fun.html">yield_fun()</a></code>.</li>
+<li>
+<code><a href="../reference/estimate_hetero.html">estimate_hetero()</a></code>.</li>
+<li>
+<code><a href="../reference/estimate_partial_dolphin.html">estimate_partial_dolphin()</a></code>.</li>
+<li>
+<code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code>.</li>
+<li>
+<code><a href="../reference/estimate_whole_body.html">estimate_whole_body()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-310-2019-10-26" class="section level1">
+<h1 class="page-header" data-toc-text="3.1.0">
+<a href="#biodosetools-310-2019-10-26" class="anchor"></a>biodosetools 3.1.0 (2019-10-26)</h1>
+<p>Unofficial release (didn’t change version on <code>DESCRIPTION</code> file). This includes some of the changes I discussed with David in Stockholm.</p>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>Made var-cov matrix optional on dose estimation inputs.</li>
+<li>Fixed calculations to make var-cov matrix optional on dose estimation inputs.</li>
+</ul>
+</div>
+<div id="fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Added additional package dependencies to <code>DESCRIPTION</code> file.</li>
+<li>Following the ISO, renamed detection limits to decision thereshold.</li>
+</ul>
+</div>
+<div id="changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes" class="anchor"></a>Changes</h2>
+<ul>
+<li>Disabled decision thresholds (for now).</li>
+<li>Hide AIC as a relative quality statistic of the dose estimation.</li>
+<li>Added mean and variance to count data tables in fitting module.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-300-2019-10-12" class="section level1">
+<h1 class="page-header" data-toc-text="3.0.0">
+<a href="#biodosetools-300-2019-10-12" class="anchor"></a>biodosetools 3.0.0 (2019-10-12)</h1>
+<p>The app is now available as an R package on GitHub (we haven’t submited Biodose Tools to CRAN yet).</p>
+<div id="new-functions-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-2" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code>runApp()</code> for launching Biodose Tools.</li>
+<li>
+<code><a href="../reference/pipe.html">%&gt;%</a></code> imported from <code>magrittr</code>.</li>
+</ul>
+</div>
+<div id="fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-1" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed variance calculation for count data.</li>
+<li>Provide fallback method for NB2 when using constraint-maxlik-optimization.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-20190727-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.07.27">
+<a href="#biodosetools-20190727-beta" class="anchor"></a>biodosetools 2019.07.27-beta</h1>
+<div id="new-features-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-1" class="anchor"></a>New features</h2>
+<ul>
+<li>Initial implementation of micronuclei, adding support in UI and server functions.</li>
+<li>Implemented negative binomial fitting calculation for micronuclei count data.</li>
+<li>Initial detection limit implementation for translocations.</li>
+<li>Added DOCX support for dicentrics and translocations.</li>
+</ul>
+</div>
+<div id="new-functions-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-3" class="anchor"></a>New functions</h2>
+<ul>
+<li>New <code>bs4MyTabPanel()</code> widget to remove unnecessary padding on <code>tabCards</code>’ panels.</li>
+</ul>
+</div>
+<div id="fixes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-2" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed colwidths for detection limits.</li>
+<li>Fixed unnecessary recalculation of num_cols for chromosome tables in translocations modules.</li>
+<li>New subdirectory structure for help dialogues.</li>
+<li>Added buttons and example tables in help dialogues.</li>
+<li>Updated documentation link.</li>
+</ul>
+</div>
+<div id="improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Added <code>button_fit</code> dependency for detection limits calculation.</li>
+<li>Updated fitting reports (new hot structures &amp; dynamic widths).</li>
+<li>Moved calculation functions from fitting and estimation modules to their own files in a new <code>calcs</code> directory.</li>
+<li>Translocations reports are complete now.</li>
+</ul>
+</div>
+<div id="changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-1" class="anchor"></a>Changes</h2>
+<ul>
+<li>Disable sourcing translations.R for now (until <code>shiny-i18n</code> is implemented).</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-20190717-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.07.17">
+<a href="#biodosetools-20190717-beta" class="anchor"></a>biodosetools 2019.07.17-beta</h1>
+</div>
+    <div id="biodosetools-20190625-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.06.25">
+<a href="#biodosetools-20190625-beta" class="anchor"></a>biodosetools 2019.06.25-beta</h1>
+</div>
+    <div id="biodosetools-20190615-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.06.15">
+<a href="#biodosetools-20190615-beta" class="anchor"></a>biodosetools 2019.06.15-beta</h1>
+</div>
+    <div id="biodosetools-20190604-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.06.04">
+<a href="#biodosetools-20190604-beta" class="anchor"></a>biodosetools 2019.06.04-beta</h1>
+</div>
+    <div id="biodosetools-20190524-beta" class="section level1">
+<h1 class="page-header" data-toc-text="2019.05.24">
+<a href="#biodosetools-20190524-beta" class="anchor"></a>biodosetools 2019.05.24-beta</h1>
+<p>First public beta for laboratories and research centers.</p>
+<div id="new-features-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-2" class="anchor"></a>New features</h2>
+<ul>
+<li>Complete implementation of Dicentrics analysis.</li>
+<li>Experimental fitting on Translocations.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-20190403-alpha" class="section level1">
+<h1 class="page-header" data-toc-text="2019.04.03">
+<a href="#biodosetools-20190403-alpha" class="anchor"></a>biodosetools 2019.04.03-alpha</h1>
+<p>Version presented in second Team Meeting at Munich.</p>
+</div>
+    <div id="biodosetools-20181129-alpha" class="section level1">
+<h1 class="page-header" data-toc-text="2018.11.29">
+<a href="#biodosetools-20181129-alpha" class="anchor"></a>biodosetools 2018.11.29-alpha</h1>
+<p>First draft and proof of concept presented to the RENEB team at Barcelona.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
