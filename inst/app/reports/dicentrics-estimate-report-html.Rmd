@@ -1,6 +1,6 @@
 ---
 title: "Dose estimation report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 
   # prettydoc::html_pretty:
@@ -13,14 +13,16 @@ params:
 ---
 
 ```{r include=FALSE}
-library(xfun)
-xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
 ```
 
 ```{r include=FALSE}
 embed_var <- function(x, ...) {
   # f = tempfile(fileext = '.rds')
-  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  f <- paste("fitting-data-", Sys.Date(), ".rds", sep = "")
   saveRDS(x, f)
   xfun::embed_file(f, ...)
 }
@@ -100,7 +102,7 @@ num_cols <- as.numeric(ncol(case_data))
 # Convert to hot and format table
 case_data %>%
   rhandsontable(width = (50 + num_cols * 50), height = "100%") %>%
-  hot_cols(colWidths = 50) %>% 
+  hot_cols(colWidths = 50) %>%
   # hot_table(highlightCol = TRUE, highlightRow = TRUE)
   hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
   hot_col(num_cols, renderer = "
@@ -130,7 +132,7 @@ if (TRUE) {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 ```{r echo=FALSE}
@@ -143,7 +145,7 @@ if (TRUE) {
     rhandsontable(width = 320, height = "100%", rowHeaders = "dose (Gy)", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 <!-- `r if (TRUE) {"#### Relative quality of the estimation"}` -->
@@ -175,12 +177,12 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial%>%
+  est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
     as.data.frame() %>%
@@ -192,7 +194,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 `r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
@@ -209,7 +211,7 @@ if (assessment == "partial-body") {
     rhandsontable(width = 320, height = "100%", rowHeaderWidth = 80) %>%
     hot_cols(colWidths = 80) %>%
     hot_cols(format = "0.000")
-} 
+}
 ```
 
 <!-- `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}` -->
@@ -230,14 +232,14 @@ if (assessment == "partial-body") {
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_mixing_prop_hetero %>%
-      # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
-      `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
-      `row.names<-`(c("dose1", "dose2")) %>%
-      # Convert to hot and format table
-      rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
-      hot_cols(colWidths = 80) %>%
-      hot_cols(format = "0.000")
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
+    `row.names<-`(c("dose1", "dose2")) %>%
+    # Convert to hot and format table
+    rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 

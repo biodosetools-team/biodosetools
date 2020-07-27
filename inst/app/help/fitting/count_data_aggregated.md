@@ -1,4 +1,4 @@
-##### Data format
+#### Data format
 
 In case you don't have access to the full dicentrics distribution, you can choose to only provide total number of dicentrics. In this case the required data are:
 

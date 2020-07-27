@@ -1,4 +1,4 @@
-##### Data format
+#### Data format
 
 The only required data are:
 - The doses `D` in Gy.

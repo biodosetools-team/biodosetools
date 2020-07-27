@@ -1,6 +1,6 @@
 ---
 title: "Dose estimation report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output:
   # prettydoc::html_pretty:
@@ -13,14 +13,16 @@ params:
 ---
 
 ```{r include=FALSE}
-library(xfun)
-xfun::pkg_load2(c('base64enc', 'htmltools', 'mime'))
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
 ```
 
 ```{r include=FALSE}
 embed_var <- function(x, ...) {
   # f = tempfile(fileext = '.rds')
-  f = paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  f <- paste("fitting-data-", Sys.Date(), ".rds", sep = "")
   saveRDS(x, f)
   xfun::embed_file(f, ...)
 }
@@ -106,7 +108,7 @@ hot <- chromosome_table %>%
   hot_col(1, colWidths = 115, readOnly = TRUE) %>%
   hot_cols(halign = "htCenter")
 
-if(num_cols > 1) {
+if (num_cols > 1) {
   hot <- hot %>%
     hot_col(2:num_cols, colWidths = 85)
 }
@@ -151,11 +153,11 @@ if (!is.null(confounders) & length(confounders) > 1) {
     as.data.frame() %>%
     mutate(
       sex_bool = with(., case_when(
-        (sex_bool == TRUE)  ~ "Used",
+        (sex_bool == TRUE) ~ "Used",
         (sex_bool == FALSE) ~ "Not used"
       )),
       smoker_bool = with(., case_when(
-        (smoker_bool == TRUE)  ~ "Yes",
+        (smoker_bool == TRUE) ~ "Yes",
         (smoker_bool == FALSE) ~ "No"
       )),
       ethnicity_value = with(., case_when(
@@ -167,10 +169,10 @@ if (!is.null(confounders) & length(confounders) > 1) {
       )),
       region_value = with(., case_when(
         (region_value == "n-america") ~ "North America",
-        (region_value == "w-europe")  ~ "Western Europe",
-        (region_value == "c-europe")  ~ "Central Europe",
-        (region_value == "e-europe")  ~ "Eastern Europe",
-        (region_value == "asia")      ~ "Asia",
+        (region_value == "w-europe") ~ "Western Europe",
+        (region_value == "c-europe") ~ "Central Europe",
+        (region_value == "e-europe") ~ "Eastern Europe",
+        (region_value == "asia") ~ "Asia",
         TRUE ~ "Not specified"
       ))
     ) %>%
@@ -248,7 +250,7 @@ if (assessment == "partial-body") {
 
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial%>%
+  est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
     as.data.frame() %>%

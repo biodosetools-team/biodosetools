@@ -9,16 +9,15 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
-# Biodose Tools <img src="man/figures/logo.png" align="right" width="120" />
+# Biodose Tools <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
+[![pkgdown Workflow Status](https://github.com/biodosimetry-uab/biodosetools/workflows/pkgdown/badge.svg)](https://biodosimetry-uab.github.io/biodosetools/)
 <!-- badges: end -->
 
 ## Overview
-
-<p align="center">
-  <img src="inst/app/www/home.svg" alt="drawing" style="max-width: 500px; width: 70%;"/>
-</p>
 
 This project in an app to be used by biological dosimetry laboratories. Biodose Tools is an open-source project that aims to be a tool to perform all different tests and calculations needed. The app is developed with <a href="https://www.r-project.org/about.html">R</a> together with <a href="https://shiny.rstudio.com">Shiny</a> to offer an on-line, easy-to-use solution. Although the intention is to provide the application as a website, all R routines can be downloaded for improvement or personal use.
 
@@ -31,14 +30,13 @@ The project is initially developed by <a href="http://www.reneb.net">RENEB</a> a
 <!-- You can install the released version of <package> from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
-<!-- install.packages("mariokart") -->
+<!-- install.packages("biodosetools") -->
 <!-- ``` -->
 
 <!-- And  -->
-The development version from [GitHub](https://github.com/) with:
+The development version can be installed from [GitHub](https://github.com/) with:
 
 ```r
-# install.packages("devtools")
 devtools::install_github("biodosimetry-uab/biodosetools")
 ```
 <!-- ## Examples -->

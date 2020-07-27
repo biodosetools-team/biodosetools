@@ -1,17 +1,15 @@
 
-# Biodose Tools <img src="man/figures/logo.png" align="right" width="120" />
+# Biodose Tools <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
+[![pkgdown Workflow
+Status](https://github.com/biodosimetry-uab/biodosetools/workflows/pkgdown/badge.svg)](https://biodosimetry-uab.github.io/biodosetools/)
 <!-- badges: end -->
 
 ## Overview
-
-<p align="center">
-
-<img src="inst/app/www/home.svg" alt="drawing" style="max-width: 500px; width: 70%;"/>
-
-</p>
 
 This project in an app to be used by biological dosimetry laboratories.
 Biodose Tools is an open-source project that aims to be a tool to
@@ -37,16 +35,16 @@ are always welcome.
 
 <!-- ``` r -->
 
-<!-- install.packages("mariokart") -->
+<!-- install.packages("biodosetools") -->
 
 <!-- ``` -->
 
 <!-- And  -->
 
-The development version from [GitHub](https://github.com/) with:
+The development version can be installed from
+[GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
 devtools::install_github("biodosimetry-uab/biodosetools")
 ```
 

@@ -1,4 +1,4 @@
-##### Fitting formula
+#### Fitting formula
 
 The objective of curve fitting is to determine those values of the coefficients $C$, $\alpha$ and $\beta$ which best fit the data points.
 

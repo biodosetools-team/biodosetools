@@ -1,13 +1,16 @@
 ---
 title: "Curve fitting report"
-author: "`r paste('Biodose Tools', '-', app_version)`"
+author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
 params:
   fit_results_list: NA
 ---
 
-```{r include=FALSE} 
+```{r include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(rhandsontable)
 pander::panderOptions("table.style", "grid")
 ```
 
@@ -25,11 +28,11 @@ gg_curve <- params$fit_results_list[["gg_curve"]]
 
 ## Count data used
 ```{r echo=FALSE}
-count_data %>% 
-  dplyr::rename(`D (Gy)` = D) %>% 
+count_data %>%
+  dplyr::rename(`D (Gy)` = D) %>%
   pander::pander()
-  # TODO:  hot_col(c(1), format = "0.000", colWidths = 60)
-  # TODO: Add u-value highlighting
+# TODO:  hot_col(c(1), format = "0.000", colWidths = 60)
+# TODO: Add u-value highlighting
 ```
 
 ## Results
