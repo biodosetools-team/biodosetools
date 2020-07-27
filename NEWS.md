@@ -1,10 +1,12 @@
-# Biodose Tools 3.2.1 (2020-02-13)
+# biodosetools 3.3.0 (2020-07-27)
+
+# biodosetools 3.2.1 (2020-02-13)
 
 ## Bug fixes
 
 * Added required `pander` package to generate DOCX reports.
 
-# Biodose Tools 3.2.0 (2020-02-11)
+# biodosetools 3.2.0 (2020-02-11)
 
 All calculations functions previously provided in `inst/app/calcs` have been made proper functions on the package.
 
@@ -39,7 +41,7 @@ All calculations functions previously provided in `inst/app/calcs` have been mad
 * `estimate_whole_body()`.
 
 
-# Biodose Tools 3.1.0 (2019-10-26)
+# biodosetools 3.1.0 (2019-10-26)
 
 Unofficial release (didn't change version on `DESCRIPTION` file). This includes some of the changes I discussed with David in Stockholm.
 
@@ -59,7 +61,7 @@ Unofficial release (didn't change version on `DESCRIPTION` file). This includes 
 * Hide AIC as a relative quality statistic of the dose estimation.
 * Added mean and variance to count data tables in fitting module.
 
-# Biodose Tools 3.0.0 (2019-10-12)
+# biodosetools 3.0.0 (2019-10-12)
 
 The app is now available as an R package on GitHub (we haven't submited Biodose Tools to CRAN yet).
 
@@ -74,7 +76,7 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 * Provide fallback method for NB2 when using constraint-maxlik-optimization.
 
 
-# Biodose Tools 2019.07.27-beta
+# biodosetools 2019.07.27-beta
 
 ## New features
 
@@ -107,19 +109,19 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 * Disable sourcing translations.R for now (until `shiny-i18n` is implemented).
 
 
-# Biodose Tools 2019.07.17-beta
+# biodosetools 2019.07.17-beta
 
 
-# Biodose Tools 2019.06.25-beta
+# biodosetools 2019.06.25-beta
 
 
-# Biodose Tools 2019.06.15-beta
+# biodosetools 2019.06.15-beta
 
 
-# Biodose Tools 2019.06.04-beta
+# biodosetools 2019.06.04-beta
 
 
-# Biodose Tools 2019.05.24-beta
+# biodosetools 2019.05.24-beta
 
 First public beta for laboratories and research centers.
 
@@ -128,11 +130,10 @@ First public beta for laboratories and research centers.
 * Complete implementation of Dicentrics analysis.
 * Experimental fitting on Translocations.
 
-# Biodose Tools 2019.04.03-alpha
+# biodosetools 2019.04.03-alpha
 
 Version presented in second Team Meeting at Munich.
 
-
-# Biodose Tools 2018.11.29-alpha
+# biodosetools 2018.11.29-alpha
 
 First draft and proof of concept presented to the RENEB team at Barcelona.
