@@ -16,25 +16,6 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
     table_reset$value <- 1
   })
 
-  # Calculate aberrations with purr ----
-  aberr_calc <- function(df, aberr_prefix = "C", power = 1) {
-    purrr::map_df(
-      df %>%
-        .[grep(aberr_prefix, names(.))] %>%
-        t() %>%
-        as.data.frame(),
-      ~ . *
-        df %>%
-          .[grep(aberr_prefix, names(.))] %>%
-          names() %>%
-          stringr::str_extract("[0-9]") %>%
-          as.numeric() %>%
-          .^power
-    ) %>%
-      t() %>%
-      rowSums()
-  }
-
   # Initialize data frame ----
   previous <- reactive({
 
@@ -163,12 +144,12 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
           mytable <- mytable %>%
             dplyr::mutate(
               N = as.integer(rowSums(.[grep("C", names(.))])),
-              X = aberr_calc(mytable, power = 1),
-              X2 = aberr_calc(mytable, power = 2),
-              mean = .data$X / .data$N,
-              var = (.data$X2 - (.data$X^2) / .data$N) / (.data$N - 1),
-              DI = .data$var / .data$mean,
-              u = (.data$var / .data$mean - assessment_u) * sqrt((.data$N - 1) / (2 * (1 - 1 / .data$X)))
+              X = calculate_aberr_power(mytable, power = 1),
+              X2 = calculate_aberr_power(mytable, power = 2),
+              mean = calculate_aberr_mean(.data$X, .data$N),
+              var = calculate_aberr_var(.data$X, .data$X2, .data$N),
+              DI = calculate_aberr_disp_index(.data$mean, .data$var),
+              u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u)
             ) %>%
             dplyr::mutate_at(
               c("X", "N", grep("C", names(.), value = TRUE)),
