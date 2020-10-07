@@ -560,6 +560,12 @@ section.sidebar .shiny-bound-input.action-link {
   border-left-color: #5bc0de;
 }
 
+/* Primary Switches */
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary {
+  color: #fff;
+  background: #5B5EA8;
+}
+
 /* Primary Radiobuttons */
 .radio-primary input[type="radio"]:checked + label::before {
   border-color: #5B5EA8;
