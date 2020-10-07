@@ -1,10 +1,25 @@
+# biodosetools 3.3.1 (2020-10-07)
+
+## Bug fixes
+
+* Count and case data calculations are performed using `calculate_aberr_*()` functions. Fixes #8.
+* Fixed missing {dplyr} namespace in `n()` function call.
+
+## New functions
+
+* `calculate_aberr_power()`, which supersedes internal `aberr_calc()` function in server modules.
+* `calculate_aberr_mean()`.
+* `calculate_aberr_var()`.
+* `calculate_aberr_disp_index()`.
+* `calculate_aberr_u_value()`.
+
 # biodosetools 3.3.0 (2020-07-27)
 
 # biodosetools 3.2.1 (2020-02-13)
 
 ## Bug fixes
 
-* Added required `pander` package to generate DOCX reports.
+* Added required {pander} package to generate DOCX reports.
 
 # biodosetools 3.2.0 (2020-02-11)
 
@@ -40,7 +55,6 @@ All calculations functions previously provided in `inst/app/calcs` have been mad
 * `estimate_whole_body_delta()`.
 * `estimate_whole_body()`.
 
-
 # biodosetools 3.1.0 (2019-10-26)
 
 Unofficial release (didn't change version on `DESCRIPTION` file). This includes some of the changes I discussed with David in Stockholm.
@@ -53,7 +67,7 @@ Unofficial release (didn't change version on `DESCRIPTION` file). This includes 
 ## Fixes
 
 * Added additional package dependencies to `DESCRIPTION` file.
-* Following the ISO, renamed detection limits to decision thereshold.
+* Following the ISO, renamed detection limits to decision threshold.
 
 ## Changes
 
@@ -63,18 +77,17 @@ Unofficial release (didn't change version on `DESCRIPTION` file). This includes 
 
 # biodosetools 3.0.0 (2019-10-12)
 
-The app is now available as an R package on GitHub (we haven't submited Biodose Tools to CRAN yet).
+The app is now available as an R package on GitHub (we haven't submitted Biodose Tools to CRAN yet).
 
 ## New functions
 
 * `runApp()` for launching Biodose Tools.
-* `%>%` imported from `magrittr`.
+* `%>%` imported from {magrittr}.
 
 ## Fixes
 
 * Fixed variance calculation for count data.
 * Provide fallback method for NB2 when using constraint-maxlik-optimization.
-
 
 # biodosetools 2019.07.27-beta
 
@@ -92,7 +105,7 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 ## Fixes
 
 * Fixed colwidths for detection limits.
-* Fixed unnecessary recalculation of num_cols for chromosome tables in translocations modules.
+* Fixed unnecessary recalculation of `num_cols` for chromosome tables in translocations modules.
 * New subdirectory structure for help dialogues.
 * Added buttons and example tables in help dialogues.
 * Updated documentation link.
@@ -106,7 +119,7 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 
 ## Changes
 
-* Disable sourcing translations.R for now (until `shiny-i18n` is implemented).
+* Disable sourcing translations.R for now (until {shiny-i18n} is implemented).
 
 
 # biodosetools 2019.07.17-beta
@@ -123,7 +136,7 @@ The app is now available as an R package on GitHub (we haven't submited Biodose 
 
 # biodosetools 2019.05.24-beta
 
-First public beta for laboratories and research centers.
+First public beta for laboratories and research centres.
 
 ## New features
 
