@@ -4,6 +4,7 @@
 
 * Count and case data calculations are performed using `calculate_aberr_*()` functions. Fixes #8.
 * Fixed missing {dplyr} namespace in `n()` function call.
+* Fixed mismatched use of `awesomeCheckbox()` and `switchInput()` in confounders input.
 
 ## New functions
 
