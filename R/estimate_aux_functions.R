@@ -65,12 +65,12 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
   }
 
   # Calculation for lower and upper yields
-  res <- general_var_cov_mat[["C", "C"]] +
-    general_var_cov_mat[["α", "α"]] * dose^2 +
-    general_var_cov_mat[["β", "β"]] * dose^4 * protracted_g_value^2 +
-    2 * general_var_cov_mat[["C", "α"]] * dose +
-    2 * general_var_cov_mat[["C", "β"]] * dose^2 * protracted_g_value +
-    2 * general_var_cov_mat[["α", "β"]] * dose^3 * protracted_g_value
+  res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
+    general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
+    general_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
+    2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
+    2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
+    2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
   if (sum(res < 0) > 0) {
     rep(0, length(res))
   } else {
@@ -134,12 +134,12 @@ calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, gener
 #' @return Corrected confidence interval
 #' @export
 correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
-  res <- general_var_cov_mat[["C", "C"]] +
-    general_var_cov_mat[["α", "α"]] * dose^2 +
-    general_var_cov_mat[["β", "β"]] * dose^4 * protracted_g_value^2 +
-    2 * general_var_cov_mat[["C", "α"]] * dose +
-    2 * general_var_cov_mat[["C", "β"]] * dose^2 * protracted_g_value +
-    2 * general_var_cov_mat[["α", "β"]] * dose^3 * protracted_g_value
+  res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
+    general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
+    general_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
+    2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
+    2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
+    2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
   if (sum(res <= 0) > 1) {
     if (type == "curve") {
       conf_int <- 0

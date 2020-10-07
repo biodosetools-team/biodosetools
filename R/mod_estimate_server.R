@@ -29,13 +29,13 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     })
 
     if (formula_select == "lin-quad") {
-      fit_coeffs_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
     } else if (formula_select == "lin-quad-no-int") {
-      fit_coeffs_names <- c("α", "β")
+      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
     } else if (formula_select == "lin") {
-      fit_coeffs_names <- c("C", "α")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha")
     } else if (formula_select == "lin-no-int") {
-      fit_coeffs_names <- c("α")
+      fit_coeffs_names <- c("coeff_alpha")
     }
 
     full_data <- data.frame(
@@ -61,13 +61,13 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     })
 
     if (model_formula == "lin-quad") {
-      fit_coeffs_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
     } else if (model_formula == "lin-quad-no-int") {
-      fit_coeffs_names <- c("α", "β")
+      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
     } else if (model_formula == "lin") {
-      fit_coeffs_names <- c("C", "α")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha")
     } else if (model_formula == "lin-no-int") {
-      fit_coeffs_names <- c("α")
+      fit_coeffs_names <- c("coeff_alpha")
     }
 
     full_data <- matrix(
@@ -187,7 +187,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Generalized variance-covariance matrix
         general_fit_coeffs <- numeric(length = 3L) %>%
-          `names<-`(c("C", "α", "β"))
+          `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
         for (var in names(fit_coeffs_vec)) {
           general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
@@ -195,9 +195,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Predict yield / aberrations
         predict_eta <- function(data, coeffs) {
-          coeffs[["C"]] * rep(1, nrow(data)) +
-            coeffs[["α"]] * data[["D"]] +
-            coeffs[["β"]] * data[["D"]] * data[["D"]]
+          coeffs[["coeff_C"]] * rep(1, nrow(data)) +
+            coeffs[["coeff_alpha"]] * data[["D"]] +
+            coeffs[["coeff_beta"]] * data[["D"]] * data[["D"]]
         }
 
         eta_sat <- model_data[["X"]]
@@ -801,7 +801,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("C", "α", "β"))
+      `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -809,8 +809,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Generalized fit coefficients
     general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-      `row.names<-`(c("C", "α", "β")) %>%
-      `colnames<-`(c("C", "α", "β"))
+      `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
+      `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
     for (x_var in rownames(fit_var_cov_mat)) {
       for (y_var in colnames(fit_var_cov_mat)) {
