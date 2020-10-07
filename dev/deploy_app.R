@@ -1,3 +1,5 @@
+# Deploy app.R to ShinyApps
+
 rsconnect::deployApp(
   appName = "biodosetools-v3",
   appDir = here::here(),
