@@ -501,22 +501,21 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
             div(
               class = "side-widget",
-              style = "max-width: 140px; margin-right: -40px;",
-              widget_label("Sex", 14),
-              awesomeCheckbox(
+              style = "max-width: 140px; margin-right: 5px;",
+              widget_label("Sex", -4, 14),
+              switchInput(
                 inputId = ns("trans_confounder_sex"),
-                label = "Sex",
-                status = "primary",
+                onStatus = "primary",
                 value = FALSE
               )
             ),
 
             div(
               class = "side-widget",
-              style = "max-width: 140px; margin-right: -40px;",
-              widget_label("Smoker", 14),
+              style = "max-width: 140px; margin-right: 5px;",
+              widget_label("Smoker", -4, 14),
               switchInput(
-                ns("trans_confounder_smoke"),
+                inputId = ns("trans_confounder_smoke"),
                 onStatus = "primary",
                 value = FALSE
               )
