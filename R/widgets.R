@@ -37,13 +37,14 @@ inner_column <- function(width, ..., offset = 0) {
 #'
 #' @param label Input label.
 #' @param margin_bottom Bottom margin.
+#' @param font_size Font size of label.
 #'
 #' @import shiny
 #'
 #' @noRd
-widget_label <- function(label, margin_bottom = 0) {
+widget_label <- function(label, margin_bottom = 0, font_size = 14) {
   div(
-    style = paste0("margin-bottom: ", margin_bottom, "px;"),
-    h6(strong(label))
+    style = paste0("margin-bottom: ", margin_bottom, "px; ", "font-size: ", font_size, "px;"),
+    p(strong(label))
   )
 }
