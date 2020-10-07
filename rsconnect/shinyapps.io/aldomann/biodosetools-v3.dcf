@@ -5,6 +5,6 @@ account: aldomann
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2616968
-bundleId: 3441920
+bundleId: 3713143
 url: https://aldomann.shinyapps.io/biodosetools-v3/
-when: 1595867726.078
+when: 1602082596.14245
