@@ -355,7 +355,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   if ("dose" %in% colnames(data)) {
     data_aggr <- data %>%
       dplyr::group_by(.data$aberr, .data$dose) %>%
-      dplyr::summarise(n = n()) %>%
+      dplyr::summarise(n = dplyr::n()) %>%
       dplyr::group_by(.data$dose) %>%
       dplyr::summarise(
         C = sum(.data$n),
