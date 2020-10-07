@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodosetools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.3.0.900</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.3.1</span>
       </span>
     </div>
 
@@ -122,6 +122,34 @@
       <small>Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="biodosetools-331-2020-10-07" class="section level1">
+<h1 class="page-header" data-toc-text="3.3.1">
+<a href="#biodosetools-331-2020-10-07" class="anchor"></a>biodosetools 3.3.1 (2020-10-07)</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Count and case data calculations are performed using <code>calculate_aberr_*()</code> functions. Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/8'>#8</a>.</li>
+<li>Fixed missing {dplyr} namespace in <code>n()</code> function call.</li>
+</ul>
+</div>
+<div id="new-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code>, which supersedes internal <code>aberr_calc()</code> function in server modules.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_mean()</a></code>.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_var()</a></code>.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_disp_index()</a></code>.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_u_value()</a></code>.</li>
+</ul>
+</div>
+</div>
     <div id="biodosetools-330-2020-07-27" class="section level1">
 <h1 class="page-header" data-toc-text="3.3.0">
 <a href="#biodosetools-330-2020-07-27" class="anchor"></a>biodosetools 3.3.0 (2020-07-27)</h1>
@@ -129,11 +157,11 @@
     <div id="biodosetools-321-2020-02-13" class="section level1">
 <h1 class="page-header" data-toc-text="3.2.1">
 <a href="#biodosetools-321-2020-02-13" class="anchor"></a>biodosetools 3.2.1 (2020-02-13)</h1>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
-<li>Added required <code>pander</code> package to generate DOCX reports.</li>
+<li>Added required {pander} package to generate DOCX reports.</li>
 </ul>
 </div>
 </div>
@@ -141,9 +169,9 @@
 <h1 class="page-header" data-toc-text="3.2.0">
 <a href="#biodosetools-320-2020-02-11" class="anchor"></a>biodosetools 3.2.0 (2020-02-11)</h1>
 <p>All calculations functions previously provided in <code>inst/app/calcs</code> have been made proper functions on the package.</p>
-<div id="new-functions" class="section level2">
+<div id="new-functions-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions" class="anchor"></a>New functions</h2>
+<a href="#new-functions-1" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_yield.html">calculate_yield()</a></code> new wrapper of <code><a href="../reference/yield_fun.html">yield_fun()</a></code>, <code><a href="../reference/R_factor.html">R_factor()</a></code>, and <code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
@@ -153,9 +181,9 @@
 <code><a href="../reference/project_yield.html">project_yield()</a></code> merged version of the <code>project_yield_estimate()</code>, <code>project_yield_lower()</code>, and <code>project_yield_upper()</code> functions.</li>
 </ul>
 </div>
-<div id="new-functions-1" class="section level2">
+<div id="new-functions-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-1" class="anchor"></a>“New” functions</h2>
+<a href="#new-functions-2" class="anchor"></a>“New” functions</h2>
 <ul>
 <li>
 <code>get_decision_threshold()</code>.</li>
@@ -219,7 +247,7 @@
 <a href="#fixes" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Added additional package dependencies to <code>DESCRIPTION</code> file.</li>
-<li>Following the ISO, renamed detection limits to decision thereshold.</li>
+<li>Following the ISO, renamed detection limits to decision threshold.</li>
 </ul>
 </div>
 <div id="changes" class="section level2">
@@ -235,15 +263,15 @@
     <div id="biodosetools-300-2019-10-12" class="section level1">
 <h1 class="page-header" data-toc-text="3.0.0">
 <a href="#biodosetools-300-2019-10-12" class="anchor"></a>biodosetools 3.0.0 (2019-10-12)</h1>
-<p>The app is now available as an R package on GitHub (we haven’t submited Biodose Tools to CRAN yet).</p>
-<div id="new-functions-2" class="section level2">
+<p>The app is now available as an R package on GitHub (we haven’t submitted Biodose Tools to CRAN yet).</p>
+<div id="new-functions-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-2" class="anchor"></a>New functions</h2>
+<a href="#new-functions-3" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code>runApp()</code> for launching Biodose Tools.</li>
 <li>
-<code><a href="../reference/pipe.html">%&gt;%</a></code> imported from <code>magrittr</code>.</li>
+<code><a href="../reference/%&gt;%.html">%&gt;%</a></code> imported from {magrittr}.</li>
 </ul>
 </div>
 <div id="fixes-1" class="section level2">
@@ -268,9 +296,9 @@
 <li>Added DOCX support for dicentrics and translocations.</li>
 </ul>
 </div>
-<div id="new-functions-3" class="section level2">
+<div id="new-functions-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-3" class="anchor"></a>New functions</h2>
+<a href="#new-functions-4" class="anchor"></a>New functions</h2>
 <ul>
 <li>New <code>bs4MyTabPanel()</code> widget to remove unnecessary padding on <code>tabCards</code>’ panels.</li>
 </ul>
@@ -280,7 +308,7 @@
 <a href="#fixes-2" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed colwidths for detection limits.</li>
-<li>Fixed unnecessary recalculation of num_cols for chromosome tables in translocations modules.</li>
+<li>Fixed unnecessary recalculation of <code>num_cols</code> for chromosome tables in translocations modules.</li>
 <li>New subdirectory structure for help dialogues.</li>
 <li>Added buttons and example tables in help dialogues.</li>
 <li>Updated documentation link.</li>
@@ -300,7 +328,7 @@
 <h2 class="hasAnchor">
 <a href="#changes-1" class="anchor"></a>Changes</h2>
 <ul>
-<li>Disable sourcing translations.R for now (until <code>shiny-i18n</code> is implemented).</li>
+<li>Disable sourcing translations.R for now (until {shiny-i18n} is implemented).</li>
 </ul>
 </div>
 </div>
@@ -323,7 +351,7 @@
     <div id="biodosetools-20190524-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.05.24">
 <a href="#biodosetools-20190524-beta" class="anchor"></a>biodosetools 2019.05.24-beta</h1>
-<p>First public beta for laboratories and research centers.</p>
+<p>First public beta for laboratories and research centres.</p>
 <div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features-2" class="anchor"></a>New features</h2>
@@ -360,7 +388,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
