@@ -128,7 +128,8 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     hot <- changed_coeffs_data() %>%
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000000")
@@ -145,7 +146,9 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     hot <- changed_var_data() %>%
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2"),
+        colHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.00000000")
@@ -393,7 +396,8 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -411,7 +415,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2"),
+        colHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -428,7 +434,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2"),
+        colHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")

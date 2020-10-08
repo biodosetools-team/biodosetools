@@ -356,7 +356,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -374,7 +375,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2"),
+        colHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -391,7 +394,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%"
+        height = "100%",
+        rowHeaders = c("C", "\u03B1", "\u03B2"),
+        colHeaders = c("C", "\u03B1", "\u03B2")
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")
