@@ -40,7 +40,6 @@ gg_curve <- params$fit_results_list[["gg_curve"]]
 # Count data used
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(count_data))
 col_headers <- colnames(count_data)
 col_headers[1] <- paste(col_headers[1], "(Gy)")
 colnames(count_data) <- col_headers
@@ -65,8 +64,6 @@ shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
 ## Coefficients
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(fit_coeffs))
-
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
   biodosetools:::fix_coeff_names("rows") %>% 
@@ -76,8 +73,6 @@ fit_coeffs %>%
 ## Model-level statistics
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(fit_model_statistics))
-
 fit_model_statistics %>%
   kable(booktabs = T, align = "c")
 ```
@@ -85,8 +80,6 @@ fit_model_statistics %>%
 ## Correlation matrix
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(fit_cor_mat))
-
 fit_cor_mat %>%
   biodosetools:::fix_coeff_names("rows") %>% 
   biodosetools:::fix_coeff_names("cols") %>% 
@@ -97,8 +90,6 @@ fit_cor_mat %>%
 ## Variance-covariance matrix
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(fit_var_cov_mat))
-
 fit_var_cov_mat %>%
   biodosetools:::fix_coeff_names("rows") %>% 
   biodosetools:::fix_coeff_names("cols") %>% 
