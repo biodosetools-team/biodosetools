@@ -486,8 +486,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- load_rmd_report(
+      temp_report <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
+      local_report <- load_rmd_report(
         paste0(
           aberr_module,
           "-fitting-report-",
@@ -495,7 +495,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         )
       )
 
-      file.copy(localReport, tempReport, overwrite = TRUE)
+      file.copy(local_report, temp_report, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
@@ -506,7 +506,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       rmarkdown::render(
-        tempReport,
+        input = temp_report,
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())

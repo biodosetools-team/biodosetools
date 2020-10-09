@@ -899,6 +899,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       parsed_genome_fraction <- 1
     }
 
+    cat(parsed_genome_fraction)
+
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       results_whole <- estimate_whole_body(
@@ -908,7 +910,6 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       )
     } else if (error_method == "delta") {
       results_whole <- estimate_whole_body_delta(
-
         case_data, general_fit_coeffs, general_var_cov_mat,
         conf_int_delta, protracted_g_value,
         cov = TRUE,
@@ -1558,8 +1559,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- load_rmd_report(
+      temp_report <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
+      local_report <- load_rmd_report(
         paste0(
           aberr_module,
           "-estimate-report-",
@@ -1567,7 +1568,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         )
       )
 
-      file.copy(localReport, tempReport, overwrite = TRUE)
+      file.copy(local_report, temp_report, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
@@ -1578,7 +1579,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       rmarkdown::render(
-        tempReport,
+        input = temp_report,
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())

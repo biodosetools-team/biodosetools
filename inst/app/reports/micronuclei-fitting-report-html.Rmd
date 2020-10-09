@@ -138,6 +138,7 @@ fit_cor_mat %>%
 ```
 
 ### Variance-covariance matrix
+
 ```{r echo=FALSE}
 num_cols <- as.numeric(ncol(fit_var_cov_mat))
 
