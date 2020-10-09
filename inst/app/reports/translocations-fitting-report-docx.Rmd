@@ -56,6 +56,8 @@ chromosome_table %>%
   pander::pander()
 ```
 
+`r if (num_cols == 1) paste("where each chromosome was stained using M-FISH.")`
+
 ## Count data used
 ```{r echo=FALSE}
 count_data %>%
