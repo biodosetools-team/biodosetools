@@ -24,7 +24,6 @@ library(ggplot2)
 library(knitr)
 ```
 
-
 ```{r load-data, echo=FALSE}
 count_data <- params$fit_results_list[["fit_raw_data"]]
 fit_model_statistics <- params$fit_results_list[["fit_model_statistics"]]
@@ -35,7 +34,35 @@ fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
 # detection_lims <- params$fit_results_list[["detection_lims"]]
+
+genome_fraction <- params$fit_results_list[["genome_fraction"]]
+chromosome_table <- params$fit_results_list[["chromosome_table"]]
+trans_sex <- params$fit_results_list[["trans_sex"]]
+frequency_select <- params$fit_results_list[["frequency_select"]]
 ```
+
+
+# Chromosome data
+
+The analyzed blood sample comes from a `r trans_sex` individual.
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(chromosome_table))
+
+chromosome_table %>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = dplyr::everything(),
+      .fns = function(x) {
+        x <- ifelse(is.na(x) | x == "FALSE", "", x)
+        x <- ifelse(x == "TRUE", "$\\checkmark$", x)
+        return(x)
+      }
+    )
+  ) %>% 
+  kable(booktabs = T, align = "c")
+```
+
 
 # Count data used
 
@@ -61,6 +88,15 @@ shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
 ## Model
 
 `r gsub("≤", "$\\\\leq$", fit_model_summary)`
+
+## Translocation frequency
+
+`r paste("The fitting was performed using the ")`
+`r if (frequency_select == "full_gen_freq") paste("full genome translocation frequency.") else if (frequency_select == "measured_freq") paste("translocation frequency measured by FISH.")`
+
+## Genomic conversion factor
+
+`r paste0("The genomic conversion factor to full genome is ", genome_fraction %>% round(3) %>%  as.character(), ".")`
 
 ## Coefficients
 
@@ -108,7 +144,7 @@ fit_var_cov_mat %>%
 
 ## Curve plot
 
-```{r echo=FALSE, fig.width=6, fig.height=3}
+```{r echo=FALSE}
 gg_curve
 ```
 
