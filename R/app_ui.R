@@ -28,7 +28,8 @@ dashboard_header <- function() {
     title = span(img(src = "www/icon_small.svg", height = 35), "Biodose Tools"),
     tags$li(
       a(
-        strong("About"),
+        # strong("About"),
+        icon("github"),
         height = 40,
         href = "https://github.com/biodosetools-team/biodosetools",
         title = "",
@@ -45,30 +46,17 @@ dashboard_header <- function() {
 #' @noRd
 dashboard_sidebar <- function() {
   dashboardSidebar(
-    # selectInput(
-    #   inputId = "experiment_select",
-    #   label = NULL,
-    #   width = 175,
-    #   choices = c(
-    #     "Dicentrics"            = "dicent",
-    #     "Translocations"        = "trans",
-    #     "Micronuclei"           = "micro" # ,
-    #     # "H2AX"                  = "h2ax",
-    #     # "Intercomparison Tests" = "intercomp"
-    #   ),
-    #   selected = "Dicentrics",
-    #   multiple = FALSE,
-    #   selectize = TRUE
-    # ),
-
+    # About section
     sidebarMenu(
       menuItem(
         "About this app",
         tabName = "home",
-        icon = icon("home")
+        icon = icon("home"),
+        selected = TRUE
       )
     ),
 
+    # Aberration assays section
     p(class = "menu-title", "Aberration assays"),
     sidebarMenu(
       # Dicentrics
@@ -76,13 +64,13 @@ dashboard_sidebar <- function() {
         "Dicentrics",
         tabName = "dicent-menu-item",
         icon = icon("dna"),
-        startExpanded = TRUE,
+        startExpanded = FALSE,
         # Modules
         menuItem(
           "Fitting",
           tabName = "tab-dicent-fitting",
-          selected = TRUE,
-          icon = icon("cog")
+          icon = icon("cog"),
+          selected = FALSE
         ),
         menuItem(
           "Dose estimation",
@@ -130,7 +118,8 @@ dashboard_sidebar <- function() {
       )
     ),
 
-    p(class = "menu-title", "Other tools"),
+    # Other tools section
+    # p(class = "menu-title", "Other tools"),
 
     p(class = "sticky-footer", a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md"))
   )
@@ -169,6 +158,15 @@ dashboard_home <- function() {
           icon = icon("book"),
           class = "home-button",
           onclick = "window.open('https://biodosetools-team.github.io/documentation/', '_blank')"
+        ),
+        div(class = "widget-sep", br()),
+
+        # Report bugs
+        actionButton(
+          inputId = "wiki_link", label = "Report issue",
+          icon = icon("bug"),
+          class = "home-button",
+          onclick = "window.open('https://github.com/biodosetools-team/biodosetools/issues/new/', '_blank')"
         )
       )
     )
