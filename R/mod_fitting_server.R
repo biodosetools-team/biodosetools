@@ -155,7 +155,6 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
             ) %>%
-            # dplyr::select(-X2, -var, -mean) %>%
             dplyr::select(-.data$X2) %>%
             dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
         } else {
@@ -350,14 +349,11 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
-      # as.data.frame() %>%
-      # dplyr::select(-statistic) %>%
-      # as.matrix() %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%",
-        rowHeaders = c("C", "\u03B1", "\u03B2")
+        height = "100%"
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -372,12 +368,12 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%",
-        rowHeaders = c("C", "\u03B1", "\u03B2"),
-        colHeaders = c("C", "\u03B1", "\u03B2")
+        height = "100%"
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(halign = "htRight")
@@ -391,12 +387,12 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
-        height = "100%",
-        rowHeaders = c("C", "\u03B1", "\u03B2"),
-        colHeaders = c("C", "\u03B1", "\u03B2")
+        height = "100%"
       ) %>%
       hot_cols(colWidths = 100) %>%
       hot_cols(format = "0.000")

@@ -104,7 +104,7 @@ shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
 ```{r echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
-  biodosetools:::fix_coeff_names("rows") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
   kable(booktabs = T, align = "c")
 ```
 
@@ -119,8 +119,8 @@ fit_model_statistics %>%
 
 ```{r echo=FALSE}
 fit_cor_mat %>%
-  biodosetools:::fix_coeff_names("rows") %>% 
-  biodosetools:::fix_coeff_names("cols") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
+  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
   formatC(format = "f", digits = 3) %>%
   kable(booktabs = T, align = "c")
 ```
@@ -129,8 +129,8 @@ fit_cor_mat %>%
 
 ```{r echo=FALSE}
 fit_var_cov_mat %>%
-  biodosetools:::fix_coeff_names("rows") %>% 
-  biodosetools:::fix_coeff_names("cols") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
+  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
   formatC(format = "e", digits = 3) %>%
   kable(booktabs = T, align = "c")
 ```
