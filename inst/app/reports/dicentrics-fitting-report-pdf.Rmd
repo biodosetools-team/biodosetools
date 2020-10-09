@@ -1,0 +1,121 @@
+---
+title: "Curve fitting report"
+author: "`r paste0('Biodose Tools', ' v', utils::packageVersion(pkg = 'biodosetools'))`"
+date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
+output: 
+  pdf_document:
+    number_sections: true
+    extra_dependencies: ["graphicx", "newpxtext", "newpxmath"]
+    # template: "/home/aldomann/Projects/Biodose Tools/biodosetools/inst/app/reports/default.tex" 
+      #!expr system.file("/app/reports/doc-prefix.tex", package = "biodosetools")
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{
+    \vspace{-50pt}
+    \includegraphics[width=2in,height=0.5in]{`r system.file("/app/reports/logo.pdf", package = "biodosetools")`}\LARGE\\
+    \begin{center}}
+  - \posttitle{\end{center}}
+# geometry: top=0in
+
+params:
+  fit_results_list: NA
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(knitr)
+```
+
+
+```{r load-data, echo=FALSE}
+count_data <- params$fit_results_list[["fit_raw_data"]]
+fit_model_statistics <- params$fit_results_list[["fit_model_statistics"]]
+fit_model_summary <- params$fit_results_list[["fit_model_summary"]]
+fit_coeffs <- params$fit_results_list[["fit_coeffs"]]
+fit_var_cov_mat <- params$fit_results_list[["fit_var_cov_mat"]]
+fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
+fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
+gg_curve <- params$fit_results_list[["gg_curve"]]
+# detection_lims <- params$fit_results_list[["detection_lims"]]
+```
+
+# Count data used
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(count_data))
+col_headers <- colnames(count_data)
+col_headers[1] <- paste(col_headers[1], "(Gy)")
+colnames(count_data) <- col_headers
+
+count_data %>% 
+  kable(booktabs = T, align = "c")
+```
+
+
+# Results
+
+## Fit formula
+
+```{r echo=FALSE}
+shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
+```
+
+## Model
+
+`r gsub("≤", "$\\\\leq$",fit_model_summary)`
+
+## Coefficients
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(fit_coeffs))
+
+fit_coeffs %>%
+  formatC(format = "e", digits = 3) %>%
+  fix_coeff_names("rows") %>% 
+  kable(booktabs = T, align = "c")
+```
+
+\newpage
+## Model-level statistics
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(fit_model_statistics))
+
+fit_model_statistics %>%
+  kable(booktabs = T, align = "c")
+```
+
+## Correlation matrix
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(fit_cor_mat))
+
+fit_cor_mat %>%
+  fix_coeff_names("rows") %>% 
+  fix_coeff_names("cols") %>% 
+  formatC(format = "f", digits = 3) %>%
+  kable(booktabs = T, align = "c")
+```
+
+## Variance-covariance matrix
+
+```{r echo=FALSE}
+num_cols <- as.numeric(ncol(fit_var_cov_mat))
+
+fit_var_cov_mat %>%
+  fix_coeff_names("rows") %>% 
+  fix_coeff_names("cols") %>% 
+  formatC(format = "e", digits = 3) %>%
+  kable(booktabs = T, align = "c")
+```
+
+## Curve plot
+
+```{r echo=FALSE, fig.width=6, fig.height=3}
+gg_curve
+```
+
+## Download fit results
+
+The PDF format does not support embedded files. You can only save the results in RDS format from Biodose Tools or from the HTML report.
