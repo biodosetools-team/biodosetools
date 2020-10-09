@@ -1,5 +1,5 @@
 ---
-title: "Curve fitting report"
+title: "Translocation FISH curve fitting report"
 author: "`r paste0('Biodose Tools', ' v', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: 

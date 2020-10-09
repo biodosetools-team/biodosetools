@@ -1,5 +1,5 @@
 ---
-title: "Curve fitting report"
+title: "Dicentrics curve fitting report"
 author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
