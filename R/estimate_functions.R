@@ -145,8 +145,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
-                                      conf_int, protracted_g_value, cov = TRUE,
-                                      aberr_module) {
+                                      conf_int, protracted_g_value, cov = TRUE, aberr_module) {
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
@@ -336,7 +335,6 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     }, c(1e-16, 100))$root
 
     if (aberr_module == "translocations") {
-      genome_fraction <- genome_fraction$genome_fraction()
       lambda_est <- lambda_est / genome_fraction
     }
 
