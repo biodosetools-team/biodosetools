@@ -259,8 +259,8 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
 
   # Plot data from curves
   curves_data <- data.frame(
-      dose = seq(0, max_dose, length.out = 100)
-    ) %>%
+    dose = seq(0, max_dose, length.out = 100)
+  ) %>%
     dplyr::mutate(
       yield = calculate_yield(.data$dose, type = "estimate", general_fit_coeffs, NULL, protracted_g_value, 0),
       yield_low = calculate_yield(.data$dose, type = "lower", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve),
