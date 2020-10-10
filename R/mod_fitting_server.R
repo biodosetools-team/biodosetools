@@ -262,13 +262,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       )
 
       # Name of the aberration to use in the y-axis
-      if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-        aberr_name <- stringr::str_to_title(aberr_module)
-      } else if (aberr_module == "translocations") {
-        if (nchar(input$trans_name) > 0) {
+      aberr_name <- to_title(aberr_module)
+      if (aberr_module == "translocations") {
+        if(nchar(input$trans_name) > 0) {
           aberr_name <- input$trans_name
-        } else {
-          aberr_name <- stringr::str_to_title(aberr_module)
         }
       }
 
@@ -294,7 +291,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # # Calculate decision thresholds
       # decision_thresh <- data.frame(
       #   N = decision_thresh_cells %>%
-      #     stringr::str_split(" ") %>%
+      #     strsplit(" ") %>%
       #     unlist() %>%
       #     as.numeric()
       # )
@@ -487,7 +484,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste(aberr_module, "-fitting-report-", Sys.Date(), input$save_report_format, sep = "")
+      paste0(aberr_module, "-fitting-report-", Sys.Date(), input$save_report_format)
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
@@ -498,7 +495,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         paste0(
           aberr_module,
           "-fitting-report-",
-          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+          gsub("^\\.", "", input$save_report_format),
+          ".Rmd"
         )
       )
 

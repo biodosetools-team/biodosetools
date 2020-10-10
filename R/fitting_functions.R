@@ -147,7 +147,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   }
 
   # Delete coeff_C column for models with no intercept
-  if (stringr::str_detect(model_formula, "no-int")) {
+  if (any(grep("no-int", model_formula))) {
     parsed_data <- parsed_data %>%
       dplyr::select(-.data$coeff_C)
   }
@@ -389,7 +389,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
   }
   fit_formula <- stats::as.formula(fit_formula_raw)
 
-  if (stringr::str_detect(model_formula, "no-int")) {
+  if (any(grep("no-int", model_formula))) {
     data_aggr <- data_aggr %>%
       dplyr::select(-.data$coeff_C)
   }

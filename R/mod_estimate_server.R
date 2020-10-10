@@ -1011,13 +1011,10 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Name of the aberration to use in the y-axis
-    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-      aberr_name <- stringr::str_to_title(aberr_module)
-    } else if (aberr_module == "translocations") {
-      if (nchar(input$trans_name) > 0) {
+    aberr_name <- to_title(aberr_module)
+    if (aberr_module == "translocations") {
+      if(nchar(input$trans_name) > 0) {
         aberr_name <- input$trans_name
-      } else {
-        aberr_name <- stringr::str_to_title(aberr_module)
       }
     }
 
@@ -1089,7 +1086,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Check if protracted correction was applied
-    if (exposure == "protracted" & stringr::str_detect(fit_formula_tex, "beta")) {
+    if (exposure == "protracted" & any(grep("beta", fit_formula_tex))) {
       est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
     }
 
@@ -1574,7 +1571,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste(aberr_module, "-estimate-report-", Sys.Date(), input$save_report_format, sep = "")
+      paste0(aberr_module, "-estimate-report-", Sys.Date(), input$save_report_format)
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
@@ -1585,7 +1582,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         paste0(
           aberr_module,
           "-estimate-report-",
-          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+          gsub("^\\.", "", input$save_report_format),
+          ".Rmd"
         )
       )
 
