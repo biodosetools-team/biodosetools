@@ -563,7 +563,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste("\u2692: A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
+    fit_model_summary <- paste("WIP: A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
   }
 
   # Calculate correlation matrix
