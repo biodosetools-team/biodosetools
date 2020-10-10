@@ -91,6 +91,16 @@ fit_coeffs %>%
 
 ```{r echo=FALSE}
 case_data %>%
+  as.matrix() %>% 
+  formatC(format = "f", digits = 3) %>%
+  as.data.frame() %>% 
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c("N", "X", dplyr::starts_with("C")),
+      .fns = as.integer
+    )    
+  ) %>% 
+  biodosetools:::fix_count_data_names(type = "case", output = "kable") %>% 
   kable(booktabs = T, align = "c")
   # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
