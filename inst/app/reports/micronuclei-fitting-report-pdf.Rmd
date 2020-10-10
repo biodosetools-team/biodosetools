@@ -40,11 +40,8 @@ gg_curve <- params$fit_results_list[["gg_curve"]]
 # Count data used
 
 ```{r echo=FALSE}
-col_headers <- colnames(count_data)
-col_headers[1] <- paste(col_headers[1], "(Gy)")
-colnames(count_data) <- col_headers
-
 count_data %>% 
+  biodosetools:::fix_count_data_names(type = "count", output = "kable") %>% 
   kable(booktabs = T, align = "c")
   # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
@@ -75,6 +72,9 @@ fit_coeffs %>%
 
 ```{r echo=FALSE}
 fit_model_statistics %>%
+  formatC(format = "f", digits = 3) %>%
+  as.data.frame() %>% 
+  dplyr::mutate(df = as.integer(df)) %>% 
   kable(booktabs = T, align = "c")
 ```
 
