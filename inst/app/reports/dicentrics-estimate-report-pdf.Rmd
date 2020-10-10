@@ -80,8 +80,6 @@ if (protraction[1]) {
 ## Coefficients
 
 ```{r echo=FALSE}
-num_cols <- as.numeric(ncol(fit_coeffs))
-
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
@@ -92,26 +90,9 @@ fit_coeffs %>%
 # Case data analyzed
 
 ```{r echo=FALSE}
-# Read number of columns
-num_cols <- as.numeric(ncol(case_data))
-
-# Convert to hot and format table
 case_data %>%
   kable(booktabs = T, align = "c")
-  # rhandsontable(
-  #   width = (50 + num_cols * 50), 
-  #   height = "100%"
-  # ) %>%
-  # hot_cols(colWidths = 50) %>%
-  # # hot_table(highlightCol = TRUE, highlightRow = TRUE)
-  # hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
-  # hot_col(num_cols, renderer = "
-  #    function (instance, td, row, col, prop, value, cellProperties) {
-  #      Handsontable.renderers.NumericRenderer.apply(this, arguments);
-  #      if (value > 1.96) {
-  #       td.style.background = 'pink';
-  #      }
-  #    }")
+  # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
 
 ## Case description

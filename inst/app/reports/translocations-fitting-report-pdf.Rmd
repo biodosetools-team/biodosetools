@@ -75,6 +75,7 @@ colnames(count_data) <- col_headers
 
 count_data %>% 
   kable(booktabs = T, align = "c")
+  # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
 
 
