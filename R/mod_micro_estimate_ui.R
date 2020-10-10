@@ -563,8 +563,8 @@ mod_micro_estimate_ui <- function(id, label) { # , locale = i18n) {
               ns("save_report_format"),
               label = NULL,
               width = "85px",
-              choices = list(".html", ".docx"),
-              selected = ".html"
+              choices = list(".pdf", ".html", ".docx"),
+              selected = ".pdf"
             )
           )
         )
