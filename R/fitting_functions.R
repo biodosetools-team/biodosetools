@@ -166,7 +166,8 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #'
 #' @return List object containing GLM fit results
 #' @export
-get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
+get_fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
+  model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
   fit_algorithm <- "glm"
@@ -222,7 +223,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     fit_dispersion <- NULL
     fit_final_model <- "poisson"
   } else if (model_family == "automatic" | model_family == "quasipoisson") {
-    # Automatic and Quasi-poisson model
+    # Automatic and quasi-Poisson model
     fit_results <- stats::glm(
       formula = fit_formula,
       family = stats::quasipoisson(link = fit_link),
@@ -231,6 +232,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     )
     fit_dispersion <- summary(fit_results)$dispersion
     fit_final_model <- "quasipoisson"
+
     # Check if Poisson model is more suitable
     if (fit_dispersion <= 1 & aberr_module != "micronuclei") {
       fit_results <- stats::glm(
@@ -284,7 +286,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     # Summary of model used
     fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion \u2264 1.")
   } else if (fit_final_model == "quasipoisson") {
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -295,7 +297,11 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    if (aberr_module != "micronuclei") {
+      fit_model_summary <- paste0("A quasi-Poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    } else {
+      fit_model_summary <- paste0("A quasi-Poisson model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
+    }
   } else if (fit_final_model == "nb2") {
     # For Poisson model
     fit_coeffs <- cbind(
@@ -308,7 +314,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste("A Negative binomial (NB2) model was used.")
+    fit_model_summary <- paste0("A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
   }
 
   # Return objects
@@ -335,6 +341,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 
 #' Perform max-likelihood optimization fitting
 #'
+#' Method based on the paper by Oliveira et al. (2011) <doi:10.1007/s00184-009-0295-7>
+#'
 #' @param data Count data
 #' @param model_formula Model formula
 #' @param model_family Model family
@@ -342,11 +350,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 #'
 #' @return List object containing maxLik fit results
 #' @export
-get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
-  # type can be "poisson", "quasipoisson" or "automatic"
-  # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
-  # start should include starting values for the coefficients of the regression model
-  # Please note that most parts of this code are from Oliviera et al. this should be cited somewhere
+get_fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link) {
+  model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
   fit_algorithm <- "constraint-maxlik-optimization"
@@ -532,7 +537,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
     fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
     t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -542,13 +547,13 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    fit_model_summary <- paste0("A quasi-Poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
   } else if (model_family == "nb2") {
     # TODO: update coefficients for NB2
     fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
     t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -558,7 +563,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste("Work in progress: A Negative binomial (NB2) model was used.")
+    fit_model_summary <- paste("\u2692: A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
   }
 
   # Calculate correlation matrix

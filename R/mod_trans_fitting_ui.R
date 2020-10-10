@@ -328,7 +328,7 @@ mod_trans_fitting_ui <- function(id, label) {
               choices = list(
                 "Automatic" = "automatic",
                 "Poisson" = "poisson",
-                "Quasipoisson" = "quasipoisson"
+                "Quasi-Poisson" = "quasipoisson"
               ),
               selected = "automatic"
             ) # ,

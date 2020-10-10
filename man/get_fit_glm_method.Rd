@@ -7,7 +7,7 @@
 get_fit_glm_method(
   count_data,
   model_formula,
-  model_family,
+  model_family = c("automatic", "poisson", "quasipoisson", "nb2"),
   fit_link = "identity",
   aberr_module
 )
