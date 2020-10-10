@@ -247,11 +247,19 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       }
     }
 
-    # Perform calculations
+    # Calculations process
     input$button_fit
 
     isolate({
-      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
+      # Calculate dose-effect fitting curve
+      message("\nPerforming dose-effect fitting...")
+      fit_results_list <- get_fit_results(
+        count_data,
+        model_formula,
+        model_family,
+        fit_link = "identity",
+        aberr_module
+      )
 
       # Name of the aberration to use in the y-axis
       if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
@@ -265,7 +273,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       }
 
       # Get dose estimation curve
+      message("\nPlotting fitting results...")
       gg_curve <- get_fit_dose_curve(fit_results_list, aberr_name)
+
+      message("\nDone!")
 
       # Make list of results to return
       results_list <- fit_results_list

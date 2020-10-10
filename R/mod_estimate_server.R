@@ -898,15 +898,25 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
+      message("\nPerforming whole-body dose estimation (Merkle)...")
       results_whole <- estimate_whole_body(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_yield, conf_int_curve, protracted_g_value,
-        parsed_genome_fraction, aberr_module
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_yield,
+        conf_int_curve,
+        protracted_g_value,
+        parsed_genome_fraction,
+        aberr_module
       )
     } else if (error_method == "delta") {
+      message("\nPerforming whole-body dose estimation (Delta)...")
       results_whole <- estimate_whole_body_delta(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_delta, protracted_g_value,
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_delta,
+        protracted_g_value,
         cov = TRUE,
         aberr_module
       )
@@ -925,10 +935,17 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       }
 
       # Calculate partial results
+      message("\nPerforming partial-body dose estimation (Dolphin)...")
       results_partial <- estimate_partial_dolphin(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_dolphin, protracted_g_value, cov = TRUE,
-        parsed_genome_fraction, aberr_module, gamma
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_dolphin,
+        protracted_g_value,
+        cov = TRUE,
+        parsed_genome_fraction,
+        aberr_module,
+        gamma
       )
 
       # Parse results
@@ -946,10 +963,16 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       }
 
       # Calculate heterogeneous result
+      message("\nPerforming heterogeneous dose estimation...")
       results_hetero <- estimate_hetero(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value,
-        gamma, gamma_error
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_yield_hetero,
+        conf_int_curve_hetero,
+        protracted_g_value,
+        gamma,
+        gamma_error
       )
 
       # Parse results
@@ -961,6 +984,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Make plot ----
+    message("\nPlotting dose estimation results...")
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
@@ -1004,6 +1028,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
       aberr_name
     )
+
+    message("\nDone!")
 
     # Return list ----
 
@@ -1116,9 +1142,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         side = "left",
 
         title = help_modal_button(
-            container = "tabbox",
-            session$ns("help_dose_mixed_yields"),
-            session$ns("help_dose_mixed_yields_modal")
+          container = "tabbox",
+          session$ns("help_dose_mixed_yields"),
+          session$ns("help_dose_mixed_yields_modal")
         ),
 
         tabPanel(
