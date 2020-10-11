@@ -71,7 +71,7 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
       gsub("^mean$", "$\\\\bar{y}$", .) %>%
-      gsub("^var$", "$\\\\sigma$", .) %>%
+      gsub("^var$", "$\\\\sigma^{2}$", .) %>%
       gsub("^DI$", "$\\\\sigma^{2} / \\\\bar{y}$", .) %>%
       gsub("^u$", "$u$", .)
 
@@ -81,12 +81,12 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
       gsub("^y$", "$y$", .) %>%
-      gsub("^y_err$", "$y_{err}$", .) %>%
+      gsub("^y_err$", "$\\\\sigma_{y} / \\\\sqrt{N}$", .) %>%
       gsub("^Fp$", "$F_{P}$", .) %>%
-      gsub("^Fp_err$", "$F_{P,err}$", .) %>%
+      gsub("^Fp_err$", "$\\\\sigma_{P} / \\\\sqrt{N}$", .) %>%
       gsub("^Fg$", "$F_{G}$", .) %>%
       gsub("^Xc$", "$X_{C}$", .) %>%
-      gsub("^Fg_err$", "$F_{G,err}$", .) %>%
+      gsub("^Fg_err$", "$\\\\sigma_{G} / \\\\sqrt{N}$", .) %>%
       gsub("^DI$", "$\\\\sigma^{2} / \\\\bar{y}$", .) %>%
       gsub("^u$", "$u$", .)
 
