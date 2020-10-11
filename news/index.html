@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodosetools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.4.0</span>
       </span>
     </div>
 
@@ -122,21 +122,67 @@
       <small>Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="biodosetools-331-2020-10-07" class="section level1">
-<h1 class="page-header" data-toc-text="3.3.1">
-<a href="#biodosetools-331-2020-10-07" class="anchor"></a>biodosetools 3.3.1 (2020-10-07)</h1>
+    <div id="biodosetools-340-2020-10-11" class="section level1">
+<h1 class="page-header" data-toc-text="3.4.0">
+<a href="#biodosetools-340-2020-10-11" class="anchor"></a>biodosetools 3.4.0 (2020-10-11)</h1>
+<ul>
+<li>Removed all non-ASCII characters.</li>
+<li>Major rehaul of reports.</li>
+<li>Added “Report bug” button on home screen and cleaned up <code>dashboard_*()</code> code.</li>
+<li>Removed dependencies on {stringr} package.</li>
+<li>Initial <code><a href="https://rdrr.io/r/utils/citation.html">utils::citation()</a></code> support via CITATION file.</li>
+<li>Minimal version of R bumped to 3.5.0.</li>
+<li>Minimal version of {dplyr} bumped to 1.0.0.</li>
+</ul>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Replaced <code>C</code>, <code>α</code>, <code>β</code> variables (and derivatives) by <code>coeff_C</code>, <code>coeff_alpha</code>, <code>coeff_beta</code>.</li>
+<li>Fixed error in genome_fraction parsing for translocations in <code><a href="../reference/estimate_partial_dolphin.html">estimate_partial_dolphin()</a></code>.</li>
+<li>Fixed count/case data standard error column names replacements.</li>
+<li>Fixed minipage issue when using more than 12 columns in {knitr} tables with column name replacements, by using <code>format = "latex", escape = FALSE</code> parameters in <code>kable()</code> call.</li>
+<li>Supress YAML warning when using <code>!expr</code> in PDF reports. See <a href="https://github.com/rstudio/rstudio/issues/7545" class="uri">https://github.com/rstudio/rstudio/issues/7545</a>.</li>
+</ul>
+</div>
+<div id="new-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code>fix_coeff_names()</code>, to fix coefficient names in reports.</li>
+<li>
+<code>fix_count_data_names()</code>, to fix count/case data column names in PDF reports.</li>
+<li>
+<code>to_title()</code>, to replace <code><a href="https://stringr.tidyverse.org/reference/case.html">stringr::str_to_title()</a></code> using base R.</li>
+</ul>
+</div>
+<div id="reports-improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#reports-improvements" class="anchor"></a>Reports improvements</h2>
+<ul>
+<li>New PDF reports, which are now the default output format.</li>
+<li>Improved HTML reports styling.</li>
+<li>Added explicit M-FISH usage in translocation reports.</li>
+<li>Added assay name in report titles.</li>
+</ul>
+</div>
+</div>
+    <div id="biodosetools-331-2020-10-07" class="section level1">
+<h1 class="page-header" data-toc-text="3.3.1">
+<a href="#biodosetools-331-2020-10-07" class="anchor"></a>biodosetools 3.3.1 (2020-10-07)</h1>
+<div id="bug-fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Count and case data calculations are performed using <code>calculate_aberr_*()</code> functions. Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/8'>#8</a>.</li>
 <li>Fixed missing {dplyr} namespace in <code>n()</code> function call.</li>
 <li>Fixed mismatched use of <code>awesomeCheckbox()</code> and <code>switchInput()</code> in confounders input.</li>
 </ul>
 </div>
-<div id="new-functions" class="section level2">
+<div id="new-functions-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions" class="anchor"></a>New functions</h2>
+<a href="#new-functions-1" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code>, which supersedes internal <code>aberr_calc()</code> function in server modules.</li>
@@ -158,9 +204,9 @@
     <div id="biodosetools-321-2020-02-13" class="section level1">
 <h1 class="page-header" data-toc-text="3.2.1">
 <a href="#biodosetools-321-2020-02-13" class="anchor"></a>biodosetools 3.2.1 (2020-02-13)</h1>
-<div id="bug-fixes-1" class="section level2">
+<div id="bug-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Added required {pander} package to generate DOCX reports.</li>
 </ul>
@@ -170,9 +216,9 @@
 <h1 class="page-header" data-toc-text="3.2.0">
 <a href="#biodosetools-320-2020-02-11" class="anchor"></a>biodosetools 3.2.0 (2020-02-11)</h1>
 <p>All calculations functions previously provided in <code>inst/app/calcs</code> have been made proper functions on the package.</p>
-<div id="new-functions-1" class="section level2">
+<div id="new-functions-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-1" class="anchor"></a>New functions</h2>
+<a href="#new-functions-2" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_yield.html">calculate_yield()</a></code> new wrapper of <code><a href="../reference/yield_fun.html">yield_fun()</a></code>, <code><a href="../reference/R_factor.html">R_factor()</a></code>, and <code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
@@ -182,9 +228,9 @@
 <code><a href="../reference/project_yield.html">project_yield()</a></code> merged version of the <code>project_yield_estimate()</code>, <code>project_yield_lower()</code>, and <code>project_yield_upper()</code> functions.</li>
 </ul>
 </div>
-<div id="new-functions-2" class="section level2">
+<div id="new-functions-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-2" class="anchor"></a>“New” functions</h2>
+<a href="#new-functions-3" class="anchor"></a>“New” functions</h2>
 <ul>
 <li>
 <code>get_decision_threshold()</code>.</li>
@@ -234,7 +280,7 @@
     <div id="biodosetools-310-2019-10-26" class="section level1">
 <h1 class="page-header" data-toc-text="3.1.0">
 <a href="#biodosetools-310-2019-10-26" class="anchor"></a>biodosetools 3.1.0 (2019-10-26)</h1>
-<p>Unofficial release (didn’t change version on <code>DESCRIPTION</code> file). This includes some of the changes I discussed with David in Stockholm.</p>
+<p>Unofficial release (wasn’t changed on <code>DESCRIPTION</code> file). This includes some of the changes discussed with David in Stockholm (ERPW19).</p>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New features</h2>
@@ -265,9 +311,9 @@
 <h1 class="page-header" data-toc-text="3.0.0">
 <a href="#biodosetools-300-2019-10-12" class="anchor"></a>biodosetools 3.0.0 (2019-10-12)</h1>
 <p>The app is now available as an R package on GitHub (we haven’t submitted Biodose Tools to CRAN yet).</p>
-<div id="new-functions-3" class="section level2">
+<div id="new-functions-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-3" class="anchor"></a>New functions</h2>
+<a href="#new-functions-4" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code>runApp()</code> for launching Biodose Tools.</li>
@@ -297,9 +343,9 @@
 <li>Added DOCX support for dicentrics and translocations.</li>
 </ul>
 </div>
-<div id="new-functions-4" class="section level2">
+<div id="new-functions-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-4" class="anchor"></a>New functions</h2>
+<a href="#new-functions-5" class="anchor"></a>New functions</h2>
 <ul>
 <li>New <code>bs4MyTabPanel()</code> widget to remove unnecessary padding on <code>tabCards</code>’ panels.</li>
 </ul>
