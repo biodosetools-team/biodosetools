@@ -4,7 +4,12 @@
 \alias{get_fit_maxlik_method}
 \title{Perform max-likelihood optimization fitting}
 \usage{
-get_fit_maxlik_method(data, model_formula, model_family, fit_link)
+get_fit_maxlik_method(
+  data,
+  model_formula,
+  model_family = c("automatic", "poisson", "quasipoisson", "nb2"),
+  fit_link
+)
 }
 \arguments{
 \item{data}{Count data}
@@ -19,5 +24,5 @@ get_fit_maxlik_method(data, model_formula, model_family, fit_link)
 List object containing maxLik fit results
 }
 \description{
-Perform max-likelihood optimization fitting
+Method based on the paper by Oliveira et al. (2011) <doi:10.1007/s00184-009-0295-7>
 }

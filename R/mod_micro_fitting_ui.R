@@ -176,7 +176,7 @@ mod_micro_fitting_ui <- function(id, label) {
               choices = list(
                 # "Automatic" = "automatic",
                 # "Poisson" = "poisson",
-                "Quasipoisson" = "quasipoisson",
+                "Quasi-Poisson" = "quasipoisson",
                 "Negative binomial (NB2)" = "nb2"
               ),
               selected = "automatic"
@@ -352,8 +352,8 @@ mod_micro_fitting_ui <- function(id, label) {
               ns("save_report_format"),
               label = NULL,
               width = "85px",
-              choices = list(".html", ".docx"),
-              selected = ".html"
+              choices = list(".pdf", ".html", ".docx"),
+              selected = ".pdf"
             )
           )
         )

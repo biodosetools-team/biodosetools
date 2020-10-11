@@ -21,15 +21,15 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
   if (type == "theory") {
     # Renormalize data if necessary
     if (response == "yield") {
-      model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["C"]]
-      model_data[["α"]] <- model_data[["α"]] / model_data[["C"]]
-      model_data[["β"]] <- model_data[["β"]] / model_data[["C"]]
-      model_data[["C"]] <- model_data[["C"]] / model_data[["C"]]
+      model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["coeff_C"]]
+      model_data[["coeff_alpha"]] <- model_data[["coeff_alpha"]] / model_data[["coeff_C"]]
+      model_data[["coeff_beta"]] <- model_data[["coeff_beta"]] / model_data[["coeff_C"]]
+      model_data[["coeff_C"]] <- model_data[["coeff_C"]] / model_data[["coeff_C"]]
     }
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("C", "α", "β"))
+      `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
     for (var in names(fit_coeffs_vec)) {
       general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
@@ -37,9 +37,9 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
 
     # Predict yield / aberrations
     predict_eta <- function(data, coeffs) {
-      coeffs[["C"]] * data[["C"]] +
-        coeffs[["α"]] * data[["α"]] +
-        coeffs[["β"]] * data[["β"]]
+      coeffs[["coeff_C"]] * data[["coeff_C"]] +
+        coeffs[["coeff_alpha"]] * data[["coeff_alpha"]] +
+        coeffs[["coeff_beta"]] * data[["coeff_beta"]]
     }
 
     eta_sat <- model_data[["aberr"]]
@@ -125,31 +125,31 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
     parsed_data <- data.frame(
       aberr = dics_vec,
       dose = dose_vec,
-      C = cell_vec
+      coeff_C = cell_vec
     ) %>%
       dplyr::mutate(
-        α = .data$dose * .data$C,
-        β = .data$dose^2 * .data$C
+        coeff_alpha = .data$dose * .data$coeff_C,
+        coeff_beta = .data$dose^2 * .data$coeff_C
       ) %>%
-      dplyr::select(.data$aberr, .data$C, .data$α, .data$β, .data$dose)
+      dplyr::select(.data$aberr, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta, .data$dose)
   } else {
     # Aggregated data only or if using translocations
     parsed_data <- count_data %>%
       dplyr::rename(
         aberr = .data$X,
-        C = .data$N
+        coeff_C = .data$N
       ) %>%
       dplyr::mutate(
-        α = .data$D * .data$C,
-        β = .data$D^2 * .data$C
+        coeff_alpha = .data$D * .data$coeff_C,
+        coeff_beta = .data$D^2 * .data$coeff_C
       ) %>%
-      dplyr::select(.data$aberr, .data$C, .data$α, .data$β)
+      dplyr::select(.data$aberr, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
   }
 
-  # Delete C column for models with no intercept
-  if (stringr::str_detect(model_formula, "no-int")) {
+  # Delete coeff_C column for models with no intercept
+  if (any(grep("no-int", model_formula))) {
     parsed_data <- parsed_data %>%
-      dplyr::select(-.data$C)
+      dplyr::select(-.data$coeff_C)
   }
 
   # Return data frame
@@ -166,7 +166,8 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #'
 #' @return List object containing GLM fit results
 #' @export
-get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
+get_fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
+  model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
   fit_algorithm <- "glm"
@@ -184,10 +185,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
   }
 
   # Construct predictors and model data
-  C <- cells
-  α <- cells * doses
-  β <- cells * doses * doses
-  model_data <- list(C = C, α = α, β = β, aberr = aberr)
+  coeff_C <- cells
+  coeff_alpha <- cells * doses
+  coeff_beta <- cells * doses * doses
+  model_data <- list(coeff_C = coeff_C, coeff_alpha = coeff_alpha, coeff_beta = coeff_beta, aberr = aberr)
   weights <- 1 / disp
 
   # Correct biased estimates
@@ -195,18 +196,18 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 
   # Select model formula
   if (model_formula == "lin-quad") {
-    fit_formula_raw <- "aberr ~ -1 + C + α + β"
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
   } else if (model_formula == "lin") {
-    fit_formula_raw <- "aberr ~ -1 + C + α"
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
     fit_formula_tex <- "Y = C + \\alpha D"
   }
   else if (model_formula == "lin-quad-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + α + β"
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
   }
   else if (model_formula == "lin-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + α"
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
     fit_formula_tex <- "Y = \\alpha D"
   }
   fit_formula <- stats::as.formula(fit_formula_raw)
@@ -222,7 +223,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     fit_dispersion <- NULL
     fit_final_model <- "poisson"
   } else if (model_family == "automatic" | model_family == "quasipoisson") {
-    # Automatic and Quasi-poisson model
+    # Automatic and quasi-Poisson model
     fit_results <- stats::glm(
       formula = fit_formula,
       family = stats::quasipoisson(link = fit_link),
@@ -231,6 +232,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
     )
     fit_dispersion <- summary(fit_results)$dispersion
     fit_final_model <- "quasipoisson"
+
     # Check if Poisson model is more suitable
     if (fit_dispersion <= 1 & aberr_module != "micronuclei") {
       fit_results <- stats::glm(
@@ -282,9 +284,9 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion ≤ 1.")
+    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion \u2264 1.")
   } else if (fit_final_model == "quasipoisson") {
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -295,7 +297,11 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    if (aberr_module != "micronuclei") {
+      fit_model_summary <- paste0("A quasi-Poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    } else {
+      fit_model_summary <- paste0("A quasi-Poisson model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
+    }
   } else if (fit_final_model == "nb2") {
     # For Poisson model
     fit_coeffs <- cbind(
@@ -308,7 +314,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste("A Negative binomial (NB2) model was used.")
+    fit_model_summary <- paste0("A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
   }
 
   # Return objects
@@ -335,6 +341,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 
 #' Perform max-likelihood optimization fitting
 #'
+#' Method based on the paper by Oliveira et al. (2011) <doi:10.1007/s00184-009-0295-7>
+#'
 #' @param data Count data
 #' @param model_formula Model formula
 #' @param model_family Model family
@@ -342,11 +350,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family, fit_link
 #'
 #' @return List object containing maxLik fit results
 #' @export
-get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
-  # type can be "poisson", "quasipoisson" or "automatic"
-  # in case of automatic the script will choose a quasipoisson model if deviance > df (see below)
-  # start should include starting values for the coefficients of the regression model
-  # Please note that most parts of this code are from Oliviera et al. this should be cited somewhere
+get_fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link) {
+  model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
   fit_algorithm <- "constraint-maxlik-optimization"
@@ -358,40 +363,40 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       dplyr::summarise(n = dplyr::n()) %>%
       dplyr::group_by(.data$dose) %>%
       dplyr::summarise(
-        C = sum(.data$n),
+        coeff_C = sum(.data$n),
         X = sum(ifelse(.data$aberr > 0, n * .data$aberr, 0))
       ) %>%
       dplyr::mutate(
-        α = .data$dose * .data$C,
-        β = .data$dose^2 * .data$C
+        coeff_alpha = .data$dose * .data$coeff_C,
+        coeff_beta = .data$dose^2 * .data$coeff_C
       ) %>%
       dplyr::rename(aberr = X) %>%
-      dplyr::select(.data$aberr, .data$dose, .data$C, .data$α, .data$β)
+      dplyr::select(.data$aberr, .data$dose, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
   } else {
     data_aggr <- data
   }
 
   # Select model formula
   if (model_formula == "lin-quad") {
-    fit_formula_raw <- "aberr ~ -1 + C + α + β"
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
   } else if (model_formula == "lin") {
-    fit_formula_raw <- "aberr ~ -1 + C + α"
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
     fit_formula_tex <- "Y = C + \\alpha D"
   }
   else if (model_formula == "lin-quad-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + α + β"
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
   }
   else if (model_formula == "lin-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + α"
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
     fit_formula_tex <- "Y = \\alpha D"
   }
   fit_formula <- stats::as.formula(fit_formula_raw)
 
-  if (stringr::str_detect(model_formula, "no-int")) {
+  if (any(grep("no-int", model_formula))) {
     data_aggr <- data_aggr %>%
-      dplyr::select(-.data$C)
+      dplyr::select(-.data$coeff_C)
   }
 
   # Find starting values for the mean
@@ -527,12 +532,12 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion ≤ 1.")
+    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion \u2264 1.")
   } else if (model_family == "quasipoisson" | (model_family == "automatic" & fit_dispersion > 1)) {
     fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
     t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -542,13 +547,13 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste0("A Quasi-poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
+    fit_model_summary <- paste0("A quasi-Poisson model accounting for overdispersion was used as the model dispersion (=", round(fit_dispersion, 2), ") > 1.")
   } else if (model_family == "nb2") {
     # TODO: update coefficients for NB2
     fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
     t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
 
-    # For Quasi-poisson model
+    # For quasi-Poisson model
     fit_coeffs <- cbind(
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
@@ -558,7 +563,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family, fit_link) {
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste("Work in progress: A Negative binomial (NB2) model was used.")
+    fit_model_summary <- paste("WIP: A negative binomial (NB2) model was used, with a model dispersion of ", round(fit_dispersion, 2), ".")
   }
 
   # Calculate correlation matrix

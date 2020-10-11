@@ -1,17 +1,27 @@
 ---
-title: "Dicentrics dose estimation report"
-author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
+title: "Micronuclei dose estimation report"
+author: "`r paste0('Biodose Tools', ' v', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
-output: word_document
+output:
+  pdf_document:
+    number_sections: true
+    extra_dependencies: ["graphicx", "newpxtext", "newpxmath"]
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{
+    \vspace{-50pt}
+    \includegraphics[width=2.0625in,height=0.5in]{`r system.file("/app/reports/logo.pdf", package = "biodosetools")`}\LARGE\\
+    \begin{center}}
+  - \posttitle{\end{center}}
+
 params:
   est_results_list: NA
 ---
 
-```{r include=FALSE}
+```{r setup, include=FALSE}
 library(dplyr)
 library(ggplot2)
-library(rhandsontable)
-pander::panderOptions("table.style", "grid")
+library(knitr)
 ```
 
 ```{r load-data, echo=FALSE}
@@ -41,164 +51,173 @@ results_comments <- params$est_results_list[["results_comments"]]
 gg_curve <- params$est_results_list[["gg_curve"]]
 ```
 
-## Curve used
 
-### Fit formula
+# Curve used
+
+## Fit formula
+
 ```{r echo=FALSE}
 withMathJax(paste0("$$", fit_formula_tex, if (protraction[1]) "G(x)", "$$"))
 ```
 
-`r if (protraction[1] ) paste("where")` 
-`r if (protraction[1]) withMathJax("\\( G(x) \\)")` 
+`r if (protraction[1] ) paste("where")`
+`r if (protraction[1]) withMathJax("\\( G(x) \\)")`
 `r if (protraction[1]) paste("is a time-dependent correction that takes into account protracted and fractionated exposures:")`
+
 ```{r echo=FALSE}
 if (protraction[1]) {
   withMathJax(paste0("$$", "G(x) = \\frac{2}{x^{2}} \\left(x - 1 - e^{-x} \\right), \\quad x = \\frac{t}{t_{0}}", "$$"))
 }
 ```
-`r if (protraction[1]) paste("The protraction times used for the dose estimation were")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste("and")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste(".")` 
+
+`r if (protraction[1]) paste("The protraction times used for the dose estimation were")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste("and")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste(".")`
 
 
-### Coefficients
+## Coefficients
+
 ```{r echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
-  # as.data.frame() %>%
-  # dplyr::select(-statistic) %>%
-  # as.matrix() %>%
-  pander::pander()
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
+  kable(booktabs = T, align = "c")
 ```
 
-## Case data analyzed
+
+# Case data analyzed
+
+\begin{centering}
+
 ```{r echo=FALSE}
 case_data %>%
-  pander::pander()
-# TODO: Add u-value highlighting
+  as.matrix() %>% 
+  formatC(format = "f", digits = 3) %>%
+  as.data.frame() %>% 
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c("N", "X", dplyr::starts_with("C")),
+      .fns = as.integer
+    )    
+  ) %>% 
+  biodosetools:::fix_count_data_names(type = "case", output = "kable") %>% 
+  kable(booktabs = T, align = "c", format = "latex", escape = FALSE)
+  # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
 
-### Case description
+\end{centering}
+
+## Case description
+
 `r case_description`
 
-## Dose estimation results
 
-`r if (TRUE) {"### Whole-body exposure results"}`
+# Dose estimation results
 
-`r if (TRUE) {"#### Whole-body exposure estimation"}`
+`r if (TRUE) {"## Whole-body exposure results"}`
+
+`r if (TRUE) {"### Whole-body exposure estimation"}`
+
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
     dplyr::select(yield) %>%
     t() %>%
     formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    as.data.frame() %>%
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
-
-`r if (TRUE) {"####"}`
 
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
-    dplyr::select(dose) %>%
+    dplyr::select(`dose (Gy)` = dose) %>%
     t() %>%
-    # as.data.frame() %>%
     formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    as.data.frame() %>%
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-<!-- `r if (TRUE) {"#### Relative quality of the estimation"}` -->
-<!-- ```{r echo=FALSE} -->
-<!-- if (TRUE) { -->
-<!--   AIC_whole %>% -->
-<!--     matrix() %>% -->
-<!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
-<!-- }  -->
-<!-- ``` -->
+`r if (assessment == "partial-body") {"## Partial-body exposure results"}`
 
-`r if (assessment == "partial-body") {"### Partial-body exposure results"}`
+`r if (assessment == "partial-body") {"### Partial-body exposure estimation"}`
 
-`r if (assessment == "partial-body") {"#### Partial-body exposure estimation"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(yield) %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("yield") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-`r if (assessment == "partial-body") {"####"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(dose) %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("dose (Gy)") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-`r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
+`r if (assessment == "partial-body") {"### Initial fraction of irradiated cells"}`
+
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_frac_partial %>%
     t() %>%
+    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("fraction") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-<!-- `r if (assessment == "partial-body") {"#### Relative quality of the estimation"}` -->
-<!-- ```{r echo=FALSE} -->
-<!-- if (assessment == "partial-body") { -->
-<!--   AIC_partial %>% -->
-<!--     matrix() %>% -->
-<!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
-<!-- }  -->
-<!-- ``` -->
+`r if (assessment == "hetero") {"## Heterogeneous exposure results"}`
 
-`r if (assessment == "hetero") {"### Heterogeneous exposure results"}`
+`r if (assessment == "hetero") {"### Observed fraction of irradiated cells and its yield"}`
 
-`r if (assessment == "hetero") {"#### Observed fraction of irradiated cells and its yield"}`
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_mixing_prop_hetero %>%
+    as.matrix() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-`r if (assessment == "hetero") {"#### Heterogeneous exposure estimation"}`
+`r if (assessment == "hetero") {"### Heterogeneous exposure estimation"}`
+
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_yields_hetero %>%
@@ -209,11 +228,10 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`(c("yield1", "yield2")) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
-
-`r if (assessment == "hetero") {"####"}`
 
 ```{r echo=FALSE}
 if (assessment == "hetero") {
@@ -225,39 +243,34 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-`r if (assessment == "hetero") {"#### Initial fraction of irradiated cells"}`
+`r if (assessment == "hetero") {"### Initial fraction of irradiated cells"}`
+
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_frac_hetero %>%
     # Fix possible NA values
+    as.matrix() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("estimate", "std.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    kable(booktabs = T, align = "c")
 }
 ```
 
-<!-- `r if (assessment == "hetero") {"#### Relative quality of the estimation"}` -->
-<!-- ```{r echo=FALSE} -->
-<!-- if (assessment == "hetero") { -->
-<!--   AIC_hetero %>% -->
-<!--     matrix() %>% -->
-<!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
-<!-- }  -->
-<!-- ``` -->
+## Curve plot
 
-### Curve plot
-```{r echo=FALSE}
+```{r echo=FALSE, fig.width=6, fig.height=3}
 gg_curve
 ```
 
-### Comments
+## Comments
+
 `r results_comments`

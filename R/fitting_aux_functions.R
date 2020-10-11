@@ -13,7 +13,7 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 
   # Generalized variance-covariance matrix
   general_fit_coeffs <- numeric(length = 3L) %>%
-    `names<-`(c("C", "α", "β"))
+    `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
   for (var in row.names(fit_coeffs)) {
     general_fit_coeffs[[var]] <- fit_coeffs[var, "estimate"] %>% as.numeric()
@@ -21,8 +21,8 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 
   # Generalized fit coefficients
   general_fit_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-    `row.names<-`(c("C", "α", "β")) %>%
-    `colnames<-`(c("C", "α", "β"))
+    `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
+    `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
   for (x_var in rownames(fit_var_cov_mat)) {
     for (y_var in colnames(fit_var_cov_mat)) {
@@ -32,9 +32,9 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 
   # Generalized curves
   yield_fun <- function(d) {
-    general_fit_coeffs[["C"]] +
-      general_fit_coeffs[["α"]] * d +
-      general_fit_coeffs[["β"]] * d^2
+    general_fit_coeffs[["coeff_C"]] +
+      general_fit_coeffs[["coeff_alpha"]] * d +
+      general_fit_coeffs[["coeff_beta"]] * d^2
   }
 
   chisq_df <- nrow(fit_coeffs)
@@ -42,12 +42,12 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 
   yield_error_fun <- function(d) {
     sqrt(
-      general_fit_var_cov_mat[["C", "C"]] +
-        general_fit_var_cov_mat[["α", "α"]] * d^2 +
-        general_fit_var_cov_mat[["β", "β"]] * d^4 +
-        2 * general_fit_var_cov_mat[["C", "α"]] * d +
-        2 * general_fit_var_cov_mat[["C", "β"]] * d^2 +
-        2 * general_fit_var_cov_mat[["α", "β"]] * d^3
+      general_fit_var_cov_mat[["coeff_C", "coeff_C"]] +
+        general_fit_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * d^2 +
+        general_fit_var_cov_mat[["coeff_beta", "coeff_beta"]] * d^4 +
+        2 * general_fit_var_cov_mat[["coeff_C", "coeff_alpha"]] * d +
+        2 * general_fit_var_cov_mat[["coeff_C", "coeff_beta"]] * d^2 +
+        2 * general_fit_var_cov_mat[["coeff_alpha", "coeff_beta"]] * d^3
     )
   }
 
@@ -124,7 +124,7 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, abe
 
   # Generalized variance-covariance matrix
   general_fit_coeffs <- numeric(length = 3L) %>%
-    `names<-`(c("C", "α", "β"))
+    `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
   for (var in rownames(fit_coeffs)) {
     general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -132,8 +132,8 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, abe
 
   # Generalized fit coefficients
   general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-    `row.names<-`(c("C", "α", "β")) %>%
-    `colnames<-`(c("C", "α", "β"))
+    `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
+    `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
   for (x_var in rownames(fit_var_cov_mat)) {
     for (y_var in colnames(fit_var_cov_mat)) {
@@ -155,12 +155,12 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, abe
   }
 
   yield_error_fun <- function(d, G) {
-    res <- general_var_cov_mat[["C", "C"]] +
-      general_var_cov_mat[["α", "α"]] * d^2 +
-      general_var_cov_mat[["β", "β"]] * d^4 * G^2 +
-      2 * general_var_cov_mat[["C", "α"]] * d +
-      2 * general_var_cov_mat[["C", "β"]] * d^2 * G +
-      2 * general_var_cov_mat[["α", "β"]] * d^3 * G
+    res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
+      general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * d^2 +
+      general_var_cov_mat[["coeff_beta", "coeff_beta"]] * d^4 * G^2 +
+      2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * d +
+      2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * d^2 * G +
+      2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * d^3 * G
     if (sum(res < 0) > 0) {
       rep(0, length(res))
     } else {

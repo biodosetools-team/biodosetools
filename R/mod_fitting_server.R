@@ -155,7 +155,6 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
               c("X", "N", grep("C", names(.), value = TRUE)),
               as.integer
             ) %>%
-            # dplyr::select(-X2, -var, -mean) %>%
             dplyr::select(-.data$X2) %>%
             dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
         } else {
@@ -248,25 +247,36 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       }
     }
 
-    # Perform calculations
+    # Calculations process
     input$button_fit
 
     isolate({
-      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
+      # Calculate dose-effect fitting curve
+      message("\nPerforming dose-effect fitting...")
+      fit_results_list <- get_fit_results(
+        count_data,
+        model_formula,
+        model_family,
+        fit_link = "identity",
+        aberr_module
+      )
 
       # Name of the aberration to use in the y-axis
-      if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-        aberr_name <- stringr::str_to_title(aberr_module)
-      } else if (aberr_module == "translocations") {
-        if (nchar(input$trans_name) > 0) {
+      aberr_name <- to_title(aberr_module)
+      if (aberr_module == "translocations") {
+        if(nchar(input$trans_name) > 0) {
           aberr_name <- input$trans_name
-        } else {
-          aberr_name <- stringr::str_to_title(aberr_module)
         }
       }
 
       # Get dose estimation curve
-      gg_curve <- get_fit_dose_curve(fit_results_list, aberr_name)
+      message("\nPlotting fitting results...")
+      gg_curve <- get_fit_dose_curve(
+        fit_results_list,
+        aberr_name
+      )
+
+      message("\nDone!")
 
       # Make list of results to return
       results_list <- fit_results_list
@@ -284,7 +294,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # # Calculate decision thresholds
       # decision_thresh <- data.frame(
       #   N = decision_thresh_cells %>%
-      #     stringr::str_split(" ") %>%
+      #     strsplit(" ") %>%
       #     unlist() %>%
       #     as.numeric()
       # )
@@ -350,9 +360,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
-      # as.data.frame() %>%
-      # dplyr::select(-statistic) %>%
-      # as.matrix() %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -371,6 +379,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -388,6 +398,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -475,22 +487,23 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste(aberr_module, "-fitting-report-", Sys.Date(), input$save_report_format, sep = "")
+      paste0(aberr_module, "-fitting-report-", Sys.Date(), input$save_report_format)
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- load_rmd_report(
+      temp_report <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
+      local_report <- load_rmd_report(
         paste0(
           aberr_module,
           "-fitting-report-",
-          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+          gsub("^\\.", "", input$save_report_format),
+          ".Rmd"
         )
       )
 
-      file.copy(localReport, tempReport, overwrite = TRUE)
+      file.copy(local_report, temp_report, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
@@ -501,7 +514,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       rmarkdown::render(
-        tempReport,
+        input = temp_report,
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())

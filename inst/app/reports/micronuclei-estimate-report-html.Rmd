@@ -1,8 +1,14 @@
 ---
-title: "Dicentrics dose estimation report"
-author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
+title: "Micronuclei dose estimation report"
+author: "`r paste0('Biodose Tools', ' v', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
-output: word_document
+output:
+  html_document:
+    css: !expr system.file("/app/reports/cosmo.css", package = "biodosetools")
+    includes:
+      before_body: !expr system.file("/app/reports/header.html", package = "biodosetools")
+      after_body: !expr system.file("/app/reports/footer.html", package = "biodosetools")
+
 params:
   est_results_list: NA
 ---
@@ -11,7 +17,16 @@ params:
 library(dplyr)
 library(ggplot2)
 library(rhandsontable)
-pander::panderOptions("table.style", "grid")
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
+```
+
+```{r include=FALSE}
+embed_var <- function(x, ...) {
+  # f = tempfile(fileext = '.rds')
+  f <- paste("fitting-data-", Sys.Date(), ".rds", sep = "")
+  saveRDS(x, f)
+  xfun::embed_file(f, ...)
+}
 ```
 
 ```{r load-data, echo=FALSE}
@@ -41,73 +56,118 @@ results_comments <- params$est_results_list[["results_comments"]]
 gg_curve <- params$est_results_list[["gg_curve"]]
 ```
 
+
 ## Curve used
 
 ### Fit formula
+
 ```{r echo=FALSE}
 withMathJax(paste0("$$", fit_formula_tex, if (protraction[1]) "G(x)", "$$"))
 ```
 
-`r if (protraction[1] ) paste("where")` 
-`r if (protraction[1]) withMathJax("\\( G(x) \\)")` 
+`r if (protraction[1] ) paste("where")`
+`r if (protraction[1]) withMathJax("\\( G(x) \\)")`
 `r if (protraction[1]) paste("is a time-dependent correction that takes into account protracted and fractionated exposures:")`
+
 ```{r echo=FALSE}
 if (protraction[1]) {
   withMathJax(paste0("$$", "G(x) = \\frac{2}{x^{2}} \\left(x - 1 - e^{-x} \\right), \\quad x = \\frac{t}{t_{0}}", "$$"))
 }
 ```
-`r if (protraction[1]) paste("The protraction times used for the dose estimation were")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste("and")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste(".")` 
+
+`r if (protraction[1]) paste("The protraction times used for the dose estimation were")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste("and")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste(".")`
 
 
 ### Coefficients
+
 ```{r echo=FALSE}
+num_cols <- as.numeric(ncol(fit_coeffs))
+
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
   # as.data.frame() %>%
   # dplyr::select(-statistic) %>%
   # as.matrix() %>%
-  pander::pander()
+  # Convert to hot and format table
+  rhandsontable(
+    width = (50 + num_cols * 100),
+    height = "100%",
+    rowHeaders = c("C", "\u03B1", "\u03B2")
+  ) %>%
+  hot_cols(colWidths = 100) %>%
+  hot_cols(halign = "htRight")
 ```
 
+
 ## Case data analyzed
+
 ```{r echo=FALSE}
+# Read number of columns
+num_cols <- as.numeric(ncol(case_data))
+
+# Convert to hot and format table
 case_data %>%
-  pander::pander()
-# TODO: Add u-value highlighting
+  rhandsontable(
+    width = (50 + num_cols * 50),
+    height = "100%"
+  ) %>%
+  hot_cols(colWidths = 50) %>%
+  # hot_table(highlightCol = TRUE, highlightRow = TRUE)
+  hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+  hot_col(num_cols, renderer = "
+     function (instance, td, row, col, prop, value, cellProperties) {
+       Handsontable.renderers.NumericRenderer.apply(this, arguments);
+       if (value > 1.96) {
+        td.style.background = 'pink';
+       }
+     }")
 ```
 
 ### Case description
+
 `r case_description`
+
 
 ## Dose estimation results
 
 `r if (TRUE) {"### Whole-body exposure results"}`
 
 `r if (TRUE) {"#### Whole-body exposure estimation"}`
+
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
     dplyr::select(yield) %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    as.data.frame() %>%
+    # Convert to hot and format table
+    rhandsontable(
+      width = 320, height = "100%",
+      rowHeaderWidth = 80
+    ) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
-
-`r if (TRUE) {"####"}`
 
 ```{r echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
     dplyr::select(dose) %>%
     t() %>%
-    # as.data.frame() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    as.data.frame() %>%
+    # Convert to hot and format table
+    rhandsontable(
+      width = 320, height = "100%",
+      rowHeaders = "dose (Gy)",
+      rowHeaderWidth = 80
+    ) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
@@ -117,14 +177,16 @@ if (TRUE) {
 <!--   AIC_whole %>% -->
 <!--     matrix() %>% -->
 <!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
 <!-- }  -->
 <!-- ``` -->
 
 `r if (assessment == "partial-body") {"### Partial-body exposure results"}`
 
 `r if (assessment == "partial-body") {"#### Partial-body exposure estimation"}`
+
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
@@ -135,12 +197,17 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("yield") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(
+      width = 320,
+      height = "100%",
+      rowHeaderWidth = 80
+    ) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
-`r if (assessment == "partial-body") {"####"}`
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
@@ -151,12 +218,19 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("dose (Gy)") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(
+      width = 320,
+      height = "100%",
+      rowHeaderWidth = 80
+    ) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
 `r if (assessment == "partial-body") {"#### Initial fraction of irradiated cells"}`
+
 ```{r echo=FALSE}
 if (assessment == "partial-body") {
   est_frac_partial %>%
@@ -166,8 +240,14 @@ if (assessment == "partial-body") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`("fraction") %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(
+      width = 320,
+      height = "100%",
+      rowHeaderWidth = 80
+    ) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
@@ -177,14 +257,16 @@ if (assessment == "partial-body") {
 <!--   AIC_partial %>% -->
 <!--     matrix() %>% -->
 <!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
 <!-- }  -->
 <!-- ``` -->
 
 `r if (assessment == "hetero") {"### Heterogeneous exposure results"}`
 
 `r if (assessment == "hetero") {"#### Observed fraction of irradiated cells and its yield"}`
+
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_mixing_prop_hetero %>%
@@ -192,9 +274,10 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(width = 405, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
@@ -203,29 +286,31 @@ if (assessment == "hetero") {
 if (assessment == "hetero") {
   est_yields_hetero %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`(c("yield1", "yield2")) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
-
-`r if (assessment == "hetero") {"####"}`
 
 ```{r echo=FALSE}
 if (assessment == "hetero") {
   est_doses_hetero %>%
     t() %>%
-    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
     # Fix possible NA values
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("lower", "estimate", "upper")) %>%
     `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(width = 325, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
@@ -237,9 +322,10 @@ if (assessment == "hetero") {
     dplyr::mutate_if(is.logical, as.double) %>%
     `colnames<-`(c("estimate", "std.err")) %>%
     `row.names<-`(c("dose1", "dose2")) %>%
-    as.matrix() %>%
-    formatC(format = "f", digits = 3) %>%
-    pander::pander()
+    # Convert to hot and format table
+    rhandsontable(width = 245, height = "100%", rowHeaderWidth = 85) %>%
+    hot_cols(colWidths = 80) %>%
+    hot_cols(format = "0.000")
 }
 ```
 
@@ -249,8 +335,9 @@ if (assessment == "hetero") {
 <!--   AIC_hetero %>% -->
 <!--     matrix() %>% -->
 <!--     `colnames<-`(c("AIC")) %>% -->
-<!--     formatC(format = "f", digits = 3) %>%  -->
-<!--     pander::pander() -->
+<!--     rhandsontable(width = 80, height = "100%") %>% -->
+<!--     hot_cols(colWidths = 80) %>% -->
+<!--     hot_cols(format = "0.000") -->
 <!-- }  -->
 <!-- ``` -->
 

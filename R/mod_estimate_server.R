@@ -29,13 +29,13 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     })
 
     if (formula_select == "lin-quad") {
-      fit_coeffs_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
     } else if (formula_select == "lin-quad-no-int") {
-      fit_coeffs_names <- c("α", "β")
+      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
     } else if (formula_select == "lin") {
-      fit_coeffs_names <- c("C", "α")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha")
     } else if (formula_select == "lin-no-int") {
-      fit_coeffs_names <- c("α")
+      fit_coeffs_names <- c("coeff_alpha")
     }
 
     full_data <- data.frame(
@@ -61,13 +61,13 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     })
 
     if (model_formula == "lin-quad") {
-      fit_coeffs_names <- c("C", "α", "β")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
     } else if (model_formula == "lin-quad-no-int") {
-      fit_coeffs_names <- c("α", "β")
+      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
     } else if (model_formula == "lin") {
-      fit_coeffs_names <- c("C", "α")
+      fit_coeffs_names <- c("coeff_C", "coeff_alpha")
     } else if (model_formula == "lin-no-int") {
-      fit_coeffs_names <- c("α")
+      fit_coeffs_names <- c("coeff_alpha")
     }
 
     full_data <- matrix(
@@ -126,6 +126,7 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
 
     # Convert to hot and format table
     hot <- changed_coeffs_data() %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
       rhandsontable(
         width = (50 + num_cols * 100),
         height = "100%"
@@ -141,8 +142,10 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
     # Read number of columns
     num_cols <- ncol(changed_var_data())
 
-    # Convert to hot and format table
     hot <- changed_var_data() %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
+      # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
         height = "100%"
@@ -187,7 +190,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Generalized variance-covariance matrix
         general_fit_coeffs <- numeric(length = 3L) %>%
-          `names<-`(c("C", "α", "β"))
+          `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
         for (var in names(fit_coeffs_vec)) {
           general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
@@ -195,9 +198,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
         # Predict yield / aberrations
         predict_eta <- function(data, coeffs) {
-          coeffs[["C"]] * rep(1, nrow(data)) +
-            coeffs[["α"]] * data[["D"]] +
-            coeffs[["β"]] * data[["D"]] * data[["D"]]
+          coeffs[["coeff_C"]] * rep(1, nrow(data)) +
+            coeffs[["coeff_alpha"]] * data[["D"]] +
+            coeffs[["coeff_beta"]] * data[["D"]] * data[["D"]]
         }
 
         eta_sat <- model_data[["X"]]
@@ -387,9 +390,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
     data()[["fit_coeffs"]] %>%
       formatC(format = "e", digits = 3) %>%
-      # as.data.frame() %>%
-      # dplyr::select(-statistic) %>%
-      # as.matrix() %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -408,6 +409,8 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
     data()[["fit_var_cov_mat"]] %>%
       formatC(format = "e", digits = 3) %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -425,6 +428,8 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
     num_cols <- as.numeric(ncol(data()[["fit_cor_mat"]]))
 
     data()[["fit_cor_mat"]] %>%
+      fix_coeff_names(type = "rows", output = "rhot") %>%
+      fix_coeff_names(type = "cols", output = "rhot") %>%
       # Convert to hot and format table
       rhandsontable(
         width = (50 + num_cols * 100),
@@ -801,7 +806,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Generalized variance-covariance matrix
     general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("C", "α", "β"))
+      `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
     for (var in rownames(fit_coeffs)) {
       general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
@@ -809,8 +814,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Generalized fit coefficients
     general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-      `row.names<-`(c("C", "α", "β")) %>%
-      `colnames<-`(c("C", "α", "β"))
+      `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
+      `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
 
     for (x_var in rownames(fit_var_cov_mat)) {
       for (y_var in colnames(fit_var_cov_mat)) {
@@ -893,16 +898,25 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
 
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
+      message("\nPerforming whole-body dose estimation (Merkle)...")
       results_whole <- estimate_whole_body(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_yield, conf_int_curve, protracted_g_value,
-        parsed_genome_fraction, aberr_module
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_yield,
+        conf_int_curve,
+        protracted_g_value,
+        parsed_genome_fraction,
+        aberr_module
       )
     } else if (error_method == "delta") {
+      message("\nPerforming whole-body dose estimation (Delta)...")
       results_whole <- estimate_whole_body_delta(
-
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_delta, protracted_g_value,
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_delta,
+        protracted_g_value,
         cov = TRUE,
         aberr_module
       )
@@ -921,10 +935,17 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       }
 
       # Calculate partial results
+      message("\nPerforming partial-body dose estimation (Dolphin)...")
       results_partial <- estimate_partial_dolphin(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_dolphin, protracted_g_value, cov = TRUE,
-        parsed_genome_fraction, aberr_module, gamma
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_dolphin,
+        protracted_g_value,
+        cov = TRUE,
+        parsed_genome_fraction,
+        aberr_module,
+        gamma
       )
 
       # Parse results
@@ -942,10 +963,16 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       }
 
       # Calculate heterogeneous result
+      message("\nPerforming heterogeneous dose estimation...")
       results_hetero <- estimate_hetero(
-        case_data, general_fit_coeffs, general_var_cov_mat,
-        conf_int_yield_hetero, conf_int_curve_hetero, protracted_g_value,
-        gamma, gamma_error
+        case_data,
+        general_fit_coeffs,
+        general_var_cov_mat,
+        conf_int_yield_hetero,
+        conf_int_curve_hetero,
+        protracted_g_value,
+        gamma,
+        gamma_error
       )
 
       # Parse results
@@ -957,6 +984,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Make plot ----
+    message("\nPlotting dose estimation results...")
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
@@ -983,23 +1011,28 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Name of the aberration to use in the y-axis
-    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-      aberr_name <- stringr::str_to_title(aberr_module)
-    } else if (aberr_module == "translocations") {
-      if (nchar(input$trans_name) > 0) {
+    aberr_name <- to_title(aberr_module)
+    if (aberr_module == "translocations") {
+      if(nchar(input$trans_name) > 0) {
         aberr_name <- input$trans_name
-      } else {
-        aberr_name <- stringr::str_to_title(aberr_module)
       }
     }
 
     # Get dose estimation curve
     gg_curve <- get_estimated_dose_curve(
-      est_full_doses, general_fit_coeffs, general_var_cov_mat,
-      protracted_g_value, conf_int_yield, conf_int_curve,
-      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
+      est_full_doses,
+      general_fit_coeffs,
+      general_var_cov_mat,
+      protracted_g_value,
+      conf_int_yield,
+      conf_int_curve,
+      conf_int_text_whole,
+      conf_int_text_partial,
+      conf_int_text_hetero,
       aberr_name
     )
+
+    message("\nDone!")
 
     # Return list ----
 
@@ -1059,7 +1092,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
 
     # Check if protracted correction was applied
-    if (exposure == "protracted" & stringr::str_detect(fit_formula_tex, "beta")) {
+    if (exposure == "protracted" & any(grep("beta", fit_formula_tex))) {
       est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
     }
 
@@ -1112,9 +1145,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         side = "left",
 
         title = help_modal_button(
-            container = "tabbox",
-            session$ns("help_dose_mixed_yields"),
-            session$ns("help_dose_mixed_yields_modal")
+          container = "tabbox",
+          session$ns("help_dose_mixed_yields"),
+          session$ns("help_dose_mixed_yields_modal")
         ),
 
         tabPanel(
@@ -1544,22 +1577,23 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste(aberr_module, "-estimate-report-", Sys.Date(), input$save_report_format, sep = "")
+      paste0(aberr_module, "-estimate-report-", Sys.Date(), input$save_report_format)
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      tempReport <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
-      localReport <- load_rmd_report(
+      temp_report <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
+      local_report <- load_rmd_report(
         paste0(
           aberr_module,
           "-estimate-report-",
-          stringr::str_replace(input$save_report_format, ".", ""), ".Rmd"
+          gsub("^\\.", "", input$save_report_format),
+          ".Rmd"
         )
       )
 
-      file.copy(localReport, tempReport, overwrite = TRUE)
+      file.copy(local_report, temp_report, overwrite = TRUE)
 
       # Set up parameters to pass to Rmd document
       params <- list(
@@ -1570,7 +1604,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       rmarkdown::render(
-        tempReport,
+        input = temp_report,
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())

@@ -1,5 +1,5 @@
 ---
-title: "Dicentrics dose estimation report"
+title: "Micronuclei dose estimation report"
 author: "`r paste('Biodose Tools', '-', utils::packageVersion(pkg = 'biodosetools'))`"
 date: "`r format(Sys.time(), '%d %B, %Y %H:%M:%S')`"
 output: word_document
@@ -48,19 +48,19 @@ gg_curve <- params$est_results_list[["gg_curve"]]
 withMathJax(paste0("$$", fit_formula_tex, if (protraction[1]) "G(x)", "$$"))
 ```
 
-`r if (protraction[1] ) paste("where")` 
-`r if (protraction[1]) withMathJax("\\( G(x) \\)")` 
+`r if (protraction[1] ) paste("where")`
+`r if (protraction[1]) withMathJax("\\( G(x) \\)")`
 `r if (protraction[1]) paste("is a time-dependent correction that takes into account protracted and fractionated exposures:")`
 ```{r echo=FALSE}
 if (protraction[1]) {
   withMathJax(paste0("$$", "G(x) = \\frac{2}{x^{2}} \\left(x - 1 - e^{-x} \\right), \\quad x = \\frac{t}{t_{0}}", "$$"))
 }
 ```
-`r if (protraction[1]) paste("The protraction times used for the dose estimation were")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste("and")` 
-`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")` 
-`r if (protraction[1]) paste(".")` 
+`r if (protraction[1]) paste("The protraction times used for the dose estimation were")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t =", protraction[2]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste("and")`
+`r if (protraction[1]) withMathJax(paste0("\\(", "t_{0} =", protraction[3]), "\\, \\textrm{h}", "\\)")`
+`r if (protraction[1]) paste(".")`
 
 
 ### Coefficients

@@ -145,48 +145,47 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
-                                      conf_int, protracted_g_value, cov = TRUE,
-                                      aberr_module) {
+                                      conf_int, protracted_g_value, cov = TRUE, aberr_module) {
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
     lambda_est <- case_data[["Fg"]]
   }
 
-  C <- general_fit_coeffs[[1]]
-  α <- general_fit_coeffs[[2]]
-  β <- general_fit_coeffs[[3]]
+  coeff_C <- general_fit_coeffs[[1]]
+  coeff_alpha <- general_fit_coeffs[[2]]
+  coeff_beta <- general_fit_coeffs[[3]]
 
   var_cov_mat <- general_var_cov_mat
 
   # Detect fitting model
-  fit_is_lq <- isFALSE(β == 0)
+  fit_is_lq <- isFALSE(coeff_beta == 0)
 
   # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
   if (fit_is_lq) {
-    # Update β to correct for protracted exposures
-    β <- β * protracted_g_value
+    # Update coeff_beta to correct for protracted exposures
+    coeff_beta <- coeff_beta * protracted_g_value
 
     # Auxiliary variable
-    z <- α^2 + 4 * β * (lambda_est - C)
+    z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
 
     # Get estimate for dose
-    dose_est <- (-α + sqrt(z)) / (2 * β)
+    dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
 
     # Derivatives of regression curve coefs
     deriv_lambda <- (z)^(-0.5)
-    deriv_C <- -(z)^(-0.5)
-    deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
-    deriv_β <- protracted_g_value * (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+    deriv_coeff_C <- -(z)^(-0.5)
+    deriv_coeff_alpha <- (1 / (2 * coeff_beta)) * (-1 + coeff_alpha * z^(-0.5))
+    deriv_coeff_beta <- protracted_g_value * (4 * coeff_beta * (lambda_est - coeff_C) * (z^(-0.5)) + 2 * coeff_alpha - 2 * z^(0.5)) / (4 * coeff_beta^2)
   } else {
     # Get estimate for dose
-    dose_est <- (lambda_est - C) / α
+    dose_est <- (lambda_est - coeff_C) / coeff_alpha
 
     # Derivatives of regression curve coefs
-    deriv_lambda <- 1 / α
-    deriv_C <- -(1 / α)
-    deriv_α <- (C - lambda_est) / α^2
-    deriv_β <- 0
+    deriv_lambda <- 1 / coeff_alpha
+    deriv_coeff_C <- -(1 / coeff_alpha)
+    deriv_coeff_alpha <- (coeff_C - lambda_est) / coeff_alpha^2
+    deriv_coeff_beta <- 0
   }
 
   # Calculate variance of lambda
@@ -210,18 +209,18 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 
   if (cov) {
     dose_est_var <-
-      (deriv_C^2) * var_cov_mat[1, 1] +
-      (deriv_α^2) * var_cov_mat[2, 2] +
-      (deriv_β^2) * var_cov_mat[3, 3] +
+      (deriv_coeff_C^2) * var_cov_mat[1, 1] +
+      (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
+      (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
       (deriv_lambda^2) * (lambda_est_sd^2) +
-      2 * (deriv_C * deriv_α) * var_cov_mat[1, 2] +
-      2 * (deriv_C * deriv_β) * var_cov_mat[1, 3] +
-      2 * (deriv_α * deriv_β) * var_cov_mat[2, 3]
+      2 * (deriv_coeff_C * deriv_coeff_alpha) * var_cov_mat[1, 2] +
+      2 * (deriv_coeff_C * deriv_coeff_beta) * var_cov_mat[1, 3] +
+      2 * (deriv_coeff_alpha * deriv_coeff_beta) * var_cov_mat[2, 3]
   } else {
     dose_est_var <-
-      (deriv_C^2) * var_cov_mat[1, 1] +
-      (deriv_α^2) * var_cov_mat[2, 2] +
-      (deriv_β^2) * var_cov_mat[3, 3] +
+      (deriv_coeff_C^2) * var_cov_mat[1, 1] +
+      (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
+      (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
       (deriv_lambda^2) * (lambda_est_sd^2)
   }
 
@@ -308,13 +307,13 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     aberr <- aberr - case_data[["Xc"]]
   }
 
-  C <- general_fit_coeffs[[1]]
-  α <- general_fit_coeffs[[2]]
-  β <- general_fit_coeffs[[3]]
+  coeff_C <- general_fit_coeffs[[1]]
+  coeff_alpha <- general_fit_coeffs[[2]]
+  coeff_beta <- general_fit_coeffs[[3]]
   var_cov_mat <- general_var_cov_mat
 
   # Detect fitting model
-  fit_is_lq <- isFALSE(β == 0)
+  fit_is_lq <- isFALSE(coeff_beta == 0)
 
   # If there are no cells with > 1 dic, the results include only NAs
   # This should be handled somewhere downstream
@@ -336,7 +335,6 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     }, c(1e-16, 100))$root
 
     if (aberr_module == "translocations") {
-      genome_fraction <- genome_fraction$genome_fraction()
       lambda_est <- lambda_est / genome_fraction
     }
 
@@ -347,29 +345,29 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 
     # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
     if (fit_is_lq) {
-      # Update β to correct for protracted exposures
-      β <- β * protracted_g_value
+      # Update coeff_beta to correct for protracted exposures
+      coeff_beta <- coeff_beta * protracted_g_value
 
       # Auxiliary variable
-      z <- α^2 + 4 * β * (lambda_est - C)
+      z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
 
       # Get estimate for dose
-      dose_est <- (-α + sqrt(z)) / (2 * β)
+      dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
 
       # Derivatives of regression curve coefs
       deriv_lambda <- (z)^(-0.5)
-      deriv_C <- -(z)^(-0.5)
-      deriv_α <- (1 / (2 * β)) * (-1 + α * z^(-0.5))
-      deriv_β <- protracted_g_value * (4 * β * (lambda_est - C) * (z^(-0.5)) + 2 * α - 2 * z^(0.5)) / (4 * β^2)
+      deriv_coeff_C <- -(z)^(-0.5)
+      deriv_coeff_alpha <- (1 / (2 * coeff_beta)) * (-1 + coeff_alpha * z^(-0.5))
+      deriv_coeff_beta <- protracted_g_value * (4 * coeff_beta * (lambda_est - coeff_C) * (z^(-0.5)) + 2 * coeff_alpha - 2 * z^(0.5)) / (4 * coeff_beta^2)
     } else {
       # Get estimate for dose
-      dose_est <- (lambda_est - C) / α
+      dose_est <- (lambda_est - coeff_C) / coeff_alpha
 
       # Derivatives of regression curve coefs
-      deriv_lambda <- 1 / α
-      deriv_C <- -(1 / α)
-      deriv_α <- (C - lambda_est) / α^2
-      deriv_β <- 0
+      deriv_lambda <- 1 / coeff_alpha
+      deriv_coeff_C <- -(1 / coeff_alpha)
+      deriv_coeff_alpha <- (coeff_C - lambda_est) / coeff_alpha^2
+      deriv_coeff_beta <- 0
     }
 
     # Get the covariance matrix for the parameters of the ZIP distribution
@@ -394,18 +392,18 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 
     if (cov) {
       dose_est_var <-
-        (deriv_C^2) * var_cov_mat[1, 1] +
-        (deriv_α^2) * var_cov_mat[2, 2] +
-        (deriv_β^2) * var_cov_mat[3, 3] +
+        (deriv_coeff_C^2) * var_cov_mat[1, 1] +
+        (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
+        (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
         (deriv_lambda^2) * (lambda_est_sd^2) +
-        2 * (deriv_C * deriv_α) * var_cov_mat[1, 2] +
-        2 * (deriv_C * deriv_β) * var_cov_mat[1, 3] +
-        2 * (deriv_α * deriv_β) * var_cov_mat[2, 3]
+        2 * (deriv_coeff_C * deriv_coeff_alpha) * var_cov_mat[1, 2] +
+        2 * (deriv_coeff_C * deriv_coeff_beta) * var_cov_mat[1, 3] +
+        2 * (deriv_coeff_alpha * deriv_coeff_beta) * var_cov_mat[2, 3]
     } else {
       dose_est_var <-
-        (deriv_C^2) * var_cov_mat[1, 1] +
-        (deriv_α^2) * var_cov_mat[2, 2] +
-        (deriv_β^2) * var_cov_mat[3, 3] +
+        (deriv_coeff_C^2) * var_cov_mat[1, 1] +
+        (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
+        (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
         (deriv_lambda^2) * (lambda_est_sd^2)
     }
 
@@ -445,7 +443,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
             (1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(C, α, β, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est), cov = cov_extended)
     } else {
       # x4: pi_est, x3: lambda_est, x1: C, x2: alpha
       formula <- paste(
@@ -453,7 +451,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
             (1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(C, α, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(coeff_C, coeff_alpha, lambda_est, pi_est), cov = cov_extended)
     }
 
     # Get confidence interval of fraction irradiated
@@ -583,9 +581,9 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
     fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
 
     # Get fitting model variables
-    C <- general_fit_coeffs[[1]]
-    α <- general_fit_coeffs[[2]]
-    β <- general_fit_coeffs[[3]]
+    coeff_C <- general_fit_coeffs[[1]]
+    coeff_alpha <- general_fit_coeffs[[2]]
+    coeff_beta <- general_fit_coeffs[[3]]
     var_cov_mat <- general_var_cov_mat
 
     # Input of the variance-covariance matrix of the parameters
@@ -762,23 +760,23 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
     # Gradient
     # h <- 0.000001
     # if (yield2_est > 0.01) {
-    #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-    #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-    #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-    #   c8 <- (get_fraction(C, α, β, gamma, frac1, yield1_est, yield2_est + h) - F) / h
+    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
+    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+    #   c8 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est + h) - F) / h
     #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
     #   sqrt(t(grad) %*% sigma %*% grad)
     # }
     # if (yield2_est <= 0.01) {
-    #   c1 <- (get_fraction(C + h, α, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c2 <- (get_fraction(C, α + h, β, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c3 <- (get_fraction(C, α, β + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c5 <- (get_fraction(C, α, β, gam + h, frac1, yield1_est, yield2_est) - F) / h
-    #   c6 <- (get_fraction(C, α, β, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-    #   c7 <- (get_fraction(C, α, β, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
+    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
     #   grad <- c(c1, c2, c3, c5, c6, c7)
     #   sigma2 <- sigma[1:6, 1:6]
     #   sqrt(t(grad) %*% sigma2 %*% grad)

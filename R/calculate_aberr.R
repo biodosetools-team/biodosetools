@@ -23,11 +23,11 @@ calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
       as.data.frame(),
     ~ . *
       data %>%
-      .[grep(aberr_prefix, names(.))] %>%
-      names() %>%
-      stringr::str_extract("[0-9]") %>%
-      as.numeric() %>%
-      .^power
+        .[grep(aberr_prefix, names(.))] %>%
+        names() %>%
+        regmatches(., regexpr("[0-9]", .)) %>%
+        as.numeric() %>%
+        .^power
   ) %>%
     t() %>%
     rowSums()
