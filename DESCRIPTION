@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: Shiny App To Be Used By Biological Dosimetry Laboratories
-Version: 3.3.1.9000
+Version: 3.4.0
 Authors@R: 
     person(given = "Alfredo",
            family = "Hernández",
@@ -18,7 +18,7 @@ Depends:
     R (>= 3.5.0)
 Imports:
     bsplus,
-    dplyr,
+    dplyr (>= 1.0.0),
     ggplot2,
     magrittr,
     MASS,

@@ -1,3 +1,34 @@
+# biodosetools 3.4.0 (2020-10-11)
+
+* Removed all non-ASCII characters.
+* Major rehaul of reports.
+* Added "Report bug" button on home screen and cleaned up `dashboard_*()` code.
+* Removed dependencies on {stringr} package.
+* Initial `utils::citation()` support via CITATION file.
+* Minimal version of R bumped to 3.5.0.
+* Minimal version of {dplyr} bumped to 1.0.0.
+
+## Bug fixes
+
+* Replaced `C`, `α`, `β` variables (and derivatives) by `coeff_C`, `coeff_alpha`, `coeff_beta`.
+* Fixed error in genome_fraction parsing for translocations in `estimate_partial_dolphin()`.
+* Fixed count/case data standard error column names replacements.
+* Fixed minipage issue when using more than 12 columns in {knitr} tables with column name replacements, by using `format = "latex", escape = FALSE` parameters in `kable()` call.
+* Supress YAML warning when using `!expr` in PDF reports. See https://github.com/rstudio/rstudio/issues/7545.
+
+## New functions
+
+* `fix_coeff_names()`, to fix coefficient names in reports.
+* `fix_count_data_names()`, to fix count/case data column names in PDF reports.
+* `to_title()`, to replace `stringr::str_to_title()` using base R.
+
+## Reports improvements
+
+* New PDF reports, which are now the default output format.
+* Improved HTML reports styling.
+* Added explicit M-FISH usage in translocation reports.
+* Added assay name in report titles.
+
 # biodosetools 3.3.1 (2020-10-07)
 
 ## Bug fixes
@@ -58,7 +89,7 @@ All calculations functions previously provided in `inst/app/calcs` have been mad
 
 # biodosetools 3.1.0 (2019-10-26)
 
-Unofficial release (didn't change version on `DESCRIPTION` file). This includes some of the changes I discussed with David in Stockholm.
+Unofficial release (wasn't changed on `DESCRIPTION` file). This includes some of the changes discussed with David in Stockholm (ERPW19).
 
 ## New features
 
