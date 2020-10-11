@@ -68,12 +68,16 @@ chromosome_table %>%
 
 # Count data used
 
+\begin{centering}
+
 ```{r echo=FALSE}
 count_data %>% 
   biodosetools:::fix_count_data_names(type = "count", output = "kable") %>% 
-  kable(booktabs = T, align = "c")
+  kable(booktabs = T, align = "c", format = "latex", escape = FALSE)
   # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
+
+\end{centering}
 
 
 # Results
