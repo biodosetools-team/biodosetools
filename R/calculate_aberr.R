@@ -42,6 +42,7 @@ calculate_aberr_mean <- function(X, N) {
 }
 
 #' @rdname calculate_aberr
+#' @export
 calculate_aberr_var <- function(X, X2, N) {
   var <- (X2 - X^2 / N) / (N - 1)
 
