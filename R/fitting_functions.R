@@ -176,23 +176,12 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
   doses <- count_data[["D"]]
   aberr <- count_data[["X"]]
   cells <- count_data[["N"]]
-  if (ncol(count_data) > 3) {
-    # Full distribution data
-    disp <- count_data[["DI"]]
-  } else {
-    # Aggregated data only
-    disp <- rep(1, nrow(count_data))
-  }
 
   # Construct predictors and model data
   coeff_C <- cells
   coeff_alpha <- cells * doses
   coeff_beta <- cells * doses * doses
   model_data <- list(coeff_C = coeff_C, coeff_alpha = coeff_alpha, coeff_beta = coeff_beta, aberr = aberr)
-  weights <- 1 / disp
-
-  # Correct biased estimates
-  weights[is.na(weights)] <- 1
 
   # Select model formula
   if (model_formula == "lin-quad") {
@@ -227,7 +216,6 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
     fit_results <- stats::glm(
       formula = fit_formula,
       family = stats::quasipoisson(link = fit_link),
-      weights = weights,
       data = model_data
     )
     fit_dispersion <- summary(fit_results)$dispersion
@@ -247,10 +235,8 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
     fit_results <- MASS::glm.nb(
       formula = fit_formula,
       link = fit_link,
-      weights = weights,
       data = model_data
     )
-    # fit_dispersion <- NULL
     fit_dispersion <- summary(fit_results)$dispersion
     fit_final_model <- "nb2"
   }
