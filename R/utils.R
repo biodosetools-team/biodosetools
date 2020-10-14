@@ -75,7 +75,11 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       gsub("^DI$", "$\\\\sigma^{2} / \\\\bar{y}$", .) %>%
       gsub("^u$", "$u$", .)
 
-    colnames(data) <- c(other_headers[1:3], counts_headers, other_headers[4:length(other_headers)])
+    if (ncol(data) > 3) {
+      colnames(data) <- c(other_headers[1:3], counts_headers, other_headers[4:length(other_headers)])
+    } else {
+      colnames(data) <- c(other_headers[1:3])
+    }
   } else if (type == "case") {
     other_headers <- grep("C[0-9]", x = col_names, value = TRUE, invert = TRUE) %>%
       gsub("^N$", "$N$", .) %>%
