@@ -153,7 +153,6 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 * Disable sourcing translations.R for now (until {shiny-i18n} is implemented).
 
-
 # biodosetools 2019.07.17-beta
 
 
@@ -172,13 +171,52 @@ First public beta for laboratories and research centres.
 
 ## New features
 
-* Complete implementation of Dicentrics analysis.
-* Experimental fitting on Translocations.
+* Initial support of reports.
+* Implemented selection of CI for dose estimation (83%-83% & 95%-95%).
+* Added method selection for partial body exposure estimation.
+* Fixed formatting of variance covariance matrices when rendered by `rHandsontableOutput()`.
+* Linear models compatibility for partial-body (Dolphin) and heterogeneous dose estimation.
+* Experimental version of new Maximum Likelihood Estimation method for dose-effect fitting.
+* Manual input of fitting coefficients and var/cov matrix for dose estimation.
+
+## Improvements
+
+* Added format/MIME type validation for file inputs.
+* Render fitting formula using MathJax.
+* Format curve depending on selected assessment/method (use appropriate CI) on dose estimation.
+* Check if yield projection into dose is mathematically possible. Negative values of yield or dose are changed to zero as well.
+* Added modification to Merkle's yield error function when using protracted exposures.
+* Implemented protracted exposure for partial body dose estimation.
+* Added automatic poisson/quasipoison selection on fitting.
+* Correct p-values depending on fitting model dispersion.
+* Added automatic correction of confidence intervals to use "simplfied" Merkle method if necessary.
+
+## Fixes
+
+* Fixed calculation of full genome.
+* Fixed alignment of conditional error/method inputs for dose estimation.
+* Changed "base" to "estimate" on CI tables for dose estimation.
+* Fixed `bs4TabCard()` bug.
 
 # biodosetools 2019.04.03-alpha
 
 Version presented in second Team Meeting at Munich.
 
+## New features
+
+* Migrated UI from {shinydashboard} to {bs4Dash}.
+* Added data, plot, and results export options.
+* Added modal dialogues using {shinyBS}.
+* Dose estimation modules for dicentrics.
+* Complete implementation of dicentrics analysis.
+* Experimental fitting for translocations assay.
+
 # biodosetools 2018.11.29-alpha
 
 First draft and proof of concept presented to the RENEB team at Barcelona.
+
+## Features
+
+* UI built using {shinydashboard}.
+* Fitting modules for dicentrics.
+* Dynamic input tables powered by {rhandsontable}.
