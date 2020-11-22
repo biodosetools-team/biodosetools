@@ -403,8 +403,38 @@
 <h2 class="hasAnchor">
 <a href="#new-features-2" class="anchor"></a>New features</h2>
 <ul>
-<li>Complete implementation of Dicentrics analysis.</li>
-<li>Experimental fitting on Translocations.</li>
+<li>Initial support of reports.</li>
+<li>Implemented selection of CI for dose estimation (83%-83% &amp; 95%-95%).</li>
+<li>Added method selection for partial body exposure estimation.</li>
+<li>Fixed formatting of variance covariance matrices when rendered by <code>rHandsontableOutput()</code>.</li>
+<li>Linear models compatibility for partial-body (Dolphin) and heterogeneous dose estimation.</li>
+<li>Experimental version of new Maximum Likelihood Estimation method for dose-effect fitting.</li>
+<li>Manual input of fitting coefficients and var/cov matrix for dose estimation.</li>
+</ul>
+</div>
+<div id="improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements-1" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Added format/MIME type validation for file inputs.</li>
+<li>Render fitting formula using MathJax.</li>
+<li>Format curve depending on selected assessment/method (use appropriate CI) on dose estimation.</li>
+<li>Check if yield projection into dose is mathematically possible. Negative values of yield or dose are changed to zero as well.</li>
+<li>Added modification to Merkle’s yield error function when using protracted exposures.</li>
+<li>Implemented protracted exposure for partial body dose estimation.</li>
+<li>Added automatic poisson/quasipoison selection on fitting.</li>
+<li>Correct p-values depending on fitting model dispersion.</li>
+<li>Added automatic correction of confidence intervals to use “simplfied” Merkle method if necessary.</li>
+</ul>
+</div>
+<div id="fixes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-3" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed calculation of full genome.</li>
+<li>Fixed alignment of conditional error/method inputs for dose estimation.</li>
+<li>Changed “base” to “estimate” on CI tables for dose estimation.</li>
+<li>Fixed <code>bs4TabCard()</code> bug.</li>
 </ul>
 </div>
 </div>
@@ -412,11 +442,32 @@
 <h1 class="page-header" data-toc-text="2019.04.03">
 <a href="#biodosetools-20190403-alpha" class="anchor"></a>biodosetools 2019.04.03-alpha</h1>
 <p>Version presented in second Team Meeting at Munich.</p>
+<div id="new-features-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-3" class="anchor"></a>New features</h2>
+<ul>
+<li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
+<li>Added data, plot, and results export options.</li>
+<li>Added modal dialogues using {shinyBS}.</li>
+<li>Dose estimation modules for dicentrics.</li>
+<li>Complete implementation of dicentrics analysis.</li>
+<li>Experimental fitting for translocations assay.</li>
+</ul>
+</div>
 </div>
     <div id="biodosetools-20181129-alpha" class="section level1">
 <h1 class="page-header" data-toc-text="2018.11.29">
 <a href="#biodosetools-20181129-alpha" class="anchor"></a>biodosetools 2018.11.29-alpha</h1>
 <p>First draft and proof of concept presented to the RENEB team at Barcelona.</p>
+<div id="features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#features" class="anchor"></a>Features</h2>
+<ul>
+<li>UI built using {shinydashboard}.</li>
+<li>Fitting modules for dicentrics.</li>
+<li>Dynamic input tables powered by {rhandsontable}.</li>
+</ul>
+</div>
 </div>
   </div>
 
