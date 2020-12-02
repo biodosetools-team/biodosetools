@@ -22,6 +22,5 @@ The project is initially developed by [RENEB](http://www.reneb.net) association,
 | [Ulrike Kulka](https://orcid.org/0000-0002-7734-3162)                                                     |     BfS     | Biologist     |
 | [Eric Grègoire](https://www.researchgate.net/profile/Eric_Gregoire2)                                      |     IRSN    | Biologist     |
 | [Manuel Higueras](https://investigacion.unirioja.es/investigadores/1322/detalle)                          |     UdR     | Mathematician |
-| [Gruel Gaëtan](https://www.researchgate.net/profile/Gruel_Gaetan)                                         |     IRSN    | Biologist     |
+| [Gaëtan Gruel](https://www.researchgate.net/profile/Gruel_Gaetan)                                         |     IRSN    | Biologist     |
 | [Ursula Oestreicher](https://www.researchgate.net/scientific-contributions/2121336457_Ursula_Oestreicher) |     BfS     | Biologist     |
-| [David Lloyd](https://www.phe-protectionservices.org.uk/cds/team/david_lloyd)                             |     PHE     | Biologist     |
