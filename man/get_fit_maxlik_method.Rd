@@ -24,5 +24,8 @@ get_fit_maxlik_method(
 List object containing maxLik fit results
 }
 \description{
-Method based on the paper by Oliveira et al. (2011) <doi:10.1007/s00184-009-0295-7>
+Method based on the paper by Oliveira, M. et al. (2016). Zero-inflated
+regression models for radiation-induced chromosome aberration data:
+A comparative study. Biometrical Journal, 58(2), 259–279.
+<doi:10.1002/bimj.201400233>
 }
