@@ -29,6 +29,7 @@
 * Added explicit M-FISH usage in translocation reports.
 * Added assay name in report titles.
 
+
 # biodosetools 3.3.1 (2020-10-07)
 
 ## Bug fixes
@@ -45,13 +46,16 @@
 * `calculate_aberr_disp_index()`.
 * `calculate_aberr_u_value()`.
 
+
 # biodosetools 3.3.0 (2020-07-27)
+
 
 # biodosetools 3.2.1 (2020-02-13)
 
 ## Bug fixes
 
 * Added required {pander} package to generate DOCX reports.
+
 
 # biodosetools 3.2.0 (2020-02-11)
 
@@ -87,6 +91,7 @@ All calculations functions previously provided in `inst/app/calcs` have been mad
 * `estimate_whole_body_delta()`.
 * `estimate_whole_body()`.
 
+
 # biodosetools 3.1.0 (2019-10-26)
 
 Unofficial release (wasn't changed on `DESCRIPTION` file). This includes some of the changes discussed with David in Stockholm (ERPW19).
@@ -107,6 +112,7 @@ Unofficial release (wasn't changed on `DESCRIPTION` file). This includes some of
 * Hide AIC as a relative quality statistic of the dose estimation.
 * Added mean and variance to count data tables in fitting module.
 
+
 # biodosetools 3.0.0 (2019-10-12)
 
 The app is now available as an R package on GitHub (we haven't submitted Biodose Tools to CRAN yet).
@@ -120,6 +126,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 * Fixed variance calculation for count data.
 * Provide fallback method for NB2 when using constraint-maxlik-optimization.
+
 
 # biodosetools 2019.07.27-beta
 
@@ -153,10 +160,50 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 * Disable sourcing translations.R for now (until {shiny-i18n} is implemented).
 
+
 # biodosetools 2019.07.17-beta
 
 
 # biodosetools 2019.06.25-beta
+
+## New features
+
+* Start translocations dose estimation module and report.
+* Allow using M-Fish color scheme in translocations fitting module.
+* Added method to convert from translocations measured by FISH to full genome.
+* Implemented confounders modifications for translocations in `generalEstimateCaseHotTable()` module.
+
+## Improvements
+
+* New chromosome table structure. `transChromosomeTable()` and `transFractionToFullGenomeCalc()` have been moved to `transGeneralModule.R`, as they are reused in the dose estimation module.
+* Using new chromosome table UI and server modules for translocations dose estimation.
+* Merged "repeated" fitting modules into a `generalFittingModules.R` file.
+* Merged `*FittingResults()` modules into `generalFittingResults()` module.
+* Updated translocations fitting report to new chromosome table structure.
+* New `generalEstimateFittingCurveHotTables()` and generalEstimateFittingCurve() modules.
+* New `globalVariables.R` with `global_fitting_formulas` list.
+* Added translocations-specific code in `generalEstimateFittingCurve()` module to take into account used translocation frequency.
+* New inputs for used translocation frequency and genomic conversion factor in manual fitting input in dose estimation module.
+* Moved dose estimation to `generalEstimateResults()` module.
+* Modify translocations `(X - Xt)` for whole-body and partial-body dose estimation.
+* Added readOnly status to `Xt`, `yt`, `yt_err` variables on `rhandsontable()` for translocations case data.
+
+## UI improvements
+
+* New `innerColumn` to use inside cards/boxes.
+* New `widgetLabel()` function for labels above widgets without default label.
+* Replaced old labels by new `widgetLabel()` function.
+* Finished confounders UI in translocations dose estimation module.
+* New `mySwichInput()` function based on `shinyWidgets::switchInput()` with `sideLabel` and custom status colors.
+* Moved from `awesomeCheckbox()` to `mySwitchInput()` in all UI modules.
+* Moved fitting curve input in translocations' dose estimation module to the top.
+
+## Fixes
+
+* Fix minor error in calculation of infimum yield values.
+* Fixed "Color options" card and color_list object for chromosome table generation.
+* Fixed missing type argument in `get_model_statistics()` in dose estimation module.
+* Deleted heterogeneous estimation for translocations.
 
 
 # biodosetools 2019.06.15-beta
