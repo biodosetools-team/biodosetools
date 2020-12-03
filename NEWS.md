@@ -161,8 +161,45 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 # biodosetools 2019.06.15-beta
 
+## New features
 
-# biodosetools 2019.06.04-beta
+* Conditional tabs in sidebar by implementing `bs4MyConditionalSidebarMenuItem()` function.
+* Implemented AIC calculation for different dose estimation assessments.
+* Added ZIP archive with sample data for testing.
+* New dynamic `bs4TabCard()` using `renderUI()` and `session$ns()` to show different tabs depending on user input.
+* Implemented manual calculation of case parameters (`N`, `X`, `y`, `y_est`, `DI`, `u`) in dose estimation module.
+
+## Improvements
+
+* Disabled automatic calculation of `N`, `X`, `DI`, `u` to avoid broken input issues when running the deployed app.
+* Added `CONTRIBUTORS.md` file.
+* Removed {fontawesome} package requirement.
+* Added translocation frequency and genomic conversion factor to translocations fitting report.
+* Chromosome table included in reports.
+* Major rewrite of {ggplot2} plot in dose estimation module.
+* Added Dolphin CI info into plot when using partial-body assessment.
+* Changed display of CI in plot for dose estimation.
+* Genomic conversion factor is used in `transFittingResults()` module for calculations instead of modifying the value of `N` in `transFittingHotTable()`.
+* Added theoretical calculation of model-specific statistics (`glm` method) on fitting module.
+* Added renormalisation of data for proper calculation of model-specific statistics in fitting module.
+* Added theoretical model-specific statistics calculation for constraint `maxlik` optimization method in fitting module.
+* Added global `get_model_statistics()` to translocations fitting module.
+
+## UI improvements
+
+* Cleaner version of `topButton()` for help button and help modals on fitting and dose estimation modules..
+* More informative model summary dialogue in fitting module.
+* Better output of genomic conversion factor.
+* "Partial" is now "Partial-body". Better titles in dose estimation results card.
+* New bs4MyTabCard() function with topButton and noPadding capabilities.
+
+## Fixes
+
+* Fixed problem with fit_formula_raw when using linear model. Disabled `*-no-int` models until Dolphin can deal with them.
+* Fixed rendering problem in Firefox (and potentially other browsers) with count data `rhandsontable()` using 100% of the card's height.
+* Fixed dose estimation `rhandsontables()` `div`s on Firefox having `height = 100%` of the card's own height.
+* Fixed height error in cases data table in dose estimation module in Firefox.
+* Fixed `glm_results object` issue in `get_model_statistics()` function.
 
 
 # biodosetools 2019.05.24-beta
