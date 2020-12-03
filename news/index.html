@@ -386,22 +386,121 @@
     <div id="biodosetools-20190625-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.06.25">
 <a href="#biodosetools-20190625-beta" class="anchor"></a>biodosetools 2019.06.25-beta</h1>
+<div id="new-features-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-2" class="anchor"></a>New features</h2>
+<ul>
+<li>Start translocations dose estimation module and report.</li>
+<li>Allow using M-Fish color scheme in translocations fitting module.</li>
+<li>Added method to convert from translocations measured by FISH to full genome.</li>
+<li>Implemented confounders modifications for translocations in <code>generalEstimateCaseHotTable()</code> module.</li>
+</ul>
+</div>
+<div id="improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements-1" class="anchor"></a>Improvements</h2>
+<ul>
+<li>New chromosome table structure. <code>transChromosomeTable()</code> and <code>transFractionToFullGenomeCalc()</code> have been moved to <code>transGeneralModule.R</code>, as they are reused in the dose estimation module.</li>
+<li>Using new chromosome table UI and server modules for translocations dose estimation.</li>
+<li>Merged “repeated” fitting modules into a <code>generalFittingModules.R</code> file.</li>
+<li>Merged <code>*FittingResults()</code> modules into <code>generalFittingResults()</code> module.</li>
+<li>Updated translocations fitting report to new chromosome table structure.</li>
+<li>New <code>generalEstimateFittingCurveHotTables()</code> and generalEstimateFittingCurve() modules.</li>
+<li>New <code>globalVariables.R</code> with <code>global_fitting_formulas</code> list.</li>
+<li>Added translocations-specific code in <code>generalEstimateFittingCurve()</code> module to take into account used translocation frequency.</li>
+<li>New inputs for used translocation frequency and genomic conversion factor in manual fitting input in dose estimation module.</li>
+<li>Moved dose estimation to <code>generalEstimateResults()</code> module.</li>
+<li>Modify translocations <code>(X - Xt)</code> for whole-body and partial-body dose estimation.</li>
+<li>Added readOnly status to <code>Xt</code>, <code>yt</code>, <code>yt_err</code> variables on <code>rhandsontable()</code> for translocations case data.</li>
+</ul>
+</div>
+<div id="ui-improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ui-improvements" class="anchor"></a>UI improvements</h2>
+<ul>
+<li>New <code>innerColumn</code> to use inside cards/boxes.</li>
+<li>New <code>widgetLabel()</code> function for labels above widgets without default label.</li>
+<li>Replaced old labels by new <code>widgetLabel()</code> function.</li>
+<li>Finished confounders UI in translocations dose estimation module.</li>
+<li>New <code>mySwichInput()</code> function based on <code><a href="https://rdrr.io/pkg/shinyWidgets/man/switchInput.html">shinyWidgets::switchInput()</a></code> with <code>sideLabel</code> and custom status colors.</li>
+<li>Moved from <code>awesomeCheckbox()</code> to <code>mySwitchInput()</code> in all UI modules.</li>
+<li>Moved fitting curve input in translocations’ dose estimation module to the top.</li>
+</ul>
+</div>
+<div id="fixes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-3" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fix minor error in calculation of infimum yield values.</li>
+<li>Fixed “Color options” card and color_list object for chromosome table generation.</li>
+<li>Fixed missing type argument in <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> in dose estimation module.</li>
+<li>Deleted heterogeneous estimation for translocations.</li>
+</ul>
+</div>
 </div>
     <div id="biodosetools-20190615-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.06.15">
 <a href="#biodosetools-20190615-beta" class="anchor"></a>biodosetools 2019.06.15-beta</h1>
+<div id="new-features-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-3" class="anchor"></a>New features</h2>
+<ul>
+<li>Conditional tabs in sidebar by implementing <code>bs4MyConditionalSidebarMenuItem()</code> function.</li>
+<li>Implemented AIC calculation for different dose estimation assessments.</li>
+<li>Added ZIP archive with sample data for testing.</li>
+<li>New dynamic <code>bs4TabCard()</code> using <code>renderUI()</code> and <code>session$ns()</code> to show different tabs depending on user input.</li>
+<li>Implemented manual calculation of case parameters (<code>N</code>, <code>X</code>, <code>y</code>, <code>y_est</code>, <code>DI</code>, <code>u</code>) in dose estimation module.</li>
+</ul>
 </div>
-    <div id="biodosetools-20190604-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.06.04">
-<a href="#biodosetools-20190604-beta" class="anchor"></a>biodosetools 2019.06.04-beta</h1>
+<div id="improvements-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements-2" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Disabled automatic calculation of <code>N</code>, <code>X</code>, <code>DI</code>, <code>u</code> to avoid broken input issues when running the deployed app.</li>
+<li>Added <code>CONTRIBUTORS.md</code> file.</li>
+<li>Removed {fontawesome} package requirement.</li>
+<li>Added translocation frequency and genomic conversion factor to translocations fitting report.</li>
+<li>Chromosome table included in reports.</li>
+<li>Major rewrite of {ggplot2} plot in dose estimation module.</li>
+<li>Added Dolphin CI info into plot when using partial-body assessment.</li>
+<li>Changed display of CI in plot for dose estimation.</li>
+<li>Genomic conversion factor is used in <code>transFittingResults()</code> module for calculations instead of modifying the value of <code>N</code> in <code>transFittingHotTable()</code>.</li>
+<li>Added theoretical calculation of model-specific statistics (<code>glm</code> method) on fitting module.</li>
+<li>Added renormalisation of data for proper calculation of model-specific statistics in fitting module.</li>
+<li>Added theoretical model-specific statistics calculation for constraint <code>maxlik</code> optimization method in fitting module.</li>
+<li>Added global <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> to translocations fitting module.</li>
+</ul>
+</div>
+<div id="ui-improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ui-improvements-1" class="anchor"></a>UI improvements</h2>
+<ul>
+<li>Cleaner version of <code>topButton()</code> for help button and help modals on fitting and dose estimation modules..</li>
+<li>More informative model summary dialogue in fitting module.</li>
+<li>Better output of genomic conversion factor.</li>
+<li>“Partial” is now “Partial-body”. Better titles in dose estimation results card.</li>
+<li>New bs4MyTabCard() function with topButton and noPadding capabilities.</li>
+</ul>
+</div>
+<div id="fixes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-4" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed problem with fit_formula_raw when using linear model. Disabled <code>*-no-int</code> models until Dolphin can deal with them.</li>
+<li>Fixed rendering problem in Firefox (and potentially other browsers) with count data <code>rhandsontable()</code> using 100% of the card’s height.</li>
+<li>Fixed dose estimation <code>rhandsontables()</code> <code>div</code>s on Firefox having <code>height = 100%</code> of the card’s own height.</li>
+<li>Fixed height error in cases data table in dose estimation module in Firefox.</li>
+<li>Fixed <code>glm_results object</code> issue in <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> function.</li>
+</ul>
+</div>
 </div>
     <div id="biodosetools-20190524-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.05.24">
 <a href="#biodosetools-20190524-beta" class="anchor"></a>biodosetools 2019.05.24-beta</h1>
 <p>First public beta for laboratories and research centres.</p>
-<div id="new-features-2" class="section level2">
+<div id="new-features-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>New features</h2>
+<a href="#new-features-4" class="anchor"></a>New features</h2>
 <ul>
 <li>Initial support of reports.</li>
 <li>Implemented selection of CI for dose estimation (83%-83% &amp; 95%-95%).</li>
@@ -412,9 +511,9 @@
 <li>Manual input of fitting coefficients and var/cov matrix for dose estimation.</li>
 </ul>
 </div>
-<div id="improvements-1" class="section level2">
+<div id="improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-1" class="anchor"></a>Improvements</h2>
+<a href="#improvements-3" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Added format/MIME type validation for file inputs.</li>
 <li>Render fitting formula using MathJax.</li>
@@ -427,9 +526,9 @@
 <li>Added automatic correction of confidence intervals to use “simplfied” Merkle method if necessary.</li>
 </ul>
 </div>
-<div id="fixes-3" class="section level2">
+<div id="fixes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-3" class="anchor"></a>Fixes</h2>
+<a href="#fixes-5" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed calculation of full genome.</li>
 <li>Fixed alignment of conditional error/method inputs for dose estimation.</li>
@@ -442,9 +541,9 @@
 <h1 class="page-header" data-toc-text="2019.04.03">
 <a href="#biodosetools-20190403-alpha" class="anchor"></a>biodosetools 2019.04.03-alpha</h1>
 <p>Version presented in second Team Meeting at Munich.</p>
-<div id="new-features-3" class="section level2">
+<div id="new-features-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-3" class="anchor"></a>New features</h2>
+<a href="#new-features-5" class="anchor"></a>New features</h2>
 <ul>
 <li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
 <li>Added data, plot, and results export options.</li>
