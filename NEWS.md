@@ -49,6 +49,76 @@
 
 # biodosetools 3.3.0 (2020-07-27)
 
+Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made de code a lot more robust.
+
+## New features
+
+* App is now a {golem} R package.
+* Migrated UI from {shinydashboard} to {bs4Dash}.
+* Modals are now built with {bsplus} instead of {shinyBS}.
+* Functions and internal data are documented using {roxygen2}.
+* Added {pkgdown} support to build {biodosetool}'s website automatically.
+* All custom theming is done through SASS and CSS instead of R code injection.
+
+## New functions
+
+* New `include_help()` for help dialogues
+* New `help_modal_button()` function to help build modal trigger buttons on boxes' titles.
+* New `load_rmd_report()` function to use in server `downloadHandler()`.
+* Moved `get_genome_fraction()` as its own exported function.
+
+## Fixes
+
+* Fixed #7. Overestimate error of lambda when dispersion is smaller than 1.
+* Fixed missing icon on sidebar.
+* Fixes in collapse button paddings.
+* Fixed `tabBox` parameters.
+* Using `rlang::.data$` to avoid "no visible binding for global variable" warnings.
+* Fixed `bsplus::bs_modal()` calls in `output$estimate_results_ui`.
+* Removed input as parameter in calculation functions.
+* Fixed style of help button on `box`/`tabBox` headers.
+* Updated old "biodosimetry-uab" URLs to "biodosetools-team".
+
+## Improvements
+
+* Stop exporting auxiliary `include*()` functions used on the app only.
+* Moved `widget_label()` to widgets.R.
+* Refactored `inner_column()` function.
+* Refactored UI modules names.
+* Refactored server functions and renamed R scripts.
+* Updated reports.
+* Using `load_rmd_report()` on `mod_estimate_results_server()` module.
+* Added DNA Content Fractions of Human Chromosomes (IHGSC) data.
+* Updated `dna_content_fractions` call on `mod_trans_fraction_to_full_genome_server()` module.
+* Added support for `tabBox` on `help_modal_button()` widget.
+* Added indentation to all module `rhandsontable()` calls.
+* Stop exporting `get_decision_threshold()` function temporarily.
+* "Stains color options" boxes don't use `inner_column()` anymore.
+* Updated `NEWS.md` headers so they can be parsed by {pkgdown}.
+
+## UI Improvements
+
+* Removed `experiment_select` `selectInput()` from sidebar. Every assay is listed on the "Aberration assays" `sidebarMenu()`.
+* Loading all UI modules in `dashboard_body()`.
+* Navbar now uses `rightUi` and `leftUi` parameters, as well as `skin = "light"`.
+* Switched from `shinyBS::bsButton()` to `shiny::actionButton()` for calling modal dialogues.
+* New CSS style sheet for {shinydashboard}.
+* Deleted old CSS files for {bs4Dash}.
+* New fonts CSS stylesheet.
+* New CSS stylesheets for fixes of existing classes and definition of custom classes.
+* Added `hot-improved` CSS class for `rHandsontableOutput()`.
+* Moved custom widgets classes from `theming.R` to `custom.css`.
+* Tweaks in `box`, `awesome-checkbox`, and sidebar submenus CSS styles.
+* Replaced `theme_button_status()` function by proper SASS to CSS compilation.
+* Finished SASS box header colors.
+* Using SASS modules to reconstruct `biodose_style.css`.
+* Moved treeview-menu style to `sidebar.scss`.
+* Added checkboxes SASS style.
+* Added missing `col-inner-*` CSS classes.
+* Added app version on sidebar footer with custom `sticky-footer` CSS class.
+* Switched to a single stylesheet, being everything built by SASS modules.
+* Added custom style to `radiobuttons`.
+
 
 # biodosetools 3.2.1 (2020-02-13)
 
@@ -243,7 +313,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Merged "repeated" fitting modules into a `generalFittingModules.R` file.
 * Merged `*FittingResults()` modules into `generalFittingResults()` module.
 * Updated translocations fitting report to new chromosome table structure.
-* New `generalEstimateFittingCurveHotTables()` and generalEstimateFittingCurve() modules.
+* New `generalEstimateFittingCurveHotTables()` and `generalEstimateFittingCurve()` modules.
 * New `globalVariables.R` with `global_fitting_formulas` list.
 * Added translocations-specific code in `generalEstimateFittingCurve()` module to take into account used translocation frequency.
 * New inputs for used translocation frequency and genomic conversion factor in manual fitting input in dose estimation module.
@@ -301,7 +371,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * More informative model summary dialogue in fitting module.
 * Better output of genomic conversion factor.
 * "Partial" is now "Partial-body". Better titles in dose estimation results card.
-* New bs4MyTabCard() function with topButton and noPadding capabilities.
+* New `bs4MyTabCard()` function with topButton and noPadding capabilities.
 
 ## Fixes
 
