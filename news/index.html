@@ -200,6 +200,90 @@
     <div id="biodosetools-330-2020-07-27" class="section level1">
 <h1 class="page-header" data-toc-text="3.3.0">
 <a href="#biodosetools-330-2020-07-27" class="anchor"></a>biodosetools 3.3.0 (2020-07-27)</h1>
+<p>Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made de code a lot more robust.</p>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>App is now a {golem} R package.</li>
+<li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
+<li>Modals are now built with {bsplus} instead of {shinyBS}.</li>
+<li>Functions and internal data are documented using {roxygen2}.</li>
+<li>Added {pkgdown} support to build {biodosetool}’s website automatically.</li>
+<li>All custom theming is done through SASS and CSS instead of R code injection.</li>
+</ul>
+</div>
+<div id="new-functions-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-2" class="anchor"></a>New functions</h2>
+<ul>
+<li>New <code><a href="../reference/include_help.html">include_help()</a></code> for help dialogues</li>
+<li>New <code>help_modal_button()</code> function to help build modal trigger buttons on boxes’ titles.</li>
+<li>New <code><a href="../reference/load_rmd_report.html">load_rmd_report()</a></code> function to use in server <code>downloadHandler()</code>.</li>
+<li>Moved <code><a href="../reference/get_genome_fraction.html">get_genome_fraction()</a></code> as its own exported function.</li>
+</ul>
+</div>
+<div id="fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed <a href='https://github.com/biodosetools-team/biodosetools/issues/7'>#7</a>. Overestimate error of lambda when dispersion is smaller than 1.</li>
+<li>Fixed missing icon on sidebar.</li>
+<li>Fixes in collapse button paddings.</li>
+<li>Fixed <code>tabBox</code> parameters.</li>
+<li>Using <code>rlang::.data$</code> to avoid “no visible binding for global variable” warnings.</li>
+<li>Fixed <code><a href="https://rdrr.io/pkg/bsplus/man/bs_modal.html">bsplus::bs_modal()</a></code> calls in <code>output$estimate_results_ui</code>.</li>
+<li>Removed input as parameter in calculation functions.</li>
+<li>Fixed style of help button on <code>box</code>/<code>tabBox</code> headers.</li>
+<li>Updated old “biodosimetry-uab” URLs to “biodosetools-team”.</li>
+</ul>
+</div>
+<div id="improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Stop exporting auxiliary <code>include*()</code> functions used on the app only.</li>
+<li>Moved <code>widget_label()</code> to widgets.R.</li>
+<li>Refactored <code>inner_column()</code> function.</li>
+<li>Refactored UI modules names.</li>
+<li>Refactored server functions and renamed R scripts.</li>
+<li>Updated reports.</li>
+<li>Using <code><a href="../reference/load_rmd_report.html">load_rmd_report()</a></code> on <code>mod_estimate_results_server()</code> module.</li>
+<li>Added DNA Content Fractions of Human Chromosomes (IHGSC) data.</li>
+<li>Updated <code>dna_content_fractions</code> call on <code>mod_trans_fraction_to_full_genome_server()</code> module.</li>
+<li>Added support for <code>tabBox</code> on <code>help_modal_button()</code> widget.</li>
+<li>Added indentation to all module <code>rhandsontable()</code> calls.</li>
+<li>Stop exporting <code>get_decision_threshold()</code> function temporarily.</li>
+<li>“Stains color options” boxes don’t use <code>inner_column()</code> anymore.</li>
+<li>Updated <code>NEWS.md</code> headers so they can be parsed by {pkgdown}.</li>
+</ul>
+</div>
+<div id="ui-improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ui-improvements" class="anchor"></a>UI Improvements</h2>
+<ul>
+<li>Removed <code>experiment_select</code> <code>selectInput()</code> from sidebar. Every assay is listed on the “Aberration assays” <code>sidebarMenu()</code>.</li>
+<li>Loading all UI modules in <code>dashboard_body()</code>.</li>
+<li>Navbar now uses <code>rightUi</code> and <code>leftUi</code> parameters, as well as <code>skin = "light"</code>.</li>
+<li>Switched from <code>shinyBS::bsButton()</code> to <code><a href="https://shiny.rstudio.com/reference/shiny/latest/actionButton.html">shiny::actionButton()</a></code> for calling modal dialogues.</li>
+<li>New CSS style sheet for {shinydashboard}.</li>
+<li>Deleted old CSS files for {bs4Dash}.</li>
+<li>New fonts CSS stylesheet.</li>
+<li>New CSS stylesheets for fixes of existing classes and definition of custom classes.</li>
+<li>Added <code>hot-improved</code> CSS class for <code>rHandsontableOutput()</code>.</li>
+<li>Moved custom widgets classes from <code>theming.R</code> to <code>custom.css</code>.</li>
+<li>Tweaks in <code>box</code>, <code>awesome-checkbox</code>, and sidebar submenus CSS styles.</li>
+<li>Replaced <code>theme_button_status()</code> function by proper SASS to CSS compilation.</li>
+<li>Finished SASS box header colors.</li>
+<li>Using SASS modules to reconstruct <code>biodose_style.css</code>.</li>
+<li>Moved treeview-menu style to <code>sidebar.scss</code>.</li>
+<li>Added checkboxes SASS style.</li>
+<li>Added missing <code>col-inner-*</code> CSS classes.</li>
+<li>Added app version on sidebar footer with custom <code>sticky-footer</code> CSS class.</li>
+<li>Switched to a single stylesheet, being everything built by SASS modules.</li>
+<li>Added custom style to <code>radiobuttons</code>.</li>
+</ul>
+</div>
 </div>
     <div id="biodosetools-321-2020-02-13" class="section level1">
 <h1 class="page-header" data-toc-text="3.2.1">
@@ -216,9 +300,9 @@
 <h1 class="page-header" data-toc-text="3.2.0">
 <a href="#biodosetools-320-2020-02-11" class="anchor"></a>biodosetools 3.2.0 (2020-02-11)</h1>
 <p>All calculations functions previously provided in <code>inst/app/calcs</code> have been made proper functions on the package.</p>
-<div id="new-functions-2" class="section level2">
+<div id="new-functions-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-2" class="anchor"></a>New functions</h2>
+<a href="#new-functions-3" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_yield.html">calculate_yield()</a></code> new wrapper of <code><a href="../reference/yield_fun.html">yield_fun()</a></code>, <code><a href="../reference/R_factor.html">R_factor()</a></code>, and <code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
@@ -228,9 +312,9 @@
 <code><a href="../reference/project_yield.html">project_yield()</a></code> merged version of the <code>project_yield_estimate()</code>, <code>project_yield_lower()</code>, and <code>project_yield_upper()</code> functions.</li>
 </ul>
 </div>
-<div id="new-functions-3" class="section level2">
+<div id="new-functions-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-3" class="anchor"></a>“New” functions</h2>
+<a href="#new-functions-4" class="anchor"></a>“New” functions</h2>
 <ul>
 <li>
 <code>get_decision_threshold()</code>.</li>
@@ -281,17 +365,17 @@
 <h1 class="page-header" data-toc-text="3.1.0">
 <a href="#biodosetools-310-2019-10-26" class="anchor"></a>biodosetools 3.1.0 (2019-10-26)</h1>
 <p>Unofficial release (wasn’t changed on <code>DESCRIPTION</code> file). This includes some of the changes discussed with David in Stockholm (ERPW19).</p>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New features</h2>
+<a href="#new-features-1" class="anchor"></a>New features</h2>
 <ul>
 <li>Made var-cov matrix optional on dose estimation inputs.</li>
 <li>Fixed calculations to make var-cov matrix optional on dose estimation inputs.</li>
 </ul>
 </div>
-<div id="fixes" class="section level2">
+<div id="fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes" class="anchor"></a>Fixes</h2>
+<a href="#fixes-1" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Added additional package dependencies to <code>DESCRIPTION</code> file.</li>
 <li>Following the ISO, renamed detection limits to decision threshold.</li>
@@ -311,9 +395,9 @@
 <h1 class="page-header" data-toc-text="3.0.0">
 <a href="#biodosetools-300-2019-10-12" class="anchor"></a>biodosetools 3.0.0 (2019-10-12)</h1>
 <p>The app is now available as an R package on GitHub (we haven’t submitted Biodose Tools to CRAN yet).</p>
-<div id="new-functions-4" class="section level2">
+<div id="new-functions-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-4" class="anchor"></a>New functions</h2>
+<a href="#new-functions-5" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code>runApp()</code> for launching Biodose Tools.</li>
@@ -321,9 +405,9 @@
 <code><a href="../reference/%&gt;%.html">%&gt;%</a></code> imported from {magrittr}.</li>
 </ul>
 </div>
-<div id="fixes-1" class="section level2">
+<div id="fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-1" class="anchor"></a>Fixes</h2>
+<a href="#fixes-2" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed variance calculation for count data.</li>
 <li>Provide fallback method for NB2 when using constraint-maxlik-optimization.</li>
@@ -333,9 +417,9 @@
     <div id="biodosetools-20190727-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.07.27">
 <a href="#biodosetools-20190727-beta" class="anchor"></a>biodosetools 2019.07.27-beta</h1>
-<div id="new-features-1" class="section level2">
+<div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>New features</h2>
+<a href="#new-features-2" class="anchor"></a>New features</h2>
 <ul>
 <li>Initial implementation of micronuclei, adding support in UI and server functions.</li>
 <li>Implemented negative binomial fitting calculation for micronuclei count data.</li>
@@ -343,16 +427,16 @@
 <li>Added DOCX support for dicentrics and translocations.</li>
 </ul>
 </div>
-<div id="new-functions-5" class="section level2">
+<div id="new-functions-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-5" class="anchor"></a>New functions</h2>
+<a href="#new-functions-6" class="anchor"></a>New functions</h2>
 <ul>
 <li>New <code>bs4MyTabPanel()</code> widget to remove unnecessary padding on <code>tabCards</code>’ panels.</li>
 </ul>
 </div>
-<div id="fixes-2" class="section level2">
+<div id="fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-2" class="anchor"></a>Fixes</h2>
+<a href="#fixes-3" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed colwidths for detection limits.</li>
 <li>Fixed unnecessary recalculation of <code>num_cols</code> for chromosome tables in translocations modules.</li>
@@ -361,9 +445,9 @@
 <li>Updated documentation link.</li>
 </ul>
 </div>
-<div id="improvements" class="section level2">
+<div id="improvements-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements" class="anchor"></a>Improvements</h2>
+<a href="#improvements-1" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Added <code>button_fit</code> dependency for detection limits calculation.</li>
 <li>Updated fitting reports (new hot structures &amp; dynamic widths).</li>
@@ -375,20 +459,95 @@
 <h2 class="hasAnchor">
 <a href="#changes-1" class="anchor"></a>Changes</h2>
 <ul>
-<li>Disable sourcing translations.R for now (until {shiny-i18n} is implemented).</li>
+<li>Disable sourcing <code>translations.R</code> for now (until {shiny-i18n} is implemented).</li>
 </ul>
 </div>
 </div>
     <div id="biodosetools-20190717-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.07.17">
 <a href="#biodosetools-20190717-beta" class="anchor"></a>biodosetools 2019.07.17-beta</h1>
+<div id="new-features-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features-3" class="anchor"></a>New features</h2>
+<ul>
+<li>Added manual input of translocations name.</li>
+<li>Implemented dynamic calculation of hot width for counts, cases, and chromosome data tables.</li>
+<li>Implemented manual input of translocation frequency to be substracted from the observed yield.</li>
+<li>Started detection limit calculation in fitting module.</li>
+<li>Implemented Delta method for whole-body estimation.</li>
+<li>Added calculation of standard error of Fg for translocations’ dose estimation module.</li>
+</ul>
+</div>
+<div id="fixes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fixes-4" class="anchor"></a>Fixes</h2>
+<ul>
+<li>Fixed depedency of the “Calculate fitting” button in the translocation module.</li>
+<li>Fixed calculations for whole and partial body estimations for translocations module.</li>
+<li>Fixed colors on chromosome hot table example.</li>
+<li>Fix genomic conversion factor not being read when doing fitting.</li>
+<li>Fix <code>Fp -&gt; y</code> when using dicentrics in dose estimation module.</li>
+<li>Fixed detection limit calculation.</li>
+<li>Fixed dose estimation in detection limits function.</li>
+<li>Corrected correction of FISH to Full genome when inputting manual fitting curve in dose estimation modules.</li>
+<li>Corrected reading of translocations fit curve values in dose estimation module.</li>
+</ul>
+</div>
+<div id="improvements-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements-2" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Tweaked variable names and order in cases data for translocations dose estimation.</li>
+<li>Updated <code>help_colors_dialog</code> for translocations modules.</li>
+<li>New module for auxiliary <code>rhandsontable()</code> tables used in help dialogues.</li>
+<li>New help dialogues for translocations modules.</li>
+<li>Consistent use of <code>genome_fraction</code> in variables related to the genomic conversion factor/fraction of genome hybridised.</li>
+<li>ggplot2 curve generation is now wrapped inside a function on the dose estimation modules.</li>
+<li>Finished confounders help dialogue.</li>
+<li>New aberration calculation method using <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map_df()</a></code> instead of a nested loops, which is about 10 times faster.</li>
+<li>Make clear in translocations dose estimation module that the coefficients are from the full genome.</li>
+<li>Added highly protracted exposure.</li>
+<li>Implemented calculation of detection limits from data.</li>
+<li>Added dose calculation to detection limits section.</li>
+<li>Changed <code>σ</code> to <code>\sigma</code> in help dialogues.</li>
+<li>Added units to result tables.</li>
+<li>Code clean-up on delta method for whole-body dose estimation.</li>
+<li>Updated plot CI text generation on legend to account for new Delta method and for separate whole-body &amp; heterogeneous error method selection.</li>
+<li>CONTRIBUTORS.md is now displayed as a modal.</li>
+<li>Using ORCID for authors when possible.</li>
+<li>Updated institution links in contributors files.</li>
+</ul>
+</div>
+<div id="ui-improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ui-improvements-1" class="anchor"></a>UI Improvements</h2>
+<ul>
+<li>Improved <code>side-widget-tall</code> bottom margins.</li>
+<li>Moved translocation frequency <code>selectInput()</code> next to Calculate Fitting button for better UX.</li>
+<li>New <code>hot-improved</code> CSS class for better hot tables’ formatting.</li>
+<li>All hot tables are using <code>hot-improved</code> class now.</li>
+<li>New contributors list style and custom CSS style for tables.</li>
+<li>Added experiment/aberration name on tab body title to avoid confussions.</li>
+<li>Improved “About” tab paddings.</li>
+<li>Improve widths of color columns in chromosome tables.</li>
+<li>Narrower color columns in chromosome tables.</li>
+<li>All hot tables’ widths are dynamic or exact now.</li>
+<li>Improved small action buttons style on help dialogues.</li>
+<li>New results color to differentiate from main color.</li>
+<li>Updated UI to adapt for new Delta method for whole-body estimation.</li>
+<li>Updated translocations UI to adapt for new Delta method for whole-body estimation.</li>
+<li>Added CI for Dolphin dose estimation UI.</li>
+<li>Added (work in progress) Micronuclei into UI.</li>
+<li>Hide language selector until shiny-i18n is implemented.</li>
+</ul>
+</div>
 </div>
     <div id="biodosetools-20190625-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.06.25">
 <a href="#biodosetools-20190625-beta" class="anchor"></a>biodosetools 2019.06.25-beta</h1>
-<div id="new-features-2" class="section level2">
+<div id="new-features-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>New features</h2>
+<a href="#new-features-4" class="anchor"></a>New features</h2>
 <ul>
 <li>Start translocations dose estimation module and report.</li>
 <li>Allow using M-Fish color scheme in translocations fitting module.</li>
@@ -396,16 +555,16 @@
 <li>Implemented confounders modifications for translocations in <code>generalEstimateCaseHotTable()</code> module.</li>
 </ul>
 </div>
-<div id="improvements-1" class="section level2">
+<div id="improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-1" class="anchor"></a>Improvements</h2>
+<a href="#improvements-3" class="anchor"></a>Improvements</h2>
 <ul>
 <li>New chromosome table structure. <code>transChromosomeTable()</code> and <code>transFractionToFullGenomeCalc()</code> have been moved to <code>transGeneralModule.R</code>, as they are reused in the dose estimation module.</li>
 <li>Using new chromosome table UI and server modules for translocations dose estimation.</li>
 <li>Merged “repeated” fitting modules into a <code>generalFittingModules.R</code> file.</li>
 <li>Merged <code>*FittingResults()</code> modules into <code>generalFittingResults()</code> module.</li>
 <li>Updated translocations fitting report to new chromosome table structure.</li>
-<li>New <code>generalEstimateFittingCurveHotTables()</code> and generalEstimateFittingCurve() modules.</li>
+<li>New <code>generalEstimateFittingCurveHotTables()</code> and <code>generalEstimateFittingCurve()</code> modules.</li>
 <li>New <code>globalVariables.R</code> with <code>global_fitting_formulas</code> list.</li>
 <li>Added translocations-specific code in <code>generalEstimateFittingCurve()</code> module to take into account used translocation frequency.</li>
 <li>New inputs for used translocation frequency and genomic conversion factor in manual fitting input in dose estimation module.</li>
@@ -414,9 +573,9 @@
 <li>Added readOnly status to <code>Xt</code>, <code>yt</code>, <code>yt_err</code> variables on <code>rhandsontable()</code> for translocations case data.</li>
 </ul>
 </div>
-<div id="ui-improvements" class="section level2">
+<div id="ui-improvements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements" class="anchor"></a>UI improvements</h2>
+<a href="#ui-improvements-2" class="anchor"></a>UI improvements</h2>
 <ul>
 <li>New <code>innerColumn</code> to use inside cards/boxes.</li>
 <li>New <code>widgetLabel()</code> function for labels above widgets without default label.</li>
@@ -427,9 +586,9 @@
 <li>Moved fitting curve input in translocations’ dose estimation module to the top.</li>
 </ul>
 </div>
-<div id="fixes-3" class="section level2">
+<div id="fixes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-3" class="anchor"></a>Fixes</h2>
+<a href="#fixes-5" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fix minor error in calculation of infimum yield values.</li>
 <li>Fixed “Color options” card and color_list object for chromosome table generation.</li>
@@ -441,9 +600,9 @@
     <div id="biodosetools-20190615-beta" class="section level1">
 <h1 class="page-header" data-toc-text="2019.06.15">
 <a href="#biodosetools-20190615-beta" class="anchor"></a>biodosetools 2019.06.15-beta</h1>
-<div id="new-features-3" class="section level2">
+<div id="new-features-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-3" class="anchor"></a>New features</h2>
+<a href="#new-features-5" class="anchor"></a>New features</h2>
 <ul>
 <li>Conditional tabs in sidebar by implementing <code>bs4MyConditionalSidebarMenuItem()</code> function.</li>
 <li>Implemented AIC calculation for different dose estimation assessments.</li>
@@ -452,9 +611,9 @@
 <li>Implemented manual calculation of case parameters (<code>N</code>, <code>X</code>, <code>y</code>, <code>y_est</code>, <code>DI</code>, <code>u</code>) in dose estimation module.</li>
 </ul>
 </div>
-<div id="improvements-2" class="section level2">
+<div id="improvements-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-2" class="anchor"></a>Improvements</h2>
+<a href="#improvements-4" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Disabled automatic calculation of <code>N</code>, <code>X</code>, <code>DI</code>, <code>u</code> to avoid broken input issues when running the deployed app.</li>
 <li>Added <code>CONTRIBUTORS.md</code> file.</li>
@@ -471,20 +630,20 @@
 <li>Added global <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> to translocations fitting module.</li>
 </ul>
 </div>
-<div id="ui-improvements-1" class="section level2">
+<div id="ui-improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements-1" class="anchor"></a>UI improvements</h2>
+<a href="#ui-improvements-3" class="anchor"></a>UI improvements</h2>
 <ul>
 <li>Cleaner version of <code>topButton()</code> for help button and help modals on fitting and dose estimation modules..</li>
 <li>More informative model summary dialogue in fitting module.</li>
 <li>Better output of genomic conversion factor.</li>
 <li>“Partial” is now “Partial-body”. Better titles in dose estimation results card.</li>
-<li>New bs4MyTabCard() function with topButton and noPadding capabilities.</li>
+<li>New <code>bs4MyTabCard()</code> function with topButton and noPadding capabilities.</li>
 </ul>
 </div>
-<div id="fixes-4" class="section level2">
+<div id="fixes-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-4" class="anchor"></a>Fixes</h2>
+<a href="#fixes-6" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed problem with fit_formula_raw when using linear model. Disabled <code>*-no-int</code> models until Dolphin can deal with them.</li>
 <li>Fixed rendering problem in Firefox (and potentially other browsers) with count data <code>rhandsontable()</code> using 100% of the card’s height.</li>
@@ -498,9 +657,9 @@
 <h1 class="page-header" data-toc-text="2019.05.24">
 <a href="#biodosetools-20190524-beta" class="anchor"></a>biodosetools 2019.05.24-beta</h1>
 <p>First public beta for laboratories and research centres.</p>
-<div id="new-features-4" class="section level2">
+<div id="new-features-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-4" class="anchor"></a>New features</h2>
+<a href="#new-features-6" class="anchor"></a>New features</h2>
 <ul>
 <li>Initial support of reports.</li>
 <li>Implemented selection of CI for dose estimation (83%-83% &amp; 95%-95%).</li>
@@ -511,9 +670,9 @@
 <li>Manual input of fitting coefficients and var/cov matrix for dose estimation.</li>
 </ul>
 </div>
-<div id="improvements-3" class="section level2">
+<div id="improvements-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-3" class="anchor"></a>Improvements</h2>
+<a href="#improvements-5" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Added format/MIME type validation for file inputs.</li>
 <li>Render fitting formula using MathJax.</li>
@@ -526,9 +685,9 @@
 <li>Added automatic correction of confidence intervals to use “simplfied” Merkle method if necessary.</li>
 </ul>
 </div>
-<div id="fixes-5" class="section level2">
+<div id="fixes-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fixes-5" class="anchor"></a>Fixes</h2>
+<a href="#fixes-7" class="anchor"></a>Fixes</h2>
 <ul>
 <li>Fixed calculation of full genome.</li>
 <li>Fixed alignment of conditional error/method inputs for dose estimation.</li>
@@ -541,9 +700,9 @@
 <h1 class="page-header" data-toc-text="2019.04.03">
 <a href="#biodosetools-20190403-alpha" class="anchor"></a>biodosetools 2019.04.03-alpha</h1>
 <p>Version presented in second Team Meeting at Munich.</p>
-<div id="new-features-5" class="section level2">
+<div id="new-features-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-5" class="anchor"></a>New features</h2>
+<a href="#new-features-7" class="anchor"></a>New features</h2>
 <ul>
 <li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
 <li>Added data, plot, and results export options.</li>
