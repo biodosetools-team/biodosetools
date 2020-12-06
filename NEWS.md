@@ -158,10 +158,73 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 ## Changes
 
-* Disable sourcing translations.R for now (until {shiny-i18n} is implemented).
+* Disable sourcing `translations.R` for now (until {shiny-i18n} is implemented).
 
 
 # biodosetools 2019.07.17-beta
+
+## New features
+
+* Added manual input of translocations name.
+* Implemented dynamic calculation of hot width for counts, cases, and chromosome data tables.
+* Implemented manual input of translocation frequency to be substracted from the observed yield.
+* Started detection limit calculation in fitting module.
+* Implemented Delta method for whole-body estimation.
+* Added calculation of standard error of Fg for translocations' dose estimation module.
+
+## Fixes
+
+* Fixed depedency of the "Calculate fitting" button in the translocation module.
+* Fixed calculations for whole and partial body estimations for translocations module.
+* Fixed colors on chromosome hot table example.
+* Fix genomic conversion factor not being read when doing fitting.
+* Fix `Fp -> y` when using dicentrics in dose estimation module.
+* Fixed detection limit calculation.
+* Fixed dose estimation in detection limits function.
+* Corrected correction of FISH to Full genome when inputting manual fitting curve in dose estimation modules.
+* Corrected reading of translocations fit curve values in dose estimation module.
+
+## Improvements
+
+* Tweaked variable names and order in cases data for translocations dose estimation.
+* Updated `help_colors_dialog` for translocations modules.
+* New module for auxiliary `rhandsontable()` tables used in help dialogues.
+* New help dialogues for translocations modules.
+* Consistent use of `genome_fraction` in variables related to the genomic conversion factor/fraction of genome hybridised.
+* ggplot2 curve generation is now wrapped inside a function on the dose estimation modules.
+* Finished confounders help dialogue.
+* New aberration calculation method using `purrr::map_df()` instead of a nested loops, which is about 10 times faster.
+* Make clear in translocations dose estimation module that the coefficients are from the full genome.
+* Added highly protracted exposure.
+* Implemented calculation of detection limits from data.
+* Added dose calculation to detection limits section.
+* Changed `σ` to `\sigma` in help dialogues.
+* Added units to result tables.
+* Code clean-up on delta method for whole-body dose estimation.
+* Updated plot CI text generation on legend to account for new Delta method and for separate whole-body & heterogeneous error method selection.
+* CONTRIBUTORS.md is now displayed as a modal.
+* Using ORCID for authors when possible.
+* Updated institution links in contributors files.
+
+## UI Improvements
+
+* Improved `side-widget-tall` bottom margins.
+* Moved translocation frequency `selectInput()` next to Calculate Fitting button for better UX.
+* New `hot-improved` CSS class for better hot tables' formatting.
+* All hot tables are using `hot-improved` class now.
+* New contributors list style and custom CSS style for tables.
+* Added experiment/aberration name on tab body title to avoid confussions.
+* Improved "About" tab paddings.
+* Improve widths of color columns in chromosome tables.
+* Narrower color columns in chromosome tables.
+* All hot tables' widths are dynamic or exact now.
+* Improved small action buttons style on help dialogues.
+* New results color to differentiate from main color.
+* Updated UI to adapt for new Delta method for whole-body estimation.
+* Updated translocations UI to adapt for new Delta method for whole-body estimation.
+* Added CI for Dolphin dose estimation UI.
+* Added (work in progress) Micronuclei into UI.
+* Hide language selector until shiny-i18n is implemented.
 
 
 # biodosetools 2019.06.25-beta
@@ -282,6 +345,7 @@ First public beta for laboratories and research centres.
 * Changed "base" to "estimate" on CI tables for dose estimation.
 * Fixed `bs4TabCard()` bug.
 
+
 # biodosetools 2019.04.03-alpha
 
 Version presented in second Team Meeting at Munich.
@@ -294,6 +358,7 @@ Version presented in second Team Meeting at Munich.
 * Dose estimation modules for dicentrics.
 * Complete implementation of dicentrics analysis.
 * Experimental fitting for translocations assay.
+
 
 # biodosetools 2018.11.29-alpha
 
