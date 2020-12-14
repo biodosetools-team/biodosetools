@@ -7,7 +7,7 @@
 <br>
 
 <p style="padding-left: 10%; padding-right: 10%;">
-  This project in an app to be used by biological dosimetry laboratories. Biodose Tools is an open-source project that aims to be a tool to perform all different tests and calculations needed. The app is developed with <a href="https://www.r-project.org/about.html">R</a> together with <a href="https://shiny.rstudio.com">Shiny</a> to offer an on-line, easy-to-use solution. Although the intention is to provide the application as a website, all R routines can be downloaded for improvement or personal use.
+  This project is an app to be used by biological dosimetry laboratories. Biodose Tools is an open source project that aims to be a tool to perform all different tests and calculations needed. The app is developed using the <a href="https://www.r-project.org/about.html">R</a> programming language and <a href="https://shiny.rstudio.com">Shiny</a> as a framework to offer an online, easy-to-use solution. Although the intention is to provide the application as a website, all R routines are available as an R package, which can be downloaded for improvement or personal use.
 </p>
 
 <p style="padding-left: 10%; padding-right: 10%;">
