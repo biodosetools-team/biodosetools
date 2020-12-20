@@ -72,6 +72,9 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
           dplyr::mutate_at(
             dplyr::vars(dplyr::starts_with("C")),
             as.integer
+          ) %>%
+          dplyr::mutate(
+            D = as.numeric(.data$D)
           )
       } else {
         full_data <- utils::read.csv(count_data$datapath, header = TRUE) %>%

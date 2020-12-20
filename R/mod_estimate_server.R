@@ -520,9 +520,16 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         `colnames<-`(paste0("C", seq(0, num_aberrs - 1, 1)))
     } else {
       full_data <- utils::read.csv(case_data$datapath, header = TRUE) %>%
+        dplyr::rename_at(
+          dplyr::vars(dplyr::everything()),
+          toupper
+        ) %>%
         dplyr::mutate_at(
           dplyr::vars(dplyr::starts_with("C")),
           as.integer
+        ) %>%
+        dplyr::select_at(
+          dplyr::vars(dplyr::starts_with("C"))
         )
     }
 
