@@ -1,3 +1,21 @@
+# biodosetools 3.4.0.9000
+
+* Added preliminary citation to README.
+
+## Bug fixes 
+
+* Fixed unexported `calculate_aberr_var()` function.
+* Stopped using weights in fitting algorithms (`glm` and `glm.nb`). Fixes #20, addresses part of #14 as well.
+* Fixed aggregated count data column parsing in `fix_count_data_names()` function.
+* Fixed case data parsing issue when `.csv` file is not perfectly formated.
+
+## Improvements 
+
+* Added Oliveira citation on `get_fit_maxlik_method()` function.
+* Fixed Gaëtan's name order in citation and contributors list.
+* Updated README and About body text
+
+
 # biodosetools 3.4.0 (2020-10-11)
 
 * Removed all non-ASCII characters.
