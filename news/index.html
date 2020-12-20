@@ -122,6 +122,32 @@
       <small>Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="biodosetools-3409000" class="section level1">
+<h1 class="page-header" data-toc-text="3.4.0.9000">
+<a href="#biodosetools-3409000" class="anchor"></a>biodosetools 3.4.0.9000</h1>
+<ul>
+<li>Added preliminary citation to README.</li>
+</ul>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fixed unexported <code><a href="../reference/calculate_aberr.html">calculate_aberr_var()</a></code> function.</li>
+<li>Stopped using weights in fitting algorithms (<code>glm</code> and <code>glm.nb</code>). Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/20'>#20</a>, addresses part of <a href='https://github.com/biodosetools-team/biodosetools/issues/14'>#14</a> as well.</li>
+<li>Fixed aggregated count data column parsing in <code>fix_count_data_names()</code> function.</li>
+<li>Fixed case data parsing issue when <code>.csv</code> file is not perfectly formated.</li>
+</ul>
+</div>
+<div id="improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Added Oliveira citation on <code><a href="../reference/get_fit_maxlik_method.html">get_fit_maxlik_method()</a></code> function.</li>
+<li>Fixed Gaëtan’s name order in citation and contributors list.</li>
+<li>Updated README and About body text</li>
+</ul>
+</div>
+</div>
     <div id="biodosetools-340-2020-10-11" class="section level1">
 <h1 class="page-header" data-toc-text="3.4.0">
 <a href="#biodosetools-340-2020-10-11" class="anchor"></a>biodosetools 3.4.0 (2020-10-11)</h1>
@@ -134,9 +160,9 @@
 <li>Minimal version of R bumped to 3.5.0.</li>
 <li>Minimal version of {dplyr} bumped to 1.0.0.</li>
 </ul>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Replaced <code>C</code>, <code>α</code>, <code>β</code> variables (and derivatives) by <code>coeff_C</code>, <code>coeff_alpha</code>, <code>coeff_beta</code>.</li>
 <li>Fixed error in genome_fraction parsing for translocations in <code><a href="../reference/estimate_partial_dolphin.html">estimate_partial_dolphin()</a></code>.</li>
@@ -171,9 +197,9 @@
     <div id="biodosetools-331-2020-10-07" class="section level1">
 <h1 class="page-header" data-toc-text="3.3.1">
 <a href="#biodosetools-331-2020-10-07" class="anchor"></a>biodosetools 3.3.1 (2020-10-07)</h1>
-<div id="bug-fixes-1" class="section level2">
+<div id="bug-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Count and case data calculations are performed using <code>calculate_aberr_*()</code> functions. Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/8'>#8</a>.</li>
 <li>Fixed missing {dplyr} namespace in <code>n()</code> function call.</li>
@@ -238,9 +264,9 @@
 <li>Updated old “biodosimetry-uab” URLs to “biodosetools-team”.</li>
 </ul>
 </div>
-<div id="improvements" class="section level2">
+<div id="improvements-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements" class="anchor"></a>Improvements</h2>
+<a href="#improvements-1" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Stop exporting auxiliary <code>include*()</code> functions used on the app only.</li>
 <li>Moved <code>widget_label()</code> to widgets.R.</li>
@@ -288,9 +314,9 @@
     <div id="biodosetools-321-2020-02-13" class="section level1">
 <h1 class="page-header" data-toc-text="3.2.1">
 <a href="#biodosetools-321-2020-02-13" class="anchor"></a>biodosetools 3.2.1 (2020-02-13)</h1>
-<div id="bug-fixes-2" class="section level2">
+<div id="bug-fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-3" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Added required {pander} package to generate DOCX reports.</li>
 </ul>
@@ -445,9 +471,9 @@
 <li>Updated documentation link.</li>
 </ul>
 </div>
-<div id="improvements-1" class="section level2">
+<div id="improvements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-1" class="anchor"></a>Improvements</h2>
+<a href="#improvements-2" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Added <code>button_fit</code> dependency for detection limits calculation.</li>
 <li>Updated fitting reports (new hot structures &amp; dynamic widths).</li>
@@ -493,9 +519,9 @@
 <li>Corrected reading of translocations fit curve values in dose estimation module.</li>
 </ul>
 </div>
-<div id="improvements-2" class="section level2">
+<div id="improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-2" class="anchor"></a>Improvements</h2>
+<a href="#improvements-3" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Tweaked variable names and order in cases data for translocations dose estimation.</li>
 <li>Updated <code>help_colors_dialog</code> for translocations modules.</li>
@@ -555,9 +581,9 @@
 <li>Implemented confounders modifications for translocations in <code>generalEstimateCaseHotTable()</code> module.</li>
 </ul>
 </div>
-<div id="improvements-3" class="section level2">
+<div id="improvements-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-3" class="anchor"></a>Improvements</h2>
+<a href="#improvements-4" class="anchor"></a>Improvements</h2>
 <ul>
 <li>New chromosome table structure. <code>transChromosomeTable()</code> and <code>transFractionToFullGenomeCalc()</code> have been moved to <code>transGeneralModule.R</code>, as they are reused in the dose estimation module.</li>
 <li>Using new chromosome table UI and server modules for translocations dose estimation.</li>
@@ -611,9 +637,9 @@
 <li>Implemented manual calculation of case parameters (<code>N</code>, <code>X</code>, <code>y</code>, <code>y_est</code>, <code>DI</code>, <code>u</code>) in dose estimation module.</li>
 </ul>
 </div>
-<div id="improvements-4" class="section level2">
+<div id="improvements-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-4" class="anchor"></a>Improvements</h2>
+<a href="#improvements-5" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Disabled automatic calculation of <code>N</code>, <code>X</code>, <code>DI</code>, <code>u</code> to avoid broken input issues when running the deployed app.</li>
 <li>Added <code>CONTRIBUTORS.md</code> file.</li>
@@ -670,9 +696,9 @@
 <li>Manual input of fitting coefficients and var/cov matrix for dose estimation.</li>
 </ul>
 </div>
-<div id="improvements-5" class="section level2">
+<div id="improvements-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#improvements-5" class="anchor"></a>Improvements</h2>
+<a href="#improvements-6" class="anchor"></a>Improvements</h2>
 <ul>
 <li>Added format/MIME type validation for file inputs.</li>
 <li>Render fitting formula using MathJax.</li>
