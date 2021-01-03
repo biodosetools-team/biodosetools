@@ -1,0 +1,7 @@
+authors:
+  Alfredo Hernández:
+    href: https://aldomann.com
+
+template:
+  params:
+    bootswatch: flatly
