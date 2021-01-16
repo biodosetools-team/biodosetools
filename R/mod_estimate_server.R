@@ -765,11 +765,14 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
       fit_coeffs <- fit_coeffs_raw %>%
         cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
-        as.matrix()
+        as.matrix() %>%
+        `rownames<-`(names_from_formula(model_formula))
 
       if (input$use_var_cov_matrix) {
         fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
-          as.matrix()
+          as.matrix() %>%
+          `colnames<-`(rownames(fit_coeffs)) %>%
+          `rownames<-`(rownames(fit_coeffs))
       } else {
         # Calculate var-cov matrix when none is provided
         fit_var_cov_mat <- matrix(
@@ -805,6 +808,8 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         fit_var_cov_mat = fit_var_cov_mat
       )
     }
+
+    # browser()
 
     # Parse fitting data
     fit_coeffs <- fit_results_list[["fit_coeffs"]]
