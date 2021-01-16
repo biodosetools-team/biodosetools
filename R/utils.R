@@ -3,6 +3,30 @@
   options("yaml.eval.expr" = TRUE)
 }
 
+#' Parse coefficient names from model formula
+#'
+#' Fix coefficient names (`coeff_C`, `coeff_alpha`, `coeff_beta`) on manual coeffiecient matrix.
+#'
+#' @param model_formula Model formula
+#'
+#' @return Vector of coefficient names
+#' @noRd
+names_from_formula <- function(model_formula) {
+  if (model_formula == "lin-quad") {
+    names <- c("coeff_C", "coeff_alpha", "coeff_beta")
+  } else if (model_formula == "lin") {
+    names <- c("coeff_C", "coeff_alpha")
+  }
+  else if (model_formula == "lin-quad-no-int") {
+    names <- c("coeff_alpha", "coeff_beta")
+  }
+  else if (model_formula == "lin-no-int") {
+    names <- c("coeff_alpha")
+  }
+
+  return(names)
+}
+
 #' Fix coefficient matrix names
 #'
 #' Fix coefficient names (`coeff_C`, `coeff_alpha`, `coeff_beta`) to display properly on reports.
