@@ -9,7 +9,7 @@ prepare_maxlik_count_data(count_data, model_formula, aberr_module)
 \arguments{
 \item{count_data}{Count data in data frame form}
 
-\item{model_formula}{Formula}
+\item{model_formula}{Model formula}
 
 \item{aberr_module}{Aberration module}
 }

@@ -89,7 +89,7 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results, fit_al
 #' Prepare count data for max-likelihood optimization fitting
 #'
 #' @param count_data Count data in data frame form
-#' @param model_formula Formula
+#' @param model_formula Model formula
 #' @param aberr_module Aberration module
 #'
 #' @return Parsed count data (data frame)
