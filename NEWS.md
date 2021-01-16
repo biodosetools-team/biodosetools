@@ -2,18 +2,23 @@
 
 * Added preliminary citation to README.
 
-## Bug fixes 
+## Bug fixes
 
 * Fixed unexported `calculate_aberr_var()` function.
 * Stopped using weights in fitting algorithms (`glm` and `glm.nb`). Fixes #20, addresses part of #14 as well.
 * Fixed aggregated count data column parsing in `fix_count_data_names()` function.
 * Fixed case data parsing issue when `.csv` file is not perfectly formated.
+* Fixed issue with manual fitting curve input (fixes #23).
 
-## Improvements 
+## New functions
+
+* `names_from_formula()`, to parse `rhandsontable()` Unicode row and column coefficient names.
+
+## Improvements
 
 * Added Oliveira citation on `get_fit_maxlik_method()` function.
 * Fixed Gaëtan's name order in citation and contributors list.
-* Updated README and About body text
+* Updated README and About body text.
 
 
 # biodosetools 3.4.0 (2020-10-11)
@@ -203,7 +208,7 @@ Unofficial release (wasn't changed on `DESCRIPTION` file). This includes some of
 
 # biodosetools 3.0.0 (2019-10-12)
 
-The app is now available as an R package on GitHub (we haven't submitted Biodose Tools to CRAN yet).
+The app is now available as an R package on GitHub (not submitted to CRAN yet).
 
 ## New functions
 
@@ -216,7 +221,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Provide fallback method for NB2 when using constraint-maxlik-optimization.
 
 
-# biodosetools 2019.07.27-beta
+# biodosetools 2.1.0 (2019-07-27)
 
 ## New features
 
@@ -231,7 +236,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 
 ## Fixes
 
-* Fixed colwidths for detection limits.
+* Fixed `colwidth`s for detection limits.
 * Fixed unnecessary recalculation of `num_cols` for chromosome tables in translocations modules.
 * New subdirectory structure for help dialogues.
 * Added buttons and example tables in help dialogues.
@@ -249,20 +254,20 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Disable sourcing `translations.R` for now (until {shiny-i18n} is implemented).
 
 
-# biodosetools 2019.07.17-beta
+# biodosetools 2.0.0 (2019-07-17)
 
 ## New features
 
 * Added manual input of translocations name.
 * Implemented dynamic calculation of hot width for counts, cases, and chromosome data tables.
-* Implemented manual input of translocation frequency to be substracted from the observed yield.
+* Implemented manual input of translocation frequency to be subtracted from the observed yield.
 * Started detection limit calculation in fitting module.
 * Implemented Delta method for whole-body estimation.
-* Added calculation of standard error of Fg for translocations' dose estimation module.
+* Added calculation of standard error of `Fg` for translocations' dose estimation module.
 
 ## Fixes
 
-* Fixed depedency of the "Calculate fitting" button in the translocation module.
+* Fixed dependency of the "Calculate fitting" button in the translocation module.
 * Fixed calculations for whole and partial body estimations for translocations module.
 * Fixed colors on chromosome hot table example.
 * Fix genomic conversion factor not being read when doing fitting.
@@ -301,7 +306,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * New `hot-improved` CSS class for better hot tables' formatting.
 * All hot tables are using `hot-improved` class now.
 * New contributors list style and custom CSS style for tables.
-* Added experiment/aberration name on tab body title to avoid confussions.
+* Added experiment/aberration name on tab body title to avoid confusions.
 * Improved "About" tab paddings.
 * Improve widths of color columns in chromosome tables.
 * Narrower color columns in chromosome tables.
@@ -315,7 +320,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Hide language selector until shiny-i18n is implemented.
 
 
-# biodosetools 2019.06.25-beta
+# biodosetools 1.2.0 (2019-06-25)
 
 ## New features
 
@@ -357,7 +362,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Deleted heterogeneous estimation for translocations.
 
 
-# biodosetools 2019.06.15-beta
+# biodosetools 1.1.0 (2019-06-15)
 
 ## New features
 
@@ -400,7 +405,7 @@ The app is now available as an R package on GitHub (we haven't submitted Biodose
 * Fixed `glm_results object` issue in `get_model_statistics()` function.
 
 
-# biodosetools 2019.05.24-beta
+# biodosetools 1.0.0 (2019-05-24)
 
 First public beta for laboratories and research centres.
 
@@ -434,7 +439,7 @@ First public beta for laboratories and research centres.
 * Fixed `bs4TabCard()` bug.
 
 
-# biodosetools 2019.04.03-alpha
+# biodosetools 0.2.0 (2019-04-03)
 
 Version presented in second Team Meeting at Munich.
 
@@ -448,7 +453,7 @@ Version presented in second Team Meeting at Munich.
 * Experimental fitting for translocations assay.
 
 
-# biodosetools 2018.11.29-alpha
+# biodosetools 0.1.0 (2018-11-29)
 
 First draft and proof of concept presented to the RENEB team at Barcelona.
 
