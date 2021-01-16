@@ -138,6 +138,15 @@
 <li>Stopped using weights in fitting algorithms (<code>glm</code> and <code>glm.nb</code>). Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/20'>#20</a>, addresses part of <a href='https://github.com/biodosetools-team/biodosetools/issues/14'>#14</a> as well.</li>
 <li>Fixed aggregated count data column parsing in <code>fix_count_data_names()</code> function.</li>
 <li>Fixed case data parsing issue when <code>.csv</code> file is not perfectly formated.</li>
+<li>Fixed issue with manual fitting curve input (fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/23'>#23</a>).</li>
+</ul>
+</div>
+<div id="new-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code>names_from_formula()</code>, to parse <code>rhandsontable()</code> Unicode row and column coefficient names.</li>
 </ul>
 </div>
 <div id="improvements" class="section level2">
@@ -146,7 +155,7 @@
 <ul>
 <li>Added Oliveira citation on <code><a href="../reference/get_fit_maxlik_method.html">get_fit_maxlik_method()</a></code> function.</li>
 <li>Fixed Gaëtan’s name order in citation and contributors list.</li>
-<li>Updated README and About body text</li>
+<li>Updated README and About body text.</li>
 </ul>
 </div>
 </div>
@@ -173,9 +182,9 @@
 <li>Supress YAML warning when using <code>!expr</code> in PDF reports. See <a href="https://github.com/rstudio/rstudio/issues/7545" class="uri">https://github.com/rstudio/rstudio/issues/7545</a>.</li>
 </ul>
 </div>
-<div id="new-functions" class="section level2">
+<div id="new-functions-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions" class="anchor"></a>New functions</h2>
+<a href="#new-functions-1" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code>fix_coeff_names()</code>, to fix coefficient names in reports.</li>
@@ -208,9 +217,9 @@
 <li>Fixed mismatched use of <code>awesomeCheckbox()</code> and <code>switchInput()</code> in confounders input.</li>
 </ul>
 </div>
-<div id="new-functions-1" class="section level2">
+<div id="new-functions-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-1" class="anchor"></a>New functions</h2>
+<a href="#new-functions-2" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code>, which supersedes internal <code>aberr_calc()</code> function in server modules.</li>
@@ -241,9 +250,9 @@
 <li>All custom theming is done through SASS and CSS instead of R code injection.</li>
 </ul>
 </div>
-<div id="new-functions-2" class="section level2">
+<div id="new-functions-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-2" class="anchor"></a>New functions</h2>
+<a href="#new-functions-3" class="anchor"></a>New functions</h2>
 <ul>
 <li>New <code><a href="../reference/include_help.html">include_help()</a></code> for help dialogues</li>
 <li>New <code>help_modal_button()</code> function to help build modal trigger buttons on boxes’ titles.</li>
@@ -328,9 +337,9 @@
 <h1 class="page-header" data-toc-text="3.2.0">
 <a href="#biodosetools-320-2020-02-11" class="anchor"></a>biodosetools 3.2.0 (2020-02-11)</h1>
 <p>All calculations functions previously provided in <code>inst/app/calcs</code> have been made proper functions on the package.</p>
-<div id="new-functions-3" class="section level2">
+<div id="new-functions-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-3" class="anchor"></a>New functions</h2>
+<a href="#new-functions-4" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code><a href="../reference/calculate_yield.html">calculate_yield()</a></code> new wrapper of <code><a href="../reference/yield_fun.html">yield_fun()</a></code>, <code><a href="../reference/R_factor.html">R_factor()</a></code>, and <code><a href="../reference/yield_error_fun.html">yield_error_fun()</a></code>.</li>
@@ -340,9 +349,9 @@
 <code><a href="../reference/project_yield.html">project_yield()</a></code> merged version of the <code>project_yield_estimate()</code>, <code>project_yield_lower()</code>, and <code>project_yield_upper()</code> functions.</li>
 </ul>
 </div>
-<div id="new-functions-4" class="section level2">
+<div id="new-functions-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-4" class="anchor"></a>“New” functions</h2>
+<a href="#new-functions-5" class="anchor"></a>“New” functions</h2>
 <ul>
 <li>
 <code>get_decision_threshold()</code>.</li>
@@ -422,10 +431,10 @@
     <div id="biodosetools-300-2019-10-12" class="section level1">
 <h1 class="page-header" data-toc-text="3.0.0">
 <a href="#biodosetools-300-2019-10-12" class="anchor"></a>biodosetools 3.0.0 (2019-10-12)</h1>
-<p>The app is now available as an R package on GitHub (we haven’t submitted Biodose Tools to CRAN yet).</p>
-<div id="new-functions-5" class="section level2">
+<p>The app is now available as an R package on GitHub (not submitted to CRAN yet).</p>
+<div id="new-functions-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-5" class="anchor"></a>New functions</h2>
+<a href="#new-functions-6" class="anchor"></a>New functions</h2>
 <ul>
 <li>
 <code>runApp()</code> for launching Biodose Tools.</li>
@@ -442,9 +451,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190727-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.07.27">
-<a href="#biodosetools-20190727-beta" class="anchor"></a>biodosetools 2019.07.27-beta</h1>
+    <div id="biodosetools-210-2019-07-27" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.0">
+<a href="#biodosetools-210-2019-07-27" class="anchor"></a>biodosetools 2.1.0 (2019-07-27)</h1>
 <div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features-2" class="anchor"></a>New features</h2>
@@ -455,9 +464,9 @@
 <li>Added DOCX support for dicentrics and translocations.</li>
 </ul>
 </div>
-<div id="new-functions-6" class="section level2">
+<div id="new-functions-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-functions-6" class="anchor"></a>New functions</h2>
+<a href="#new-functions-7" class="anchor"></a>New functions</h2>
 <ul>
 <li>New <code>bs4MyTabPanel()</code> widget to remove unnecessary padding on <code>tabCards</code>’ panels.</li>
 </ul>
@@ -466,7 +475,7 @@
 <h2 class="hasAnchor">
 <a href="#fixes-3" class="anchor"></a>Fixes</h2>
 <ul>
-<li>Fixed colwidths for detection limits.</li>
+<li>Fixed <code>colwidth</code>s for detection limits.</li>
 <li>Fixed unnecessary recalculation of <code>num_cols</code> for chromosome tables in translocations modules.</li>
 <li>New subdirectory structure for help dialogues.</li>
 <li>Added buttons and example tables in help dialogues.</li>
@@ -491,26 +500,26 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190717-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.07.17">
-<a href="#biodosetools-20190717-beta" class="anchor"></a>biodosetools 2019.07.17-beta</h1>
+    <div id="biodosetools-200-2019-07-17" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#biodosetools-200-2019-07-17" class="anchor"></a>biodosetools 2.0.0 (2019-07-17)</h1>
 <div id="new-features-3" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features-3" class="anchor"></a>New features</h2>
 <ul>
 <li>Added manual input of translocations name.</li>
 <li>Implemented dynamic calculation of hot width for counts, cases, and chromosome data tables.</li>
-<li>Implemented manual input of translocation frequency to be substracted from the observed yield.</li>
+<li>Implemented manual input of translocation frequency to be subtracted from the observed yield.</li>
 <li>Started detection limit calculation in fitting module.</li>
 <li>Implemented Delta method for whole-body estimation.</li>
-<li>Added calculation of standard error of Fg for translocations’ dose estimation module.</li>
+<li>Added calculation of standard error of <code>Fg</code> for translocations’ dose estimation module.</li>
 </ul>
 </div>
 <div id="fixes-4" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fixes-4" class="anchor"></a>Fixes</h2>
 <ul>
-<li>Fixed depedency of the “Calculate fitting” button in the translocation module.</li>
+<li>Fixed dependency of the “Calculate fitting” button in the translocation module.</li>
 <li>Fixed calculations for whole and partial body estimations for translocations module.</li>
 <li>Fixed colors on chromosome hot table example.</li>
 <li>Fix genomic conversion factor not being read when doing fitting.</li>
@@ -555,7 +564,7 @@
 <li>New <code>hot-improved</code> CSS class for better hot tables’ formatting.</li>
 <li>All hot tables are using <code>hot-improved</code> class now.</li>
 <li>New contributors list style and custom CSS style for tables.</li>
-<li>Added experiment/aberration name on tab body title to avoid confussions.</li>
+<li>Added experiment/aberration name on tab body title to avoid confusions.</li>
 <li>Improved “About” tab paddings.</li>
 <li>Improve widths of color columns in chromosome tables.</li>
 <li>Narrower color columns in chromosome tables.</li>
@@ -570,9 +579,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190625-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.06.25">
-<a href="#biodosetools-20190625-beta" class="anchor"></a>biodosetools 2019.06.25-beta</h1>
+    <div id="biodosetools-120-2019-06-25" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.0">
+<a href="#biodosetools-120-2019-06-25" class="anchor"></a>biodosetools 1.2.0 (2019-06-25)</h1>
 <div id="new-features-4" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features-4" class="anchor"></a>New features</h2>
@@ -625,9 +634,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190615-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.06.15">
-<a href="#biodosetools-20190615-beta" class="anchor"></a>biodosetools 2019.06.15-beta</h1>
+    <div id="biodosetools-110-2019-06-15" class="section level1">
+<h1 class="page-header" data-toc-text="1.1.0">
+<a href="#biodosetools-110-2019-06-15" class="anchor"></a>biodosetools 1.1.0 (2019-06-15)</h1>
 <div id="new-features-5" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features-5" class="anchor"></a>New features</h2>
@@ -681,9 +690,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190524-beta" class="section level1">
-<h1 class="page-header" data-toc-text="2019.05.24">
-<a href="#biodosetools-20190524-beta" class="anchor"></a>biodosetools 2019.05.24-beta</h1>
+    <div id="biodosetools-100-2019-05-24" class="section level1">
+<h1 class="page-header" data-toc-text="1.0.0">
+<a href="#biodosetools-100-2019-05-24" class="anchor"></a>biodosetools 1.0.0 (2019-05-24)</h1>
 <p>First public beta for laboratories and research centres.</p>
 <div id="new-features-6" class="section level2">
 <h2 class="hasAnchor">
@@ -724,9 +733,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20190403-alpha" class="section level1">
-<h1 class="page-header" data-toc-text="2019.04.03">
-<a href="#biodosetools-20190403-alpha" class="anchor"></a>biodosetools 2019.04.03-alpha</h1>
+    <div id="biodosetools-020-2019-04-03" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.0">
+<a href="#biodosetools-020-2019-04-03" class="anchor"></a>biodosetools 0.2.0 (2019-04-03)</h1>
 <p>Version presented in second Team Meeting at Munich.</p>
 <div id="new-features-7" class="section level2">
 <h2 class="hasAnchor">
@@ -741,9 +750,9 @@
 </ul>
 </div>
 </div>
-    <div id="biodosetools-20181129-alpha" class="section level1">
-<h1 class="page-header" data-toc-text="2018.11.29">
-<a href="#biodosetools-20181129-alpha" class="anchor"></a>biodosetools 2018.11.29-alpha</h1>
+    <div id="biodosetools-010-2018-11-29" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.0">
+<a href="#biodosetools-010-2018-11-29" class="anchor"></a>biodosetools 0.1.0 (2018-11-29)</h1>
 <p>First draft and proof of concept presented to the RENEB team at Barcelona.</p>
 <div id="features" class="section level2">
 <h2 class="hasAnchor">
