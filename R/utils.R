@@ -11,7 +11,9 @@
 #'
 #' @return Vector of coefficient names
 #' @noRd
-names_from_formula <- function(model_formula) {
+names_from_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
+  model_formula <- match.arg(model_formula)
+
   if (model_formula == "lin-quad") {
     names <- c("coeff_C", "coeff_alpha", "coeff_beta")
   } else if (model_formula == "lin") {
