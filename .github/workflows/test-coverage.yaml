@@ -14,6 +14,7 @@ jobs:
   test-coverage:
     runs-on: macOS-latest
     env:
+      RSPM: "https://packagemanager.rstudio.com/cran/latest"
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
@@ -21,12 +22,6 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
 
       - uses: r-lib/actions/setup-pandoc@v1
-
-      - name: Use RStudio Package Manager
-        run: |
-          options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/cran/latest"))
-          options(BioC_mirror = "https://packagemanager.rstudio.com/bioconductor")
-        shell: Rscript {0}
 
       - name: Query dependencies
         run: |
