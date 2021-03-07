@@ -16,6 +16,12 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Use RStudio Package Manager
+        run: |
+          options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/cran/latest"))
+          options(BioC_mirror = "https://packagemanager.rstudio.com/bioconductor")
+        shell: Rscript {0}
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
