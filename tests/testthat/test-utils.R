@@ -54,18 +54,21 @@ test_that("fix_coeff_names works", {
 })
 
 test_that("fix_count_data_names works", {
-  # Expected output
-  count_data <- system.file("extdata", "dicentrics-fitting-data-2020-10-10.rds", package = "biodosetools") %>%
-    readRDS() %>%
-    .$fit_raw_data
+  # Prepare data
+  count_data <- fit_results$fit_raw_data
 
-  cols <- fix_count_data_names(count_data, type = "count", output = "kable") %>%
+  count_data_cols <- fix_count_data_names(count_data, type = "count", output = "kable") %>%
     colnames()
+  count_data_cols_len <- length(count_data_cols)
 
-  expect_equal(cols[1:4], c("$D$ (Gy)", "$N$", "$X$", "$C_{0}$"))
-  expect_equal(cols[(seq(length(cols) - 3, length(cols), 1))],c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$"))
-})
 
-test_that("to title works", {
-  expect_equal(to_title("hello world"), "Hello World")
+  # Expected outputs
+  expect_equal(
+    count_data_cols[1:4],
+    c("$D$ (Gy)", "$N$", "$X$", "$C_{0}$")
+  )
+  expect_equal(
+    count_data_cols[seq(count_data_cols_len - 3, count_data_cols_len, 1)],
+    c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$")
+  )
 })
