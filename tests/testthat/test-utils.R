@@ -1,19 +1,56 @@
+# Basic utils ----
+
+test_that("to title works", {
+  expect_equal(
+    to_title("hello world"),
+    "Hello World"
+  )
+})
+
 test_that("names_from_formula works", {
   # Correct argument matching
   expect_error(names_from_formula("lon-quod"))
-  # Output class
-  expect_type(names_from_formula("lin-quad"), "character")
+
+  # Expected names
+  expect_equal(
+    names_from_formula("lin-quad"),
+    c("coeff_C", "coeff_alpha", "coeff_beta")
+  )
+  expect_equal(
+    names_from_formula("lin"),
+    c("coeff_C", "coeff_alpha")
+  )
+  expect_equal(
+    names_from_formula("lin-quad-no-int"),
+    c("coeff_alpha", "coeff_beta")
+  )
+  expect_equal(
+    names_from_formula("lin-no-int"),
+    c("coeff_alpha")
+  )
 })
 
+
+# Formatting fixes ----
+
+fit_results <- system.file("extdata", "dicentrics-fitting-data-2020-10-10.rds", package = "biodosetools") %>%
+  readRDS()
+
 test_that("fix_coeff_names works", {
-  # Expected output
-  fit_coeffs <- system.file("extdata", "dicentrics-fitting-data-2020-10-10.rds", package = "biodosetools") %>%
-    readRDS() %>%
-    .$fit_coeffs
+  # Prepare data
+  fit_var_cov_mat <- fit_results$fit_var_cov_mat %>%
+    fix_coeff_names("rows", "kable") %>%
+    fix_coeff_names("cols", "kable")
 
-  fit_coeffs <- fix_coeff_names(fit_coeffs, "rows", "kable")
-
-  expect_equal(rownames(fit_coeffs), c("$C$", "$\\alpha$", "$\\beta$"))
+  # Expected outputs
+  expect_equal(
+    rownames(fit_var_cov_mat),
+    c("$C$", "$\\alpha$", "$\\beta$")
+  )
+  expect_equal(
+    colnames(fit_var_cov_mat),
+    c("$C$", "$\\alpha$", "$\\beta$")
+  )
 })
 
 test_that("fix_count_data_names works", {
