@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform max-likelihood optimization fitting — get_fit_maxlik_method • biodosetools</title>
+<title>Get translocation rate — get_translocation_rate • biodosetools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,11 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Perform max-likelihood optimization fitting — get_fit_maxlik_method" />
-<meta property="og:description" content="Method based on the paper by Oliveira, M. et al. (2016). Zero-inflated
-regression models for radiation-induced chromosome aberration data:
-A comparative study. Biometrical Journal, 58(2), 259–279.
-&amp;lt;doi:10.1002/bimj.201400233&amp;gt;" />
+<meta property="og:title" content="Get translocation rate — get_translocation_rate" />
+<meta property="og:description" content="Get translocation rate" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -124,54 +121,66 @@ A comparative study. Biometrical Journal, 58(2), 259–279.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform max-likelihood optimization fitting</h1>
-    <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/fitting_functions.R'><code>R/fitting_functions.R</code></a></small>
-    <div class="hidden name"><code>get_fit_maxlik_method.Rd</code></div>
+    <h1>Get translocation rate</h1>
+    <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/translocations.R'><code>R/translocations.R</code></a></small>
+    <div class="hidden name"><code>get_translocation_rate.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Method based on the paper by Oliveira, M. et al. (2016). Zero-inflated
-regression models for radiation-induced chromosome aberration data:
-A comparative study. Biometrical Journal, 58(2), 259–279.
-&lt;doi:10.1002/bimj.201400233&gt;</p>
+    <p>Get translocation rate</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_fit_maxlik_method</span><span class='op'>(</span>
-  <span class='va'>data</span>,
-  <span class='va'>model_formula</span>,
-  model_family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"automatic"</span>, <span class='st'>"poisson"</span>, <span class='st'>"quasipoisson"</span>, <span class='st'>"nb2"</span><span class='op'>)</span>,
-  <span class='va'>fit_link</span>,
-  <span class='va'>aberr_module</span>
+    <pre class="usage"><span class='fu'>get_translocation_rate</span><span class='op'>(</span>
+  <span class='va'>cells</span>,
+  <span class='va'>genome_fraction</span>,
+  <span class='va'>age_value</span>,
+  sex_bool <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sex_value <span class='op'>=</span> <span class='st'>"none"</span>,
+  smoker_bool <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ethnicity_value <span class='op'>=</span> <span class='st'>"none"</span>,
+  region_value <span class='op'>=</span> <span class='st'>"none"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>Count data</p></td>
+      <th>cells</th>
+      <td><p>Number of cells <code>N</code></p></td>
     </tr>
     <tr>
-      <th>model_formula</th>
-      <td><p>Model formula</p></td>
+      <th>genome_fraction</th>
+      <td><p>Genomic fraction used in translocations</p></td>
     </tr>
     <tr>
-      <th>model_family</th>
-      <td><p>Model family</p></td>
+      <th>age_value</th>
+      <td><p>Age of the individual</p></td>
     </tr>
     <tr>
-      <th>fit_link</th>
-      <td><p>Family link</p></td>
+      <th>sex_bool</th>
+      <td><p>If <code>TRUE</code>, <code>sex_value</code> will be used</p></td>
     </tr>
     <tr>
-      <th>aberr_module</th>
-      <td><p>Aberration module</p></td>
+      <th>sex_value</th>
+      <td><p>Sex of the individual, either "male" of "female"</p></td>
+    </tr>
+    <tr>
+      <th>smoker_bool</th>
+      <td><p>Whether the individual smokes or not</p></td>
+    </tr>
+    <tr>
+      <th>ethnicity_value</th>
+      <td><p>Ethnicity of the individual</p></td>
+    </tr>
+    <tr>
+      <th>region_value</th>
+      <td><p>Region of the individual</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List object containing maxLik fit results</p>
+    <p>Translocation rate.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
