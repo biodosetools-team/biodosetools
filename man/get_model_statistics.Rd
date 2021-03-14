@@ -7,15 +7,17 @@
 get_model_statistics(
   model_data,
   fit_coeffs_vec,
-  glm_results,
-  fit_algorithm,
+  glm_results = NULL,
+  fit_algorithm = NULL,
   response = "yield",
   link = "identity",
-  type = "theory",
+  type = c("theory", "raw"),
   Y = NULL,
   mu = NULL,
   n = NULL,
-  npar = NULL
+  npar = NULL,
+  genome_fraction = NULL,
+  aberr_module
 )
 }
 \arguments{
@@ -40,6 +42,10 @@ get_model_statistics(
 \item{n}{number of parameters (required in constraint-maxlik-optimization)}
 
 \item{npar}{number of parameters (required in constraint-maxlik-optimization)}
+
+\item{genome_fraction}{Genomic fraction used in translocations}
+
+\item{aberr_module}{Aberration module}
 }
 \value{
 Model statistics data frame

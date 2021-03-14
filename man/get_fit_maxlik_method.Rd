@@ -8,7 +8,8 @@ get_fit_maxlik_method(
   data,
   model_formula,
   model_family = c("automatic", "poisson", "quasipoisson", "nb2"),
-  fit_link
+  fit_link,
+  aberr_module
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ get_fit_maxlik_method(
 \item{model_family}{Model family}
 
 \item{fit_link}{Family link}
+
+\item{aberr_module}{Aberration module}
 }
 \value{
 List object containing maxLik fit results
