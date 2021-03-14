@@ -51,7 +51,6 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
   return(2 / 0.974 * (single_sum - cross_sum))
 }
 
-
 #' Get translocation rate
 #'
 #' @param cells Number of cells \code{N}
@@ -66,7 +65,7 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #' @return Translocation rate.
 #' @export
 get_translocation_rate <- function(cells, genome_fraction, age_value,
-                                   sex_bool = FALSE, sex_value ="none",
+                                   sex_bool = FALSE, sex_value = "none",
                                    smoker_bool = FALSE,
                                    ethnicity_value = "none", region_value = "none") {
   age_trans_frequency <- function(age) {

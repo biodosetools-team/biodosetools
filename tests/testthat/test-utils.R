@@ -61,7 +61,6 @@ test_that("fix_count_data_names works", {
     colnames()
   count_data_cols_len <- length(count_data_cols)
 
-
   # Expected outputs
   expect_equal(
     count_data_cols[1:4],

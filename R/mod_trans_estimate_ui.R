@@ -533,7 +533,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
                     "White"  = "white",
                     "Asian"  = "asian",
                     "Black"  = "black",
-                    "Others" = "other"
+                    "Other" = "other"
                   ),
                   "None" = c(
                     "Not specified" = "none"
