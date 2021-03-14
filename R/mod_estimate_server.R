@@ -410,41 +410,6 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
     table_reset$value <- 1
   })
 
-  # Translocation confounder function ----
-  get_translocation_rate <- function(cells, genome_fraction, age_value,
-                                     sex_bool = FALSE, smoker_bool = FALSE,
-                                     ethnicity_value = "none", region_value = "none") {
-    age_trans_frequency <- function(age) {
-      trans_frequency <- exp(-7.925) + exp(-9.284) * (age * exp(0.01062 * age))
-      return(trans_frequency)
-    }
-
-    sex_trans_list <- c(1, 1, 0.92) %>%
-      `names<-`(c("none", "male", "female"))
-    smoke_trans_list <- c(1, 1.19) %>%
-      `names<-`(c("FALSE", "TRUE"))
-    ethnicity_trans_list <- c(1, 1, 1.23, 0.84, 1.06) %>%
-      `names<-`(c("none", "white", "asian", "black", "other"))
-    region_trans_list <- c(1, 1, 0.99, 1.75, 1.75, 0.86) %>%
-      `names<-`(c("none", "n-america", "w-europe", "c-europe", "e-europe", "asia"))
-
-    sex_value <- ifelse(sex_bool, input$trans_sex, "none")
-
-    sex_trans_frequency <- sex_trans_list[[sex_value]]
-    smoke_trans_frequency <- smoke_trans_list[[as.character(smoker_bool)]]
-    ethnicity_trans_frequency <- ethnicity_trans_list[[ethnicity_value]]
-    region_trans_frequency <- region_trans_list[[region_value]]
-
-    expected_aberr <- cells * genome_fraction *
-      age_trans_frequency(age_value) *
-      sex_trans_frequency *
-      smoke_trans_frequency *
-      ethnicity_trans_frequency *
-      region_trans_frequency
-
-    return(expected_aberr)
-  }
-
   # Initialize data frame ----
   previous <- reactive({
 
@@ -579,6 +544,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
                   .data$N, genome_fraction,
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
+                  sex_value = input$trans_sex,
                   smoker_bool = input$trans_confounder_smoke,
                   ethnicity_value = input$trans_confounder_ethnicity,
                   region_value = input$trans_confounder_region
@@ -976,7 +942,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     # Name of the aberration to use in the y-axis
     aberr_name <- to_title(aberr_module)
     if (aberr_module == "translocations") {
-      if(nchar(input$trans_name) > 0) {
+      if (nchar(input$trans_name) > 0) {
         aberr_name <- input$trans_name
       }
     }
