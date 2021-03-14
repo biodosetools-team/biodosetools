@@ -178,57 +178,6 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       fit_data <- input$load_fit_data
     })
 
-    # Model statistic function for translocations
-    get_model_statistics <- function(model_data, fit_coeffs_vec, genome_fraction,
-                                     response = "yield", link = "identity", type = "theory") {
-      # Calculate from theory or use statistics calculated by glm
-      if (type == "theory") {
-        # Renormalize data if necessary
-        if (response == "yield") {
-          model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] * genome_fraction)
-        }
-
-        # Generalized variance-covariance matrix
-        general_fit_coeffs <- numeric(length = 3L) %>%
-          `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
-
-        for (var in names(fit_coeffs_vec)) {
-          general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
-        }
-
-        # Predict yield / aberrations
-        predict_eta <- function(data, coeffs) {
-          coeffs[["coeff_C"]] * rep(1, nrow(data)) +
-            coeffs[["coeff_alpha"]] * data[["D"]] +
-            coeffs[["coeff_beta"]] * data[["D"]] * data[["D"]]
-        }
-
-        eta_sat <- model_data[["X"]]
-        eta <- predict_eta(model_data, general_fit_coeffs)
-
-        num_data <- length(eta_sat)
-        num_params <- sum(fit_coeffs_vec != 0)
-
-        # Calculate logLik depending on fitting link
-        if (link == "identity") {
-          logLik <- sum(log(eta) * eta_sat - eta - log(factorial(eta_sat)))
-        } else if (link == "log") {
-          logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
-        }
-
-        # Calculate model-specific statistics
-        fit_model_statistics <- cbind(
-          logLik = logLik,
-          deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-          df = num_data - num_params,
-          AIC = 2 * num_params - 2 * logLik,
-          BIC = log(num_data) * num_params - 2 * logLik
-        )
-      }
-
-      return(fit_model_statistics)
-    }
-
     input$button_view_fit_data
 
     isolate({
@@ -259,9 +208,11 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 
             # Update model-specific statistics
             fit_results_list[["fit_model_statistics"]] <- get_model_statistics(
-              fit_results_list[["fit_raw_data"]],
-              fit_results_list[["fit_coeffs"]][, "estimate"],
-              fit_genome_fraction
+              model_data = fit_results_list[["fit_raw_data"]],
+              fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
+              response = "yield", link = "identity", type = "theory",
+              genome_fraction = fit_genome_fraction,
+              aberr_module = aberr_module
             )
           }
         }
