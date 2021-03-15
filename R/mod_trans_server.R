@@ -89,8 +89,8 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
 
     # Modify pairs of chromosome/stain color depending on stain method
     if (color_scheme) {
-      chromosome <- chromosome_table[["Chromosome"]] %>% as.character()
-      color <- paste("M-Fish", chromosome_table[["Chromosome"]]) %>% as.character()
+      chromosome <- as.character(chromosome_table[["Chromosome"]])
+      color <- paste("M-Fish", chromosome)
     } else {
       chromosome_table_melt <- chromosome_table %>%
         tidyr::pivot_longer(
@@ -101,7 +101,7 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
       chromosome_table_clean <- chromosome_table_melt %>%
         dplyr::filter(.data$Bool == TRUE)
 
-      chromosome <- chromosome_table_clean[["Chromosome"]] %>% as.character()
+      chromosome <- as.character(chromosome_table_clean[["Chromosome"]])
       color <- chromosome_table_clean[["Stain"]]
     }
 
@@ -115,8 +115,14 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     if (input$button_calc_genome_fraction <= 0) {
       return(NULL)
     }
+
     genome_fraction_value <- genome_fraction()
-    genome_fraction_text <- paste0("The genomic conversion factor to full genome is ", genome_fraction_value %>% round(3) %>% as.character(), ".")
+    genome_fraction_text <- paste0(
+      "The genomic conversion factor to full genome is ",
+      as.character(round(genome_fraction_value, 3)),
+      "."
+    )
+
     return(genome_fraction_text)
   })
 
