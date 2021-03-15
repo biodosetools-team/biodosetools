@@ -16,7 +16,7 @@ NULL
 #' @rdname calculate_aberr
 #' @export
 calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
-  purrr::map_df(
+  aberr <- purrr::map_df(
     data %>%
       .[grep(aberr_prefix, names(.))] %>%
       t() %>%
@@ -30,7 +30,10 @@ calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
         .^power
   ) %>%
     t() %>%
-    rowSums()
+    rowSums() %>%
+    as.integer()
+
+  return(aberr)
 }
 
 #' @rdname calculate_aberr
