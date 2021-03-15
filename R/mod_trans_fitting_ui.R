@@ -318,7 +318,7 @@ mod_trans_fitting_ui <- function(id, label) {
             selectInput(
               ns("formula_select"),
               label = "Fitting formula",
-              choices = global_fitting_formulas,
+              choices = list_fitting_formulas(),
               selected = "lin-quad"
             ),
             # Fitting model

@@ -143,3 +143,21 @@ to_title <- function(string) {
 
   return(string)
 }
+
+#' Global fitting formulas
+#'
+#' @noRd
+list_fitting_formulas <- function() {
+  fitting_formulas <- list(
+    "Linear quadratic" = c(
+      "Y = C + \u03B1D + \u03B2D\u00B2" = "lin-quad"
+      # "Y = \u03B1D + \u03B2D\u00B2" = "lin-quad-no-int"
+    ),
+    "Linear" = c(
+      "Y = C + \u03B1D" = "lin"
+      # "Y = \u03B1D" = "lin-no-int"
+    )
+  )
+
+  return(fitting_formulas)
+}

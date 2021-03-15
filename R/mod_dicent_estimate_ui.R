@@ -80,7 +80,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
                   ns("formula_select"),
                   width = 165,
                   label = "Fitting formula",
-                  choices = global_fitting_formulas,
+                  choices = list_fitting_formulas(),
                   selected = "lin-quad"
                 )
               ),
