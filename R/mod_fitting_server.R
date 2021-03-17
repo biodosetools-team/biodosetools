@@ -142,24 +142,8 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
             assessment_u <- 1.17
           }
 
-
           # Calculated columns
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = as.integer(rowSums(.[grep("C", names(.))])),
-              X = calculate_aberr_power(mytable, power = 1),
-              X2 = calculate_aberr_power(mytable, power = 2),
-              mean = calculate_aberr_mean(.data$X, .data$N),
-              var = calculate_aberr_var(.data$X, .data$X2, .data$N),
-              DI = calculate_aberr_disp_index(.data$mean, .data$var),
-              u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u)
-            ) %>%
-            dplyr::mutate_at(
-              c("X", "N", grep("C", names(.), value = TRUE)),
-              as.integer
-            ) %>%
-            dplyr::select(-.data$X2) %>%
-            dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
+          mytable <- calculate_aberr_table(mytable)
         } else {
           mytable <- mytable %>%
             dplyr::mutate(

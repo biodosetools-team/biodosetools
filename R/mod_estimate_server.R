@@ -502,23 +502,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
         # Calculated columns
-        mytable <- mytable %>%
-          dplyr::mutate(
-            N = as.integer(rowSums(.[grep("C", names(.))])),
-            X = calculate_aberr_power(mytable, power = 1),
-            X2 = calculate_aberr_power(mytable, power = 2),
-            var = calculate_aberr_var(.data$X, .data$X2, .data$N),
-            std_err = sqrt(.data$var / .data$N),
-            mean = calculate_aberr_mean(.data$X, .data$N),
-            DI = calculate_aberr_disp_index(.data$mean, .data$var),
-            u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = 1)
-          ) %>%
-          dplyr::mutate_at(
-            c("X", "N", grep("C", names(.), value = TRUE)),
-            as.integer
-          ) %>%
-          dplyr::select(-.data$X2, -.data$var) %>%
-          dplyr::select(.data$N, .data$X, dplyr::everything())
+        mytable <- calculate_aberr_table(mytable, type = "case")
 
         # Rename mean and std_err depending on aberration module
         if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
