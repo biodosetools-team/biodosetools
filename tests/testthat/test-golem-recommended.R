@@ -11,6 +11,7 @@ test_that("app server", {
 })
 
 # Configure this test to fit your need
+# Commented, as devtools::check() fails at x$is_alive() (see https://github.com/ThinkR-open/golem/issues/587)
 # test_that(
 #   "app launches",{
 #     skip_on_cran()
