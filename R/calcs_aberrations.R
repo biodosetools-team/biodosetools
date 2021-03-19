@@ -93,7 +93,7 @@ calculate_aberr_table <- function(data, type = c("count", "case")) {
           .fns = as.integer
         )
       ) %>%
-      dplyr::select(-.data$X2)%>%
+      dplyr::select(-.data$X2) %>%
       dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
   } else if (type == "case") {
     data <- data %>%

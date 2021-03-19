@@ -135,10 +135,10 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
 to_title <- function(string) {
   split_string <- strsplit(string, " ")[[1]]
   string <- paste(
-    toupper(substring(split_string, 1,1)),
+    toupper(substring(split_string, 1, 1)),
     substring(split_string, 2),
-    sep="",
-    collapse=" "
+    sep = "",
+    collapse = " "
   )
 
   return(string)

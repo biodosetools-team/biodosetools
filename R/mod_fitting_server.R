@@ -251,7 +251,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Name of the aberration to use in the y-axis
       aberr_name <- to_title(aberr_module)
       if (aberr_module == "translocations") {
-        if(nchar(input$trans_name) > 0) {
+        if (nchar(input$trans_name) > 0) {
           aberr_name <- input$trans_name
         }
       }

@@ -205,8 +205,6 @@ with_red_star <- function(text) {
   )
 }
 
-
-
 #' Repeat tags$br
 #'
 #' @param times the number of br to return
@@ -294,7 +292,6 @@ col_2 <- function(...) {
 col_1 <- function(...) {
   column(1, ...)
 }
-
 
 #' Include Content From a File
 #'
