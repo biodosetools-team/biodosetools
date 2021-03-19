@@ -60,8 +60,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Load data from file
             awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
@@ -219,8 +218,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Load data from file
             awesomeCheckbox(
               inputId = ns("load_case_data_check"),
@@ -253,8 +251,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
       # Box: hot Cases input ----
-      column(
-        width = 7,
+      col_7(
         box(
           width = 12,
           title = "Data input",
@@ -537,8 +534,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
     ),
 
     fluidRow(
-      column(
-        width = 6,
+      col_6(
         # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
@@ -590,8 +586,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
       # Box: Plot curves ----
-      column(
-        width = 6,
+      col_6(
         box(
           width = 12,
           title = "Curve plot",

@@ -64,8 +64,7 @@ mod_micro_fitting_ui <- function(id, label) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Load file checkbox
             awesomeCheckbox(
               inputId = ns("load_count_data_check"),
@@ -160,8 +159,7 @@ mod_micro_fitting_ui <- function(id, label) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Fitting formula
             selectInput(
               ns("formula_select"),
@@ -229,8 +227,7 @@ mod_micro_fitting_ui <- function(id, label) {
 
 
     fluidRow(
-      column(
-        width = 6,
+      col_6(
         # tabBox: Fit results ----
         div(
           # Ugly fix for inner fluidRow() padding
@@ -358,8 +355,7 @@ mod_micro_fitting_ui <- function(id, label) {
           )
         )
       ),
-      column(
-        width = 6,
+      col_6(
         # Box: Plot box ----
         box(
           width = 12,

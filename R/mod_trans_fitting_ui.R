@@ -44,9 +44,7 @@ mod_trans_fitting_ui <- function(id, label) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
-
+          col_12(
             awesomeRadio(
               inputId = ns("trans_sex"),
               status = "info",
@@ -108,9 +106,7 @@ mod_trans_fitting_ui <- function(id, label) {
         )
       ),
 
-      column(
-        width = 7,
-
+      col_7(
         # Box: Chromosome-color table ----
         box(
           width = 12,
@@ -119,9 +115,7 @@ mod_trans_fitting_ui <- function(id, label) {
           collapsible = TRUE,
 
           fluidRow(
-            column(
-              width = 12,
-
+            col_12(
               div(
                 class = "hot-improved",
                 rHandsontableOutput(outputId = ns("chromosome_table"))
@@ -145,9 +139,7 @@ mod_trans_fitting_ui <- function(id, label) {
           collapsible = TRUE,
 
           fluidRow(
-            column(
-              width = 12,
-
+            col_12(
               uiOutput(ns("genome_fraction"))
             )
           )
@@ -206,9 +198,7 @@ mod_trans_fitting_ui <- function(id, label) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
-
+          col_12(
             # Name of translocations
             textInput(
               inputId = ns("trans_name"),
@@ -312,8 +302,7 @@ mod_trans_fitting_ui <- function(id, label) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Fitting formula
             selectInput(
               ns("formula_select"),
@@ -396,8 +385,7 @@ mod_trans_fitting_ui <- function(id, label) {
 
 
     fluidRow(
-      column(
-        width = 6,
+      col_6(
         # tabBox: Fit results ----
         div(
           # Ugly fix for inner fluidRow() padding
@@ -528,8 +516,7 @@ mod_trans_fitting_ui <- function(id, label) {
         )
       ),
 
-      column(
-        width = 6,
+      col_6(
         # Box: Plot box ----
         box(
           width = 12,

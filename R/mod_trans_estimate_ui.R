@@ -61,8 +61,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
+          col_12(
             # Load data from file
             awesomeCheckbox(
               inputId = ns("load_fit_data_check"),
@@ -245,9 +244,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
-
+          col_12(
             awesomeRadio(
               inputId = ns("trans_sex"),
               status = "info",
@@ -307,9 +304,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
 
-      column(
-        width = 7,
-
+      col_7(
         # Box: Chromosome-color table ----
         box(
           width = 12,
@@ -318,9 +313,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
           collapsible = TRUE,
 
           fluidRow(
-            column(
-              width = 12,
-
+            col_12(
               div(
                 class = "hot-improved",
                 rHandsontableOutput(outputId = ns("chromosome_table"))
@@ -345,9 +338,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
           collapsible = TRUE,
 
           fluidRow(
-            column(
-              width = 12,
-
+            col_12(
               uiOutput(ns("genome_fraction"))
             )
           )
@@ -406,9 +397,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         ),
 
         fluidRow(
-          column(
-            width = 12,
-
+          col_12(
             # Name of translocations
             textInput(
               inputId = ns("trans_name"),
@@ -473,8 +462,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
       ),
 
       # Box: hot Cases & confounders input ----
-      column(
-        width = 7,
+      col_7(
         box(
           width = 12,
           title = "Data input",
@@ -831,8 +819,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
     ),
 
     fluidRow(
-      column(
-        width = 6,
+      col_6(
         # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
@@ -884,8 +871,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
       # Box: Plot curves ----
-      column(
-        width = 6,
+      col_6(
         box(
           width = 12,
           title = "Curve plot",
