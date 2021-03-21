@@ -7,6 +7,7 @@
 \alias{calculate_aberr_var}
 \alias{calculate_aberr_disp_index}
 \alias{calculate_aberr_u_value}
+\alias{init_aberr_table}
 \alias{calculate_aberr_table}
 \title{Aberration calculation functions}
 \usage{
@@ -20,7 +21,9 @@ calculate_aberr_disp_index(mean, var)
 
 calculate_aberr_u_value(X, N, mean, var, assessment_u = 1)
 
-calculate_aberr_table(data, type = c("count", "case"))
+init_aberr_table(data, type = c("count", "case"), aberr_module)
+
+calculate_aberr_table(data, type = c("count", "case"), assessment_u = 1)
 }
 \arguments{
 \item{data}{Count or case data.}
@@ -42,6 +45,8 @@ calculate_aberr_table(data, type = c("count", "case"))
 \item{assessment_u}{Expected u-value of the assessment. For a Poisson distribution this should be unity.}
 
 \item{type}{Type of input data. Either "count" and "case".}
+
+\item{aberr_module}{Aberration module}
 }
 \description{
 Aberration calculation functions

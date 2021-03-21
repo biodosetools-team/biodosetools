@@ -10,14 +10,14 @@ get_model_statistics(
   glm_results = NULL,
   fit_algorithm = NULL,
   response = "yield",
-  link = "identity",
+  link = c("identity", "log"),
   type = c("theory", "raw"),
   Y = NULL,
   mu = NULL,
   n = NULL,
   npar = NULL,
   genome_fraction = NULL,
-  aberr_module
+  calc_type = c("fitting", "estimation")
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ get_model_statistics(
 
 \item{genome_fraction}{Genomic fraction used in translocations}
 
-\item{aberr_module}{Aberration module}
+\item{calc_type}{Calculation type, either "fitting" or "estimation"}
 }
 \value{
 Model statistics data frame
