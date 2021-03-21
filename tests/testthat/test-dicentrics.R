@@ -1,9 +1,9 @@
 # Dicentrics fitting ----
 
-test_that("processing full count data works", {
+test_that("get_fit_results with full count data works", {
   # Example from IAEA (2011)
   dic_count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
-    read.csv() %>%
+    utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 
   # Expected outputs
@@ -51,10 +51,10 @@ test_that("processing full count data works", {
   )
 })
 
-test_that("processing aggregated count data works", {
+test_that("get_fit_results with aggregated count data works", {
   # Example from IAEA (2011)
   dic_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
-    read.csv() %>%
+    utils::read.csv() %>%
     dplyr::mutate(
       D = as.numeric(.data$D)
     )
@@ -101,4 +101,48 @@ test_that("processing aggregated count data works", {
       aberr_module
     )
   )
+})
+
+
+# Dicentrics dose estimation ----
+
+test_that("processing case data works", {
+  case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
+    utils::read.csv( header = TRUE) %>%
+    dplyr::rename_with(
+      .fn = toupper,
+      .cols = dplyr::everything()
+    ) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::starts_with("C"),
+        .fns = as.integer
+      )
+    ) %>%
+    dplyr::select(
+      dplyr::starts_with("C")
+    )
+
+  case_data <- calculate_aberr_table(
+    data = case_data,
+    type = "case",
+    assessment_u = 1
+  )
+
+  # Specific to dicentrics/micronuclei
+  case_data <- case_data %>%
+    dplyr::mutate(
+      y = .data$mean,
+      y_err = .data$std_err
+    ) %>%
+    dplyr::select(-.data$mean, -.data$std_err)
+
+  # Colnames validation
+  case_data_cols <- colnames(case_data)
+  case_data_cols_len <- length(case_data_cols)
+
+  # Expected outcomes
+  expect_equal(case_data_cols[1:2], c("N", "X"))
+  expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 4, 1)])))
+  expect_equal(case_data_cols[seq(case_data_cols_len - 3, case_data_cols_len, 1)], c("DI", "u", "y", "y_err"))
 })

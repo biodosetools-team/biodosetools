@@ -1,8 +1,8 @@
 # Translocation utils ----
 
-test_that("get_translocation_rate works", {
+test_that("get_translocation_rate_sigurdson works", {
   # Default parameters for confounders
-  default_rate <- get_translocation_rate(
+  default_rate <- get_translocation_rate_sigurdson(
     cells = 100,
     genome_fraction = 0.3,
     age_value = 25,
@@ -14,7 +14,7 @@ test_that("get_translocation_rate works", {
   )
 
   # Adding confounders will result in a higher rate
-  other_rate <- get_translocation_rate(
+  other_rate <- get_translocation_rate_sigurdson(
     cells = 100,
     genome_fraction = 0.3,
     age_value = 25,
@@ -29,6 +29,17 @@ test_that("get_translocation_rate works", {
   expect_lt(default_rate, other_rate)
 })
 
+test_that("get_translocation_rate_manual works", {
+  # Translocation frequency per cell
+  rate <- get_translocation_rate_manual(
+    cells = 100,
+    genome_fraction = 0.3,
+    expected_aberr_value = 0.00339
+  )
+
+  # Expected output
+  expect_equal(round(rate, 3), 0.102)
+})
 
 test_that("get_genome_fraction works", {
   # Example from IAEA (2011)
@@ -49,7 +60,7 @@ test_that("get_genome_fraction works", {
 test_that("get_fit_results with full count data works", {
   # Example from IAEA (2011)
   trans_count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
-    read.csv() %>%
+    utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 
   # Expected outputs
@@ -100,7 +111,7 @@ test_that("get_fit_results with full count data works", {
 test_that("get_fit_results with aggregated count data works", {
   # Example from IAEA (2011)
   trans_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
-    read.csv() %>%
+    utils::read.csv() %>%
     dplyr::mutate(
       D = as.numeric(.data$D)
     )
@@ -152,6 +163,53 @@ test_that("get_fit_results with aggregated count data works", {
 
 # Translocations dose estimation ----
 
-# test_that("processing aggregated count data works", {
-#
-# })
+test_that("processing case data works", {
+  case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
+    utils::read.csv(header = TRUE) %>%
+    dplyr::rename_with(
+      .fn = toupper,
+      .cols = dplyr::everything()
+    ) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::starts_with("C"),
+        .fns = as.integer
+      )
+    ) %>%
+    dplyr::select(
+      dplyr::starts_with("C")
+    )
+
+  case_data <- calculate_aberr_table(
+    data = case_data,
+    type = "case",
+    assessment_u = 1
+  )
+
+  # Specific to translocations
+  genome_fraction <- 0.585
+
+  case_data <- case_data %>%
+    dplyr::mutate(
+      Fp = .data$mean,
+      Fp_err = .data$std_err
+    ) %>%
+    dplyr::select(-.data$mean, -.data$std_err) %>%
+    dplyr::mutate(
+      Xc = dplyr::case_when(
+        # "sigurdson" ~ get_translocation_rate_sigurdson(...),
+        # "manual" ~ get_translocation_rate_manual(...),
+        TRUE ~ 0
+      ),
+      Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
+      Fg_err = .data$Fp_err / sqrt(genome_fraction)
+    )
+
+  # Colnames validation
+  case_data_cols <- colnames(case_data)
+  case_data_cols_len <- length(case_data_cols)
+
+  expect_equal(case_data_cols[1:2], c("N", "X"))
+  expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 7, 1)])))
+  expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("DI", "u", "Fp", "Fp_err", "Xc", "Fg", "Fg_err"))
+})
