@@ -205,7 +205,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
       model_formula <- input$formula_select
       model_family <- input$family_select
-      # decision_thresh_cells <- input$decision_thresh_cells
+      # decision_threshold_cells <- input$decision_threshold_cells
     })
 
     if (aberr_module == "translocations") {

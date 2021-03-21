@@ -180,7 +180,7 @@ mod_dicent_fitting_ui <- function(id, label) {
               selected = "automatic"
             ) # ,
             # Decision thresholds
-            # textInput(ns("decision_thresh_cells"), "Cells for decision thresholds", value = "150 500 1000")
+            # textInput(ns("decision_threshold_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
         )
       )
