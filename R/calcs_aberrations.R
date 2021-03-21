@@ -10,6 +10,7 @@
 #' @param var Variance.
 #' @param assessment_u Expected u-value of the assessment. For a Poisson distribution this should be unity.
 #' @param type Type of input data. Either "count" and "case".
+#' @param aberr_module Aberration module
 #' @name calculate_aberr
 NULL
 # > NULL
