@@ -105,7 +105,7 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
 #'
 #' @return A vector with aberr_test and dose_est
 #' @noRd
-get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, aberr_module, input) {
+calculate_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, aberr_module, input) {
 
   # Use measured translocation frequency fit
   if (aberr_module == "translocations") {
@@ -193,4 +193,39 @@ get_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, abe
   dose_est <- project_yield_estimate(yield_est, conf_int)
 
   return(c(aberr_test, dose_est))
+}
+
+#' Calculate decision thresholds table
+#'
+#' @param fit_results_list List of fit results
+#' @param aberr_module Aberration module
+#' @param input UI input variable
+#'
+#' @return A vector with aberr_test and dose_est
+#' @noRd
+#' @importFrom rlang .data
+calculate_decision_threshold_table <- function(fit_results_list, decision_threshold_cells, aberr_module, input) {
+  decision_threshold <- data.frame(
+    N = decision_threshold_cells %>%
+      strsplit(" ") %>%
+      unlist() %>%
+      as.numeric()
+  )
+
+  decision_threshold <- decision_threshold %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      X95 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.95, aberr_module, input)[1],
+      D95 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.95, aberr_module, input)[2] * 1000,
+      X83 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.83, aberr_module, input)[1],
+      D83 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.83, aberr_module, input)[2] * 1000
+    ) %>%
+    dplyr::mutate(
+      dplyr::across(
+      .cols = c(.data$N, grep("X", names(.), value = TRUE)),
+      .fns = as.integer
+      )
+    )
+
+  return(decision_threshold)
 }

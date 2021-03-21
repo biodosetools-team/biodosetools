@@ -270,28 +270,13 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         results_list[["trans_sex"]] <- input$trans_sex
       }
 
-      # # Calculate decision thresholds
-      # decision_thresh <- data.frame(
-      #   N = decision_thresh_cells %>%
-      #     strsplit(" ") %>%
-      #     unlist() %>%
-      #     as.numeric()
+      # Calculate decision thresholds
+      # results_list[["decision_thresh"]] <- calculate_decision_threshold_table(
+      #   fit_results_list,
+      #   decision_thresh_cells,
+      #   aberr_module,
+      #   input
       # )
-      #
-      # decision_thresh <- decision_thresh %>%
-      #   dplyr::rowwise() %>%
-      #   dplyr::mutate(
-      #     X95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[1],
-      #     D95 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.95, aberr_module, input)[2] * 1000,
-      #     X83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[1],
-      #     D83 = get_decision_threshold(fit_results_list, cells = N, conf_int = 0.83, aberr_module, input)[2] * 1000
-      #   ) %>%
-      #   dplyr::mutate_at(
-      #     c("N", grep("X", names(.), value = TRUE)),
-      #     as.integer
-      #   )
-      #
-      # results_list[["decision_thresh"]] <- decision_thresh
 
       return(results_list)
     })
