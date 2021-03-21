@@ -112,22 +112,10 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         # Initial renderization of the table
         if (!use_aggr_count_data) {
           # Calculated columns
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = 0,
-              X = 0,
-              mean = 0,
-              var = 0,
-              DI = 0,
-              u = 0
-            ) %>%
-            dplyr::select(.data$D, .data$N, .data$X, dplyr::everything()) %>%
-            dplyr::mutate(
-              D = as.numeric(.data$D)
-            ) %>%
-            dplyr::mutate_at(
-              c("X", "N", grep("C", names(.), value = TRUE)),
-              as.integer
+          mytable <- init_aberr_table(
+              data =mytable,
+              type = "count",
+              aberr_module
             )
         }
         return(mytable)
@@ -136,14 +124,18 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
 
         if (!use_aggr_count_data) {
           # Expected u-value for assessment
-          assessment_u <- 1.00
+          assessment_u <- 1
 
           if (aberr_module == "micronuclei") {
             assessment_u <- 1.17
           }
 
           # Calculated columns
-          mytable <- calculate_aberr_table(mytable)
+          mytable <- calculate_aberr_table(
+            data = mytable,
+            type = "count",
+            assessment_u = assessment_u
+          )
         } else {
           mytable <- mytable %>%
             dplyr::mutate(

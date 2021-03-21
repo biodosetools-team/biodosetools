@@ -70,9 +70,78 @@ calculate_aberr_u_value <- function(X, N, mean, var, assessment_u = 1) {
 }
 
 #' @rdname calculate_aberr
+#' @importFrom rlang .data
+init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
+  type <- match.arg(type)
+
+  if (type == "count") {
+    data <- data %>%
+      dplyr::mutate(
+        N = 0,
+        X = 0,
+        mean = 0,
+        var = 0,
+        DI = 0,
+        u = 0
+      ) %>%
+      dplyr::select(.data$D, .data$N, .data$X, dplyr::everything()) %>%
+      dplyr::mutate(
+        D = as.numeric(.data$D)
+      ) %>%
+      dplyr::mutate(
+        dplyr::across(
+          .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+          .fns = as.integer
+        )
+      )
+  } else if (type == "case") {
+    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+      data <- data %>%
+        dplyr::mutate(
+          N = 0,
+          X = 0,
+          y = 0,
+          y_err = 0,
+          DI = 0,
+          u = 0
+        ) %>%
+        dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
+        dplyr::mutate(
+          dplyr::across(
+            .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+            .fns = as.integer
+          )
+        )
+    } else if (aberr_module == "translocations") {
+      data <- data %>%
+        dplyr::mutate(
+          N = 0,
+          X = 0,
+          Fp = 0,
+          Fp_err = 0,
+          DI = 0,
+          u = 0,
+          Xc = 0,
+          Fg = 0,
+          Fg_err = 0
+        ) %>%
+        dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
+        dplyr::mutate(
+          dplyr::across(
+            .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+            .fns = as.integer
+          )
+        )
+    }
+  }
+
+  return(data)
+}
+
+#' @rdname calculate_aberr
 #' @export
 #' @importFrom rlang .data
-calculate_aberr_table <- function(data, type = c("count", "case")) {
+calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u = 1) {
   type <- match.arg(type)
 
   if (type == "count") {
@@ -85,7 +154,7 @@ calculate_aberr_table <- function(data, type = c("count", "case")) {
         mean = calculate_aberr_mean(.data$X, .data$N),
         var = calculate_aberr_var(.data$X, .data$X2, .data$N),
         DI = calculate_aberr_disp_index(.data$mean, .data$var),
-        u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = 1.00)
+        u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = assessment_u)
       ) %>%
       dplyr::mutate(
         dplyr::across(
@@ -105,7 +174,7 @@ calculate_aberr_table <- function(data, type = c("count", "case")) {
         std_err = sqrt(.data$var / .data$N),
         mean = calculate_aberr_mean(.data$X, .data$N),
         DI = calculate_aberr_disp_index(.data$mean, .data$var),
-        u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = 1.00)
+        u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = assessment_u)
       ) %>%
       dplyr::mutate_at(
         c("X", "N", grep("C", names(.), value = TRUE)),

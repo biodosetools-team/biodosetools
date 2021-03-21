@@ -464,45 +464,20 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         mytable <- previous()
 
         # Initial renderization of the table
-        if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = 0,
-              X = 0,
-              y = 0,
-              y_err = 0,
-              DI = 0,
-              u = 0
-            ) %>%
-            dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
-            dplyr::mutate_at(
-              c("X", "N", grep("C", names(.), value = TRUE)),
-              as.integer
-            )
-        } else if (aberr_module == "translocations") {
-          mytable <- mytable %>%
-            dplyr::mutate(
-              N = 0,
-              X = 0,
-              Fp = 0,
-              Fp_err = 0,
-              DI = 0,
-              u = 0,
-              Xc = 0,
-              Fg = 0,
-              Fg_err = 0
-            ) %>%
-            dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
-            dplyr::mutate_at(
-              c("X", "N", grep("C", names(.), value = TRUE)),
-              as.integer
-            )
-        }
+        mytable <- init_aberr_table(
+          data = mytable,
+          type = "case",
+          aberr_module
+        )
       } else if (!identical(previous(), input$case_data_hot)) {
         mytable <- as.data.frame(hot_to_r(input$case_data_hot))
 
         # Calculated columns
-        mytable <- calculate_aberr_table(mytable, type = "case")
+        mytable <- calculate_aberr_table(
+          data = mytable,
+          type = "case",
+          assessment_u = 1
+        )
 
         # Rename mean and std_err depending on aberration module
         if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
@@ -709,8 +684,6 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         fit_var_cov_mat = fit_var_cov_mat
       )
     }
-
-    # browser()
 
     # Parse fitting data
     fit_coeffs <- fit_results_list[["fit_coeffs"]]
