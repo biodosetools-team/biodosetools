@@ -388,7 +388,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
         coeff_alpha = .data$dose * .data$coeff_C,
         coeff_beta = .data$dose^2 * .data$coeff_C
       ) %>%
-      dplyr::rename(aberr = X) %>%
+      dplyr::rename(aberr = .data$X) %>%
       dplyr::select(.data$aberr, .data$dose, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
   } else {
     data_aggr <- data

@@ -418,16 +418,18 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         `colnames<-`(paste0("C", seq(0, num_aberrs - 1, 1)))
     } else {
       full_data <- utils::read.csv(case_data$datapath, header = TRUE) %>%
-        dplyr::rename_at(
-          dplyr::vars(dplyr::everything()),
-          toupper
+        dplyr::rename_with(
+          .fn = toupper,
+          .cols = dplyr::everything()
         ) %>%
-        dplyr::mutate_at(
-          dplyr::vars(dplyr::starts_with("C")),
-          as.integer
+        dplyr::mutate(
+          dplyr::across(
+            .cols = dplyr::starts_with("C"),
+            .fns = as.integer
+          )
         ) %>%
-        dplyr::select_at(
-          dplyr::vars(dplyr::starts_with("C"))
+        dplyr::select(
+          dplyr::starts_with("C")
         )
     }
 
@@ -1214,7 +1216,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
@@ -1237,7 +1239,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose (Gy)") %>%
       # Convert to hot and format table
@@ -1259,7 +1261,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
@@ -1279,7 +1281,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       # `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
@@ -1302,7 +1304,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
@@ -1324,7 +1326,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
       # Convert to hot and format table
@@ -1344,7 +1346,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     }
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
-      dplyr::mutate_if(is.logical, as.double) %>%
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
       `colnames<-`(c("estimate", "std.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table

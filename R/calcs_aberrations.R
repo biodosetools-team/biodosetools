@@ -92,7 +92,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
       ) %>%
       dplyr::mutate(
         dplyr::across(
-          .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+          .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
           .fns = as.integer
         )
       )
@@ -110,7 +110,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
         dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
-            .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+            .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
             .fns = as.integer
           )
         )
@@ -130,7 +130,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
         dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
-            .cols = c(.data$X, .data$N, grep("C", names(.), value = TRUE)),
+            .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
             .fns = as.integer
           )
         )
@@ -179,9 +179,11 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
         DI = calculate_aberr_disp_index(.data$mean, .data$var),
         u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = assessment_u)
       ) %>%
-      dplyr::mutate_at(
-        c("X", "N", grep("C", names(.), value = TRUE)),
-        as.integer
+      dplyr::mutate(
+        dplyr::across(
+          .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
+          .fns = as.integer
+        )
       ) %>%
       dplyr::select(-.data$X2, -.data$var) %>%
       dplyr::select(.data$N, .data$X, dplyr::everything())

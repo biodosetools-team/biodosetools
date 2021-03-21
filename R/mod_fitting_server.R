@@ -69,9 +69,11 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         full_data <- utils::read.csv(count_data$datapath, header = TRUE) %>%
           # Force column naming
           `colnames<-`(c("D", paste0("C", seq(0, ncol(.) - 2, 1)))) %>%
-          dplyr::mutate_at(
-            dplyr::vars(dplyr::starts_with("C")),
-            as.integer
+          dplyr::mutate(
+            dplyr::across(
+              .cols = dplyr::starts_with("C"),
+              .fns = as.integer
+            )
           ) %>%
           dplyr::mutate(
             D = as.numeric(.data$D)
@@ -80,9 +82,11 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         full_data <- utils::read.csv(count_data$datapath, header = TRUE) %>%
           # Force column naming
           `colnames<-`(c("D", "N", "X")) %>%
-          dplyr::mutate_at(
-            c("N", "X"),
-            as.integer
+          dplyr::mutate(
+            dplyr::across(
+              .cols = c(.data$N, .data$X),
+              .fns = as.integer
+            )
           )
       }
     }
