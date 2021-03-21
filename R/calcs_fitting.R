@@ -12,20 +12,24 @@
 #' @param n number of parameters (required in constraint-maxlik-optimization)
 #' @param npar number of parameters (required in constraint-maxlik-optimization)
 #' @param genome_fraction Genomic fraction used in translocations
-#' @param aberr_module Aberration module
+#' @param calc_type Calculation type, either "fitting" or "estimation"
 #'
 #' @return Model statistics data frame
 #' @export
 get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
-                                 response = "yield", link = "identity", type = c("theory", "raw"),
+                                 response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                  Y = NULL, mu = NULL, n = NULL, npar = NULL,
-                                 genome_fraction = NULL, aberr_module) {
+                                 genome_fraction = NULL, calc_type = c("fitting", "estimation")) {
+  # Validate parameters
+  link <- match.arg(link)
   type <- match.arg(type)
+  calc_type <- match.arg(calc_type)
 
-  renormalise_model_data <- function(model_data, genome_fraction, aberr_module) {
-    if (aberr_module == "translocations") {
+  # Auxiliary functions
+  renormalise_model_data <- function(model_data, genome_fraction, calc_type) {
+    if (calc_type == "estimation") {
       model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] * genome_fraction)
-    } else {
+    } else if (calc_type == "fitting") {
       model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["coeff_C"]]
       model_data[["coeff_alpha"]] <- model_data[["coeff_alpha"]] / model_data[["coeff_C"]]
       model_data[["coeff_beta"]] <- model_data[["coeff_beta"]] / model_data[["coeff_C"]]
@@ -35,22 +39,22 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
     return(model_data)
   }
 
-  get_eta_sat <- function(model_data, aberr_module) {
-    if (aberr_module == "translocations") {
+  get_eta_sat <- function(model_data, calc_type) {
+    if (calc_type == "estimation") {
       eta_sat <- model_data[["X"]]
-    } else {
+    } else if (calc_type == "fitting") {
       eta_sat <- model_data[["aberr"]]
     }
 
     return(eta_sat)
   }
 
-  predict_eta <- function(data, coeffs, aberr_module) {
-    if (aberr_module == "translocations") {
+  predict_eta <- function(data, coeffs, calc_type) {
+    if (calc_type == "estimation") {
       eta <- coeffs[["coeff_C"]] * rep(1, nrow(data)) +
         coeffs[["coeff_alpha"]] * data[["D"]] +
         coeffs[["coeff_beta"]] * data[["D"]] * data[["D"]]
-    } else {
+    } else if (calc_type == "fitting") {
       eta <- coeffs[["coeff_C"]] * data[["coeff_C"]] +
         coeffs[["coeff_alpha"]] * data[["coeff_alpha"]] +
         coeffs[["coeff_beta"]] * data[["coeff_beta"]]
@@ -63,7 +67,7 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
   if (type == "theory") {
     # Renormalize data if necessary
     if (response == "yield") {
-      model_data <- renormalise_model_data(model_data, genome_fraction, aberr_module)
+      model_data <- renormalise_model_data(model_data, genome_fraction, calc_type)
     }
 
     # Generalized variance-covariance matrix
@@ -74,9 +78,8 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
       general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
     }
 
-    # Predict yield / aberrations
-    eta_sat <- get_eta_sat(model_data, aberr_module)
-    eta <- predict_eta(model_data, general_fit_coeffs, aberr_module)
+    eta_sat <- get_eta_sat(model_data, calc_type)
+    eta <- predict_eta(model_data, general_fit_coeffs, calc_type)
 
     num_data <- length(eta_sat)
     num_params <- sum(fit_coeffs_vec != 0)
@@ -286,7 +289,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y = NULL, mu = NULL, n = NULL, npar = NULL,
-    genome_fraction = NULL, aberr_module = aberr_module
+    genome_fraction = NULL, calc_type = "fitting"
   )
 
   # Correct p-values depending on model dispersion
@@ -542,7 +545,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y = Y, mu = mu, n = n, npar = npar,
-    genome_fraction = NULL, aberr_module = aberr_module
+    genome_fraction = NULL, calc_type = "fitting"
   )
 
   # Correct p-values depending on model dispersion

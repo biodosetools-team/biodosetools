@@ -212,7 +212,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
               fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
               response = "yield", link = "identity", type = "theory",
               genome_fraction = fit_genome_fraction,
-              aberr_module = aberr_module
+              calc_type = "estimation"
             )
           }
         }
