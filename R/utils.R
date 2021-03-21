@@ -3,6 +3,40 @@
   options("yaml.eval.expr" = TRUE)
 }
 
+#' Parse raw and TeX formulae from model formula
+#'
+#' @param model_formula Model formula
+#'
+#' @return List of raw and TeX formulae
+#' @noRd
+parse_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
+  # Validate parameters
+  model_formula <- match.arg(model_formula)
+
+  # Parse formula
+  if (model_formula == "lin-quad") {
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
+    fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+  } else if (model_formula == "lin") {
+    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
+    fit_formula_tex <- "Y = C + \\alpha D"
+  } else if (model_formula == "lin-quad-no-int") {
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
+    fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+  } else if (model_formula == "lin-no-int") {
+    fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
+    fit_formula_tex <- "Y = \\alpha D"
+  }
+
+  formula_list <- list(
+    fit_formula_raw = fit_formula_raw,
+    fit_formula_tex = fit_formula_tex
+  )
+
+  return(formula_list)
+}
+
+
 #' Parse coefficient names from model formula
 #'
 #' Fix coefficient names (`coeff_C`, `coeff_alpha`, `coeff_beta`) on manual coeffiecient matrix.
@@ -11,10 +45,11 @@
 #'
 #' @return Vector of coefficient names
 #' @noRd
-names_from_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
+names_from_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
   # Validate parameters
   model_formula <- match.arg(model_formula)
 
+  # Parse formula
   if (model_formula == "lin-quad") {
     names <- c("coeff_C", "coeff_alpha", "coeff_beta")
   } else if (model_formula == "lin") {

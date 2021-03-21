@@ -60,15 +60,7 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
       model_formula <- input$formula_select
     })
 
-    if (model_formula == "lin-quad") {
-      fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
-    } else if (model_formula == "lin-quad-no-int") {
-      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
-    } else if (model_formula == "lin") {
-      fit_coeffs_names <- c("coeff_C", "coeff_alpha")
-    } else if (model_formula == "lin-no-int") {
-      fit_coeffs_names <- c("coeff_alpha")
-    }
+    fit_coeffs_names <- names_from_model_formula(model_formula)
 
     full_data <- matrix(
       0.0,
@@ -219,15 +211,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
       } else {
         model_formula <- input$formula_select
         # Parse formula
-        if (model_formula == "lin-quad") {
-          fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-        } else if (model_formula == "lin") {
-          fit_formula_tex <- "Y = C + \\alpha D"
-        } else if (model_formula == "lin-quad-no-int") {
-          fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-        } else if (model_formula == "lin-no-int") {
-          fit_formula_tex <- "Y = \\alpha D"
-        }
+        fit_formula_tex <- parse_model_formula(model_formula)$fit_formula_tex
 
         fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
         fit_coeffs <- fit_coeffs_raw %>%
@@ -624,21 +608,13 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     } else {
       model_formula <- input$formula_select
       # Parse formula
-      if (model_formula == "lin-quad") {
-        fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-      } else if (model_formula == "lin") {
-        fit_formula_tex <- "Y = C + \\alpha D"
-      } else if (model_formula == "lin-quad-no-int") {
-        fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-      } else if (model_formula == "lin-no-int") {
-        fit_formula_tex <- "Y = \\alpha D"
-      }
+      fit_formula_tex <- parse_model_formula(model_formula)$fit_formula_tex
 
       fit_coeffs_raw <- hot_to_r(input$fit_coeffs_hot)
       fit_coeffs <- fit_coeffs_raw %>%
         cbind(statistic = c(rep(0, nrow(fit_coeffs_raw)))) %>%
         as.matrix() %>%
-        `rownames<-`(names_from_formula(model_formula))
+        `rownames<-`(names_from_model_formula(model_formula))
 
       if (input$use_var_cov_matrix) {
         fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%

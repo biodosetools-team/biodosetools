@@ -221,19 +221,9 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
   model_data <- list(coeff_C = coeff_C, coeff_alpha = coeff_alpha, coeff_beta = coeff_beta, aberr = aberr)
 
   # Select model formula
-  if (model_formula == "lin-quad") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-  } else if (model_formula == "lin") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
-    fit_formula_tex <- "Y = C + \\alpha D"
-  } else if (model_formula == "lin-quad-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-  } else if (model_formula == "lin-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
-    fit_formula_tex <- "Y = \\alpha D"
-  }
+  parsed_model_formula <- parse_model_formula(model_formula)
+  fit_formula_raw <- parsed_model_formula$fit_formula_raw
+  fit_formula_tex <- parsed_model_formula$fit_formula_tex
   fit_formula <- stats::as.formula(fit_formula_raw)
 
   # Perform automatic fit calculation
@@ -405,19 +395,9 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
   }
 
   # Select model formula
-  if (model_formula == "lin-quad") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
-  } else if (model_formula == "lin") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
-    fit_formula_tex <- "Y = C + \\alpha D"
-  } else if (model_formula == "lin-quad-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-  } else if (model_formula == "lin-no-int") {
-    fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
-    fit_formula_tex <- "Y = \\alpha D"
-  }
+  parsed_model_formula <- parse_model_formula(model_formula)
+  fit_formula_raw <- parsed_model_formula$fit_formula_raw
+  fit_formula_tex <- parsed_model_formula$fit_formula_tex
   fit_formula <- stats::as.formula(fit_formula_raw)
 
   if (any(grep("no-int", model_formula))) {

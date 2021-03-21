@@ -7,25 +7,25 @@ test_that("to title works", {
   )
 })
 
-test_that("names_from_formula works", {
+test_that("names_from_model_formula works", {
   # Correct argument matching
-  expect_error(names_from_formula("lon-quod"))
+  expect_error(names_from_model_formula("lon-quod"))
 
   # Expected names
   expect_equal(
-    names_from_formula("lin-quad"),
+    names_from_model_formula("lin-quad"),
     c("coeff_C", "coeff_alpha", "coeff_beta")
   )
   expect_equal(
-    names_from_formula("lin"),
+    names_from_model_formula("lin"),
     c("coeff_C", "coeff_alpha")
   )
   expect_equal(
-    names_from_formula("lin-quad-no-int"),
+    names_from_model_formula("lin-quad-no-int"),
     c("coeff_alpha", "coeff_beta")
   )
   expect_equal(
-    names_from_formula("lin-no-int"),
+    names_from_model_formula("lin-no-int"),
     c("coeff_alpha")
   )
 })
