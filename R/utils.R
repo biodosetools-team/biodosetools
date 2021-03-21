@@ -18,11 +18,9 @@ names_from_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no
     names <- c("coeff_C", "coeff_alpha", "coeff_beta")
   } else if (model_formula == "lin") {
     names <- c("coeff_C", "coeff_alpha")
-  }
-  else if (model_formula == "lin-quad-no-int") {
+  } else if (model_formula == "lin-quad-no-int") {
     names <- c("coeff_alpha", "coeff_beta")
-  }
-  else if (model_formula == "lin-no-int") {
+  } else if (model_formula == "lin-no-int") {
     names <- c("coeff_alpha")
   }
 

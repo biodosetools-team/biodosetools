@@ -226,12 +226,10 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
   } else if (model_formula == "lin") {
     fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
     fit_formula_tex <- "Y = C + \\alpha D"
-  }
-  else if (model_formula == "lin-quad-no-int") {
+  } else if (model_formula == "lin-quad-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-  }
-  else if (model_formula == "lin-no-int") {
+  } else if (model_formula == "lin-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
     fit_formula_tex <- "Y = \\alpha D"
   }
@@ -411,12 +409,10 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
   } else if (model_formula == "lin") {
     fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
     fit_formula_tex <- "Y = C + \\alpha D"
-  }
-  else if (model_formula == "lin-quad-no-int") {
+  } else if (model_formula == "lin-quad-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
     fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-  }
-  else if (model_formula == "lin-no-int") {
+  } else if (model_formula == "lin-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
     fit_formula_tex <- "Y = \\alpha D"
   }

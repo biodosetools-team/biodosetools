@@ -223,11 +223,9 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
           fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
         } else if (model_formula == "lin") {
           fit_formula_tex <- "Y = C + \\alpha D"
-        }
-        else if (model_formula == "lin-quad-no-int") {
+        } else if (model_formula == "lin-quad-no-int") {
           fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-        }
-        else if (model_formula == "lin-no-int") {
+        } else if (model_formula == "lin-no-int") {
           fit_formula_tex <- "Y = \\alpha D"
         }
 
@@ -630,11 +628,9 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
         fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
       } else if (model_formula == "lin") {
         fit_formula_tex <- "Y = C + \\alpha D"
-      }
-      else if (model_formula == "lin-quad-no-int") {
+      } else if (model_formula == "lin-quad-no-int") {
         fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
-      }
-      else if (model_formula == "lin-no-int") {
+      } else if (model_formula == "lin-no-int") {
         fit_formula_tex <- "Y = \\alpha D"
       }
 
