@@ -35,19 +35,19 @@ test_that("parse_model_formula works", {
   expect_error(parse_model_formula("lon-quod"))
 
   # Expected names
-  parsed_model_formula <-parse_model_formula("lin-quad")
+  parsed_model_formula <- parse_model_formula("lin-quad")
   expect_equal(parsed_model_formula$fit_formula_raw, "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta")
   expect_equal(parsed_model_formula$fit_formula_tex, "Y = C + \\alpha D + \\beta D^{2}")
 
-  parsed_model_formula <-parse_model_formula("lin")
+  parsed_model_formula <- parse_model_formula("lin")
   expect_equal(parsed_model_formula$fit_formula_raw, "aberr ~ -1 + coeff_C + coeff_alpha")
   expect_equal(parsed_model_formula$fit_formula_tex, "Y = C + \\alpha D")
 
-  parsed_model_formula <-parse_model_formula("lin-quad-no-int")
+  parsed_model_formula <- parse_model_formula("lin-quad-no-int")
   expect_equal(parsed_model_formula$fit_formula_raw, "aberr ~ -1 + coeff_alpha + coeff_beta")
   expect_equal(parsed_model_formula$fit_formula_tex, "Y = \\alpha D + \\beta D^{2}")
 
-  parsed_model_formula <-parse_model_formula("lin-no-int")
+  parsed_model_formula <- parse_model_formula("lin-no-int")
   expect_equal(parsed_model_formula$fit_formula_raw, "aberr ~ -1 + coeff_alpha")
   expect_equal(parsed_model_formula$fit_formula_tex, "Y = \\alpha D")
 })

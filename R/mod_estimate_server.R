@@ -447,7 +447,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
         table_reset$value <- 0
         mytable <- previous()
 
-        # Initial renderization of the table
+        # Initial rendering of the table
         mytable <- init_aberr_table(
           data = mytable,
           type = "case",
@@ -483,17 +483,17 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
             dplyr::mutate(
               Xc = dplyr::case_when(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson" ~
-                  get_translocation_rate_sigurdson(
-                    .data$N, genome_fraction,
-                    age_value = input$trans_confounder_age,
-                    sex_bool = input$trans_confounder_sex,
-                    sex_value = input$trans_sex,
-                    smoker_bool = input$trans_confounder_smoke,
-                    ethnicity_value = input$trans_confounder_ethnicity,
-                    region_value = input$trans_confounder_region
-                  ),
+                get_translocation_rate_sigurdson(
+                  .data$N, genome_fraction,
+                  age_value = input$trans_confounder_age,
+                  sex_bool = input$trans_confounder_sex,
+                  sex_value = input$trans_sex,
+                  smoker_bool = input$trans_confounder_smoke,
+                  ethnicity_value = input$trans_confounder_ethnicity,
+                  region_value = input$trans_confounder_region
+                ),
                 input$trans_confounders & input$trans_confounders_type == "manual" ~
-                  get_translocation_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
+                get_translocation_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
                 TRUE ~ 0
               ),
               Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),

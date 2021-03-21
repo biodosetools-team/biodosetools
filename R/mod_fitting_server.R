@@ -113,7 +113,7 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         table_reset$value <- 0
         mytable <- previous()
 
-        # Initial renderization of the table
+        # Initial rendering of the table
         if (!use_aggr_count_data) {
           # Calculated columns
           mytable <- init_aberr_table(

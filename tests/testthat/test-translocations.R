@@ -209,6 +209,7 @@ test_that("processing case data works", {
   case_data_cols <- colnames(case_data)
   case_data_cols_len <- length(case_data_cols)
 
+  # Expected outcomes
   expect_equal(case_data_cols[1:2], c("N", "X"))
   expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 7, 1)])))
   expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("DI", "u", "Fp", "Fp_err", "Xc", "Fg", "Fg_err"))

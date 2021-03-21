@@ -281,12 +281,10 @@ col_3 <- function(...) {
   column(3, ...)
 }
 
-
 #' @importFrom shiny column
 col_2 <- function(...) {
   column(2, ...)
 }
-
 
 #' @importFrom shiny column
 col_1 <- function(...) {

@@ -108,7 +108,7 @@ test_that("get_fit_results with aggregated count data works", {
 
 test_that("processing case data works", {
   case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
-    utils::read.csv( header = TRUE) %>%
+    utils::read.csv(header = TRUE) %>%
     dplyr::rename_with(
       .fn = toupper,
       .cols = dplyr::everything()
