@@ -12,6 +12,7 @@
 #' @return Vector of coefficient names
 #' @noRd
 names_from_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
+  # Validate parameters
   model_formula <- match.arg(model_formula)
 
   if (model_formula == "lin-quad") {
@@ -38,6 +39,7 @@ names_from_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no
 #' @return Data with fixed rownames and colnames.
 #' @noRd
 fix_coeff_names <- function(data, type = c("rows", "cols"), output = c("kable", "rhot")) {
+  # Validate parameters
   type <- match.arg(type)
   output <- match.arg(output)
 
@@ -81,9 +83,11 @@ fix_coeff_names <- function(data, type = c("rows", "cols"), output = c("kable", 
 #' @return Data with fixed colnames.
 #' @noRd
 fix_count_data_names <- function(data, type = c("count", "case"), output = "kable") {
+  # Validate parameters
   type <- match.arg(type)
   output <- match.arg(output)
 
+  # Parse headers
   col_names <- colnames(data)
 
   counts_headers <- grep("C[0-9]", x = col_names, value = TRUE)

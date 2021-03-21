@@ -73,6 +73,7 @@ calculate_aberr_u_value <- function(X, N, mean, var, assessment_u = 1) {
 #' @rdname calculate_aberr
 #' @importFrom rlang .data
 init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
+  # Validate parameters
   type <- match.arg(type)
 
   if (type == "count") {
@@ -143,6 +144,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
 #' @export
 #' @importFrom rlang .data
 calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u = 1) {
+  # Validate parameters
   type <- match.arg(type)
 
   if (type == "count") {

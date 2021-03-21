@@ -203,6 +203,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #' @return List object containing GLM fit results
 #' @export
 get_fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
+  # Validate parameters
   model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
@@ -377,6 +378,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
 #' @return List object containing maxLik fit results
 #' @export
 get_fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
+  # Validate parameters
   model_family <- match.arg(model_family)
 
   # Store fit algorithm as a string
