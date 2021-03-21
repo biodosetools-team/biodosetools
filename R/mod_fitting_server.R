@@ -113,10 +113,10 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
         if (!use_aggr_count_data) {
           # Calculated columns
           mytable <- init_aberr_table(
-              data =mytable,
-              type = "count",
-              aberr_module
-            )
+            data = mytable,
+            type = "count",
+            aberr_module
+          )
         }
         return(mytable)
       } else if (!identical(previous(), input$count_data_hot)) {

@@ -645,7 +645,7 @@ get_fit_results <- function(count_data, model_formula, model_family, fit_link = 
       return(fit_results_list)
     },
     error = function(error_message) {
-      message("Warning: Problem with glm -> constraint ML optimization will be used instead of glm")
+      message("Warning: Problem with glm -> constraint ML optimization will be used instead")
 
       # Perform fitting
       prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
