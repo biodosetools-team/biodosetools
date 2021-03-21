@@ -7,7 +7,7 @@
 #'
 #' @import shiny rhandsontable
 #' @noRd
-mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsFactors) {
+mod_estimation_fit_curve_hot_server <- function(input, output, session, stringsAsFactors) {
 
   # Reset tables ----
   table_reset <- reactiveValues(value = 0)
@@ -159,7 +159,7 @@ mod_estimate_fit_curve_hot_server <- function(input, output, session, stringsAsF
 #'
 #' @import shiny rhandsontable
 #' @noRd
-mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFactors, aberr_module) {
+mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFactors, aberr_module) {
 
   # Calculations ----
   data <- reactive({
@@ -383,7 +383,7 @@ mod_estimate_fit_curve_server <- function(input, output, session, stringsAsFacto
 #' @import shiny rhandsontable
 #' @importFrom rlang .data
 #' @noRd
-mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimation_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -557,7 +557,7 @@ mod_estimate_case_hot_server <- function(input, output, session, stringsAsFactor
 #' @import shiny rhandsontable
 #' @importFrom rlang .data
 #' @noRd
-mod_estimate_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimation_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
   data <- reactive({
 
     # Calcs: get variables ----
@@ -981,7 +981,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   # Results outputs ----
 
   # renderUI: Estimate results tabBox ----
-  output$estimate_results_ui <- renderUI({
+  output$estimation_results_ui <- renderUI({
     assessment <- input$assessment_select
 
     # Help modal
@@ -991,14 +991,14 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       size = "large",
 
       body = tagList(
-        include_help("estimate/dose_mixed_yields.md")
+        include_help("estimation/dose_mixed_yields.md")
       )
     )
 
     if (assessment == "whole-body") {
       # Whole-body
       return_tabbox <- tabBox(
-        id = "estimate_results_tabs",
+        id = "estimation_results_tabs",
         width = 12,
         side = "left",
 
@@ -1032,7 +1032,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     } else if (assessment == "partial-body") {
       # Partial-body
       return_tabbox <- tabBox(
-        id = "estimate_results_tabs",
+        id = "estimation_results_tabs",
         width = 12,
         side = "left",
 
@@ -1093,7 +1093,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
     } else if (assessment == "hetero") {
       # Heterogeneous
       return_tabbox <- tabBox(
-        id = "estimate_results_tabs",
+        id = "estimation_results_tabs",
         width = 12,
         side = "left",
 
@@ -1420,7 +1420,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   # Export plot ----
   output$save_plot <- downloadHandler(
     filename = function() {
-      paste("estimate-curve-", Sys.Date(), input$save_plot_format, sep = "")
+      paste("estimation-curve-", Sys.Date(), input$save_plot_format, sep = "")
     },
     content = function(file) {
       ggplot2::ggsave(
@@ -1435,7 +1435,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
   output$save_report <- downloadHandler(
     # For PDF output, change this to "report.pdf"
     filename = function() {
-      paste0(aberr_module, "-estimate-report-", Sys.Date(), input$save_report_format)
+      paste0(aberr_module, "-estimation-report-", Sys.Date(), input$save_report_format)
     },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
@@ -1445,7 +1445,7 @@ mod_estimate_results_server <- function(input, output, session, stringsAsFactors
       local_report <- load_rmd_report(
         paste0(
           aberr_module,
-          "-estimate-report-",
+          "-estimation-report-",
           gsub("^\\.", "", input$save_report_format),
           ".Rmd"
         )

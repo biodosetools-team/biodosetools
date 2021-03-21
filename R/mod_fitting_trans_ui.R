@@ -1,17 +1,151 @@
-#' Micronuclei Fitting UI Module
+#' Translocations Fitting UI Module
 #'
 #' @param id Namespace for the {shiny} module.
 #' @param label Internal label of the {shiny} module.
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_micro_fitting_ui <- function(id, label) {
+mod_fitting_trans_ui <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
   tabItem(
     tabName = label,
-    h2("Micronuclei: Dose-effect fitting"),
+    h2("Translocations: Dose-effect fitting"),
+
+    fluidRow(
+      # Box: Stains color options ----
+      box(
+        width = 5,
+        title = span(
+          "Stains color options",
+          help_modal_button(
+            ns("help_colors_data"),
+            ns("help_colors_modal")
+          )
+        ),
+        status = "info",
+        collapsible = TRUE,
+
+        # Help modal
+        bsplus::bs_modal(
+          id = ns("help_colors_modal"),
+          title = "Help: Stain color data input",
+          size = "large",
+
+          body = tagList(
+            include_help("trans/colors_data_input.md"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("help_chromosome_hot"))
+            ),
+            include_help("trans/colors_data_input_b.md")
+          )
+        ),
+
+        fluidRow(
+          col_12(
+            awesomeRadio(
+              inputId = ns("trans_sex"),
+              status = "info",
+              label = "Sex",
+              choices = c(
+                "Male"   = "male",
+                "Female" = "female"
+              ),
+              selected = "male"
+            ),
+
+            selectizeInput(
+              inputId = ns("trans_chromosome_select"),
+              label = "Chromosomes",
+              choices = c(1:21, "X", "Y"),
+              options = list(
+                placeholder = "Select stained chromosomes"
+              ),
+              multiple = TRUE
+            ),
+
+            widget_label("Stain color scheme"),
+            awesomeCheckbox(
+              inputId = ns("trans_m_fish_scheme"),
+
+              status = "info",
+              label = "Use M-Fish",
+              value = FALSE
+            ),
+
+            conditionalPanel(
+              condition = "!input.trans_m_fish_scheme",
+              ns = ns,
+              selectizeInput(
+                inputId = ns("trans_color_select"),
+                label = "Stain colors",
+                choices = c(
+                  "Red",
+                  "Green",
+                  "Yellow",
+                  "Orange",
+                  "Purple",
+                  "Magenta",
+                  "Cyan"
+                ),
+                options = list(
+                  placeholder = "Select observed colors"
+                  # TODO: use renderUI to force maxItems
+                  #       to be length(trans_color_select)
+                  # maxItems = 5
+                ),
+                multiple = TRUE
+              )
+            ),
+
+            br(),
+            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+          )
+        )
+      ),
+
+      col_7_inner(
+        # Box: Chromosome-color table ----
+        box(
+          width = 12,
+          title = "Chromosome data",
+          status = "primary",
+          collapsible = TRUE,
+
+          fluidRow(
+            col_12(
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(outputId = ns("chromosome_table"))
+              ),
+
+              br(),
+              actionButton(
+                ns("button_calc_genome_fraction"),
+                class = "inputs-button",
+                "Calculate fraction"
+              )
+            )
+          )
+        ),
+
+        # Box: Conversion factor to full genome ----
+        box(
+          width = 12,
+          title = "Genomic conversion factor",
+          status = "success",
+          collapsible = TRUE,
+
+          fluidRow(
+            col_12(
+              uiOutput(ns("genome_fraction"))
+            )
+          )
+        )
+      )
+    ),
 
     fluidRow(
       # Box: Data input options ----
@@ -65,9 +199,17 @@ mod_micro_fitting_ui <- function(id, label) {
 
         fluidRow(
           col_12(
+            # Name of translocations
+            textInput(
+              inputId = ns("trans_name"),
+              label = "Name of translocations",
+              placeholder = "Input type of translocations"
+            ),
+
             # Load file checkbox
             awesomeCheckbox(
               inputId = ns("load_count_data_check"),
+
               status = "info",
               label = "Load data from file",
               value = FALSE
@@ -76,9 +218,10 @@ mod_micro_fitting_ui <- function(id, label) {
             # Full/aggregated data checkbox
             awesomeCheckbox(
               inputId = ns("use_aggr_count_data_check"),
+
               status = "info",
               width = "100%",
-              label = "Only provide total number of micronuclei",
+              label = "Only provide total number of translocations",
               value = FALSE
             ),
 
@@ -91,7 +234,7 @@ mod_micro_fitting_ui <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_count_data_check & !input.use_aggr_count_data_check",
               ns = ns,
-              numericInput(ns("num_aberrs"), "Maximum number of micronuclei per cell", value = 5)
+              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
             ),
             # Load from file ----
             conditionalPanel(
@@ -172,10 +315,9 @@ mod_micro_fitting_ui <- function(id, label) {
               ns("family_select"),
               label = "Fitting model",
               choices = list(
-                # "Automatic" = "automatic",
-                # "Poisson" = "poisson",
-                "Quasi-Poisson" = "quasipoisson",
-                "Negative binomial (NB2)" = "nb2"
+                "Automatic" = "automatic",
+                "Poisson" = "poisson",
+                "Quasi-Poisson" = "quasipoisson"
               ),
               selected = "automatic"
             ) # ,
@@ -198,6 +340,7 @@ mod_micro_fitting_ui <- function(id, label) {
           class = "hot-improved",
           rHandsontableOutput(ns("count_data_hot"))
         ),
+
         # Buttons
         br(),
         div(
@@ -220,8 +363,23 @@ mod_micro_fitting_ui <- function(id, label) {
             selected = ".csv"
           )
         ),
-        div(class = "widget-sep", br()),
-        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting")
+        div(style = "height: 10px;", br()),
+        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting"),
+        div(
+          class = "side-widget-tall",
+          # Translocation frequency
+          selectInput(
+            ns("frequency_select"),
+            # label = "Translocation frequency",
+            label = NULL,
+            width = "180px",
+            choices = list(
+              "Measured by FISH" = "measured_freq",
+              "Full genome"      = "full_gen_freq"
+            ),
+            selected = "measured_freq"
+          )
+        )
       )
     ),
 
@@ -249,6 +407,7 @@ mod_micro_fitting_ui <- function(id, label) {
               rHandsontableOutput(ns("fit_coeffs"))
             )
           ),
+
           tabPanel(
             title = "Summary statistics",
             h5("Model-level statistics"),
@@ -336,6 +495,7 @@ mod_micro_fitting_ui <- function(id, label) {
               selected = ".rds"
             )
           ),
+
           # Download report
           div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
@@ -351,6 +511,7 @@ mod_micro_fitting_ui <- function(id, label) {
           )
         )
       ),
+
       # Box: Plot box ----
       box(
         width = 6,

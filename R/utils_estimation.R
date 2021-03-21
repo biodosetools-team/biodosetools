@@ -89,7 +89,10 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #'
 #' @return Yield
 #' @export
-calculate_yield <- function(dose, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+  # Validate parameters
+  type <- match.arg(type)
+
   # Calculate factor per type
   type_factor <- switch(type, "estimate" = 0, "lower" = 1, "upper" = -1)
 

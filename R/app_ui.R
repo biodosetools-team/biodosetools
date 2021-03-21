@@ -49,7 +49,7 @@ dashboard_sidebar <- function() {
     # About section
     sidebarMenu(
       menuItem(
-        "About this app",
+        text = "About this app",
         tabName = "home",
         icon = icon("home"),
         selected = TRUE
@@ -61,56 +61,56 @@ dashboard_sidebar <- function() {
     sidebarMenu(
       # Dicentrics
       menuItem(
-        "Dicentrics",
-        tabName = "dicent-menu-item",
+        text = "Dicentrics",
+        tabName = "menu-item-dicent",
         icon = icon("dna"),
         startExpanded = FALSE,
         # Modules
         menuItem(
-          "Fitting",
-          tabName = "tab-dicent-fitting",
+          text = "Fitting",
+          tabName = "tab-fitting-dicent",
           icon = icon("cog"),
           selected = FALSE
         ),
         menuItem(
-          "Dose estimation",
-          tabName = "tab-dicent-estimate",
+          text = "Dose estimation",
+          tabName = "tab-estimation-dicent",
           icon = icon("calculator")
         )
       ),
       # Translocations
       menuItem(
-        "Translocations",
-        tabName = "trans-menu-item",
+        text = "Translocations",
+        tabName = "menu-item-trans",
         icon = icon("palette"),
         # Modules
         menuSubItem(
-          "Fitting",
-          tabName = "tab-trans-fitting",
+          text = "Fitting",
+          tabName = "tab-fitting-trans",
           icon = icon("cog")
         ),
         menuSubItem(
-          "Dose estimation",
-          tabName = "tab-trans-estimate",
+          text = "Dose estimation",
+          tabName = "tab-estimation-trans",
           icon = icon("calculator")
         )
       ),
       # Micronuclei
       menuItem(
-        "Micronuclei",
-        tabName = "micro-menu-item",
+        text = "Micronuclei",
+        tabName = "menu-item-micro",
         icon = icon("dot-circle"),
         # Modules
         menuItem(
-          "Fitting",
-          tabName = "tab-micro-fitting",
+          text = "Fitting",
+          tabName = "tab-fitting-micro",
           icon = icon("cog"),
           badgeLabel = "wip",
           badgeColor = "green"
         ),
         menuItem(
-          "Dose estimation",
-          tabName = "tab-micro-estimate",
+          text = "Dose estimation",
+          tabName = "tab-estimation-micro",
           icon = icon("calculator"),
           badgeLabel = "wip",
           badgeColor = "green"
@@ -183,12 +183,12 @@ dashboard_body <- function() {
       dashboard_home(),
 
       # Modules
-      mod_dicent_fitting_ui(id = "dicent_fitting", label = "tab-dicent-fitting"),
-      mod_dicent_estimate_ui(id = "dicent_estimate", label = "tab-dicent-estimate"),
-      mod_trans_fitting_ui(id = "trans_fitting", label = "tab-trans-fitting"),
-      mod_trans_estimate_ui(id = "trans_estimate", label = "tab-trans-estimate"),
-      mod_micro_fitting_ui(id = "micro_fitting", label = "tab-micro-fitting"),
-      mod_micro_estimate_ui(id = "micro_estimate", label = "tab-micro-estimate")
+      mod_fitting_dicent_ui(id = "fitting_dicent_ui", label = "tab-fitting-dicent"),
+      mod_estimation_dicent_ui(id = "estimation_dicent_ui", label = "tab-estimation-dicent"),
+      mod_fitting_trans_ui(id = "fitting_trans_ui", label = "tab-fitting-trans"),
+      mod_estimation_trans_ui(id = "estimation_trans_ui", label = "tab-estimation-trans"),
+      mod_fitting_micro_ui(id = "fitting_micro_ui", label = "tab-fitting-micro"),
+      mod_estimation_micro_ui(id = "estimation_micro_ui", label = "tab-estimation-micro")
     )
   )
 }

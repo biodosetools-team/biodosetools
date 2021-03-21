@@ -5,7 +5,7 @@
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
+mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
@@ -49,14 +49,14 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
             conditionalPanel(
               condition = "input.help_fit_data_option == 'manual'",
               ns = ns,
-              include_help("estimate/fit_data_input.md")
+              include_help("estimation/fit_data_input.md")
             ),
             conditionalPanel(
               condition = "input.help_fit_data_option == 'load'",
               ns = ns,
-              include_help("estimate/fit_data_load.md")
+              include_help("estimation/fit_data_load.md")
             ),
-            include_help("trans/fit_data_estimate.md")
+            include_help("trans/fit_data_estimation.md")
           )
         ),
 
@@ -582,8 +582,8 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
           title = span(
             "Dose estimation options",
             help_modal_button(
-              ns("help_estimate_options"),
-              ns("help_estimate_options_modal")
+              ns("help_estimation_options"),
+              ns("help_estimation_options_modal")
             )
           ),
           status = "info",
@@ -591,14 +591,14 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
           # Help modal
           bsplus::bs_modal(
-            id = ns("help_estimate_options_modal"),
+            id = ns("help_estimation_options_modal"),
             title = "Help: Dose estimation options",
             size = "large",
 
             body = tagList(
               # Option selection
               radioGroupButtons(
-                inputId = ns("help_estimate_options_option"),
+                inputId = ns("help_estimation_options_option"),
                 label = NULL,
                 choices = c(
                   "Exposure"             = "exposure",
@@ -609,25 +609,25 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
               ),
               # Contents
               conditionalPanel(
-                condition = "input.help_estimate_options_option == 'exposure'",
+                condition = "input.help_estimation_options_option == 'exposure'",
                 ns = ns,
-                include_help("estimate/dose_exposure.md")
+                include_help("estimation/dose_exposure.md")
               ),
               conditionalPanel(
-                condition = "input.help_estimate_options_option == 'assess'",
+                condition = "input.help_estimation_options_option == 'assess'",
                 ns = ns,
-                include_help("estimate/dose_assessment.md")
+                include_help("estimation/dose_assessment.md")
               ),
               conditionalPanel(
-                condition = "input.help_estimate_options_option == 'error'",
+                condition = "input.help_estimation_options_option == 'error'",
                 ns = ns,
-                include_help("estimate/dose_error.md"),
+                include_help("estimation/dose_error.md"),
                 include_help("dicent/dose_error_methods.md")
               ),
               conditionalPanel(
-                condition = "input.help_estimate_options_option == 'surv_coeff'",
+                condition = "input.help_estimation_options_option == 'surv_coeff'",
                 ns = ns,
-                include_help("estimate/fraction_coeff_select.md")
+                include_help("estimation/fraction_coeff_select.md")
               )
             )
           ),
@@ -821,7 +821,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
     fluidRow(
       col_6_inner(
         # tabBox: Estimation results ----
-        uiOutput(ns("estimate_results_ui")),
+        uiOutput(ns("estimation_results_ui")),
 
         # Box: Export data and results ----
         box(
@@ -844,7 +844,7 @@ mod_trans_estimate_ui <- function(id, label) { # , locale = i18n) {
 
             body = tagList(
               # Contents
-              include_help("save/estimate_data_save_report.md")
+              include_help("save/estimation_data_save_report.md")
             )
           ),
 

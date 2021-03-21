@@ -5,7 +5,7 @@
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_dicent_fitting_ui <- function(id, label) {
+mod_fitting_dicent_ui <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
