@@ -51,7 +51,7 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
   return(2 / 0.974 * (single_sum - cross_sum))
 }
 
-#' Get translocation rate
+#' Get Sigurdson's translocation rate
 #'
 #' @param cells Number of cells \code{N}
 #' @param genome_fraction Genomic fraction used in translocations
@@ -64,7 +64,7 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #'
 #' @return Translocation rate.
 #' @export
-get_translocation_rate <- function(cells, genome_fraction, age_value,
+get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
                                    sex_bool = FALSE, sex_value = "none",
                                    smoker_bool = FALSE,
                                    ethnicity_value = "none", region_value = "none") {
@@ -97,6 +97,21 @@ get_translocation_rate <- function(cells, genome_fraction, age_value,
     smoke_trans_frequency *
     ethnicity_trans_frequency *
     region_trans_frequency
+
+  return(expected_aberr)
+}
+
+#' Get manual translocation rate
+#'
+#' @param cells Number of cells \code{N}
+#' @param genome_fraction Genomic fraction used in translocations
+#' @param expected_aberr_value Expected aberrations
+#'
+#' @return Translocation rate.
+#' @export
+get_translocation_rate_manual <- function(cells, genome_fraction, expected_aberr_value) {
+  # Expected aberrations
+  expected_aberr <- expected_aberr_value * cells * genome_fraction
 
   return(expected_aberr)
 }
