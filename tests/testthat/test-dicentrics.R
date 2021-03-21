@@ -33,12 +33,13 @@ test_that("processing full count data works", {
   expect_gt(ncol(dic_count_data), 3)
   expect_equal(fit_results_list$fit_raw_data, as.matrix(dic_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, dic_count_data$D)
 
   # Fitting (maxlik)
   model_formula <- list_fitting_formulas()[[2]]
 
-  # Expected outputs
+  # Expected glm warning in tryCatch()
   expect_warning(
     get_fit_results(
       count_data = dic_count_data,
@@ -84,12 +85,13 @@ test_that("processing aggregated count data works", {
   # Expected outputs
   expect_equal(fit_results_list$fit_raw_data, as.matrix(dic_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, dic_count_data$D)
 
   # Fitting (maxlik)
   model_formula <- list_fitting_formulas()[[2]]
 
-  # Expected outputs
+  # Expected glm warning in tryCatch()
   expect_warning(
     get_fit_results(
       count_data = dic_count_data,
