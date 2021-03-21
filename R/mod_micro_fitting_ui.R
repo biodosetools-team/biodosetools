@@ -227,62 +227,58 @@ mod_micro_fitting_ui <- function(id, label) {
 
 
     fluidRow(
-      col_6(
+      col_6_inner(
         # tabBox: Fit results ----
-        div(
-          # Ugly fix for inner fluidRow() padding
-          style = "margin-left: -7.5px; margin-right: -7.5px",
-          tabBox(
-            id = ns("fit_results_tabs"),
-            width = 12,
-            side = "left",
+        tabBox(
+          id = ns("fit_results_tabs"),
+          width = 12,
+          side = "left",
 
-            tabPanel(
-              title = "Result of curve fit",
-              h5("Fit formula"),
-              uiOutput(ns("fit_formula_tex")),
+          tabPanel(
+            title = "Result of curve fit",
+            h5("Fit formula"),
+            uiOutput(ns("fit_formula_tex")),
 
-              h5("Model"),
-              uiOutput(ns("fit_model_summary")),
+            h5("Model"),
+            uiOutput(ns("fit_model_summary")),
 
-              br(),
-              h5("Coefficients"),
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(ns("fit_coeffs"))
-              )
+            br(),
+            h5("Coefficients"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_coeffs"))
+            )
+          ),
+          tabPanel(
+            title = "Summary statistics",
+            h5("Model-level statistics"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_model_statistics"))
             ),
-            tabPanel(
-              title = "Summary statistics",
-              h5("Model-level statistics"),
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(ns("fit_model_statistics"))
-              ),
 
-              br(),
-              h5("Correlation matrix"),
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(ns("fit_cor_mat"))
-              ),
+            br(),
+            h5("Correlation matrix"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_cor_mat"))
+            ),
 
-              br(),
-              h5("Variance-covariance matrix"),
-              div(
-                class = "hot-improved",
-                rHandsontableOutput(ns("fit_var_cov_mat"))
-              )
-            ) # ,
-            # tabPanel(
-            #   tabName = "Decision thresholds",
-            #   h5("Decision thresholds"),
-            #   div(
-            #     class = "hot-improved",
-            #     rHandsontableOutput(ns("fit_decision_thresh"))
-            #   )
-            # )
-          )
+            br(),
+            h5("Variance-covariance matrix"),
+            div(
+              class = "hot-improved",
+              rHandsontableOutput(ns("fit_var_cov_mat"))
+            )
+          ) # ,
+          # tabPanel(
+          #   tabName = "Decision thresholds",
+          #   h5("Decision thresholds"),
+          #   div(
+          #     class = "hot-improved",
+          #     rHandsontableOutput(ns("fit_decision_thresh"))
+          #   )
+          # )
         ),
 
         # Box: Export data and results ----
@@ -355,27 +351,25 @@ mod_micro_fitting_ui <- function(id, label) {
           )
         )
       ),
-      col_6(
-        # Box: Plot box ----
-        box(
-          width = 12,
-          title = "Curve plot",
-          status = "success",
-          collapsible = TRUE,
+      # Box: Plot box ----
+      box(
+        width = 6,
+        title = "Curve plot",
+        status = "success",
+        collapsible = TRUE,
 
-          # Plot
-          plotOutput(ns("plot")),
-          # Download plot
-          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("save_plot_format"),
-              label = NULL,
-              width = "85px",
-              choices = list(".png", ".pdf"),
-              selected = ".png"
-            )
+        # Plot
+        plotOutput(ns("plot")),
+        # Download plot
+        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("save_plot_format"),
+            label = NULL,
+            width = "85px",
+            choices = list(".png", ".pdf"),
+            selected = ".png"
           )
         )
       )

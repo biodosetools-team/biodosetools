@@ -251,7 +251,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
       # Box: hot Cases input ----
-      col_7(
+      col_7_inner(
         box(
           width = 12,
           title = "Data input",
@@ -534,7 +534,7 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
     ),
 
     fluidRow(
-      col_6(
+      col_6_inner(
         # tabBox: Estimation results ----
         uiOutput(ns("estimate_results_ui")),
 
@@ -586,26 +586,24 @@ mod_dicent_estimate_ui <- function(id, label) { # , locale = i18n) {
         )
       ),
       # Box: Plot curves ----
-      col_6(
-        box(
-          width = 12,
-          title = "Curve plot",
-          status = "success",
-          collapsible = TRUE,
+      box(
+        width = 6,
+        title = "Curve plot",
+        status = "success",
+        collapsible = TRUE,
 
-          # Plot
-          plotOutput(ns("plot")),
-          # Download plot
-          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("save_plot_format"),
-              label = NULL,
-              width = "85px",
-              choices = list(".png", ".pdf"),
-              selected = ".png"
-            )
+        # Plot
+        plotOutput(ns("plot")),
+        # Download plot
+        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("save_plot_format"),
+            label = NULL,
+            width = "85px",
+            choices = list(".png", ".pdf"),
+            selected = ".png"
           )
         )
       )

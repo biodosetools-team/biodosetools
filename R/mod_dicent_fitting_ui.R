@@ -227,7 +227,7 @@ mod_dicent_fitting_ui <- function(id, label) {
 
 
     fluidRow(
-      col_6(
+      col_6_inner(
         # tabBox: Fit results ----
         tabBox(
           id = ns("fit_results_tabs"),
@@ -353,27 +353,25 @@ mod_dicent_fitting_ui <- function(id, label) {
           )
         )
       ),
-      col_6(
-        # Box: Plot box ----
-        box(
-          width = 12,
-          title = "Curve plot",
-          status = "success",
-          collapsible = TRUE,
+      # Box: Plot box ----
+      box(
+        width = 6,
+        title = "Curve plot",
+        status = "success",
+        collapsible = TRUE,
 
-          # Plot
-          plotOutput(ns("plot")),
-          # Download plot
-          downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
-          div(
-            class = "side-widget-tall",
-            selectInput(
-              ns("save_plot_format"),
-              label = NULL,
-              width = "85px",
-              choices = list(".png", ".pdf"),
-              selected = ".png"
-            )
+        # Plot
+        plotOutput(ns("plot")),
+        # Download plot
+        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        div(
+          class = "side-widget-tall",
+          selectInput(
+            ns("save_plot_format"),
+            label = NULL,
+            width = "85px",
+            choices = list(".png", ".pdf"),
+            selected = ".png"
           )
         )
       )
