@@ -25,26 +25,13 @@ calculate_decision_threshold <- function(fit_results_list, cells, conf_int = 0.9
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
 
-  # Generalized variance-covariance matrix
-  general_fit_coeffs <- numeric(length = 3L) %>%
-    `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+  # Generalised fit coefficients
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
 
-  for (var in rownames(fit_coeffs)) {
-    general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
-  }
+  # Generalised variance-covariance matrix
+  general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
-  # Generalized fit coefficients
-  general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-    `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
-    `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
-
-  for (x_var in rownames(fit_var_cov_mat)) {
-    for (y_var in colnames(fit_var_cov_mat)) {
-      general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
-    }
-  }
-
-  # Generalized curves
+  # Generalised curves
   yield_fun <- function(d, G) {
     general_fit_coeffs[[1]] +
       general_fit_coeffs[[2]] * d +

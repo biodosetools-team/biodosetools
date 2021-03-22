@@ -70,13 +70,8 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
       model_data <- renormalise_model_data(model_data, genome_fraction, calc_type)
     }
 
-    # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
-
-    for (var in names(fit_coeffs_vec)) {
-      general_fit_coeffs[[var]] <- fit_coeffs_vec[[var]]
-    }
+    # Generalised fit coefficients
+    general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs_vec)
 
     eta_sat <- get_eta_sat(model_data, calc_type)
     eta <- predict_eta(model_data, general_fit_coeffs, calc_type)

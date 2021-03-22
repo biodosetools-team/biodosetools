@@ -662,24 +662,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
     fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
 
-    # Generalized variance-covariance matrix
-    general_fit_coeffs <- numeric(length = 3L) %>%
-      `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+    # Generalised fit coefficients
+    general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
 
-    for (var in rownames(fit_coeffs)) {
-      general_fit_coeffs[var] <- fit_coeffs[var, "estimate"]
-    }
-
-    # Generalized fit coefficients
-    general_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-      `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
-      `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
-
-    for (x_var in rownames(fit_var_cov_mat)) {
-      for (y_var in colnames(fit_var_cov_mat)) {
-        general_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
-      }
-    }
+    # Generalised variance-covariance matrix
+    general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
     # Protracted variables ----
     if (exposure == "protracted") {

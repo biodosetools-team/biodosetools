@@ -11,26 +11,13 @@ get_fit_dose_curve <- function(fit_results_list, aberr_name) {
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
 
-  # Generalized variance-covariance matrix
-  general_fit_coeffs <- numeric(length = 3L) %>%
-    `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+  # Generalised fit coefficients
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
 
-  for (var in row.names(fit_coeffs)) {
-    general_fit_coeffs[[var]] <- fit_coeffs[var, "estimate"] %>% as.numeric()
-  }
+  # Generalised variance-covariance matrix
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
-  # Generalized fit coefficients
-  general_fit_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
-    `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
-    `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
-
-  for (x_var in rownames(fit_var_cov_mat)) {
-    for (y_var in colnames(fit_var_cov_mat)) {
-      general_fit_var_cov_mat[x_var, y_var] <- fit_var_cov_mat[x_var, y_var]
-    }
-  }
-
-  # Generalized curves
+  # Generalised curves
   yield_fun <- function(d) {
     general_fit_coeffs[["coeff_C"]] +
       general_fit_coeffs[["coeff_alpha"]] * d +

@@ -198,3 +198,32 @@ list_fitting_formulas <- function() {
 
   return(fitting_formulas)
 }
+
+#' Generalised fit coefficients
+#' @noRd
+generalise_fit_coeffs <- function(fit_coeffs_vec) {
+  general_fit_coeffs <- numeric(length = 3L) %>%
+    `names<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+
+  for (var in names(fit_coeffs_vec)) {
+    general_fit_coeffs[[var]] <- as.numeric(fit_coeffs_vec[[var]])
+  }
+
+  return(general_fit_coeffs)
+}
+
+#' Generalised variance-covariance matrix
+#' @noRd
+generalise_fit_var_cov_mat <- function(fit_var_cov_mat) {
+  general_fit_var_cov_mat <- matrix(0, nrow = 3, ncol = 3) %>%
+    `row.names<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>%
+    `colnames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+
+  for (x_var in rownames(fit_var_cov_mat)) {
+    for (y_var in colnames(fit_var_cov_mat)) {
+      general_fit_var_cov_mat[x_var, y_var] <- as.numeric(fit_var_cov_mat[x_var, y_var])
+    }
+  }
+
+  return(general_fit_var_cov_mat)
+}
