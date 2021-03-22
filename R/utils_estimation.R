@@ -114,12 +114,9 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
 #'
 #' @return Yield infimum
 #' @export
-calculate_yield_infimum <- function(type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
-  # Calculate factor per type
-  type_factor <- switch(type, list("estimate" = 0, "lower" = 1, "upper" = -1))
-
+calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
   # Calculate yield
-  yield <- calculate_yield(0, type = "estimate", general_fit_coeffs, general_var_cov_mat, 1, conf_int)
+  yield <- calculate_yield(0, type, general_fit_coeffs, general_var_cov_mat, 1, conf_int)
 
   return(yield)
 }
