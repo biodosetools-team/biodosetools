@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcs_fitting.R
 \name{get_fit_glm_method}
 \alias{get_fit_glm_method}
-\title{Perform GLM (Generalized Linear Model) fitting}
+\title{Perform GLM (Generalised Linear Model) fitting}
 \usage{
 get_fit_glm_method(
   count_data,
@@ -27,5 +27,5 @@ get_fit_glm_method(
 List object containing GLM fit results
 }
 \description{
-Perform GLM (Generalized Linear Model) fitting
+Perform GLM (Generalised Linear Model) fitting
 }

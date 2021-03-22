@@ -20,9 +20,9 @@ get_estimated_dose_curve(
 \arguments{
 \item{est_full_doses}{Data frame with yields and dose estimations. It requires dose, yield, type, level columns}
 
-\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix}
 
-\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+\item{general_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

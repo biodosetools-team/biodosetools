@@ -16,7 +16,7 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
     table_reset$value <- 1
   })
 
-  # Initialize data frame ----
+  # Initialise data frame ----
   previous <- reactive({
 
     # Create button dependency for updating dimensions

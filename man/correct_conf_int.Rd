@@ -15,7 +15,7 @@ correct_conf_int(
 \arguments{
 \item{conf_int}{Confidence interval}
 
-\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+\item{general_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

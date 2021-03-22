@@ -14,12 +14,12 @@ protracted_g_function <- function(time, time_0) {
   return(g_value)
 }
 
-# Generalized curves ----
+# Generalised curves ----
 
 #' Calculate yield
 #'
 #' @param dose Dose
-#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
 #' @param protracted_g_value Protracted G(x) value
 #'
 #' @return Yield
@@ -37,7 +37,7 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 #' Calculate R regression confidence factor depeding on selected confidence interval and type of fit.
 #'
 #' @param conf_int Confidence interval
-#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
 #'
 #' @return R regression confidence factor
 #' @export
@@ -53,7 +53,7 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 #' Calculate yield error using Merkle's method
 #'
 #' @param dose Dose
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #'
 #' @return Yield error
@@ -82,8 +82,8 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #'
 #' @param dose Dose
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
@@ -108,8 +108,8 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
 #' Calculate theoretical yield infimum
 #'
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
 #' @return Yield infimum
@@ -129,7 +129,7 @@ calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), gene
 #' @param protracted_g_value Protracted G(x) value
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param dose Dose
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #'
 #' @return Corrected confidence interval
 #' @export
@@ -157,8 +157,8 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 #'
 #' @param yield Yield to be projected
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
@@ -198,8 +198,8 @@ correct_negative_vals <- function(x) {
 #'
 #' @param yield Yield
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
 #' @return Numeric value of corrected yield
@@ -239,8 +239,8 @@ correct_boundary <- function(x) {
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int_text_whole Text to display confidence interval for whole-body estimation
 #' @param conf_int_text_partial Text to display confidence interval for partial-body estimation
 #' @param conf_int_text_hetero Text to display confidence interval for heterogeneous estimation

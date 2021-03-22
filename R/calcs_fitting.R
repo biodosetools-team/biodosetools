@@ -65,7 +65,7 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
 
   # Calculate from theory or use statistics calculated by glm
   if (type == "theory") {
-    # Renormalize data if necessary
+    # Renormalise data if necessary
     if (response == "yield") {
       model_data <- renormalise_model_data(model_data, genome_fraction, calc_type)
     }
@@ -187,7 +187,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   return(parsed_data)
 }
 
-#' Perform GLM (Generalized Linear Model) fitting
+#' Perform GLM (Generalised Linear Model) fitting
 #'
 #' @param count_data Count data in data frame form
 #' @param model_formula Model formula

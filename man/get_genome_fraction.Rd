@@ -16,7 +16,7 @@ get_genome_fraction(dna_table, chromosome, color, sex)
 \item{sex}{Sex of the individual}
 }
 \value{
-Fraction of genome hybridized.
+Fraction of genome hybridised.
 }
 \description{
 Get genome fraction

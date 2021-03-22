@@ -18,7 +18,7 @@ mod_estimation_fit_curve_hot_server <- function(input, output, session, stringsA
     table_var_reset$value <- 1
   })
 
-  # Initialize data frames ----
+  # Initialise data frames ----
   previous_coeffs <- reactive({
 
     # Create button dependency for updating dimensions
@@ -392,7 +392,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
     table_reset$value <- 1
   })
 
-  # Initialize data frame ----
+  # Initialise data frame ----
   previous <- reactive({
 
     # Create button dependency for updating dimensions
@@ -706,7 +706,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
     }
 
-    # Initialize partial-body and heterogeneous CI text for plot legend
+    # Initialise partial-body and heterogeneous CI text for plot legend
     conf_int_text_partial <- NULL
     conf_int_text_hetero <- NULL
 

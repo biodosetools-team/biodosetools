@@ -5,7 +5,7 @@
 #' @param color Color of the stains.
 #' @param sex Sex of the individual
 #'
-#' @return Fraction of genome hybridized.
+#' @return Fraction of genome hybridised.
 #' @export
 #' @importFrom rlang .data
 get_genome_fraction <- function(dna_table, chromosome, color, sex) {

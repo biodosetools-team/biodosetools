@@ -13,7 +13,7 @@ AIC_from_data(
 )
 }
 \arguments{
-\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix}
 
 \item{data}{Data (dose, yield) to calculate AIC from}
 

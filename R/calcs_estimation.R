@@ -2,7 +2,7 @@
 
 #' Calculate AIC (Akaike's ‘An Information Criterion’)
 #'
-#' @param general_fit_coeffs Generalized fit coefficients matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
 #' @param data Data (dose, yield) to calculate AIC from
 #' @param dose_var Name of the dose variable (enquoted)
 #' @param yield_var Name of the yield variable (enquoted)
@@ -44,8 +44,8 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
 #' @param protracted_g_value Protracted G(x) value
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param genome_fraction Genomic fraction used in translocations, else 1
 #' @param aberr_module Aberration module Aberration module
 #'
@@ -136,8 +136,8 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' Whole-body dose estimation using Delta method.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidenve interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
@@ -264,8 +264,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' Partial-body dose estimation using Dolphin method.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
@@ -486,8 +486,8 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' Heterogeneous dose estimation.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalized fit coefficients matrix
-#' @param general_var_cov_mat Generalized variance-covariance matrix
+#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param general_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
 #' @param protracted_g_value Protracted G(x) value

@@ -18,9 +18,9 @@ estimate_whole_body(
 \arguments{
 \item{case_data}{Case data in data frame form}
 
-\item{general_fit_coeffs}{Generalized fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix}
 
-\item{general_var_cov_mat}{Generalized variance-covariance matrix}
+\item{general_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{conf_int_yield}{Confidence interval of the yield}
 
