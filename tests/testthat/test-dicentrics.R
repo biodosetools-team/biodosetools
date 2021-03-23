@@ -107,7 +107,7 @@ test_that("get_fit_results with aggregated count data works", {
 # Dicentrics dose estimation ----
 
 test_that("processing case data works", {
-  case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
+  case_data <- app_sys("extdata", "cases-data-partial.csv") %>%
     utils::read.csv(header = TRUE) %>%
     dplyr::rename_with(
       .fn = toupper,
@@ -147,9 +147,7 @@ test_that("processing case data works", {
   expect_equal(case_data_cols[seq(case_data_cols_len - 3, case_data_cols_len, 1)], c("DI", "u", "y", "y_err"))
 
   # Dose estimation
-  exposure <- "acute"
-  assessment <- "whole-body"
-  error_method <- "merkle-83"
+  aberr_module <- "dicentrics"
 
   fit_results_list <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
     readRDS()
@@ -165,67 +163,109 @@ test_that("processing case data works", {
   # Generalised variance-covariance matrix
   general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
-  # Protracted variables
-  if (exposure == "protracted") {
-    # protracted_time <-
-    # protracted_life_time <-
-    protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
-  } else if (exposure == "protracted_high") {
-    protracted_g_value <- 0
-    # Used in report (dummy values)
-    protracted_time <- NA
-    protracted_life_time <- NA
-  } else {
-    protracted_g_value <- 1
-    # Used in report (dummy values)
-    protracted_time <- NA
-    protracted_life_time <- NA
-  }
+  # Protraction (acute exposure)
+  protracted_g_value <- 1
 
-  # Confidence intervals
+  # CI: Whole-body assessment (Merkle's method)
+  conf_int_curve_merkle <- 0.83
+  conf_int_yield_merkle <- conf_int_curve_merkle
 
-  # Select whole-body CI depending on selected method
-  if (grepl("merkle", error_method, fixed = TRUE)) {
-    conf_int_curve <- paste0("0.", gsub("\\D", "", error_method)) %>% as.numeric()
-    conf_int_yield <- conf_int_curve
+  # CI: Whole-body assessment (Delta method)
+  conf_int_curve_delta <- 0.83
+  conf_int_yield_delta <- conf_int_curve_delta
+  conf_int_delta <- 0.95
 
-    # Parse CI text for plot legend
-    conf_int_text_whole <- paste0(
-      "(", round(100 * conf_int_curve, 0), "%",
-      "-", round(100 * conf_int_yield, 0), "%", ")"
-    )
-  } else if (error_method == "delta") {
-    conf_int_curve <- 0.83
-    conf_int_yield <- conf_int_curve
-    conf_int_delta <- 0.95
+  # CI: Partial-body assessment
+  conf_int_dolphin <- 0.95
 
-    # Parse CI text for plot legend
-    conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
-  }
+  # CI: Heterogeneous assessment
+  conf_int_curve_hetero <- 0.83
+  conf_int_yield_hetero <- conf_int_curve_hetero
 
-  conf_int_curve <- conf_int_curve %>%
+  # CI: corrections (Merkle's method)
+  conf_int_curve_merkle <- conf_int_curve_merkle %>%
     correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
-  conf_int_yield <- conf_int_yield %>%
+  conf_int_yield_merkle <- conf_int_yield_merkle %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+
+  # CI: corrections (Delta method)
+  conf_int_curve_delta <- conf_int_curve_delta %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+  conf_int_yield_delta <- conf_int_yield_delta %>%
     correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
 
   # Parse genome fraction
   parsed_genome_fraction <- 1
 
   # Calculations
-  results_whole <- estimate_whole_body(
+  results_whole_merkle <- estimate_whole_body(
     case_data,
     general_fit_coeffs,
     general_var_cov_mat,
-    conf_int_yield,
-    conf_int_curve,
+    conf_int_yield = conf_int_curve_merkle,
+    conf_int_curve = conf_int_yield_merkle,
     protracted_g_value,
     parsed_genome_fraction,
-    aberr_module = "dicentrics"
+    aberr_module
   )
 
-  # Expected outputs
-  expect_equal(colnames(results_whole$est_doses), c("yield", "dose"))
-  expect_equal(rownames(results_whole$est_doses), c("lower", "estimate", "upper"))
-  expect_equal(round(results_whole$AIC, 3), 7.771)
+  results_whole_delta <- estimate_whole_body_delta(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int = conf_int_delta,
+    protracted_g_value,
+    cov = TRUE,
+    aberr_module
+  )
 
+  results_partial <- estimate_partial_dolphin(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int = conf_int_dolphin,
+    protracted_g_value,
+    cov = TRUE,
+    genome_fraction = 1,
+    aberr_module,
+    gamma = 1 / 2.7
+  )
+
+  results_hetero <- estimate_hetero(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int_yield_hetero,
+    conf_int_curve_hetero,
+    protracted_g_value,
+    gamma = 1 / 2.7,
+    gamma_error = 0
+  )
+
+  # Expected outputs (whole-body)
+  expect_equal(colnames(results_whole_merkle$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_whole_merkle$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_merkle$AIC, 3), 7.057)
+
+  expect_equal(colnames(results_whole_delta$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_whole_delta$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_delta$AIC, 3), 7.057)
+
+  expect_equal(results_whole_merkle$est_doses["estimate", "yield"], results_whole_delta$est_doses["estimate", "yield"])
+  expect_gt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
+  expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
+
+  # Expected outputs (partial-body)
+  expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_partial$AIC, 3), 8.133)
+
+  # Expected outputs (heterogeneous)
+  expect_equal(colnames(results_hetero$est_yields), c("yield1", "yield2"))
+  expect_equal(rownames(results_hetero$est_yields), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_hetero$est_doses), c("dose1", "dose2"))
+  expect_equal(rownames(results_hetero$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_hetero$AIC, 3), 8.264)
+  expect_equal(results_hetero$est_yields["lower", "yield2"], 0)
+  expect_equal(results_hetero$est_doses["lower", "dose2"], 0)
 })
