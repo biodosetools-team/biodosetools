@@ -169,18 +169,28 @@ test_that("processing case data works", {
   # CI: Whole-body assessment (Merkle's method)
   conf_int_curve_merkle <- 0.83
   conf_int_yield_merkle <- conf_int_curve_merkle
+  conf_int_text_whole <- paste0(
+    "(", round(100 * conf_int_curve_merkle, 0), "%",
+    "-", round(100 * conf_int_yield_merkle, 0), "%", ")"
+  )
 
   # CI: Whole-body assessment (Delta method)
   conf_int_curve_delta <- 0.83
   conf_int_yield_delta <- conf_int_curve_delta
   conf_int_delta <- 0.95
+  conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
 
   # CI: Partial-body assessment
   conf_int_dolphin <- 0.95
+  conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
 
   # CI: Heterogeneous assessment
   conf_int_curve_hetero <- 0.83
   conf_int_yield_hetero <- conf_int_curve_hetero
+  conf_int_text_hetero <- paste0(
+    "(", round(100 * conf_int_curve_hetero, 0), "%",
+    "-", round(100 * conf_int_yield_hetero, 0), "%", ")"
+  )
 
   # CI: corrections (Merkle's method)
   conf_int_curve_merkle <- conf_int_curve_merkle %>%
@@ -268,4 +278,29 @@ test_that("processing case data works", {
   expect_equal(round(results_hetero$AIC, 3), 8.264)
   expect_equal(results_hetero$est_yields["lower", "yield2"], 0)
   expect_equal(results_hetero$est_doses["lower", "dose2"], 0)
+
+  # Plot
+  est_full_doses <- data.frame(
+    dose = c(results_whole_merkle$est_doses[["dose"]], results_hetero$est_doses[["dose1"]], results_hetero$est_doses[["dose2"]]),
+    yield = c(results_whole_merkle$est_doses[["yield"]], results_hetero$est_yields[["yield1"]], results_hetero$est_yields[["yield2"]]),
+    type = c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
+    level = rep(c("Lower", "Estimate", "Upper"), 3)
+  )
+
+  gg_curve <- get_estimated_dose_curve(
+    est_full_doses,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    protracted_g_value,
+    conf_int_yield = conf_int_yield_merkle,
+    conf_int_curve = conf_int_curve_merkle,
+    conf_int_text_whole,
+    conf_int_text_partial,
+    conf_int_text_hetero,
+    aberr_name = to_title(aberr_module)
+  )
+
+  # Expected outcomes
+  expect_equal(names(gg_curve$labels), c("colour", "shape", "x", "y", "ymin", "ymax"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"))
 })
