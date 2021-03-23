@@ -93,3 +93,14 @@ test_that("fix_count_data_names works", {
     c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$")
   )
 })
+
+
+# Dose estimation ----
+
+test_that("protracted_g_function works", {
+  # Analytical solution
+  product_log <- 0.2784645427610738
+
+  # Expected output
+  expect_equal(protracted_g_function(time = 4 * (1 + product_log), time_0 = 2), 0.5)
+})
