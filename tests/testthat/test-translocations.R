@@ -215,4 +215,110 @@ test_that("processing case data works", {
   expect_equal(case_data_cols[1:2], c("N", "X"))
   expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 7, 1)])))
   expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("DI", "u", "Fp", "Fp_err", "Xc", "Fg", "Fg_err"))
+
+  # Dose estimation
+  aberr_module <- "translocations"
+
+  fit_results_list <- app_sys("extdata", "translocations-fitting-data-2020-10-10.rds") %>%
+    readRDS()
+
+  # Parse fitting data
+  fit_coeffs <- fit_results_list[["fit_coeffs"]]
+  fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+  fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
+
+  # Generalised fit coefficients
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+
+  # Generalised variance-covariance matrix
+  general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+  # Protraction (acute exposure)
+  protracted_g_value <- 1
+
+  # CI: Whole-body assessment (Merkle's method)
+  conf_int_curve_merkle <- 0.83
+  conf_int_yield_merkle <- conf_int_curve_merkle
+  conf_int_text_whole <- paste0(
+    "(", round(100 * conf_int_curve_merkle, 0), "%",
+    "-", round(100 * conf_int_yield_merkle, 0), "%", ")"
+  )
+
+  # CI: Whole-body assessment (Delta method)
+  conf_int_curve_delta <- 0.83
+  conf_int_yield_delta <- conf_int_curve_delta
+  conf_int_delta <- 0.95
+  conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
+
+  # CI: Partial-body assessment
+  conf_int_dolphin <- 0.95
+  conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
+
+  # CI: corrections (Merkle's method)
+  conf_int_curve_merkle <- conf_int_curve_merkle %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+  conf_int_yield_merkle <- conf_int_yield_merkle %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+
+  # CI: corrections (Delta method)
+  conf_int_curve_delta <- conf_int_curve_delta %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+  conf_int_yield_delta <- conf_int_yield_delta %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+
+  # Parse genome fraction
+  parsed_genome_fraction <- 0.585
+
+  # Calculations
+  results_whole_merkle <- estimate_whole_body(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int_yield = conf_int_curve_merkle,
+    conf_int_curve = conf_int_yield_merkle,
+    protracted_g_value,
+    parsed_genome_fraction,
+    aberr_module
+  )
+
+  results_whole_delta <- estimate_whole_body_delta(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int = conf_int_delta,
+    protracted_g_value,
+    cov = TRUE,
+    aberr_module
+  )
+
+  results_partial <- estimate_partial_dolphin(
+    case_data,
+    general_fit_coeffs,
+    general_var_cov_mat,
+    conf_int = conf_int_dolphin,
+    protracted_g_value,
+    cov = TRUE,
+    genome_fraction = parsed_genome_fraction,
+    aberr_module,
+    gamma = 1 / 2.7
+  )
+
+  # Expected outputs (whole-body)
+  expect_equal(colnames(results_whole_merkle$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_whole_merkle$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_merkle$AIC, 3), 8.223)
+
+  expect_equal(colnames(results_whole_delta$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_whole_delta$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_delta$AIC, 3), 8.223)
+
+  expect_equal(results_whole_merkle$est_doses["estimate", "yield"], results_whole_delta$est_doses["estimate", "yield"])
+  # TODO: check theory
+  # expect_lt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
+  # expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
+
+  # Expected outputs (partial-body)
+  expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
+  expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_partial$AIC, 3), 8.838)
 })
