@@ -33,8 +33,26 @@ test_that("get_fit_results with full count data works", {
   expect_gt(ncol(dic_count_data), 3)
   expect_equal(fit_results_list$fit_raw_data, as.matrix(dic_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+  expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
+  expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
+  expect_true(is.null(fit_results_list$fit_dispersion) & grepl("A Poisson", fit_results_list$fit_model_summary))
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, dic_count_data$D)
+
+  # Fitting (linear model)
+  fit_results_list <- get_fit_results(
+    count_data = dplyr::filter(dic_count_data, D < 1),
+    model_formula = list_fitting_formulas()[[2]],
+    model_family = "quasipoisson",
+    fit_link = "identity",
+    aberr_module
+  )
+
+  # Expected results
+  expect_equal(fit_results_list$fit_algorithm, "glm")
+  expect_true(all(dim(fit_results_list$fit_cor_mat) == c(2, 2)))
+  expect_true(all(dim(fit_results_list$fit_coeffs) == c(2, 4)))
+  expect_true(fit_results_list$fit_dispersion > 1 & grepl("A quasi\\-Poisson", fit_results_list$fit_model_summary))
 
   # Fitting (maxlik)
   model_formula <- list_fitting_formulas()[[2]]
