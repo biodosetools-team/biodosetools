@@ -142,6 +142,8 @@ test_that("get_fit_results with aggregated count data works", {
   # Expected outputs
   expect_equal(fit_results_list$fit_raw_data, as.matrix(trans_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+  expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
+  expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
 
