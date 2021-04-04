@@ -75,22 +75,61 @@ test_that("fix_coeff_names works", {
   )
 })
 
-test_that("fix_count_data_names works", {
+test_that("fix_count_data_names for count data works", {
   # Prepare data
-  count_data <- fit_results$fit_raw_data
+  case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
+    utils::read.csv(header = TRUE) %>%
+    dplyr::rename_with(
+      .fn = toupper,
+      .cols = dplyr::everything()
+    ) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::starts_with("C"),
+        .fns = as.integer
+      )
+    ) %>%
+    dplyr::select(
+      dplyr::starts_with("C")
+    )
 
-  count_data_cols <- fix_count_data_names(count_data, type = "count", output = "kable") %>%
+  case_data <- calculate_aberr_table(
+    data = case_data,
+    type = "case",
+    assessment_u = 1
+  )
+
+  # Specific to translocations
+  genome_fraction <- 0.585
+
+  case_data <- case_data %>%
+    dplyr::mutate(
+      Fp = .data$mean,
+      Fp_err = .data$std_err
+    ) %>%
+    dplyr::select(-.data$mean, -.data$std_err) %>%
+    dplyr::mutate(
+      Xc = dplyr::case_when(
+        # "sigurdson" ~ get_translocation_rate_sigurdson(...),
+        # "manual" ~ get_translocation_rate_manual(...),
+        TRUE ~ 0
+      ),
+      Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
+      Fg_err = .data$Fp_err / sqrt(genome_fraction)
+    )
+
+  case_data_cols <- fix_count_data_names(case_data, type = "case", output = "kable") %>%
     colnames()
-  count_data_cols_len <- length(count_data_cols)
+  case_data_cols_len <- length(case_data_cols)
 
   # Expected outputs
   expect_equal(
-    count_data_cols[1:4],
-    c("$D$ (Gy)", "$N$", "$X$", "$C_{0}$")
+    case_data_cols[1:3],
+    c("$N$", "$X$", "$C_{0}$")
   )
   expect_equal(
-    count_data_cols[seq(count_data_cols_len - 3, count_data_cols_len, 1)],
-    c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$")
+    case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)],
+    c("$\\sigma^{2} / \\bar{y}$", "$u$", "$F_{P}$", "$\\sigma_{P} / \\sqrt{N}$", "$X_{C}$", "$F_{G}$", "$\\sigma_{G} / \\sqrt{N}$")
   )
 })
 
