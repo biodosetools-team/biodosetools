@@ -254,7 +254,7 @@ test_that("processing case data works", {
     conf_int = conf_int_dolphin,
     protracted_g_value,
     cov = TRUE,
-    genome_fraction = 1,
+    genome_fraction = parsed_genome_fraction,
     aberr_module,
     gamma = 1 / 2.7
   )
