@@ -77,6 +77,25 @@ test_that("fix_coeff_names works", {
 
 test_that("fix_count_data_names for count data works", {
   # Prepare data
+  count_data <- fit_results$fit_raw_data
+
+  count_data_cols <- fix_count_data_names(count_data, type = "count", output = "kable") %>%
+    colnames()
+  count_data_cols_len <- length(count_data_cols)
+
+  # Expected outputs
+  expect_equal(
+    count_data_cols[1:4],
+    c("$D$ (Gy)", "$N$", "$X$", "$C_{0}$")
+  )
+  expect_equal(
+    count_data_cols[seq(count_data_cols_len - 3, count_data_cols_len, 1)],
+    c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$")
+  )
+})
+
+test_that("fix_count_data_names for case data works", {
+  # Prepare data
   case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
     utils::read.csv(header = TRUE) %>%
     dplyr::rename_with(
