@@ -162,3 +162,11 @@ test_that("protracted_g_function works", {
   # Expected output
   expect_equal(protracted_g_function(time = 4 * (1 + product_log), time_0 = 2), 0.5)
 })
+
+test_that("correct_boundary works", {
+  # Expected outputs
+  expect_equal(correct_boundary(-0.5, 0))
+  expect_equal(correct_boundary(0.5, 0.5))
+  expect_equal(correct_boundary(1.5, 1))
+})
+
