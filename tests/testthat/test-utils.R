@@ -165,8 +165,8 @@ test_that("protracted_g_function works", {
 
 test_that("correct_boundary works", {
   # Expected outputs
-  expect_equal(correct_boundary(-0.5, 0))
-  expect_equal(correct_boundary(0.5, 0.5))
-  expect_equal(correct_boundary(1.5, 1))
+  expect_equal(correct_boundary(-0.5), 0)
+  expect_equal(correct_boundary(0.5), 0.5)
+  expect_equal(correct_boundary(1.5), 1)
 })
 
