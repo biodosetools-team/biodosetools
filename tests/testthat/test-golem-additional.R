@@ -5,6 +5,10 @@ test_that("list_to_li works", {
     as.character(list_to_li(c("a", "b"))),
     "<li>a</li>\n<li>b</li>"
   )
+  expect_equal(
+    as.character(list_to_li(c("a", "b"), class = "my-class")),
+    '<li class="my-class">a</li>\n<li class="my-class">b</li>'
+  )
 })
 
 test_that("list_to_p works", {
@@ -12,12 +16,20 @@ test_that("list_to_p works", {
     as.character(list_to_p(c("a", "b"))),
     "<p>a</p>\n<p>b</p>"
   )
+  expect_equal(
+    as.character(list_to_p(c("a", "b"), class = "my-class")),
+    '<p class="my-class">a</p>\n<p class="my-class">b</p>'
+  )
 })
 
 test_that("named_to_li works", {
   expect_equal(
     as.character(named_to_li(c(a = "a", b = "b"))),
     "<li><b>a:</b> a</li>\n<li><b>b:</b> b</li>"
+  )
+  expect_equal(
+    as.character(named_to_li(c(a = "a", b = "b"), class = "my-class")),
+    '<li class="my-class"><b>a:</b> a</li>\n<li class="my-class"><b>b:</b> b</li>'
   )
 })
 
