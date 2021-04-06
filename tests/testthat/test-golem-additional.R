@@ -60,3 +60,16 @@ test_that("jq_hide works", {
     "<script>$('#element-id').hide()</script>"
   )
 })
+
+test_that("tagRemoveAttributes and (un)display work", {
+  a <- shiny::tags$p(src = "plop", "pouet")
+  a_notag <- tagRemoveAttributes(a, "src")
+  a_hidden <- undisplay(a)
+  a_unhidden <- display(a_hidden)
+
+  # Expected outcomes
+  expect_equal(as.character(a), '<p src="plop">pouet</p>')
+  expect_equal(as.character(a_notag), "<p>pouet</p>")
+  expect_equal(as.character(a_hidden), '<p src="plop" style="display: none;">pouet</p>')
+  expect_equal(as.character(a_unhidden), '<p src="plop" style="">pouet</p>')
+})
