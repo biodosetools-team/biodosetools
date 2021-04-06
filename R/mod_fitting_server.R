@@ -275,9 +275,9 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       }
 
       # Calculate decision thresholds
-      # results_list[["decision_thresh"]] <- calculate_decision_threshold_table(
+      # results_list[["decision_threshold"]] <- calculate_decision_threshold_table(
       #   fit_results_list,
-      #   decision_thresh_cells,
+      #   decision_threshold_cells,
       #   aberr_module,
       #   input
       # )

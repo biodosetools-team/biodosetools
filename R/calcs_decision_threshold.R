@@ -2,22 +2,27 @@
 #'
 #' @param fit_results_list List of fit results
 #' @param cells N
+#' @param count_data Count data in data frame form
+#' @param model_formula Model formula
+#' @param model_family Model family
+#' @param frequency_select Whether to use measured frequency or full genome frequency
 #' @param conf_int CI
 #' @param aberr_module Aberration module
-#' @param input UI input variable
-#'
+#' @name calculate_decision_threshold
+NULL
+# > NULL
+
+#' @rdname calculate_decision_threshold
 #' @return A vector with aberr_test and dose_est
 #' @noRd
-calculate_decision_threshold <- function(fit_results_list, cells, conf_int = 0.95, aberr_module, input) {
-
+calculate_decision_threshold <- function(fit_results_list, cells,
+                                         count_data, model_formula, model_family,
+                                         frequency_select = c(NULL, "measured_freq", "full_gen_freq"),
+                                         conf_int = 0.95, aberr_module) {
   # Use measured translocation frequency fit
   if (aberr_module == "translocations") {
-    if (input$frequency_select == "full_gen_freq") {
-      count_data <- rhandsontable::hot_to_r(input$count_data_hot)
-      model_formula <- input$formula_select
-      model_family <- input$family_select
-
-      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity")
+    if (frequency_select == "full_gen_freq") {
+      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
     }
   }
 
@@ -85,16 +90,17 @@ calculate_decision_threshold <- function(fit_results_list, cells, conf_int = 0.9
   return(c(aberr_test, dose_est))
 }
 
-#' Calculate decision thresholds table
-#'
-#' @param fit_results_list List of fit results
-#' @param aberr_module Aberration module
-#' @param input UI input variable
-#'
+#' @rdname calculate_decision_threshold
 #' @return A vector with aberr_test and dose_est
 #' @noRd
 #' @importFrom rlang .data
-calculate_decision_threshold_table <- function(fit_results_list, decision_threshold_cells, aberr_module, input) {
+calculate_decision_threshold_table <- function(fit_results_list, decision_threshold_cells,
+                                               count_data, model_formula, model_family,
+                                               frequency_select = c(NULL, "measured_freq", "full_gen_freq"),
+                                               aberr_module) {
+  # Validate parameters
+  frequency_select <- match.arg(frequency_select)
+
   decision_threshold <- data.frame(
     N = decision_threshold_cells %>%
       strsplit(" ") %>%
@@ -105,10 +111,26 @@ calculate_decision_threshold_table <- function(fit_results_list, decision_thresh
   decision_threshold <- decision_threshold %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      X95 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.95, aberr_module, input)[1],
-      D95 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.95, aberr_module, input)[2] * 1000,
-      X83 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.83, aberr_module, input)[1],
-      D83 = calculate_decision_threshold(fit_results_list, cells = .data$N, conf_int = 0.83, aberr_module, input)[2] * 1000
+      X95 = calculate_decision_threshold(
+        fit_results_list, cells = .data$N,
+        count_data, model_formula, model_family, frequency_select,
+        conf_int = 0.95, aberr_module
+      )[1],
+      D95 = calculate_decision_threshold(
+        fit_results_list, cells = .data$N,
+        count_data, model_formula, model_family, frequency_select,
+        conf_int = 0.95, aberr_module
+      )[2] * 1000,
+      X83 = calculate_decision_threshold(
+        fit_results_list, cells = .data$N,
+        count_data, model_formula, model_family, frequency_select,
+        conf_int = 0.83, aberr_module
+      )[1],
+      D83 = calculate_decision_threshold(
+        fit_results_list, cells = .data$N,
+        count_data, model_formula, model_family, frequency_select,
+        conf_int = 0.83, aberr_module
+      )[2] * 1000
     ) %>%
     dplyr::mutate(
       dplyr::across(
