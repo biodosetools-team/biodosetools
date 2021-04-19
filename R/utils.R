@@ -125,11 +125,11 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
   # Parse headers
   col_names <- colnames(data)
 
-  counts_headers <- grep("C[0-9]", x = col_names, value = TRUE)
-  counts_headers <- paste0("$C_{", regmatches(counts_headers, regexpr("[0-9]", counts_headers)), "}$")
+  counts_headers <- grep("C[0-9]+", x = col_names, value = TRUE)
+  counts_headers <- paste0("$C_{", regmatches(counts_headers, regexpr("[0-9]+", counts_headers)), "}$")
 
   if (type == "count") {
-    other_headers <- grep("C[0-9]", x = col_names, value = TRUE, invert = TRUE) %>%
+    other_headers <- grep("C[0-9]+", x = col_names, value = TRUE, invert = TRUE) %>%
       gsub("^D$", "$D$ (Gy)", .) %>%
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
@@ -144,7 +144,7 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       colnames(data) <- c(other_headers[1:3])
     }
   } else if (type == "case") {
-    other_headers <- grep("C[0-9]", x = col_names, value = TRUE, invert = TRUE) %>%
+    other_headers <- grep("C[0-9]+", x = col_names, value = TRUE, invert = TRUE) %>%
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
       gsub("^y$", "$y$", .) %>%
