@@ -24,11 +24,12 @@ app_ui <- function(request) {
 #' @noRd
 dashboard_header <- function() {
   dashboardHeader(
-    # title = "Biodose Tools"
-    title = span(img(src = "www/icon_small.svg", height = 35), "Biodose Tools"),
+    title = span(
+      img(src = "www/icon_small.svg", height = 35),
+      "Biodose Tools"
+    ),
     tags$li(
       a(
-        # strong("About"),
         icon("github"),
         height = 40,
         href = "https://github.com/biodosetools-team/biodosetools",
@@ -121,7 +122,13 @@ dashboard_sidebar <- function() {
     # Other tools section
     # p(class = "menu-title", "Other tools"),
 
-    p(class = "sticky-footer", a(paste("Version", utils::packageVersion(pkg = "biodosetools")), href = "https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md"))
+    p(
+      class = "sticky-footer",
+      a(
+        paste("Version", utils::packageVersion(pkg = "biodosetools")),
+        href = "https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md"
+      )
+    )
   )
 }
 

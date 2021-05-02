@@ -82,7 +82,6 @@ get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
   region_trans_list <- c(1, 1, 0.99, 1.75, 1.75, 0.86) %>%
     `names<-`(c("none", "n-america", "w-europe", "c-europe", "e-europe", "asia"))
 
-  # sex_value <- ifelse(sex_bool, input$trans_sex, "none")
   sex_value <- ifelse(sex_bool, sex_value, "none")
 
   sex_trans_frequency <- sex_trans_list[[sex_value]]
