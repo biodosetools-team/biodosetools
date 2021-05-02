@@ -349,7 +349,7 @@ mod_fitting_trans_ui <- function(id, label) {
             condition = "!input.use_aggr_count_data_check",
             ns = ns,
             actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
-            div(class = "widget-sep", br())
+            widget_sep()
           )
         ),
         downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
@@ -497,7 +497,7 @@ mod_fitting_trans_ui <- function(id, label) {
           ),
 
           # Download report
-          div(class = "widget-sep", br()),
+          widget_sep(),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
           div(
             class = "side-widget-tall",

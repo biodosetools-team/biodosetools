@@ -150,7 +150,7 @@ dashboard_home <- function() {
           class = "home-button",
           onclick = "window.open('https://github.com/biodosetools-team/biodosetools/', '_blank')"
         ),
-        div(class = "widget-sep", br()),
+        widget_sep(),
 
         # Wiki/Documentation icon
         actionButton(
@@ -159,7 +159,7 @@ dashboard_home <- function() {
           class = "home-button",
           onclick = "window.open('https://biodosetools-team.github.io/documentation/', '_blank')"
         ),
-        div(class = "widget-sep", br()),
+        widget_sep(),
 
         # Report bugs
         actionButton(

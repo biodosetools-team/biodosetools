@@ -85,7 +85,7 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
                 )
               ),
 
-              div(class = "widget-sep", br()),
+              widget_sep(),
               actionButton(
                 ns("button_gen_table"),
                 class = "options-button",
@@ -646,7 +646,7 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
               selected = "acute"
             )
           ),
-          div(class = "widget-sep", br()),
+          widget_sep(),
 
           # Assessment selection
           div(
@@ -680,7 +680,7 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
               selected = "merkle-83"
             )
           ),
-          div(class = "widget-sep", br()),
+          widget_sep(),
 
           # Partial-body error method selection
           div(
@@ -720,7 +720,7 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
                 min = 0
               )
             ),
-            div(class = "widget-sep", br()),
+            widget_sep(),
 
             # Rejoining time
             div(
@@ -759,7 +759,7 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
               )
             ),
 
-            div(class = "widget-sep", br()),
+            widget_sep(),
 
             div(
               class = "side-widget",
@@ -856,7 +856,6 @@ mod_estimation_trans_ui <- function(id, label) { # , locale = i18n) {
           ),
 
           # Download report
-          # div(class = "widget-sep", br()),
           downloadButton(ns("save_report"), class = "export-button", "Download report"),
           div(
             class = "side-widget-tall",
