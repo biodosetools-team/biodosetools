@@ -183,29 +183,62 @@ mod_fitting_dicent_ui <- function(id, label) {
             # textInput(ns("decision_threshold_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
         )
-      ),
+      )
+    ),
 
+    # Box: Irradiation conditions input ----
+    fluidRow(
       box(
-        width = 6,
+        width = 12,
         title = "Irradiation conditions",
 
         status = "primary",
         collapsible = TRUE,
         collapsed = TRUE,
 
-        # Dose conditions
-        h5("Irradiation setup"),
-        textAreaInput(
-          inputId = ns("dose_conditions_a"),
-          label = "Dose quantity",
-          placeholder = "Short summary of the dose conditions"
+        col_6(
+          textInput(
+            inputId = ns("irr_cond_irradiator_name"),
+            label = "Name of the irradiator used",
+            placeholder = NULL
+          ),
+          textAreaInput(
+            inputId = ns("irr_cond_radiation_quality"),
+            label = "Radiation quality",
+            placeholder = "X or gamma rays and energy"
+          ),
+          textInput(
+            inputId = ns("irr_cond_dose_rate"),
+            label = "Dose rate (Gy/min)",
+            placeholder = NULL
+          ),
+          textInput(
+            inputId = ns("irr_cond_dose_quantity"),
+            label = "Dose quantity",
+            placeholder = "In water or air kerma"
+          )
         ),
-
-        h5("Irradiation characteristics"),
-        textAreaInput(
-          inputId = ns("dose_conditions"),
-          label = "Dose conditions",
-          placeholder = "Short summary of the dose conditions"
+        col_6(
+          textInput(
+            inputId = ns("irr_cond_whole_blood"),
+            label = "Whole blood or isolated lymphocytes",
+            placeholder = NULL
+          ),
+          textInput(
+            inputId = ns("irr_cond_temperature"),
+            label = "Temperature",
+            placeholder = "Temperature during the irradiation"
+          ),
+          textInput(
+            inputId = ns("irr_cond_time"),
+            label = "Time incubations",
+            placeholder = "Time incubations after sample irradiation"
+          ),
+          textAreaInput(
+            inputId = ns("irr_cond_beam_characteristics"),
+            label = "Beam characteristics",
+            placeholder = "Beam quality indicators, filtration (X-rays), energy (Gamma rays), ..."
+          )
         )
       )
     ),
