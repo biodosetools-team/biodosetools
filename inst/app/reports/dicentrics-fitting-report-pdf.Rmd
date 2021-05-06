@@ -60,7 +60,7 @@ shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
 
 ## Model
 
-`r gsub("≤", "$\\\\leq$", fit_model_summary)`
+`r gsub("<=", "$\\\\leq$", fit_model_summary)`
 
 ## Coefficients
 

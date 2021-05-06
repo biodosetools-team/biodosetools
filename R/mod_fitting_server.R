@@ -300,7 +300,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     if (input$button_fit <= 0) {
       return(NULL)
     }
-    data()[["fit_model_summary"]]
+    data()[["fit_model_summary"]] %>%
+      gsub("<=", "\u2264", .)
   })
 
   output$fit_model_statistics <- renderRHandsontable({

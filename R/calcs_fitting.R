@@ -292,7 +292,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
 
     # Summary of model used
-    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion \u2264 1.")
+    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion <= 1.")
   } else if (fit_final_model == "quasipoisson") {
     # For quasi-Poisson model
     fit_coeffs <- cbind(
@@ -535,7 +535,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
       `row.names<-`(names(fit_coeffs_vec))
 
     # Summary of model used
-    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion \u2264 1.")
+    fit_model_summary <- paste("A Poisson model assuming equidispersion was used as the model dispersion <= 1.")
   } else if (model_family == "quasipoisson" | (model_family == "automatic" & fit_dispersion > 1)) {
     fit_var_cov_mat <- fit_var_cov_mat * fit_dispersion
     t_value <- fit_coeffs_vec / sqrt(diag(fit_var_cov_mat))
