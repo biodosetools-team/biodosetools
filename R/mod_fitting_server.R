@@ -432,6 +432,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       if (input$save_fit_data_format == ".rds") {
         results_list <- data()
         results_list[["gg_curve"]] <- NULL
+        results_list[["biodosetools_version"]] <- utils::packageVersion(pkg = 'biodosetools')
         saveRDS(results_list, file = file)
       }
     }
