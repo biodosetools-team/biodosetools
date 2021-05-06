@@ -61,7 +61,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 
   # Modify results for translocations
   if (aberr_module == "translocations") {
-    aberr <- aberr - case_data[["Xc"]]
+    aberr <- correct_negative_vals(aberr - case_data[["Xc"]])
     yield_est <- case_data[["Fg"]]
   }
 

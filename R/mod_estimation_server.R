@@ -496,7 +496,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
                 get_translocation_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
                 TRUE ~ 0
               ),
-              Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
+              Fg = correct_negative_vals(.data$X - .data$Xc) / (.data$N * genome_fraction),
               Fg_err = .data$Fp_err / sqrt(genome_fraction)
             )
         }
