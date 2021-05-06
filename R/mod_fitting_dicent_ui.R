@@ -183,6 +183,30 @@ mod_fitting_dicent_ui <- function(id, label) {
             # textInput(ns("decision_threshold_cells"), "Cells for decision thresholds", value = "150 500 1000")
           )
         )
+      ),
+
+      box(
+        width = 6,
+        title = "Irradiation conditions",
+
+        status = "primary",
+        collapsible = TRUE,
+        collapsed = TRUE,
+
+        # Dose conditions
+        h5("Irradiation setup"),
+        textAreaInput(
+          inputId = ns("dose_conditions_a"),
+          label = "Dose quantity",
+          placeholder = "Short summary of the dose conditions"
+        ),
+
+        h5("Irradiation characteristics"),
+        textAreaInput(
+          inputId = ns("dose_conditions"),
+          label = "Dose conditions",
+          placeholder = "Short summary of the dose conditions"
+        )
       )
     ),
 
