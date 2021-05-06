@@ -196,7 +196,7 @@ mod_fitting_dicent_ui <- function(id, label) {
         collapsible = TRUE,
         collapsed = TRUE,
 
-        col_6(
+        col_6_inner(
           textInput(
             inputId = ns("irr_cond_irradiator_name"),
             label = "Name of the irradiator used",
@@ -218,7 +218,7 @@ mod_fitting_dicent_ui <- function(id, label) {
             placeholder = "In water or air kerma"
           )
         ),
-        col_6(
+        col_6_inner(
           textInput(
             inputId = ns("irr_cond_whole_blood"),
             label = "Whole blood or isolated lymphocytes",
