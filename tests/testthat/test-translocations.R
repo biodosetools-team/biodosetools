@@ -167,20 +167,7 @@ test_that("get_fit_results with aggregated count data works", {
 
 test_that("processing case data works", {
   case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
-    utils::read.csv(header = TRUE) %>%
-    dplyr::rename_with(
-      .fn = toupper,
-      .cols = dplyr::everything()
-    ) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = dplyr::starts_with("C"),
-        .fns = as.integer
-      )
-    ) %>%
-    dplyr::select(
-      dplyr::starts_with("C")
-    )
+    utils::read.csv(header = TRUE)
 
   case_data <- calculate_aberr_table(
     data = case_data,
