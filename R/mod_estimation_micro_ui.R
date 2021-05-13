@@ -5,14 +5,15 @@
 #'
 #' @import shiny shinydashboard shinyWidgets rhandsontable
 #' @noRd
-mod_estimation_micro_ui <- function(id, label) { # , locale = i18n) {
+mod_estimation_micro_ui <- function(id, label) {
   # Create a namespace function using the provided id
   ns <- NS(id)
 
   tabItem(
+    class = "tabitem-container",
     tabName = label,
+
     h2("Micronuclei: Dose estimation"),
-    # h2(locale$t("Hello Shiny!")),
 
     fluidRow(
       # Box: Curve fitting options ----

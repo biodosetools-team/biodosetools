@@ -10,7 +10,9 @@ mod_fitting_micro_ui <- function(id, label) {
   ns <- NS(id)
 
   tabItem(
+    class = "tabitem-container",
     tabName = label,
+
     h2("Micronuclei: Dose-effect fitting"),
 
     fluidRow(

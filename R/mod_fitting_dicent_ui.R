@@ -10,7 +10,9 @@ mod_fitting_dicent_ui <- function(id, label) {
   ns <- NS(id)
 
   tabItem(
+    class = "tabitem-container",
     tabName = label,
+
     h2("Dicentrics: Dose-effect fitting"),
 
     fluidRow(
