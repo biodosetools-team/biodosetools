@@ -126,6 +126,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.tabitem-container {
+  max-width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 /* Sidebar */
 .sticky-footer {
   position: fixed;
@@ -681,4 +687,3 @@ section.sidebar .shiny-bound-input.action-link {
   font-size: 30px;
   vertical-align: middle;
 }
-
