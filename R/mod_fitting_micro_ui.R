@@ -188,6 +188,65 @@ mod_fitting_micro_ui <- function(id, label) {
       )
     ),
 
+    # Box: Irradiation conditions input ----
+    fluidRow(
+      box(
+        width = 12,
+        title = "Irradiation conditions",
+
+        status = "primary",
+        collapsible = TRUE,
+        collapsed = TRUE,
+
+        col_6(
+          class = "col-inner-textinput-left",
+          textInput(
+            inputId = ns("irr_cond_irradiator_name"),
+            label = "Name of the irradiator used",
+            placeholder = NULL
+          ),
+          textAreaInput(
+            inputId = ns("irr_cond_radiation_quality"),
+            label = "Radiation quality",
+            placeholder = "X or gamma rays and energy"
+          ),
+          textInput(
+            inputId = ns("irr_cond_dose_rate"),
+            label = "Dose rate (Gy/min)",
+            placeholder = NULL
+          ),
+          textInput(
+            inputId = ns("irr_cond_dose_quantity"),
+            label = "Dose quantity",
+            placeholder = "In water or air kerma"
+          )
+        ),
+        col_6(
+          class = "col-inner-textinput-right",
+          textInput(
+            inputId = ns("irr_cond_whole_blood"),
+            label = "Whole blood or isolated lymphocytes",
+            placeholder = NULL
+          ),
+          textInput(
+            inputId = ns("irr_cond_temperature"),
+            label = "Temperature",
+            placeholder = "Temperature during the irradiation"
+          ),
+          textInput(
+            inputId = ns("irr_cond_time"),
+            label = "Time incubations",
+            placeholder = "Time incubations after sample irradiation"
+          ),
+          textAreaInput(
+            inputId = ns("irr_cond_beam_characteristics"),
+            label = "Beam characteristics",
+            placeholder = "Beam quality indicators, filtration (X-rays), energy (Gamma rays), ..."
+          )
+        )
+      )
+    ),
+
     # Box: hot Count data input ----
     fluidRow(
       box(
