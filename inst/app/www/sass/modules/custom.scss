@@ -79,6 +79,28 @@
   }
 }
 
+.col-inner-textinput-left {
+  padding: 0 !important;
+}
+
+.col-inner-textinput-right {
+  padding: 0 !important;
+}
+
+@media (min-width:767px) {
+  .col-inner-textinput-left {
+    padding: 0 !important;
+    padding-right: 5px !important;
+  }
+
+  .col-inner-textinput-right {
+    padding: 0 !important;
+    padding-left: 5px !important;
+  }
+}
+
+/* Custom tabItem() container */
+
 .tabitem-container {
   max-width: 1000px;
   margin-right: auto;
