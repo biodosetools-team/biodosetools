@@ -8,6 +8,10 @@ output:
     extra_dependencies: ["graphicx", "newpxtext", "newpxmath"]
 header-includes:
   - \usepackage{titling}
+  - \usepackage{booktabs}
+  - \usepackage{tabularx}
+  - \usepackage{float}
+  - \usepackage{colortbl}
   - \pretitle{
     \vspace{-50pt}
     \includegraphics[width=2.0625in,height=0.5in]{`r system.file("/app/reports/logo.pdf", package = "biodosetools")`}\LARGE\\
@@ -21,9 +25,18 @@ params:
 ```{r setup, include=FALSE}
 library(dplyr)
 library(ggplot2)
-library(knitr)
 ```
 
+```{r include=FALSE}
+kable <- function(x, font_size = NULL, ...) {
+  knitr::kable(x, format = "latex", booktabs = TRUE, ...) %>% 
+    kableExtra::kable_styling(
+      position = "center",
+      latex_options = "HOLD_position",
+      font_size = font_size
+    )
+}
+```
 
 ```{r load-data, echo=FALSE}
 count_data <- params$fit_results_list[["fit_raw_data"]]
@@ -42,11 +55,14 @@ irr_conds <- params$fit_results_list[["irr_conds"]]
 
 \begin{centering}
 
-```{r echo=FALSE}
-count_data %>% 
-  biodosetools:::fix_count_data_names(type = "count", output = "kable") %>% 
-  kable(booktabs = T, align = "c", format = "latex", escape = FALSE)
-  # TODO: Highlight u > 1.96 without kableExtra dependency
+```{r count-data, echo=FALSE}
+data <- count_data %>% 
+  biodosetools:::fix_count_data_names(type = "count", output = "kable")
+
+data$`$u$` <- kableExtra::cell_spec(data$`$u$`, background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white"))
+
+data %>% 
+  kable(align = "c", escape = FALSE)
 ```
 
 \end{centering}
@@ -55,9 +71,7 @@ count_data %>%
 
 ## Fit formula
 
-```{r echo=FALSE}
-shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
-```
+`r paste0("$$", fit_formula_tex, "$$")`
 
 ## Model
 
@@ -65,46 +79,46 @@ shiny::withMathJax(paste0("$$", fit_formula_tex, "$$"))
 
 ## Coefficients
 
-```{r echo=FALSE}
+```{r fit-coeffs, echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
-  kable(booktabs = T, align = "c")
+  kable(align = "c", escape = FALSE)
 ```
 
 ## Model-level statistics
 
-```{r echo=FALSE}
+```{r fit-model-statistics, echo=FALSE}
 fit_model_statistics %>%
   formatC(format = "f", digits = 3) %>%
   as.data.frame() %>% 
   dplyr::mutate(df = as.integer(df)) %>% 
-  kable(booktabs = T, align = "c")
+  kable(align = "c")
 ```
 
 ## Correlation matrix
 
-```{r echo=FALSE}
+```{r fit-cor-mat, echo=FALSE}
 fit_cor_mat %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
   biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
   formatC(format = "f", digits = 3) %>%
-  kable(booktabs = T, align = "c")
+  kable(align = "c", escape = FALSE)
 ```
 
 ## Variance-covariance matrix
 
-```{r echo=FALSE}
+```{r fit-var-cov-mat, echo=FALSE}
 fit_var_cov_mat %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
   biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
   formatC(format = "e", digits = 3) %>%
-  kable(booktabs = T, align = "c")
+  kable(align = "c", escape = FALSE)
 ```
 
 ## Irradiation conditions
 
-```{r echo=FALSE}
+```{r irr-conds, echo=FALSE}
 data.frame(
   matrix(
     unlist(irr_conds), 
@@ -113,13 +127,14 @@ data.frame(
   )
 ) %>% 
   `colnames<-`(c("Characteristic", "Details")) %>% 
-  kable(booktabs = T, align = "l")
-  
+  kable(align = "l", linesep = "\\midrule") %>% 
+  kableExtra::column_spec(1, width = "4.5cm") %>% 
+  kableExtra::column_spec(2, width = "10cm")
 ```
 
 ## Curve plot
 
-```{r echo=FALSE, fig.width=6, fig.height=3}
+```{r gg-curve, echo=FALSE, fig.width=6, fig.height=3}
 gg_curve
 ```
 
