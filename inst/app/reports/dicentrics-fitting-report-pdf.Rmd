@@ -34,6 +34,7 @@ fit_var_cov_mat <- params$fit_results_list[["fit_var_cov_mat"]]
 fit_cor_mat <- params$fit_results_list[["fit_cor_mat"]]
 fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
+irr_conds <- params$fit_results_list[["irr_conds"]]
 # detection_lims <- params$fit_results_list[["detection_lims"]]
 ```
 
@@ -99,6 +100,21 @@ fit_var_cov_mat %>%
   biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
   formatC(format = "e", digits = 3) %>%
   kable(booktabs = T, align = "c")
+```
+
+## Irradiation conditions
+
+```{r echo=FALSE}
+data.frame(
+  matrix(
+    unlist(irr_conds), 
+    nrow = length(irr_conds), 
+    byrow = TRUE
+  )
+) %>% 
+  `colnames<-`(c("Characteristic", "Details")) %>% 
+  kable(booktabs = T, align = "l")
+  
 ```
 
 ## Curve plot
