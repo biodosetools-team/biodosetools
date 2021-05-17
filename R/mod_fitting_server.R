@@ -282,6 +282,42 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       #   input
       # )
 
+      # Add irradiation conditions
+      results_list[["irr_conds"]] <- list(
+        irradiator_name = c(
+          label = "Name of the irradiator used",
+          text = input$irr_cond_irradiator_name
+        ),
+        radiation_quality = c(
+          label = "Radiation quality",
+          text = input$irr_cond_radiation_quality
+        ),
+        dose_rate = c(
+          label = "Dose rate (Gy/min)",
+          text = input$irr_cond_dose_rate
+        ),
+        dose_quantity = c(
+          label = "Dose quantity",
+          text = input$irr_cond_dose_quantity
+        ),
+        whole_blood = c(
+          label = "Whole blood or isolated lymphocytes",
+          text = input$irr_cond_whole_blood
+        ),
+        temperature = c(
+          label = "Temperature",
+          text = input$irr_cond_temperature
+        ),
+        time = c(
+          label = "Time incubations",
+          text = input$irr_cond_time
+        ),
+        beam_characteristics = c(
+          label = "Beam characteristics",
+          text = input$irr_cond_beam_characteristics
+        )
+      )
+
       return(results_list)
     })
   })
@@ -436,40 +472,6 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
         # Add additional values to list
         results_list[["gg_curve"]] <- NULL
-        results_list[["irr_conds"]] <- list(
-          irradiator_name = c(
-            label = "Name of the irradiator used",
-            text = input$irr_cond_irradiator_name
-          ),
-          radiation_quality = c(
-            label = "Radiation quality",
-            text = input$irr_cond_radiation_quality
-          ),
-          dose_rate = c(
-            label = "Dose rate (Gy/min)",
-            text = input$irr_cond_dose_rate
-          ),
-          dose_quantity = c(
-            label = "Dose quantity",
-            text = input$irr_cond_dose_quantity
-          ),
-          whole_blood = c(
-            label = "Whole blood or isolated lymphocytes",
-            text = input$irr_cond_whole_blood
-          ),
-          temperature = c(
-            label = "Temperature",
-            text = input$irr_cond_temperature
-          ),
-          time = c(
-            label = "Time incubations",
-            text = input$irr_cond_time
-          ),
-          beam_characteristics = c(
-            label = "Beam characteristics",
-            text = input$irr_cond_beam_characteristics
-          )
-        )
         results_list[["biodosetools_version"]] <- utils::packageVersion(pkg = 'biodosetools')
 
         # Export RDS file
