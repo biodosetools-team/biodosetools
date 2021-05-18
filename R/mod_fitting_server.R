@@ -504,11 +504,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      temp_report <- file.path(tempdir(), paste0(aberr_module, "-report.Rmd"))
+      temp_report <- file.path(tempdir(), "report.Rmd")
       local_report <- load_rmd_report(
         paste0(
-          aberr_module,
-          "-fitting-report-",
+          "fitting-report-",
           gsub("^\\.", "", input$save_report_format),
           ".Rmd"
         )
@@ -518,7 +517,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
       # Set up parameters to pass to Rmd document
       params <- list(
-        fit_results_list = data()
+        fit_results_list = data(),
+        aberr_module = aberr_module
       )
 
       # Knit the document, passing in the `params` list, and eval it in a
