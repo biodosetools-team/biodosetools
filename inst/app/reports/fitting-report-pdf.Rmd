@@ -55,6 +55,7 @@ kable <- function(x, font_size = NULL, ...) {
 ```{r load-data, echo=FALSE}
 aberr_module <- params$aberr_module
 
+# General parameters
 count_data <- params$fit_results_list[["fit_raw_data"]]
 fit_model_statistics <- params$fit_results_list[["fit_model_statistics"]]
 fit_model_summary <- params$fit_results_list[["fit_model_summary"]]
@@ -65,7 +66,47 @@ fit_formula_tex <- params$fit_results_list[["fit_formula_tex"]]
 gg_curve <- params$fit_results_list[["gg_curve"]]
 irr_conds <- params$fit_results_list[["irr_conds"]]
 # detection_lims <- params$fit_results_list[["detection_lims"]]
+
+# Translocations
+genome_fraction <- params$fit_results_list[["genome_fraction"]]
+chromosome_table <- params$fit_results_list[["chromosome_table"]]
+trans_sex <- params$fit_results_list[["trans_sex"]]
+frequency_select <- params$fit_results_list[["frequency_select"]]
 ```
+
+`r if (aberr_module == "translocations") {"# Chromosome data"}`
+
+`r 
+if (aberr_module == "translocations") {
+  paste("The analysed blood sample comes from a", trans_sex, "individual.")
+}
+`
+
+```{r echo=FALSE}
+if (aberr_module == "translocations") {
+  num_cols <- as.numeric(ncol(chromosome_table))
+  
+  chromosome_table %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::everything(),
+        .fns = function(x) {
+          x <- ifelse(is.na(x) | x == "FALSE", "", x)
+          x <- ifelse(x == "TRUE", "$\\checkmark$", x)
+          return(x)
+        }
+      )
+    ) %>%
+    kable(align = "c", escape = FALSE)
+}
+```
+
+`r 
+if (aberr_module == "translocations") {
+  if (num_cols == 1) {
+    "where each chromosome was stained using M-FISH."
+  }
+}`
 
 # Count data used
 
@@ -92,6 +133,31 @@ data %>%
 ## Model
 
 `r gsub("<=", "$\\\\leq$", fit_model_summary)`
+
+`r if (aberr_module == "translocations") {"## Translocation frequency"}`
+
+`r 
+if (aberr_module == "translocations") {
+  paste("The fitting was performed using the ")
+}
+`
+`r 
+if (aberr_module == "translocations") {
+  if (frequency_select == "full_gen_freq") {
+    paste("full genome translocation frequency.")
+  } else if (frequency_select == "measured_freq") {
+    paste("translocation frequency measured by FISH.")
+  }
+}
+`
+
+`r if (aberr_module == "translocations") {"## Genomic conversion factor"}`
+
+`r 
+if (aberr_module == "translocations") {
+  paste0("The genomic conversion factor to full genome is ", as.character(round(genome_fraction, 3)), ".")
+}
+`
 
 ## Coefficients
 
