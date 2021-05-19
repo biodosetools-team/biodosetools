@@ -43,7 +43,7 @@ library(ggplot2)
 
 ```{r include=FALSE}
 kable <- function(x, font_size = NULL, ...) {
-  knitr::kable(x, format = "latex", booktabs = TRUE, ...) %>% 
+  knitr::kable(x, format = "latex", booktabs = TRUE, ...) %>%
     kableExtra::kable_styling(
       position = "center",
       latex_options = "HOLD_position",
@@ -85,7 +85,7 @@ if (aberr_module == "translocations") {
 ```{r echo=FALSE}
 if (aberr_module == "translocations") {
   num_cols <- as.numeric(ncol(chromosome_table))
-  
+
   chromosome_table %>%
     dplyr::mutate(
       dplyr::across(
@@ -113,12 +113,15 @@ if (aberr_module == "translocations") {
 \begin{centering}
 
 ```{r count-data, echo=FALSE}
-data <- count_data %>% 
+data <- count_data %>%
   biodosetools:::fix_count_data_names(type = "count", output = "kable")
 
-data$`$u$` <- kableExtra::cell_spec(data$`$u$`, background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white"))
+data$`$u$` <- kableExtra::cell_spec(
+  x = data$`$u$`, 
+  background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white")
+)
 
-data %>% 
+data %>%
   kable(align = "c", escape = FALSE)
 ```
 
@@ -164,7 +167,7 @@ if (aberr_module == "translocations") {
 ```{r fit-coeffs, echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
-  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
   kable(align = "c", escape = FALSE)
 ```
 
@@ -173,8 +176,8 @@ fit_coeffs %>%
 ```{r fit-model-statistics, echo=FALSE}
 fit_model_statistics %>%
   formatC(format = "f", digits = 3) %>%
-  as.data.frame() %>% 
-  dplyr::mutate(df = as.integer(df)) %>% 
+  as.data.frame() %>%
+  dplyr::mutate(df = as.integer(df)) %>%
   kable(align = "c")
 ```
 
@@ -182,8 +185,8 @@ fit_model_statistics %>%
 
 ```{r fit-cor-mat, echo=FALSE}
 fit_cor_mat %>%
-  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
-  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
+  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>%
   formatC(format = "f", digits = 3) %>%
   kable(align = "c", escape = FALSE)
 ```
@@ -192,8 +195,8 @@ fit_cor_mat %>%
 
 ```{r fit-var-cov-mat, echo=FALSE}
 fit_var_cov_mat %>%
-  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>% 
-  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>% 
+  biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
+  biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>%
   formatC(format = "e", digits = 3) %>%
   kable(align = "c", escape = FALSE)
 ```
@@ -203,14 +206,14 @@ fit_var_cov_mat %>%
 ```{r irr-conds, echo=FALSE}
 data.frame(
   matrix(
-    unlist(irr_conds), 
-    nrow = length(irr_conds), 
+    unlist(irr_conds),
+    nrow = length(irr_conds),
     byrow = TRUE
   )
-) %>% 
-  `colnames<-`(c("Characteristic", "Details")) %>% 
-  kable(align = "l", linesep = "\\midrule") %>% 
-  kableExtra::column_spec(1, width = "4.5cm") %>% 
+) %>%
+  `colnames<-`(c("Characteristic", "Details")) %>%
+  kable(align = "l", linesep = "\\midrule") %>%
+  kableExtra::column_spec(1, width = "4.5cm") %>%
   kableExtra::column_spec(2, width = "10cm")
 ```
 
