@@ -166,7 +166,7 @@ if (aberr_module == "translocations") {
 # Case data analyzed
 
 ```{r case-data, echo=FALSE}
-case_data %>%
+data <- case_data %>%
   as.matrix() %>%
   formatC(format = "f", digits = 3) %>%
   as.data.frame() %>%
@@ -176,9 +176,15 @@ case_data %>%
       .fns = as.integer
     )
   ) %>%
-  biodosetools:::fix_count_data_names(type = "case", output = "kable") %>%
+  biodosetools:::fix_count_data_names(type = "case", output = "kable")
+
+data$`$u$` <- kableExtra::cell_spec(
+  x = data$`$u$`,
+  background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white")
+)
+
+data %>%
   render_table(align = "c", escape = FALSE)
-  # TODO: Highlight u > 1.96 without kableExtra dependency
 ```
 
 `r if (aberr_module == "translocations") {"## Confounders"}`
