@@ -22,6 +22,10 @@ params:
   aberr_module: NA
 ---
 
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+```
 
 ```{r parsed-title, include=FALSE}
 aberr_module <- params$aberr_module
@@ -36,11 +40,6 @@ parsed_title <- dplyr::case_when(
 ---
 title: `r parsed_title`
 ---
-
-```{r setup, include=FALSE}
-library(dplyr)
-library(ggplot2)
-```
 
 ```{r render-table-fn, include=FALSE}
 render_table <- function(x, font_size = NULL, ...) {
@@ -115,7 +114,7 @@ confounders <- params$est_results_list[["confounders"]]
 
 `r if (aberr_module == "translocations") {"## Full genome coefficients"} else {"## Coefficients"}`
 
-```{r echo=FALSE}
+```{r fit-coeffs, echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
@@ -130,7 +129,7 @@ fit_coeffs %>%
 }
 `
 
-```{r echo=FALSE}
+```{r chromosome-table, echo=FALSE}
 if (aberr_module == "translocations") {
   num_cols <- as.numeric(ncol(chromosome_table))
 
@@ -166,7 +165,7 @@ if (aberr_module == "translocations") {
 
 # Case data analyzed
 
-```{r echo=FALSE}
+```{r case-data, echo=FALSE}
 case_data %>%
   as.matrix() %>%
   formatC(format = "f", digits = 3) %>%
@@ -195,7 +194,7 @@ case_data %>%
 }
 `
 
-```{r echo=FALSE}
+```{r confounders-table, echo=FALSE}
 if (aberr_module == "translocations") {
   if (!is.null(confounders) & length(confounders) > 1) {
     confounders %>%
@@ -244,7 +243,7 @@ if (aberr_module == "translocations") {
 
 `r if (TRUE) {"### Whole-body exposure estimation {-}"}`
 
-```{r echo=FALSE}
+```{r whole-yield, echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
     dplyr::select(yield) %>%
@@ -256,7 +255,7 @@ if (TRUE) {
 }
 ```
 
-```{r echo=FALSE}
+```{r whole-dose, echo=FALSE}
 if (TRUE) {
   est_doses_whole %>%
     dplyr::select(`dose (Gy)` = dose) %>%
@@ -272,7 +271,7 @@ if (TRUE) {
 
 `r if (assessment == "partial-body") {"### Partial-body exposure estimation {-}"}`
 
-```{r echo=FALSE}
+```{r partial-yield, echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(yield) %>%
@@ -288,7 +287,7 @@ if (assessment == "partial-body") {
 }
 ```
 
-```{r echo=FALSE}
+```{r partial-dose, echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
     dplyr::select(dose) %>%
@@ -306,7 +305,7 @@ if (assessment == "partial-body") {
 
 `r if (assessment == "partial-body") {"### Initial fraction of irradiated cells {-}"}`
 
-```{r echo=FALSE}
+```{r partial-fraction, echo=FALSE}
 if (assessment == "partial-body") {
   est_frac_partial %>%
     t() %>%
@@ -321,9 +320,77 @@ if (assessment == "partial-body") {
 }
 ```
 
+`r if (assessment == "hetero") {"## Heterogeneous exposure results"}`
+
+`r if (assessment == "hetero") {"### Observed fraction of irradiated cells and its yield {-}"}`
+
+```{r hetero-mix-prop, echo=FALSE}
+if (assessment == "hetero") {
+  est_mixing_prop_hetero %>%
+    as.matrix() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
+    `row.names<-`(c("dose1", "dose2")) %>%
+    # Convert to hot and format table
+    render_table(align = "c")
+}
+```
+
+`r if (assessment == "hetero") {"### Heterogeneous exposure estimation {-}"}`
+
+```{r hetero-yield, echo=FALSE}
+if (assessment == "hetero") {
+  est_yields_hetero %>%
+    t() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`(c("yield1", "yield2")) %>%
+    # Convert to hot and format table
+    render_table(align = "c")
+}
+```
+
+```{r hetero-dose, echo=FALSE}
+if (assessment == "hetero") {
+  est_doses_hetero %>%
+    t() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
+    # Fix possible NA values
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("lower", "estimate", "upper")) %>%
+    `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
+    # Convert to hot and format table
+    render_table(align = "c")
+}
+```
+
+`r if (assessment == "hetero") {"### Initial fraction of irradiated cells {-}"}`
+
+```{r hetero-fraction, echo=FALSE}
+if (assessment == "hetero") {
+  est_frac_hetero %>%
+    # Fix possible NA values
+    as.matrix() %>%
+    formatC(format = "f", digits = 3) %>%
+    as.data.frame() %>%
+    dplyr::mutate_if(is.logical, as.double) %>%
+    `colnames<-`(c("estimate", "std.err")) %>%
+    `row.names<-`(c("dose1", "dose2")) %>%
+    # Convert to hot and format table
+    render_table(align = "c")
+}
+```
+
 ## Curve plot
 
-```{r echo=FALSE, fig.width=6, fig.height=3}
+```{r gg-curve, echo=FALSE, fig.width=6, fig.height=3}
 gg_curve
 ```
 
