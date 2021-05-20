@@ -566,7 +566,7 @@ mod_fitting_trans_ui <- function(id, label) {
               ns("save_report_format"),
               label = NULL,
               width = "85px",
-              choices = list(".pdf", ".html", ".docx"),
+              choices = list(".pdf", ".docx"),
               selected = ".pdf"
             )
           )
