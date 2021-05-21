@@ -204,6 +204,9 @@ data.frame(
   )
 ) %>%
   `colnames<-`(c("Characteristic", "Details")) %>%
+  dplyr::mutate(
+    Details = ifelse(Details == "", "Not specified", Details)
+  ) %>% 
   render_table(align = "l", linesep = "\\midrule") %>%
   kableExtra::column_spec(1, width = "4.5cm") %>%
   kableExtra::column_spec(2, width = "10cm")
@@ -214,7 +217,3 @@ data.frame(
 ```{r gg-curve, echo=FALSE, fig.width=6, fig.height=3}
 gg_curve
 ```
-
-## Download fit results
-
-The PDF format does not support embedded files. You can only save the results in RDS format from Biodose Tools or from the HTML report.
