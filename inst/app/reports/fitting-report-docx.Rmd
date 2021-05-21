@@ -11,14 +11,6 @@ params:
 ```{r setup, include=FALSE}
 library(dplyr)
 library(ggplot2)
-pander::panderOptions("table.style", "grid")
-pander::panderOptions("table.split.table", Inf)
-pander::panderOptions(
-  "table.alignment.default", 
-  function(df) {
-    ifelse(sapply(df, is.numeric), "center", "left")
-  }
-)
 ```
 
 ```{r parsed-title, include=FALSE}
@@ -36,6 +28,15 @@ title: `r parsed_title`
 ---
 
 ```{r render-table-fn, include=FALSE}
+pander::panderOptions("table.style", "grid")
+pander::panderOptions("table.split.table", Inf)
+pander::panderOptions(
+  "table.alignment.default",
+  function(df) {
+    ifelse(sapply(df, is.numeric), "center", "left")
+  }
+)
+
 render_table <- function(x, ...) {
   pander::pander(x)
   # TODO: handle alignments via justify parameter
@@ -100,15 +101,10 @@ if (aberr_module == "translocations") {
 
 ```{r count-data, echo=FALSE}
 data <- count_data %>%
-  biodosetools:::fix_count_data_names(type = "count", output = "kable")
-
-# data$`$u$` <- kableExtra::cell_spec(
-#   x = data$`$u$`,
-#   background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white")
-# )
-
-data %>%
+  biodosetools:::fix_count_data_names(type = "count", output = "kable") %>%
   render_table(align = "c")
+
+# TODO: handle u > 1.96 highlighting
 ```
 
 
@@ -149,7 +145,7 @@ data %>%
 ```{r fit-coeffs, echo=FALSE}
 fit_coeffs %>%
   formatC(format = "e", digits = 3) %>%
-  as.data.frame() %>% 
+  as.data.frame() %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
   render_table(align = "c")
 ```
@@ -171,7 +167,7 @@ fit_cor_mat %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
   biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>%
   formatC(format = "f", digits = 3) %>%
-  as.data.frame() %>% 
+  as.data.frame() %>%
   render_table(align = "c")
 ```
 
@@ -182,7 +178,7 @@ fit_var_cov_mat %>%
   biodosetools:::fix_coeff_names(type = "rows", output = "kable") %>%
   biodosetools:::fix_coeff_names(type = "cols", output = "kable") %>%
   formatC(format = "e", digits = 3) %>%
-  as.data.frame() %>% 
+  as.data.frame() %>%
   render_table(align = "c")
 ```
 
@@ -200,9 +196,7 @@ data.frame(
   dplyr::mutate(
     Details = ifelse(Details == "", "Not specified", Details)
   ) %>%
-  render_table(align = "l")#, linesep = "\\midrule") %>%
-  # kableExtra::column_spec(1, width = "4.5cm") %>%
-  # kableExtra::column_spec(2, width = "10cm")
+  render_table(align = "l")
 ```
 
 ## Curve plot
