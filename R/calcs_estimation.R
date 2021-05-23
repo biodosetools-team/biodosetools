@@ -9,7 +9,6 @@
 #' @param fit_link A specification for the model link function
 #'
 #' @return Numeric value with the corresponding AIC
-#' @export
 AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
 
   # Manual log-likelihood function
@@ -44,14 +43,14 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
 #' @param protracted_g_value Protracted G(x) value
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param fit_coeffs Fitting coefficients matrix
+#' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param genome_fraction Genomic fraction used in translocations, else 1
 #' @param aberr_module Aberration module Aberration module
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = 1, aberr_module) {
+estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = 1, aberr_module) {
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -65,11 +64,15 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     yield_est <- case_data[["Fg"]]
   }
 
+  # Generalised fit coefficients and variance-covariance matrix
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
   # Correct CIs
   conf_int_curve <- conf_int_curve %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+    correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "curve")
   conf_int_yield <- conf_int_yield %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+    correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "yield")
 
   # Calculate CI using Exact Poisson tests
   aberr_row <- stats::poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
@@ -82,16 +85,16 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
   # TODO: possible modification IAEA§9.7.3
 
   # Correct "unrootable" yields
-  yield_est <- correct_yield(yield_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-  yield_low <- correct_yield(yield_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-  yield_upp <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+  yield_est <- correct_yield(yield_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+  yield_low <- correct_yield(yield_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+  yield_upp <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
 
   # Calculate projections
   dose_est <- project_yield(
     yield = yield_est,
     type = "estimate",
     general_fit_coeffs = general_fit_coeffs,
-    general_var_cov_mat = NULL,
+    general_fit_var_cov_mat = NULL,
     protracted_g_value = protracted_g_value,
     conf_int = 0
   )
@@ -100,7 +103,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     yield = yield_low,
     type = "lower",
     general_fit_coeffs = general_fit_coeffs,
-    general_var_cov_mat = general_var_cov_mat,
+    general_fit_var_cov_mat = general_fit_var_cov_mat,
     protracted_g_value = protracted_g_value,
     conf_int = conf_int_curve
   )
@@ -109,7 +112,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     yield = yield_upp,
     type = "upper",
     general_fit_coeffs = general_fit_coeffs,
-    general_var_cov_mat = general_var_cov_mat,
+    general_fit_var_cov_mat = general_fit_var_cov_mat,
     protracted_g_value = protracted_g_value,
     conf_int = conf_int_curve
   )
@@ -142,16 +145,16 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' Whole-body dose estimation using Delta method.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
-#' @param conf_int Confidenve interval
+#' @param fit_coeffs Fitting coefficients matrix
+#' @param fit_var_cov_mat Fitting variance-covariance matrix
+#' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param aberr_module Aberration module
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
+estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                       conf_int, protracted_g_value, cov = TRUE, aberr_module) {
   # Parse parameters and coefficients
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
@@ -160,11 +163,13 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
     lambda_est <- case_data[["Fg"]]
   }
 
+  # Generalised fit coefficients and variance-covariance matrix
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
   coeff_C <- general_fit_coeffs[[1]]
   coeff_alpha <- general_fit_coeffs[[2]]
   coeff_beta <- general_fit_coeffs[[3]]
-
-  var_cov_mat <- general_var_cov_mat
 
   # Detect fitting model
   fit_is_lq <- isFALSE(coeff_beta == 0)
@@ -217,18 +222,18 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 
   if (cov) {
     dose_est_var <-
-      (deriv_coeff_C^2) * var_cov_mat[1, 1] +
-      (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
-      (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
+      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
+      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
+      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
       (deriv_lambda^2) * (lambda_est_sd^2) +
-      2 * (deriv_coeff_C * deriv_coeff_alpha) * var_cov_mat[1, 2] +
-      2 * (deriv_coeff_C * deriv_coeff_beta) * var_cov_mat[1, 3] +
-      2 * (deriv_coeff_alpha * deriv_coeff_beta) * var_cov_mat[2, 3]
+      2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
+      2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
+      2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
   } else {
     dose_est_var <-
-      (deriv_coeff_C^2) * var_cov_mat[1, 1] +
-      (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
-      (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
+      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
+      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
+      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
       (deriv_lambda^2) * (lambda_est_sd^2)
   }
 
@@ -271,8 +276,8 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #' Partial-body dose estimation using Dolphin method.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param fit_coeffs Fitting coefficients matrix
+#' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param conf_int Confidence interval
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
@@ -282,7 +287,7 @@ estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var
 #'
 #' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_cov_mat,
+estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                      conf_int, protracted_g_value, cov = TRUE,
                                      genome_fraction = 1, aberr_module, gamma) {
 
@@ -315,10 +320,14 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
     aberr <- aberr - case_data[["Xc"]]
   }
 
+  # Generalised fit coefficients and variance-covariance matrix
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+  # Parse fitting coefficients
   coeff_C <- general_fit_coeffs[[1]]
   coeff_alpha <- general_fit_coeffs[[2]]
   coeff_beta <- general_fit_coeffs[[3]]
-  var_cov_mat <- general_var_cov_mat
 
   # Detect fitting model
   fit_is_lq <- isFALSE(coeff_beta == 0)
@@ -383,11 +392,11 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 
     if (fit_is_lq) {
       cov_extended <- matrix(0, nrow = 5, ncol = 5)
-      cov_extended[1:3, 1:3] <- var_cov_mat
+      cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
       cov_extended[4:5, 4:5] <- cov_est
     } else {
       cov_extended <- matrix(0, nrow = 4, ncol = 4)
-      cov_extended[1:3, 1:3] <- var_cov_mat
+      cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
       cov_extended[3:4, 3:4] <- cov_est
     }
 
@@ -400,18 +409,18 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 
     if (cov) {
       dose_est_var <-
-        (deriv_coeff_C^2) * var_cov_mat[1, 1] +
-        (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
-        (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
+        (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
+        (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
+        (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
         (deriv_lambda^2) * (lambda_est_sd^2) +
-        2 * (deriv_coeff_C * deriv_coeff_alpha) * var_cov_mat[1, 2] +
-        2 * (deriv_coeff_C * deriv_coeff_beta) * var_cov_mat[1, 3] +
-        2 * (deriv_coeff_alpha * deriv_coeff_beta) * var_cov_mat[2, 3]
+        2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
+        2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
+        2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
     } else {
       dose_est_var <-
-        (deriv_coeff_C^2) * var_cov_mat[1, 1] +
-        (deriv_coeff_alpha^2) * var_cov_mat[2, 2] +
-        (deriv_coeff_beta^2) * var_cov_mat[3, 3] +
+        (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
+        (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
+        (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
         (deriv_lambda^2) * (lambda_est_sd^2)
     }
 
@@ -493,8 +502,8 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #' Heterogeneous dose estimation.
 #'
 #' @param case_data Case data in data frame form
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param fit_coeffs Fitting coefficients matrix
+#' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
 #' @param protracted_g_value Protracted G(x) value
@@ -503,7 +512,7 @@ estimate_partial_dolphin <- function(case_data, general_fit_coeffs, general_var_
 #'
 #' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
+estimate_hetero <- function(case_data, fit_coeffs, fit_var_cov_mat,
                             conf_int_yield, conf_int_curve, protracted_g_value,
                             gamma, gamma_error) {
 
@@ -530,7 +539,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = mu1,
       type = "estimate",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = NULL,
+      general_fit_var_cov_mat = NULL,
       protracted_g_value = protracted_g_value,
       conf_int = 0
     )
@@ -542,7 +551,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
         yield = mu2,
         type = "estimate",
         general_fit_coeffs = general_fit_coeffs,
-        general_var_cov_mat = NULL,
+        general_fit_var_cov_mat = NULL,
         protracted_g_value = protracted_g_value,
         conf_int = 0
       )
@@ -588,21 +597,24 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
 
     fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
 
-    # Get fitting model variables
+    # Generalised fit coefficients and variance-covariance matrix
+    general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+    general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+    # Parse fitting coefficients
     coeff_C <- general_fit_coeffs[[1]]
     coeff_alpha <- general_fit_coeffs[[2]]
     coeff_beta <- general_fit_coeffs[[3]]
-    var_cov_mat <- general_var_cov_mat
 
     # Input of the variance-covariance matrix of the parameters
     sigma <- numeric(49)
     dim(sigma) <- c(7, 7)
-    sigma[1, 1] <- var_cov_mat[1, 1]
-    sigma[2, 2] <- var_cov_mat[2, 2]
-    sigma[3, 3] <- var_cov_mat[3, 3]
-    sigma[1, 2] <- var_cov_mat[1, 2]
-    sigma[1, 3] <- var_cov_mat[1, 3]
-    sigma[2, 3] <- var_cov_mat[2, 3]
+    sigma[1, 1] <- general_fit_var_cov_mat[1, 1]
+    sigma[2, 2] <- general_fit_var_cov_mat[2, 2]
+    sigma[3, 3] <- general_fit_var_cov_mat[3, 3]
+    sigma[1, 2] <- general_fit_var_cov_mat[1, 2]
+    sigma[1, 3] <- general_fit_var_cov_mat[1, 3]
+    sigma[2, 3] <- general_fit_var_cov_mat[2, 3]
     sigma[2, 1] <- sigma[1, 2]
     sigma[3, 1] <- sigma[1, 3]
     sigma[3, 2] <- sigma[2, 3]
@@ -659,13 +671,13 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
     yield2_upp <- yield2_est + std_estim[3]
 
     # Correct "unrootable" yields
-    yield1_est <- correct_yield(yield1_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-    yield1_low <- correct_yield(yield1_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-    yield1_upp <- correct_yield(yield1_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield1_est <- correct_yield(yield1_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield1_low <- correct_yield(yield1_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield1_upp <- correct_yield(yield1_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
 
-    yield2_est <- correct_yield(yield2_est, "estimate", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-    yield2_low <- correct_yield(yield2_low, "lower", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
-    yield2_upp <- correct_yield(yield2_upp, "upper", general_fit_coeffs, general_var_cov_mat, conf_int_curve)
+    yield2_est <- correct_yield(yield2_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield2_low <- correct_yield(yield2_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield2_upp <- correct_yield(yield2_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
 
     est_yields <- data.frame(
       yield1 = c(yield1_low, yield1_est, yield1_upp),
@@ -687,7 +699,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield1_est,
       type = "estimate",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = NULL,
+      general_fit_var_cov_mat = NULL,
       protracted_g_value = protracted_g_value,
       conf_int = 0
     )
@@ -695,7 +707,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield1_low,
       type = "lower",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = general_var_cov_mat,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
       protracted_g_value = protracted_g_value,
       conf_int = conf_int_curve
     )
@@ -703,7 +715,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield1_upp,
       type = "upper",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = general_var_cov_mat,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
       protracted_g_value = protracted_g_value,
       conf_int = conf_int_curve
     )
@@ -712,7 +724,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield2_est,
       type = "estimate",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = NULL,
+      general_fit_var_cov_mat = NULL,
       protracted_g_value = protracted_g_value,
       conf_int = 0
     )
@@ -720,7 +732,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield2_low,
       type = "lower",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = general_var_cov_mat,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
       protracted_g_value = protracted_g_value,
       conf_int = conf_int_curve
     )
@@ -728,7 +740,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       yield = yield2_upp,
       type = "upper",
       general_fit_coeffs = general_fit_coeffs,
-      general_var_cov_mat = general_var_cov_mat,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
       protracted_g_value = protracted_g_value,
       conf_int = conf_int_curve
     )
@@ -764,7 +776,7 @@ estimate_hetero <- function(case_data, general_fit_coeffs, general_var_cov_mat,
       dose_var = "dose", yield_var = "yield", fit_link = "identity"
     )
 
-    # WIP: This is not requiered yet
+    # WIP: This is not required yet
     # Gradient
     # h <- 0.000001
     # if (yield2_est > 0.01) {

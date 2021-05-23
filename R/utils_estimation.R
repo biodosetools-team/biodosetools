@@ -229,8 +229,8 @@ correct_boundary <- function(x) {
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int_yield Confidence interval of the yield
 #' @param conf_int_curve Confidence interval of the curve
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param fit_coeffs Fitting coefficients matrix
+#' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param conf_int_text_whole Text to display confidence interval for whole-body estimation
 #' @param conf_int_text_partial Text to display confidence interval for partial-body estimation
 #' @param conf_int_text_hetero Text to display confidence interval for heterogeneous estimation
@@ -238,7 +238,7 @@ correct_boundary <- function(x) {
 #'
 #' @return ggplot object
 #' @export
-get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general_var_cov_mat,
+get_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_mat,
                                      protracted_g_value, conf_int_yield, conf_int_curve,
                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
                                      aberr_name) {
@@ -247,11 +247,15 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
     ifelse(is.na(.), 0, .) %>%
     max()
 
+  # Generalised fit coefficients and variance-covariance matrix
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
   # Correct CIs
   conf_int_curve <- conf_int_curve %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+    correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "curve")
   conf_int_yield <- conf_int_yield %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
+    correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "yield")
 
   # Plot data from curves
   curves_data <- data.frame(
@@ -259,8 +263,8 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
   ) %>%
     dplyr::mutate(
       yield = calculate_yield(.data$dose, type = "estimate", general_fit_coeffs, NULL, protracted_g_value, 0),
-      yield_low = calculate_yield(.data$dose, type = "lower", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve),
-      yield_upp = calculate_yield(.data$dose, type = "upper", general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int_curve)
+      yield_low = calculate_yield(.data$dose, type = "lower", general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int_curve),
+      yield_upp = calculate_yield(.data$dose, type = "upper", general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int_curve)
     )
 
   # Make base plot

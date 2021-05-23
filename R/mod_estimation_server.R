@@ -662,12 +662,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
     fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
 
-    # Generalised fit coefficients
-    general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
-
-    # Generalised variance-covariance matrix
-    general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
-
     # Protracted variables ----
     if (exposure == "protracted") {
       protracted_time <- input$protracted_time
@@ -741,8 +735,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       message("\nPerforming whole-body dose estimation (Merkle)...")
       results_whole <- estimate_whole_body(
         case_data,
-        general_fit_coeffs,
-        general_var_cov_mat,
+        fit_coeffs,
+        fit_var_cov_mat,
         conf_int_yield,
         conf_int_curve,
         protracted_g_value,
@@ -753,8 +747,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       message("\nPerforming whole-body dose estimation (Delta)...")
       results_whole <- estimate_whole_body_delta(
         case_data,
-        general_fit_coeffs,
-        general_var_cov_mat,
+        fit_coeffs,
+        fit_var_cov_mat,
         conf_int_delta,
         protracted_g_value,
         cov = TRUE,
@@ -778,8 +772,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       message("\nPerforming partial-body dose estimation (Dolphin)...")
       results_partial <- estimate_partial_dolphin(
         case_data,
-        general_fit_coeffs,
-        general_var_cov_mat,
+        fit_coeffs,
+        fit_var_cov_mat,
         conf_int_dolphin,
         protracted_g_value,
         cov = TRUE,
@@ -806,8 +800,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       message("\nPerforming heterogeneous dose estimation...")
       results_hetero <- estimate_hetero(
         case_data,
-        general_fit_coeffs,
-        general_var_cov_mat,
+        fit_coeffs,
+        fit_var_cov_mat,
         conf_int_yield_hetero,
         conf_int_curve_hetero,
         protracted_g_value,
@@ -861,8 +855,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     # Get dose estimation curve
     gg_curve <- get_estimated_dose_curve(
       est_full_doses,
-      general_fit_coeffs,
-      general_var_cov_mat,
+      fit_coeffs,
+      fit_var_cov_mat,
       protracted_g_value,
       conf_int_yield,
       conf_int_curve,
