@@ -6,8 +6,8 @@
 \usage{
 get_estimated_dose_curve(
   est_full_doses,
-  general_fit_coeffs,
-  general_var_cov_mat,
+  fit_coeffs,
+  fit_var_cov_mat,
   protracted_g_value,
   conf_int_yield,
   conf_int_curve,
@@ -20,9 +20,9 @@ get_estimated_dose_curve(
 \arguments{
 \item{est_full_doses}{Data frame with yields and dose estimations. It requires dose, yield, type, level columns}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

@@ -8,7 +8,7 @@ correct_yield(
   yield,
   type = "estimate",
   general_fit_coeffs,
-  general_var_cov_mat,
+  general_fit_var_cov_mat,
   conf_int
 )
 }
@@ -19,7 +19,7 @@ correct_yield(
 
 \item{general_fit_coeffs}{Generalised fit coefficients matrix}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{conf_int}{Confidence interval}
 }

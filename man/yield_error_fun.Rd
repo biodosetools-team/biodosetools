@@ -4,12 +4,12 @@
 \alias{yield_error_fun}
 \title{Calculate yield error}
 \usage{
-yield_error_fun(dose, general_var_cov_mat = NULL, protracted_g_value)
+yield_error_fun(dose, general_fit_var_cov_mat = NULL, protracted_g_value)
 }
 \arguments{
 \item{dose}{Dose}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 }

@@ -6,7 +6,7 @@
 \usage{
 correct_conf_int(
   conf_int,
-  general_var_cov_mat,
+  general_fit_var_cov_mat,
   protracted_g_value,
   type,
   dose = seq(0, 10, 0.2)
@@ -15,7 +15,7 @@ correct_conf_int(
 \arguments{
 \item{conf_int}{Confidence interval}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

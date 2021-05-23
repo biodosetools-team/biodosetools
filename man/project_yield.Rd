@@ -8,7 +8,7 @@ project_yield(
   yield,
   type = "estimate",
   general_fit_coeffs,
-  general_var_cov_mat = NULL,
+  general_fit_var_cov_mat = NULL,
   protracted_g_value,
   conf_int = 0.95
 )
@@ -20,7 +20,7 @@ project_yield(
 
 \item{general_fit_coeffs}{Generalised fit coefficients matrix}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

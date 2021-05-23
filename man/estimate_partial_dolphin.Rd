@@ -6,8 +6,8 @@
 \usage{
 estimate_partial_dolphin(
   case_data,
-  general_fit_coeffs,
-  general_var_cov_mat,
+  fit_coeffs,
+  fit_var_cov_mat,
   conf_int,
   protracted_g_value,
   cov = TRUE,
@@ -19,9 +19,9 @@ estimate_partial_dolphin(
 \arguments{
 \item{case_data}{Case data in data frame form}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix}
 
-\item{general_var_cov_mat}{Generalised variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
 
 \item{conf_int}{Confidence interval}
 
