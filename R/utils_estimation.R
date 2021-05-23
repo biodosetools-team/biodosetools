@@ -23,7 +23,6 @@ protracted_g_function <- function(time, time_0) {
 #' @param protracted_g_value Protracted G(x) value
 #'
 #' @return Yield
-#' @export
 yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
   yield <- general_fit_coeffs[[1]] +
     general_fit_coeffs[[2]] * dose +
@@ -40,7 +39,6 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 #' @param general_fit_coeffs Generalised fit coefficients matrix
 #'
 #' @return R regression confidence factor
-#' @export
 R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
   r_factor <- sqrt(stats::qchisq(conf_int, df = chisq_df))
@@ -57,7 +55,6 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 #' @param protracted_g_value Protracted G(x) value
 #'
 #' @return Yield error
-#' @export
 yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value) {
   # Special case for yield estimate
   if (is.null(general_var_cov_mat)) {
@@ -88,7 +85,6 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #' @param conf_int Confidence interval
 #'
 #' @return Yield
-#' @export
 calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   # Validate parameters
   type <- match.arg(type)
@@ -113,7 +109,6 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
 #' @param conf_int Confidence interval
 #'
 #' @return Yield infimum
-#' @export
 calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
   # Calculate yield
   yield <- calculate_yield(0, type, general_fit_coeffs, general_var_cov_mat, 1, conf_int)
@@ -162,7 +157,6 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 #' @param conf_int Confidence interval
 #'
 #' @return Numeric value of projected dose
-#' @export
 project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
@@ -185,7 +179,6 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 #' @param x Numeric value
 #'
 #' @return Numeric value corrected to zero if negative
-#' @export
 correct_negative_vals <- function(x) {
   x_corrected <- ifelse(x < 0, 0, x)
 
@@ -202,7 +195,6 @@ correct_negative_vals <- function(x) {
 #' @param conf_int Confidence interval
 #'
 #' @return Numeric value of corrected yield
-#' @export
 correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat, conf_int) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
 
@@ -219,7 +211,6 @@ correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 #' @param x Numeric value
 #'
 #' @return Numeric value in [0, 1] range
-#' @export
 correct_boundary <- function(x) {
   if (x > 1) {
     return(1)

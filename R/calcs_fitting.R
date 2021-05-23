@@ -15,7 +15,6 @@
 #' @param calc_type Calculation type, either "fitting" or "estimation"
 #'
 #' @return Model statistics data frame
-#' @export
 get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
                                  response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                  Y = NULL, mu = NULL, n = NULL, npar = NULL,
@@ -124,7 +123,6 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
 #' @param aberr_module Aberration module
 #'
 #' @return Parsed count data (data frame)
-#' @export
 #' @importFrom rlang .data
 prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   if (ncol(count_data) > 3 & aberr_module != "translocations") {
