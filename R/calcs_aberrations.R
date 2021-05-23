@@ -16,7 +16,6 @@ NULL
 # > NULL
 
 #' @rdname calculate_aberr
-#' @export
 calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
   aberr <- purrr::map_df(
     data %>%
@@ -39,7 +38,6 @@ calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
 }
 
 #' @rdname calculate_aberr
-#' @export
 calculate_aberr_mean <- function(X, N) {
   mean <- X / N
 
@@ -47,7 +45,6 @@ calculate_aberr_mean <- function(X, N) {
 }
 
 #' @rdname calculate_aberr
-#' @export
 calculate_aberr_var <- function(X, X2, N) {
   var <- (X2 - X^2 / N) / (N - 1)
 
@@ -55,7 +52,6 @@ calculate_aberr_var <- function(X, X2, N) {
 }
 
 #' @rdname calculate_aberr
-#' @export
 calculate_aberr_disp_index <- function(mean, var) {
   disp_index <- var / mean
 
@@ -63,7 +59,6 @@ calculate_aberr_disp_index <- function(mean, var) {
 }
 
 #' @rdname calculate_aberr
-#' @export
 calculate_aberr_u_value <- function(X, N, mean, var, assessment_u = 1) {
   u_value <- (var / mean - assessment_u) * sqrt((N - 1) / (2 * (1 - 1 / X)))
 
