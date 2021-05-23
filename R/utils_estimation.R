@@ -51,23 +51,23 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 #' Calculate yield error using Merkle's method
 #'
 #' @param dose Dose
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #'
 #' @return Yield error
-yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value) {
+yield_error_fun <- function(dose, general_fit_var_cov_mat = NULL, protracted_g_value) {
   # Special case for yield estimate
-  if (is.null(general_var_cov_mat)) {
+  if (is.null(general_fit_var_cov_mat)) {
     return(0)
   }
 
   # Calculation for lower and upper yields
-  res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
-    general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
-    general_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
-    2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
-    2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
-    2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
+  res <- general_fit_var_cov_mat[["coeff_C", "coeff_C"]] +
+    general_fit_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
+    general_fit_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
+    2 * general_fit_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
+    2 * general_fit_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
+    2 * general_fit_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
   if (sum(res < 0) > 0) {
     rep(0, length(res))
   } else {
@@ -80,12 +80,12 @@ yield_error_fun <- function(dose, general_var_cov_mat = NULL, protracted_g_value
 #' @param dose Dose
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
 #' @return Yield
-calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
   # Validate parameters
   type <- match.arg(type)
 
@@ -96,7 +96,7 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
   yield <- yield_fun(dose, general_fit_coeffs, protracted_g_value) +
     as.numeric(type_factor) *
       R_factor(general_fit_coeffs, conf_int) *
-      yield_error_fun(dose, general_var_cov_mat, protracted_g_value)
+      yield_error_fun(dose, general_fit_var_cov_mat, protracted_g_value)
 
   return(yield)
 }
@@ -105,13 +105,13 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
 #'
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
 #' @return Yield infimum
-calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), general_fit_coeffs, general_var_cov_mat = NULL, conf_int = 0.95) {
+calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), general_fit_coeffs, general_fit_var_cov_mat = NULL, conf_int = 0.95) {
   # Calculate yield
-  yield <- calculate_yield(0, type, general_fit_coeffs, general_var_cov_mat, 1, conf_int)
+  yield <- calculate_yield(0, type, general_fit_coeffs, general_fit_var_cov_mat, 1, conf_int)
 
   return(yield)
 }
@@ -124,16 +124,16 @@ calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), gene
 #' @param protracted_g_value Protracted G(x) value
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param dose Dose
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #'
 #' @return Corrected confidence interval
-correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
-  res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
-    general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
-    general_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
-    2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
-    2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
-    2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
+correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
+  res <- general_fit_var_cov_mat[["coeff_C", "coeff_C"]] +
+    general_fit_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
+    general_fit_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
+    2 * general_fit_var_cov_mat[["coeff_C", "coeff_alpha"]] * dose +
+    2 * general_fit_var_cov_mat[["coeff_C", "coeff_beta"]] * dose^2 * protracted_g_value +
+    2 * general_fit_var_cov_mat[["coeff_alpha", "coeff_beta"]] * dose^3 * protracted_g_value
   if (sum(res <= 0) > 1) {
     if (type == "curve") {
       conf_int <- 0
@@ -152,17 +152,17 @@ correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, 
 #' @param yield Yield to be projected
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #' @param protracted_g_value Protracted G(x) value
 #' @param conf_int Confidence interval
 #'
 #' @return Numeric value of projected dose
-project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
-  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
+project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
 
   if (yield >= yield_inf) {
     projected_dose <- stats::uniroot(function(dose) {
-      calculate_yield(dose, type, general_fit_coeffs, general_var_cov_mat, protracted_g_value, conf_int) - yield
+      calculate_yield(dose, type, general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int) - yield
     }, c(1e-16, 100))$root
   } else {
     projected_dose <- 0
@@ -191,12 +191,12 @@ correct_negative_vals <- function(x) {
 #' @param yield Yield
 #' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
 #' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_var_cov_mat Generalised variance-covariance matrix
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
 #' @param conf_int Confidence interval
 #'
 #' @return Numeric value of corrected yield
-correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_var_cov_mat, conf_int) {
-  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_var_cov_mat, conf_int)
+correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int) {
+  yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
 
   if (yield < yield_inf) {
     yield <- 0

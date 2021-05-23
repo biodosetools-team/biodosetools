@@ -34,7 +34,7 @@ calculate_decision_threshold <- function(fit_results_list, cells,
   general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
 
   # Generalised variance-covariance matrix
-  general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
   # Generalised curves
   yield_fun <- function(d, G) {
@@ -50,12 +50,12 @@ calculate_decision_threshold <- function(fit_results_list, cells,
   }
 
   yield_error_fun <- function(d, G) {
-    res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
-      general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * d^2 +
-      general_var_cov_mat[["coeff_beta", "coeff_beta"]] * d^4 * G^2 +
-      2 * general_var_cov_mat[["coeff_C", "coeff_alpha"]] * d +
-      2 * general_var_cov_mat[["coeff_C", "coeff_beta"]] * d^2 * G +
-      2 * general_var_cov_mat[["coeff_alpha", "coeff_beta"]] * d^3 * G
+    res <- general_fit_var_cov_mat[["coeff_C", "coeff_C"]] +
+      general_fit_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * d^2 +
+      general_fit_var_cov_mat[["coeff_beta", "coeff_beta"]] * d^4 * G^2 +
+      2 * general_fit_var_cov_mat[["coeff_C", "coeff_alpha"]] * d +
+      2 * general_fit_var_cov_mat[["coeff_C", "coeff_beta"]] * d^2 * G +
+      2 * general_fit_var_cov_mat[["coeff_alpha", "coeff_beta"]] * d^3 * G
     if (sum(res < 0) > 0) {
       rep(0, length(res))
     } else {
