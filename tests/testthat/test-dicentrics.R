@@ -162,12 +162,6 @@ test_that("processing case data works", {
   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
   fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
 
-  # Generalised fit coefficients
-  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
-
-  # Generalised variance-covariance matrix
-  general_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
-
   # Protraction (acute exposure)
   protracted_g_value <- 1
 
@@ -180,8 +174,6 @@ test_that("processing case data works", {
   )
 
   # CI: Whole-body assessment (Delta method)
-  conf_int_curve_delta <- 0.83
-  conf_int_yield_delta <- conf_int_curve_delta
   conf_int_delta <- 0.95
   conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
 
@@ -197,26 +189,14 @@ test_that("processing case data works", {
     "-", round(100 * conf_int_yield_hetero, 0), "%", ")"
   )
 
-  # CI: corrections (Merkle's method)
-  conf_int_curve_merkle <- conf_int_curve_merkle %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
-  conf_int_yield_merkle <- conf_int_yield_merkle %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
-
-  # CI: corrections (Delta method)
-  conf_int_curve_delta <- conf_int_curve_delta %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
-  conf_int_yield_delta <- conf_int_yield_delta %>%
-    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
-
   # Parse genome fraction
   parsed_genome_fraction <- 1
 
   # Calculations
   results_whole_merkle <- estimate_whole_body(
     case_data,
-    general_fit_coeffs,
-    general_var_cov_mat,
+    fit_coeffs,
+    fit_var_cov_mat,
     conf_int_yield = conf_int_curve_merkle,
     conf_int_curve = conf_int_yield_merkle,
     protracted_g_value,
@@ -226,8 +206,8 @@ test_that("processing case data works", {
 
   results_whole_delta <- estimate_whole_body_delta(
     case_data,
-    general_fit_coeffs,
-    general_var_cov_mat,
+    fit_coeffs,
+    fit_var_cov_mat,
     conf_int = conf_int_delta,
     protracted_g_value,
     cov = TRUE,
@@ -236,8 +216,8 @@ test_that("processing case data works", {
 
   results_partial <- estimate_partial_dolphin(
     case_data,
-    general_fit_coeffs,
-    general_var_cov_mat,
+    fit_coeffs,
+    fit_var_cov_mat,
     conf_int = conf_int_dolphin,
     protracted_g_value,
     cov = TRUE,
@@ -248,8 +228,8 @@ test_that("processing case data works", {
 
   results_hetero <- estimate_hetero(
     case_data,
-    general_fit_coeffs,
-    general_var_cov_mat,
+    fit_coeffs,
+    fit_var_cov_mat,
     conf_int_yield_hetero,
     conf_int_curve_hetero,
     protracted_g_value,
@@ -294,8 +274,8 @@ test_that("processing case data works", {
 
   gg_curve <- get_estimated_dose_curve(
     est_full_doses,
-    general_fit_coeffs,
-    general_var_cov_mat,
+    fit_coeffs,
+    fit_var_cov_mat,
     protracted_g_value,
     conf_int_yield = conf_int_yield_merkle,
     conf_int_curve = conf_int_curve_merkle,
