@@ -132,8 +132,8 @@
 
     <pre class="usage"><span class='fu'>get_estimated_dose_curve</span><span class='op'>(</span>
   <span class='va'>est_full_doses</span>,
-  <span class='va'>general_fit_coeffs</span>,
-  <span class='va'>general_var_cov_mat</span>,
+  <span class='va'>fit_coeffs</span>,
+  <span class='va'>fit_var_cov_mat</span>,
   <span class='va'>protracted_g_value</span>,
   <span class='va'>conf_int_yield</span>,
   <span class='va'>conf_int_curve</span>,
@@ -151,12 +151,12 @@
       <td><p>Data frame with yields and dose estimations. It requires dose, yield, type, level columns</p></td>
     </tr>
     <tr>
-      <th>general_fit_coeffs</th>
-      <td><p>Generalised fit coefficients matrix</p></td>
+      <th>fit_coeffs</th>
+      <td><p>Fitting coefficients matrix</p></td>
     </tr>
     <tr>
-      <th>general_var_cov_mat</th>
-      <td><p>Generalised variance-covariance matrix</p></td>
+      <th>fit_var_cov_mat</th>
+      <td><p>Fitting variance-covariance matrix</p></td>
     </tr>
     <tr>
       <th>protracted_g_value</th>
