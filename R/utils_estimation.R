@@ -132,7 +132,6 @@ calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), gene
 #' @param general_var_cov_mat Generalised variance-covariance matrix
 #'
 #' @return Corrected confidence interval
-#' @export
 correct_conf_int <- function(conf_int, general_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
   res <- general_var_cov_mat[["coeff_C", "coeff_C"]] +
     general_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
@@ -256,6 +255,12 @@ get_estimated_dose_curve <- function(est_full_doses, general_fit_coeffs, general
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
     max()
+
+  # Correct CIs
+  conf_int_curve <- conf_int_curve %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+  conf_int_yield <- conf_int_yield %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
 
   # Plot data from curves
   curves_data <- data.frame(

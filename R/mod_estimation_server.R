@@ -727,11 +727,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       )
     }
 
-    conf_int_curve <- conf_int_curve %>%
-      correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
-    conf_int_yield <- conf_int_yield %>%
-      correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
-
     # Calculations ----
 
     # Parse genome fraction

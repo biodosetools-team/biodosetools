@@ -52,6 +52,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = 1, aberr_module) {
+  # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
 
@@ -59,11 +60,16 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
     yield_est <- case_data[["y"]]
   }
 
-  # Modify results for translocations
   if (aberr_module == "translocations") {
     aberr <- correct_negative_vals(aberr - case_data[["Xc"]])
     yield_est <- case_data[["Fg"]]
   }
+
+  # Correct CIs
+  conf_int_curve <- conf_int_curve %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "curve")
+  conf_int_yield <- conf_int_yield %>%
+    correct_conf_int(general_var_cov_mat, protracted_g_value, type = "yield")
 
   # Calculate CI using Exact Poisson tests
   aberr_row <- stats::poisson.test(x = round(aberr, 0), conf.level = conf_int_yield)[["conf.int"]]
@@ -147,6 +153,7 @@ estimate_whole_body <- function(case_data, general_fit_coeffs, general_var_cov_m
 #' @export
 estimate_whole_body_delta <- function(case_data, general_fit_coeffs, general_var_cov_mat,
                                       conf_int, protracted_g_value, cov = TRUE, aberr_module) {
+  # Parse parameters and coefficients
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
