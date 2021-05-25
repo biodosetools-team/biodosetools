@@ -1,4 +1,4 @@
-#' Get genome fraction
+#' Calculate genome fraction
 #'
 #' @param dna_table DNA content fractions table.
 #' @param chromosome Chromosomes.
@@ -8,7 +8,7 @@
 #' @return Fraction of genome hybridised.
 #' @export
 #' @importFrom rlang .data
-get_genome_fraction <- function(dna_table, chromosome, color, sex) {
+calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
   # Construct color/chromosome table
   color_table <- cbind(
     color,
@@ -51,7 +51,7 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
   return(2 / 0.974 * (single_sum - cross_sum))
 }
 
-#' Get Sigurdson's translocation rate
+#' Calculate Sigurdson's translocation rate
 #'
 #' @param cells Number of cells \code{N}
 #' @param genome_fraction Genomic fraction used in translocations
@@ -64,7 +64,7 @@ get_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #'
 #' @return Translocation rate.
 #' @export
-get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
+calculate_trans_rate_sigurdson <- function(cells, genome_fraction, age_value,
                                              sex_bool = FALSE, sex_value = "none",
                                              smoker_bool = FALSE,
                                              ethnicity_value = "none", region_value = "none") {
@@ -73,14 +73,10 @@ get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
     return(trans_frequency)
   }
 
-  sex_trans_list <- c(1, 1, 0.92) %>%
-    `names<-`(c("none", "male", "female"))
-  smoke_trans_list <- c(1, 1.19) %>%
-    `names<-`(c("FALSE", "TRUE"))
-  ethnicity_trans_list <- c(1, 1, 1.23, 0.84, 1.06) %>%
-    `names<-`(c("none", "white", "asian", "black", "other"))
-  region_trans_list <- c(1, 1, 0.99, 1.75, 1.75, 0.86) %>%
-    `names<-`(c("none", "n-america", "w-europe", "c-europe", "e-europe", "asia"))
+  sex_trans_list <- c("none" = 1, "male" = 1, "female" = 0.92)
+  smoke_trans_list <- c("FALSE" = 1, "TRUE" = 1.19)
+  ethnicity_trans_list <- c("none" = 1, "white" = 1, "asian" = 1.23, "black" = 0.84, "other" = 1.06)
+  region_trans_list <- c("none" = 1, "n-america" = 1, "w-europe" = 0.99, "c-europe" = 1.75, "e-europe" = 1.75, "asia" = 0.86)
 
   sex_value <- ifelse(sex_bool, sex_value, "none")
 
@@ -100,7 +96,7 @@ get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
   return(expected_aberr)
 }
 
-#' Get manual translocation rate
+#' Calculate manual translocation rate
 #'
 #' @param cells Number of cells \code{N}
 #' @param genome_fraction Genomic fraction used in translocations
@@ -108,7 +104,7 @@ get_translocation_rate_sigurdson <- function(cells, genome_fraction, age_value,
 #'
 #' @return Translocation rate.
 #' @export
-get_translocation_rate_manual <- function(cells, genome_fraction, expected_aberr_value) {
+calculate_trans_rate_manual <- function(cells, genome_fraction, expected_aberr_value) {
   # Expected aberrations
   expected_aberr <- expected_aberr_value * cells * genome_fraction
 

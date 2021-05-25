@@ -105,7 +105,7 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
       color <- chromosome_table_clean[["Stain"]]
     }
 
-    genome_fraction <- get_genome_fraction(dna_table, chromosome, color, sex)
+    genome_fraction <- calculate_genome_fraction(dna_table, chromosome, color, sex)
 
     return(genome_fraction)
   })

@@ -483,7 +483,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
             dplyr::mutate(
               Xc = dplyr::case_when(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson" ~
-                get_translocation_rate_sigurdson(
+                calculate_trans_rate_sigurdson(
                   .data$N, genome_fraction,
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
@@ -493,7 +493,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
                   region_value = input$trans_confounder_region
                 ),
                 input$trans_confounders & input$trans_confounders_type == "manual" ~
-                get_translocation_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
+                calculate_trans_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
                 TRUE ~ 0
               ),
               Fg = correct_negative_vals(.data$X - .data$Xc) / (.data$N * genome_fraction),
