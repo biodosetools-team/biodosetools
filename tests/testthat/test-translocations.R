@@ -1,8 +1,8 @@
 # Translocation utils ----
 
-test_that("get_translocation_rate_sigurdson works", {
+test_that("calculate_trans_rate_sigurdson works", {
   # Default parameters for confounders
-  default_rate <- get_translocation_rate_sigurdson(
+  default_rate <- calculate_trans_rate_sigurdson(
     cells = 100,
     genome_fraction = 0.3,
     age_value = 25,
@@ -14,7 +14,7 @@ test_that("get_translocation_rate_sigurdson works", {
   )
 
   # Adding confounders will result in a higher rate
-  other_rate <- get_translocation_rate_sigurdson(
+  other_rate <- calculate_trans_rate_sigurdson(
     cells = 100,
     genome_fraction = 0.3,
     age_value = 25,
@@ -29,9 +29,9 @@ test_that("get_translocation_rate_sigurdson works", {
   expect_lt(default_rate, other_rate)
 })
 
-test_that("get_translocation_rate_manual works", {
+test_that("calculate_trans_rate_manual works", {
   # Translocation frequency per cell
-  rate <- get_translocation_rate_manual(
+  rate <- calculate_trans_rate_manual(
     cells = 100,
     genome_fraction = 0.3,
     expected_aberr_value = 0.00339
@@ -41,9 +41,9 @@ test_that("get_translocation_rate_manual works", {
   expect_equal(round(rate, 3), 0.102)
 })
 
-test_that("get_genome_fraction works", {
+test_that("calculate_genome_fraction works", {
   # Example from IAEA (2011)
-  genome_fraction <- get_genome_fraction(
+  genome_fraction <- calculate_genome_fraction(
     dna_table = dna_content_fractions_morton,
     chromosome = c(1, 2, 4, 3, 5, 6),
     color = c(rep("Red", 3), rep("Green", 3)),
@@ -57,7 +57,7 @@ test_that("get_genome_fraction works", {
 
 # Translocations fitting ----
 
-test_that("get_fit_results with full count data works", {
+test_that("fit with full count data works", {
   # Example from IAEA (2011)
   trans_count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
     utils::read.csv() %>%
@@ -73,7 +73,7 @@ test_that("get_fit_results with full count data works", {
   model_family <- "automatic"
   aberr_module <- "translocations"
 
-  fit_results_list <- get_fit_results(
+  fit_results_list <- fit(
     count_data = trans_count_data,
     model_formula,
     model_family,
@@ -81,7 +81,7 @@ test_that("get_fit_results with full count data works", {
     aberr_module
   )
 
-  gg_curve <- get_fit_dose_curve(
+  gg_curve <- plot_fit_dose_curve(
     fit_results_list,
     aberr_name = to_title(aberr_module)
   )
@@ -98,7 +98,7 @@ test_that("get_fit_results with full count data works", {
 
   # Expected glm warning in tryCatch()
   expect_warning(
-    get_fit_results(
+    fit(
       count_data = trans_count_data,
       model_formula,
       model_family,
@@ -108,7 +108,7 @@ test_that("get_fit_results with full count data works", {
   )
 })
 
-test_that("get_fit_results with aggregated count data works", {
+test_that("fit with aggregated count data works", {
   # Example from IAEA (2011)
   trans_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
     utils::read.csv() %>%
@@ -126,7 +126,7 @@ test_that("get_fit_results with aggregated count data works", {
   model_family <- "automatic"
   aberr_module <- "translocations"
 
-  fit_results_list <- get_fit_results(
+  fit_results_list <- fit(
     count_data = trans_count_data,
     model_formula,
     model_family,
@@ -134,7 +134,7 @@ test_that("get_fit_results with aggregated count data works", {
     aberr_module
   )
 
-  gg_curve <- get_fit_dose_curve(
+  gg_curve <- plot_fit_dose_curve(
     fit_results_list,
     aberr_name = to_title(aberr_module)
   )
@@ -152,7 +152,7 @@ test_that("get_fit_results with aggregated count data works", {
 
   # Expected glm warning in tryCatch()
   expect_warning(
-    get_fit_results(
+    fit(
       count_data = trans_count_data,
       model_formula,
       model_family,
@@ -186,8 +186,8 @@ test_that("processing case data works", {
     dplyr::select(-.data$mean, -.data$std_err) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(
-        # "sigurdson" ~ get_translocation_rate_sigurdson(...),
-        # "manual" ~ get_translocation_rate_manual(...),
+        # "sigurdson" ~ calculate_trans_rate_sigurdson(...),
+        # "manual" ~ calculate_trans_rate_manual(...),
         TRUE ~ 0
       ),
       Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),

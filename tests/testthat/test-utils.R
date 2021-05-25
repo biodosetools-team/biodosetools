@@ -129,8 +129,8 @@ test_that("fix_count_data_names for case data works", {
     dplyr::select(-.data$mean, -.data$std_err) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(
-        # "sigurdson" ~ get_translocation_rate_sigurdson(...),
-        # "manual" ~ get_translocation_rate_manual(...),
+        # "sigurdson" ~ calculate_trans_rate_sigurdson(...),
+        # "manual" ~ calculate_trans_rate_manual(...),
         TRUE ~ 0
       ),
       Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),

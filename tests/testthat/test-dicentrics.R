@@ -1,6 +1,6 @@
 # Dicentrics fitting ----
 
-test_that("get_fit_results with full count data works", {
+test_that("fit with full count data works", {
   # Example from IAEA (2011)
   dic_count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
     utils::read.csv() %>%
@@ -16,7 +16,7 @@ test_that("get_fit_results with full count data works", {
   model_family <- "automatic"
   aberr_module <- "dicentrics"
 
-  fit_results_list <- get_fit_results(
+  fit_results_list <- fit(
     count_data = dic_count_data,
     model_formula,
     model_family,
@@ -24,7 +24,7 @@ test_that("get_fit_results with full count data works", {
     aberr_module
   )
 
-  gg_curve <- get_fit_dose_curve(
+  gg_curve <- plot_fit_dose_curve(
     fit_results_list,
     aberr_name = to_title(aberr_module)
   )
@@ -40,7 +40,7 @@ test_that("get_fit_results with full count data works", {
   expect_equal(gg_curve$data$dose, dic_count_data$D)
 
   # Fitting (linear model)
-  fit_results_list <- get_fit_results(
+  fit_results_list <- fit(
     count_data = dplyr::filter(dic_count_data, D < 1),
     model_formula = list_fitting_formulas()[[2]],
     model_family = "quasipoisson",
@@ -59,7 +59,7 @@ test_that("get_fit_results with full count data works", {
 
   # Expected glm warning in tryCatch()
   expect_warning(
-    get_fit_results(
+    fit(
       count_data = dic_count_data,
       model_formula,
       model_family,
@@ -69,7 +69,7 @@ test_that("get_fit_results with full count data works", {
   )
 })
 
-test_that("get_fit_results with aggregated count data works", {
+test_that("fit with aggregated count data works", {
   # Example from IAEA (2011)
   dic_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
     utils::read.csv() %>%
@@ -87,7 +87,7 @@ test_that("get_fit_results with aggregated count data works", {
   model_family <- "automatic"
   aberr_module <- "dicentrics"
 
-  fit_results_list <- get_fit_results(
+  fit_results_list <- fit(
     count_data = dic_count_data,
     model_formula,
     model_family,
@@ -95,7 +95,7 @@ test_that("get_fit_results with aggregated count data works", {
     aberr_module
   )
 
-  gg_curve <- get_fit_dose_curve(
+  gg_curve <- plot_fit_dose_curve(
     fit_results_list,
     aberr_name = to_title(aberr_module)
   )
@@ -111,7 +111,7 @@ test_that("get_fit_results with aggregated count data works", {
 
   # Expected glm warning in tryCatch()
   expect_warning(
-    get_fit_results(
+    fit(
       count_data = dic_count_data,
       model_formula,
       model_family,
@@ -272,7 +272,7 @@ test_that("processing case data works", {
     level = rep(c("Lower", "Estimate", "Upper"), 3)
   )
 
-  gg_curve <- get_estimated_dose_curve(
+  gg_curve <- plot_estimated_dose_curve(
     est_full_doses,
     fit_coeffs,
     fit_var_cov_mat,
