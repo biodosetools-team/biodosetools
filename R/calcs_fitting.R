@@ -15,7 +15,7 @@
 #' @param calc_type Calculation type, either "fitting" or "estimation"
 #'
 #' @return Model statistics data frame
-get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
+calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
                                  response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                  Y = NULL, mu = NULL, n = NULL, npar = NULL,
                                  genome_fraction = NULL, calc_type = c("fitting", "estimation")) {
@@ -38,7 +38,7 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
     return(model_data)
   }
 
-  get_eta_sat <- function(model_data, calc_type) {
+  calculate_eta_sat <- function(model_data, calc_type) {
     if (calc_type == "estimation") {
       eta_sat <- model_data[["X"]]
     } else if (calc_type == "fitting") {
@@ -72,7 +72,7 @@ get_model_statistics <- function(model_data, fit_coeffs_vec, glm_results = NULL,
     # Generalised fit coefficients
     general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs_vec)
 
-    eta_sat <- get_eta_sat(model_data, calc_type)
+    eta_sat <- calculate_eta_sat(model_data, calc_type)
     eta <- predict_eta(model_data, general_fit_coeffs, calc_type)
 
     num_data <- length(eta_sat)
@@ -266,7 +266,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
   fit_coeffs_vec <- stats::coef(fit_results)
 
   # Model-specific statistics
-  fit_model_statistics <- get_model_statistics(
+  fit_model_statistics <- calculate_model_stats(
     model_data = model_data, fit_coeffs_vec = fit_coeffs_vec,
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
@@ -511,7 +511,7 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
   fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
 
   # Model-specific statistics
-  fit_model_statistics <- get_model_statistics(
+  fit_model_statistics <- calculate_model_stats(
     model_data = data_aggr, fit_coeffs_vec = fit_coeffs_vec,
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",

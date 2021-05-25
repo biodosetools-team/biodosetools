@@ -199,7 +199,7 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
             fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
 
             # Update model-specific statistics
-            fit_results_list[["fit_model_statistics"]] <- get_model_statistics(
+            fit_results_list[["fit_model_statistics"]] <- calculate_model_stats(
               model_data = fit_results_list[["fit_raw_data"]],
               fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
               response = "yield", link = "identity", type = "theory",
