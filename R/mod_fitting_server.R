@@ -236,7 +236,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     isolate({
       # Calculate dose-effect fitting curve
       message("\nPerforming dose-effect fitting...")
-      fit_results_list <- get_fit_results(
+      fit_results_list <- fit(
         count_data,
         model_formula,
         model_family,

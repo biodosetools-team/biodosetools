@@ -195,7 +195,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #'
 #' @return List object containing GLM fit results
 #' @export
-get_fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
+fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
 
@@ -360,7 +360,7 @@ get_fit_glm_method <- function(count_data, model_formula, model_family = c("auto
 #'
 #' @return List object containing maxLik fit results
 #' @export
-get_fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
+fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
 
@@ -597,9 +597,9 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
   return(fit_results_list)
 }
 
-#' Perform fitting algorithm
+#' Perform dose-effect fitting algorithm
 #'
-#' Wrapper for get_fit_glm_method() and get_fit_maxlik_method() functions.
+#' Wrapper for fit_glm_method() and fit_maxlik_method() functions.
 #'
 #' @param count_data Count data in data frame form
 #' @param model_formula Model formula
@@ -609,12 +609,12 @@ get_fit_maxlik_method <- function(data, model_formula, model_family = c("automat
 #'
 #' @return List object containing fit results either using GLM or maxLik optimization
 #' @export
-get_fit_results <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
+fit <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
   # If glm produces an error, constraint ML maximization is performed
   tryCatch(
     {
       # Perform fitting
-      fit_results_list <- get_fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
+      fit_results_list <- fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
 
       # Return results
       return(fit_results_list)
@@ -624,7 +624,7 @@ get_fit_results <- function(count_data, model_formula, model_family, fit_link = 
 
       # Perform fitting
       prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
-      fit_results_list <- get_fit_maxlik_method(prepared_data, model_formula, model_family, fit_link, aberr_module)
+      fit_results_list <- fit_maxlik_method(prepared_data, model_formula, model_family, fit_link, aberr_module)
       fit_results_list[["fit_raw_data"]] <- as.matrix(count_data)
 
       # Return results

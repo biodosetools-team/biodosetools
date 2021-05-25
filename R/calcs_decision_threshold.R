@@ -22,7 +22,7 @@ calculate_decision_threshold <- function(fit_results_list, cells,
   # Use measured translocation frequency fit
   if (aberr_module == "translocations") {
     if (frequency_select == "full_gen_freq") {
-      fit_results_list <- get_fit_results(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
+      fit_results_list <- fit(count_data, model_formula, model_family, fit_link = "identity", aberr_module)
     }
   }
 
