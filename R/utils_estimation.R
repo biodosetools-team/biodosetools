@@ -223,7 +223,7 @@ correct_boundary <- function(x) {
 
 # Curve function ----
 
-#' Get dose estimation curve
+#' Plot dose estimation curve
 #'
 #' @param est_full_doses Data frame with yields and dose estimations. It requires dose, yield, type, level columns
 #' @param protracted_g_value Protracted G(x) value
@@ -238,7 +238,7 @@ correct_boundary <- function(x) {
 #'
 #' @return ggplot object
 #' @export
-get_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_mat,
+plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_mat,
                                      protracted_g_value, conf_int_yield, conf_int_curve,
                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
                                      aberr_name) {

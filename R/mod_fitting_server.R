@@ -254,7 +254,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
       # Get dose estimation curve
       message("\nPlotting fitting results...")
-      gg_curve <- get_fit_dose_curve(
+      gg_curve <- plot_fit_dose_curve(
         fit_results_list,
         aberr_name
       )

@@ -853,7 +853,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     }
 
     # Get dose estimation curve
-    gg_curve <- get_estimated_dose_curve(
+    gg_curve <- plot_estimated_dose_curve(
       est_full_doses,
       fit_coeffs,
       fit_var_cov_mat,

@@ -1,11 +1,11 @@
-#' Get fit dose curve
+#' Plot fit dose curve
 #'
 #' @param fit_results_list List of fit results
 #' @param aberr_name Name of the aberration to use in the y-axis
 #'
 #' @return ggplot object
 #' @export
-get_fit_dose_curve <- function(fit_results_list, aberr_name) {
+plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
   # Read objects from fit results list
   count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
