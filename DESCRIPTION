@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: Shiny App To Be Used By Biological Dosimetry Laboratories
-Version: 3.4.0.9000
+Version: 3.5.0
 Authors@R: 
     person(given = "Alfredo",
            family = "Hernández",

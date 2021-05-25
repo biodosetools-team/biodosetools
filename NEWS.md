@@ -1,30 +1,73 @@
-# biodosetools 3.4.0.9000
+# biodosetools 3.5.0 (2021-05-26)
 
+* Added unit tests for to check code coverage and to validate that the code performs as expected.
+* Major revision of the fitting and dose estimation pipelines, introducing new auxiliary functions to reduce duplicated code.
+* Major simplification of report rendering process; abandoned HTML output.
+* Added custom {pkgdown} theme for more consistent branding.
 * Added preliminary citation to README.
+
+## New features
+
+* Added irradiation conditions input to dose-effect fitting modules.
+* Reports include conditional formatting of `u`-value and other formatting refinements.
+* Added `biodosetools_version` element to `*-fitting-data-YYY-MM-DD.rds` files.
 
 ## Bug fixes
 
 * Fixed unexported `calculate_aberr_var()` function.
 * Stopped using weights in fitting algorithms (`glm` and `glm.nb`). Fixes #20, addresses part of #14 as well.
 * Fixed aggregated count data column parsing in `fix_count_data_names()` function.
-* Fixed case data parsing issue when `.csv` file is not perfectly formated.
+* Fixed case data parsing issue when `.csv` file is not perfectly formatted.
 * Fixed issue with manual fitting curve input (fixes #23).
+* Fixed bug in `calculate_yield_infimum()` where infima were being calculated for yield estimate only (fixes #26).
+* Fixed wrong calculation of aberrations `X` for `Ck` when `k>=10` (fixes #27).
+* Fixed `fix_count_data_names()` to properly correct `Ck>=C10` (related to issue #27).
+* Added "where" to global variables (see https://github.com/r-lib/tidyselect/issues/201).
 
 ## New functions
 
-* `names_from_formula()`, to parse `rhandsontable()` Unicode row and column coefficient names.
+* `inner_column()`, to fix padding of boxes inside columns.
+* `widget_sep()`, to insert `div(class = "widget-sep", br())` calls.
+* `names_from_model_formula()`, to parse `rhandsontable()` Unicode row and column coefficient names.
+* `parse_model_formula()` to get raw and TeX formulae from `model_formula`.
+* `calculate_trans_rate_sigurdson()` and `calculate_trans_rate_manual()` to calculate translocation rates.
+* `calculate_aberr_table()` wrapper, to calculate aberration tables for count and cases data.
+* `init_aberr_table()`, to initialise aberration distribution tables in fitting and estimation server modules.
+* `list_fitting_formulas()`, to replace global `global_fitting_formulas` object.
+* `generalise_fit_coeffs()` and `generalise_fit_var_cov_mat()`, used internally in estimation functions instead of using `general_fit_*` as parameters.
+
+## Function refactoring
+
+* Refactored `get_decision_threshold()` functoin to `calculate_decision_threshold()`, and added `calculate_decision_threshold_table()` wrapper function.
+* Refactored `calculate_decision_threshold_*()` functions to remove `input` argument.
+* Refactored `get_*()` translocation functions to `calculate_*()` for better consistency.
+* Refactored `get_*_dose_curve()` functions to `plot_*_dose_curve()` for more clarity.
+* Refactored `get_model_statistics()` to `calculate_model_stats()`.
+* Refactored `get_fit_*()` functions to `fit()` and `fit_*_method()`.
 
 ## Improvements
 
 * Added Oliveira citation on `get_fit_maxlik_method()` function.
 * Fixed Gaëtan's name order in citation and contributors list.
 * Updated README and About body text.
+* Renamed source R files for better naming consistency.
+* Changed structure of modules to `mod_<calc_type>_<aberration>_*()`.
+* Generalised `get_model_statistics()` function so that local `get_model_statistics()` definition could be removed from `mod_estimate_fit_curve_server()` module.
+* Multiple (18 files) `<aberration>-<module>-<format>.Rmd` report templates have been merged into `<module>-<format>.Rmd` (4 files).
+* Use `correct_negative_vals()` to ensure correct dose estimation when `X < Xc` in translocations asay.
+* Replaced all `*_at()` and `*_if()` occurrences by their {dplyr} 1.0.0 equivalents.
+
+## UI Improvements
+
+* Replaced `column(width = X)` calls by `col_X()` in UI modules.
+* Added `tabitem-container` class to `tabItem()` page containers for fixed `max-width` while keeping responsive UI.
+* Added `col-inner-textinput-*` CSS classes for Irradiation conditions `textInput()` widgets' containers.
 
 
 # biodosetools 3.4.0 (2020-10-11)
 
 * Removed all non-ASCII characters.
-* Major rehaul of reports.
+* Major overhaul of reports.
 * Added "Report bug" button on home screen and cleaned up `dashboard_*()` code.
 * Removed dependencies on {stringr} package.
 * Initial `utils::citation()` support via CITATION file.
