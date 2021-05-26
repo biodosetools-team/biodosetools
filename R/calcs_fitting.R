@@ -194,7 +194,6 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #' @param aberr_module Aberration module
 #'
 #' @return List object containing GLM fit results
-#' @export
 fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
@@ -359,7 +358,6 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
 #' @param aberr_module Aberration module
 #'
 #' @return List object containing maxLik fit results
-#' @export
 fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
@@ -606,28 +604,39 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
 #' @param model_family Model family
 #' @param fit_link Family link
 #' @param aberr_module Aberration module
+#' @param algorithm Optional selection of algorithm to be used, either "glm" or "maxlik". By default, "glm" is used, with "maxlik" as a fallback method.
 #'
 #' @return List object containing fit results either using GLM or maxLik optimization
 #' @export
-fit <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module) {
-  # If glm produces an error, constraint ML maximization is performed
+fit <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module, algorithm = c("glm", "maxlik")) {
+  # Validate parameters
+  algorithm <- match.arg(algorithm)
+
+  if (algorithm == "maxlik") {
+    # Perform fitting via maxlik method
+    prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
+    fit_results_list <- fit_maxlik_method(prepared_data, model_formula, model_family, fit_link, aberr_module)
+    fit_results_list[["fit_raw_data"]] <- as.matrix(count_data)
+
+    return(fit_results_list)
+  }
+
+  # If glm() produces an error, constraint ML maximization is performed
   tryCatch(
     {
-      # Perform fitting
+      # Perform fitting via glm()
       fit_results_list <- fit_glm_method(count_data, model_formula, model_family, fit_link, aberr_module)
 
-      # Return results
       return(fit_results_list)
     },
     error = function(error_message) {
       message("Warning: Problem with glm -> constraint ML optimization will be used instead")
 
-      # Perform fitting
+      # Perform fitting via maxlik method
       prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
       fit_results_list <- fit_maxlik_method(prepared_data, model_formula, model_family, fit_link, aberr_module)
       fit_results_list[["fit_raw_data"]] <- as.matrix(count_data)
 
-      # Return results
       return(fit_results_list)
     }
   )

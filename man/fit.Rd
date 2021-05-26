@@ -9,7 +9,8 @@ fit(
   model_formula,
   model_family,
   fit_link = "identity",
-  aberr_module
+  aberr_module,
+  algorithm = c("glm", "maxlik")
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fit(
 \item{fit_link}{Family link}
 
 \item{aberr_module}{Aberration module}
+
+\item{algorithm}{Optional selection of algorithm to be used, either "glm" or "maxlik". By default, "glm" is used, with "maxlik" as a fallback method.}
 }
 \value{
 List object containing fit results either using GLM or maxLik optimization
