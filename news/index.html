@@ -140,7 +140,9 @@
 <ul>
 <li>Added irradiation conditions input to dose-effect fitting modules.</li>
 <li>Reports include conditional formatting of <code>u</code>-value and other formatting refinements.</li>
-<li>Added <code>biodosetools_version</code> element to <code>*-fitting-data-YYY-MM-DD.rds</code> files.</li>
+<li>Added <code>biodosetools_version</code> element to Shiny App’s exported <code>*-fitting-data-YYY-MM-DD.rds</code> files.</li>
+<li>
+<code><a href="../reference/fit.html">fit()</a></code> function allows to optionally select <code>"glm"</code> or <code>"maxlik"</code> algorithms. If <code>"glm"</code> if selected, the original <code><a href="https://rdrr.io/r/base/conditions.html">tryCatch()</a></code> routine will be executed.</li>
 </ul>
 </div>
 <div id="bug-fixes" class="section level2">

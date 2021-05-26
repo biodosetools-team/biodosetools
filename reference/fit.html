@@ -135,7 +135,8 @@
   <span class='va'>model_formula</span>,
   <span class='va'>model_family</span>,
   fit_link <span class='op'>=</span> <span class='st'>"identity"</span>,
-  <span class='va'>aberr_module</span>
+  <span class='va'>aberr_module</span>,
+  algorithm <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"glm"</span>, <span class='st'>"maxlik"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -160,6 +161,10 @@
     <tr>
       <th>aberr_module</th>
       <td><p>Aberration module</p></td>
+    </tr>
+    <tr>
+      <th>algorithm</th>
+      <td><p>Optional selection of algorithm to be used, either "glm" or "maxlik". By default, "glm" is used, with "maxlik" as a fallback method.</p></td>
     </tr>
     </table>
 
