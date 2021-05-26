@@ -10,7 +10,8 @@
 
 * Added irradiation conditions input to dose-effect fitting modules.
 * Reports include conditional formatting of `u`-value and other formatting refinements.
-* Added `biodosetools_version` element to `*-fitting-data-YYY-MM-DD.rds` files.
+* Added `biodosetools_version` element to Shiny App's exported `*-fitting-data-YYY-MM-DD.rds` files.
+* `fit()` function allows to optionally select `"glm"` or `"maxlik"` algorithms. If `"glm"` if selected, the original `tryCatch()` routine will be executed.
 
 ## Bug fixes
 
