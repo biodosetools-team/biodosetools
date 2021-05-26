@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate protracted function G(x) — protracted_g_function • biodosetools</title>
+<title>Calculate Sigurdson's translocation rate — calculate_trans_rate_sigurdson • biodosetools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Calculate protracted function G(x) — protracted_g_function" />
-<meta property="og:description" content="Calculate protracted function G(x)" />
+<meta property="og:title" content="Calculate Sigurdson's translocation rate — calculate_trans_rate_sigurdson" />
+<meta property="og:description" content="Calculate Sigurdson's translocation rate" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -121,33 +121,66 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate protracted function G(x)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/utils_estimation.R'><code>R/utils_estimation.R</code></a></small>
-    <div class="hidden name"><code>protracted_g_function.Rd</code></div>
+    <h1>Calculate Sigurdson's translocation rate</h1>
+    <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/calcs_translocations.R'><code>R/calcs_translocations.R</code></a></small>
+    <div class="hidden name"><code>calculate_trans_rate_sigurdson.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate protracted function G(x)</p>
+    <p>Calculate Sigurdson's translocation rate</p>
     </div>
 
-    <pre class="usage"><span class='fu'>protracted_g_function</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>time_0</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>calculate_trans_rate_sigurdson</span><span class='op'>(</span>
+  <span class='va'>cells</span>,
+  <span class='va'>genome_fraction</span>,
+  <span class='va'>age_value</span>,
+  sex_bool <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sex_value <span class='op'>=</span> <span class='st'>"none"</span>,
+  smoker_bool <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ethnicity_value <span class='op'>=</span> <span class='st'>"none"</span>,
+  region_value <span class='op'>=</span> <span class='st'>"none"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>time</th>
-      <td><p>Time over which the irradiation occurred</p></td>
+      <th>cells</th>
+      <td><p>Number of cells <code>N</code></p></td>
     </tr>
     <tr>
-      <th>time_0</th>
-      <td><p>The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours</p></td>
+      <th>genome_fraction</th>
+      <td><p>Genomic fraction used in translocations</p></td>
+    </tr>
+    <tr>
+      <th>age_value</th>
+      <td><p>Age of the individual</p></td>
+    </tr>
+    <tr>
+      <th>sex_bool</th>
+      <td><p>If <code>TRUE</code>, <code>sex_value</code> will be used</p></td>
+    </tr>
+    <tr>
+      <th>sex_value</th>
+      <td><p>Sex of the individual, either "male" of "female"</p></td>
+    </tr>
+    <tr>
+      <th>smoker_bool</th>
+      <td><p>Whether the individual smokes or not</p></td>
+    </tr>
+    <tr>
+      <th>ethnicity_value</th>
+      <td><p>Ethnicity of the individual</p></td>
+    </tr>
+    <tr>
+      <th>region_value</th>
+      <td><p>Region of the individual</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>G(x) numeric value</p>
+    <p>Translocation rate.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate protracted function G(x) — protracted_g_function • biodosetools</title>
+<title>Plot dose estimation curve — plot_estimated_dose_curve • biodosetools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Calculate protracted function G(x) — protracted_g_function" />
-<meta property="og:description" content="Calculate protracted function G(x)" />
+<meta property="og:title" content="Plot dose estimation curve — plot_estimated_dose_curve" />
+<meta property="og:description" content="Plot dose estimation curve" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -121,33 +121,76 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate protracted function G(x)</h1>
+    <h1>Plot dose estimation curve</h1>
     <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/utils_estimation.R'><code>R/utils_estimation.R</code></a></small>
-    <div class="hidden name"><code>protracted_g_function.Rd</code></div>
+    <div class="hidden name"><code>plot_estimated_dose_curve.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate protracted function G(x)</p>
+    <p>Plot dose estimation curve</p>
     </div>
 
-    <pre class="usage"><span class='fu'>protracted_g_function</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>time_0</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plot_estimated_dose_curve</span><span class='op'>(</span>
+  <span class='va'>est_full_doses</span>,
+  <span class='va'>fit_coeffs</span>,
+  <span class='va'>fit_var_cov_mat</span>,
+  <span class='va'>protracted_g_value</span>,
+  <span class='va'>conf_int_yield</span>,
+  <span class='va'>conf_int_curve</span>,
+  <span class='va'>conf_int_text_whole</span>,
+  <span class='va'>conf_int_text_partial</span>,
+  <span class='va'>conf_int_text_hetero</span>,
+  <span class='va'>aberr_name</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>time</th>
-      <td><p>Time over which the irradiation occurred</p></td>
+      <th>est_full_doses</th>
+      <td><p>Data frame with yields and dose estimations. It requires dose, yield, type, level columns</p></td>
     </tr>
     <tr>
-      <th>time_0</th>
-      <td><p>The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours</p></td>
+      <th>fit_coeffs</th>
+      <td><p>Fitting coefficients matrix</p></td>
+    </tr>
+    <tr>
+      <th>fit_var_cov_mat</th>
+      <td><p>Fitting variance-covariance matrix</p></td>
+    </tr>
+    <tr>
+      <th>protracted_g_value</th>
+      <td><p>Protracted G(x) value</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_yield</th>
+      <td><p>Confidence interval of the yield</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_curve</th>
+      <td><p>Confidence interval of the curve</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_text_whole</th>
+      <td><p>Text to display confidence interval for whole-body estimation</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_text_partial</th>
+      <td><p>Text to display confidence interval for partial-body estimation</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_text_hetero</th>
+      <td><p>Text to display confidence interval for heterogeneous estimation</p></td>
+    </tr>
+    <tr>
+      <th>aberr_name</th>
+      <td><p>Name of the aberration to use in the y-axis</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>G(x) numeric value</p>
+    <p>ggplot object</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

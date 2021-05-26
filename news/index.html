@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">biodosetools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.5.0</span>
       </span>
     </div>
 
@@ -124,12 +124,25 @@
       <small>Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="biodosetools-3409000" class="section level1">
-<h1 class="page-header" data-toc-text="3.4.0.9000">
-<a href="#biodosetools-3409000" class="anchor"></a>biodosetools 3.4.0.9000</h1>
+    <div id="biodosetools-350-2021-05-26" class="section level1">
+<h1 class="page-header" data-toc-text="3.5.0">
+<a href="#biodosetools-350-2021-05-26" class="anchor"></a>biodosetools 3.5.0 (2021-05-26)</h1>
 <ul>
+<li>Added unit tests for to check code coverage and to validate that the code performs as expected.</li>
+<li>Major revision of the fitting and dose estimation pipelines, introducing new auxiliary functions to reduce duplicated code.</li>
+<li>Major simplification of report rendering process; abandoned HTML output.</li>
+<li>Added custom {pkgdown} theme for more consistent branding.</li>
 <li>Added preliminary citation to README.</li>
 </ul>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>Added irradiation conditions input to dose-effect fitting modules.</li>
+<li>Reports include conditional formatting of <code>u</code>-value and other formatting refinements.</li>
+<li>Added <code>biodosetools_version</code> element to <code>*-fitting-data-YYY-MM-DD.rds</code> files.</li>
+</ul>
+</div>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
@@ -137,8 +150,12 @@
 <li>Fixed unexported <code><a href="../reference/calculate_aberr.html">calculate_aberr_var()</a></code> function.</li>
 <li>Stopped using weights in fitting algorithms (<code>glm</code> and <code>glm.nb</code>). Fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/20'>#20</a>, addresses part of <a href='https://github.com/biodosetools-team/biodosetools/issues/14'>#14</a> as well.</li>
 <li>Fixed aggregated count data column parsing in <code>fix_count_data_names()</code> function.</li>
-<li>Fixed case data parsing issue when <code>.csv</code> file is not perfectly formated.</li>
+<li>Fixed case data parsing issue when <code>.csv</code> file is not perfectly formatted.</li>
 <li>Fixed issue with manual fitting curve input (fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/23'>#23</a>).</li>
+<li>Fixed bug in <code><a href="../reference/calculate_yield_infimum.html">calculate_yield_infimum()</a></code> where infima were being calculated for yield estimate only (fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/26'>#26</a>).</li>
+<li>Fixed wrong calculation of aberrations <code>X</code> for <code>Ck</code> when <code>k&gt;=10</code> (fixes <a href='https://github.com/biodosetools-team/biodosetools/issues/27'>#27</a>).</li>
+<li>Fixed <code>fix_count_data_names()</code> to properly correct <code>Ck&gt;=C10</code> (related to issue <a href='https://github.com/biodosetools-team/biodosetools/issues/27'>#27</a>).</li>
+<li>Added “where” to global variables (see <a href="https://github.com/r-lib/tidyselect/issues/201" class="uri">https://github.com/r-lib/tidyselect/issues/201</a>).</li>
 </ul>
 </div>
 <div id="new-functions" class="section level2">
@@ -146,16 +163,59 @@
 <a href="#new-functions" class="anchor"></a>New functions</h2>
 <ul>
 <li>
-<code>names_from_formula()</code>, to parse <code>rhandsontable()</code> Unicode row and column coefficient names.</li>
+<code>inner_column()</code>, to fix padding of boxes inside columns.</li>
+<li>
+<code>widget_sep()</code>, to insert <code>div(class = "widget-sep", br())</code> calls.</li>
+<li>
+<code>names_from_model_formula()</code>, to parse <code>rhandsontable()</code> Unicode row and column coefficient names.</li>
+<li>
+<code>parse_model_formula()</code> to get raw and TeX formulae from <code>model_formula</code>.</li>
+<li>
+<code><a href="../reference/calculate_trans_rate_sigurdson.html">calculate_trans_rate_sigurdson()</a></code> and <code><a href="../reference/calculate_trans_rate_manual.html">calculate_trans_rate_manual()</a></code> to calculate translocation rates.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">calculate_aberr_table()</a></code> wrapper, to calculate aberration tables for count and cases data.</li>
+<li>
+<code><a href="../reference/calculate_aberr.html">init_aberr_table()</a></code>, to initialise aberration distribution tables in fitting and estimation server modules.</li>
+<li>
+<code>list_fitting_formulas()</code>, to replace global <code>global_fitting_formulas</code> object.</li>
+<li>
+<code>generalise_fit_coeffs()</code> and <code>generalise_fit_var_cov_mat()</code>, used internally in estimation functions instead of using <code>general_fit_*</code> as parameters.</li>
+</ul>
+</div>
+<div id="function-refactoring" class="section level2">
+<h2 class="hasAnchor">
+<a href="#function-refactoring" class="anchor"></a>Function refactoring</h2>
+<ul>
+<li>Refactored <code>get_decision_threshold()</code> functoin to <code><a href="../reference/calculate_decision_threshold.html">calculate_decision_threshold()</a></code>, and added <code>calculate_decision_threshold_table()</code> wrapper function.</li>
+<li>Refactored <code>calculate_decision_threshold_*()</code> functions to remove <code>input</code> argument.</li>
+<li>Refactored <code>get_*()</code> translocation functions to <code>calculate_*()</code> for better consistency.</li>
+<li>Refactored <code>get_*_dose_curve()</code> functions to <code>plot_*_dose_curve()</code> for more clarity.</li>
+<li>Refactored <code>get_model_statistics()</code> to <code><a href="../reference/calculate_model_stats.html">calculate_model_stats()</a></code>.</li>
+<li>Refactored <code>get_fit_*()</code> functions to <code><a href="../reference/fit.html">fit()</a></code> and <code>fit_*_method()</code>.</li>
 </ul>
 </div>
 <div id="improvements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#improvements" class="anchor"></a>Improvements</h2>
 <ul>
-<li>Added Oliveira citation on <code><a href="../reference/get_fit_maxlik_method.html">get_fit_maxlik_method()</a></code> function.</li>
+<li>Added Oliveira citation on <code>get_fit_maxlik_method()</code> function.</li>
 <li>Fixed Gaëtan’s name order in citation and contributors list.</li>
 <li>Updated README and About body text.</li>
+<li>Renamed source R files for better naming consistency.</li>
+<li>Changed structure of modules to <code>mod_&lt;calc_type&gt;_&lt;aberration&gt;_*()</code>.</li>
+<li>Generalised <code>get_model_statistics()</code> function so that local <code>get_model_statistics()</code> definition could be removed from <code>mod_estimate_fit_curve_server()</code> module.</li>
+<li>Multiple (18 files) <code>&lt;aberration&gt;-&lt;module&gt;-&lt;format&gt;.Rmd</code> report templates have been merged into <code>&lt;module&gt;-&lt;format&gt;.Rmd</code> (4 files).</li>
+<li>Use <code><a href="../reference/correct_negative_vals.html">correct_negative_vals()</a></code> to ensure correct dose estimation when <code>X &lt; Xc</code> in translocations asay.</li>
+<li>Replaced all <code>*_at()</code> and <code>*_if()</code> occurrences by their {dplyr} 1.0.0 equivalents.</li>
+</ul>
+</div>
+<div id="ui-improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ui-improvements" class="anchor"></a>UI Improvements</h2>
+<ul>
+<li>Replaced <code>column(width = X)</code> calls by <code>col_X()</code> in UI modules.</li>
+<li>Added <code>tabitem-container</code> class to <code>tabItem()</code> page containers for fixed <code>max-width</code> while keeping responsive UI.</li>
+<li>Added <code>col-inner-textinput-*</code> CSS classes for Irradiation conditions <code>textInput()</code> widgets’ containers.</li>
 </ul>
 </div>
 </div>
@@ -164,7 +224,7 @@
 <a href="#biodosetools-340-2020-10-11" class="anchor"></a>biodosetools 3.4.0 (2020-10-11)</h1>
 <ul>
 <li>Removed all non-ASCII characters.</li>
-<li>Major rehaul of reports.</li>
+<li>Major overhaul of reports.</li>
 <li>Added “Report bug” button on home screen and cleaned up <code>dashboard_*()</code> code.</li>
 <li>Removed dependencies on {stringr} package.</li>
 <li>Initial <code><a href="https://rdrr.io/r/utils/citation.html">utils::citation()</a></code> support via CITATION file.</li>
@@ -238,9 +298,9 @@
 <h1 class="page-header" data-toc-text="3.3.0">
 <a href="#biodosetools-330-2020-07-27" class="anchor"></a>biodosetools 3.3.0 (2020-07-27)</h1>
 <p>Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made de code a lot more robust.</p>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New features</h2>
+<a href="#new-features-1" class="anchor"></a>New features</h2>
 <ul>
 <li>App is now a {golem} R package.</li>
 <li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
@@ -257,7 +317,7 @@
 <li>New <code><a href="../reference/include_help.html">include_help()</a></code> for help dialogues</li>
 <li>New <code>help_modal_button()</code> function to help build modal trigger buttons on boxes’ titles.</li>
 <li>New <code><a href="../reference/load_rmd_report.html">load_rmd_report()</a></code> function to use in server <code>downloadHandler()</code>.</li>
-<li>Moved <code><a href="../reference/get_genome_fraction.html">get_genome_fraction()</a></code> as its own exported function.</li>
+<li>Moved <code>get_genome_fraction()</code> as its own exported function.</li>
 </ul>
 </div>
 <div id="fixes" class="section level2">
@@ -295,9 +355,9 @@
 <li>Updated <code>NEWS.md</code> headers so they can be parsed by {pkgdown}.</li>
 </ul>
 </div>
-<div id="ui-improvements" class="section level2">
+<div id="ui-improvements-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements" class="anchor"></a>UI Improvements</h2>
+<a href="#ui-improvements-1" class="anchor"></a>UI Improvements</h2>
 <ul>
 <li>Removed <code>experiment_select</code> <code>selectInput()</code> from sidebar. Every assay is listed on the “Aberration assays” <code>sidebarMenu()</code>.</li>
 <li>Loading all UI modules in <code>dashboard_body()</code>.</li>
@@ -356,15 +416,15 @@
 <li>
 <code>get_decision_threshold()</code>.</li>
 <li>
-<code><a href="../reference/get_fit_dose_curve.html">get_fit_dose_curve()</a></code>.</li>
+<code>get_fit_dose_curve()</code>.</li>
 <li>
-<code><a href="../reference/get_fit_glm_method.html">get_fit_glm_method()</a></code>.</li>
+<code>get_fit_glm_method()</code>.</li>
 <li>
-<code><a href="../reference/get_fit_maxlik_method.html">get_fit_maxlik_method()</a></code>.</li>
+<code>get_fit_maxlik_method()</code>.</li>
 <li>
-<code><a href="../reference/get_fit_results.html">get_fit_results()</a></code>.</li>
+<code>get_fit_results()</code>.</li>
 <li>
-<code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code>.</li>
+<code>get_model_statistics()</code>.</li>
 <li>
 <code><a href="../reference/prepare_maxlik_count_data.html">prepare_maxlik_count_data()</a></code>.</li>
 <li>
@@ -378,7 +438,7 @@
 <li>
 <code><a href="../reference/correct_yield.html">correct_yield()</a></code>.</li>
 <li>
-<code><a href="../reference/get_estimated_dose_curve.html">get_estimated_dose_curve()</a></code>.</li>
+<code>get_estimated_dose_curve()</code>.</li>
 <li>
 <code><a href="../reference/protracted_g_function.html">protracted_g_function()</a></code>.</li>
 <li>
@@ -402,9 +462,9 @@
 <h1 class="page-header" data-toc-text="3.1.0">
 <a href="#biodosetools-310-2019-10-26" class="anchor"></a>biodosetools 3.1.0 (2019-10-26)</h1>
 <p>Unofficial release (wasn’t changed on <code>DESCRIPTION</code> file). This includes some of the changes discussed with David in Stockholm (ERPW19).</p>
-<div id="new-features-1" class="section level2">
+<div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>New features</h2>
+<a href="#new-features-2" class="anchor"></a>New features</h2>
 <ul>
 <li>Made var-cov matrix optional on dose estimation inputs.</li>
 <li>Fixed calculations to make var-cov matrix optional on dose estimation inputs.</li>
@@ -454,9 +514,9 @@
     <div id="biodosetools-210-2019-07-27" class="section level1">
 <h1 class="page-header" data-toc-text="2.1.0">
 <a href="#biodosetools-210-2019-07-27" class="anchor"></a>biodosetools 2.1.0 (2019-07-27)</h1>
-<div id="new-features-2" class="section level2">
+<div id="new-features-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>New features</h2>
+<a href="#new-features-3" class="anchor"></a>New features</h2>
 <ul>
 <li>Initial implementation of micronuclei, adding support in UI and server functions.</li>
 <li>Implemented negative binomial fitting calculation for micronuclei count data.</li>
@@ -503,9 +563,9 @@
     <div id="biodosetools-200-2019-07-17" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.0">
 <a href="#biodosetools-200-2019-07-17" class="anchor"></a>biodosetools 2.0.0 (2019-07-17)</h1>
-<div id="new-features-3" class="section level2">
+<div id="new-features-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-3" class="anchor"></a>New features</h2>
+<a href="#new-features-4" class="anchor"></a>New features</h2>
 <ul>
 <li>Added manual input of translocations name.</li>
 <li>Implemented dynamic calculation of hot width for counts, cases, and chromosome data tables.</li>
@@ -555,9 +615,9 @@
 <li>Updated institution links in contributors files.</li>
 </ul>
 </div>
-<div id="ui-improvements-1" class="section level2">
+<div id="ui-improvements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements-1" class="anchor"></a>UI Improvements</h2>
+<a href="#ui-improvements-2" class="anchor"></a>UI Improvements</h2>
 <ul>
 <li>Improved <code>side-widget-tall</code> bottom margins.</li>
 <li>Moved translocation frequency <code>selectInput()</code> next to Calculate Fitting button for better UX.</li>
@@ -582,9 +642,9 @@
     <div id="biodosetools-120-2019-06-25" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0">
 <a href="#biodosetools-120-2019-06-25" class="anchor"></a>biodosetools 1.2.0 (2019-06-25)</h1>
-<div id="new-features-4" class="section level2">
+<div id="new-features-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-4" class="anchor"></a>New features</h2>
+<a href="#new-features-5" class="anchor"></a>New features</h2>
 <ul>
 <li>Start translocations dose estimation module and report.</li>
 <li>Allow using M-Fish color scheme in translocations fitting module.</li>
@@ -610,9 +670,9 @@
 <li>Added readOnly status to <code>Xt</code>, <code>yt</code>, <code>yt_err</code> variables on <code>rhandsontable()</code> for translocations case data.</li>
 </ul>
 </div>
-<div id="ui-improvements-2" class="section level2">
+<div id="ui-improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements-2" class="anchor"></a>UI improvements</h2>
+<a href="#ui-improvements-3" class="anchor"></a>UI improvements</h2>
 <ul>
 <li>New <code>innerColumn</code> to use inside cards/boxes.</li>
 <li>New <code>widgetLabel()</code> function for labels above widgets without default label.</li>
@@ -629,7 +689,7 @@
 <ul>
 <li>Fix minor error in calculation of infimum yield values.</li>
 <li>Fixed “Color options” card and color_list object for chromosome table generation.</li>
-<li>Fixed missing type argument in <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> in dose estimation module.</li>
+<li>Fixed missing type argument in <code>get_model_statistics()</code> in dose estimation module.</li>
 <li>Deleted heterogeneous estimation for translocations.</li>
 </ul>
 </div>
@@ -637,9 +697,9 @@
     <div id="biodosetools-110-2019-06-15" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.0">
 <a href="#biodosetools-110-2019-06-15" class="anchor"></a>biodosetools 1.1.0 (2019-06-15)</h1>
-<div id="new-features-5" class="section level2">
+<div id="new-features-6" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-5" class="anchor"></a>New features</h2>
+<a href="#new-features-6" class="anchor"></a>New features</h2>
 <ul>
 <li>Conditional tabs in sidebar by implementing <code>bs4MyConditionalSidebarMenuItem()</code> function.</li>
 <li>Implemented AIC calculation for different dose estimation assessments.</li>
@@ -664,12 +724,12 @@
 <li>Added theoretical calculation of model-specific statistics (<code>glm</code> method) on fitting module.</li>
 <li>Added renormalisation of data for proper calculation of model-specific statistics in fitting module.</li>
 <li>Added theoretical model-specific statistics calculation for constraint <code>maxlik</code> optimization method in fitting module.</li>
-<li>Added global <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> to translocations fitting module.</li>
+<li>Added global <code>get_model_statistics()</code> to translocations fitting module.</li>
 </ul>
 </div>
-<div id="ui-improvements-3" class="section level2">
+<div id="ui-improvements-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ui-improvements-3" class="anchor"></a>UI improvements</h2>
+<a href="#ui-improvements-4" class="anchor"></a>UI improvements</h2>
 <ul>
 <li>Cleaner version of <code>topButton()</code> for help button and help modals on fitting and dose estimation modules..</li>
 <li>More informative model summary dialogue in fitting module.</li>
@@ -686,7 +746,7 @@
 <li>Fixed rendering problem in Firefox (and potentially other browsers) with count data <code>rhandsontable()</code> using 100% of the card’s height.</li>
 <li>Fixed dose estimation <code>rhandsontables()</code> <code>div</code>s on Firefox having <code>height = 100%</code> of the card’s own height.</li>
 <li>Fixed height error in cases data table in dose estimation module in Firefox.</li>
-<li>Fixed <code>glm_results object</code> issue in <code><a href="../reference/get_model_statistics.html">get_model_statistics()</a></code> function.</li>
+<li>Fixed <code>glm_results object</code> issue in <code>get_model_statistics()</code> function.</li>
 </ul>
 </div>
 </div>
@@ -694,9 +754,9 @@
 <h1 class="page-header" data-toc-text="1.0.0">
 <a href="#biodosetools-100-2019-05-24" class="anchor"></a>biodosetools 1.0.0 (2019-05-24)</h1>
 <p>First public beta for laboratories and research centres.</p>
-<div id="new-features-6" class="section level2">
+<div id="new-features-7" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-6" class="anchor"></a>New features</h2>
+<a href="#new-features-7" class="anchor"></a>New features</h2>
 <ul>
 <li>Initial support of reports.</li>
 <li>Implemented selection of CI for dose estimation (83%-83% &amp; 95%-95%).</li>
@@ -737,9 +797,9 @@
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#biodosetools-020-2019-04-03" class="anchor"></a>biodosetools 0.2.0 (2019-04-03)</h1>
 <p>Version presented in second Team Meeting at Munich.</p>
-<div id="new-features-7" class="section level2">
+<div id="new-features-8" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-7" class="anchor"></a>New features</h2>
+<a href="#new-features-8" class="anchor"></a>New features</h2>
 <ul>
 <li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
 <li>Added data, plot, and results export options.</li>
