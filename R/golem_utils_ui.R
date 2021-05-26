@@ -290,33 +290,3 @@ col_2 <- function(...) {
 col_1 <- function(...) {
   column(1, ...)
 }
-
-#' Include Content From a File
-#'
-#' Load rendered RMarkdown from a file and turn into HTML.
-#'
-#' @param path Path of the input file to be rendered.
-#'
-#' @rdname includeRMarkdown
-#'
-#' @importFrom rmarkdown render
-#' @importFrom markdown markdownToHTML
-#' @importFrom htmltools HTML
-includeRMarkdown <- function(path) {
-  md <- tempfile(fileext = ".md")
-
-  on.exit(unlink(md), add = TRUE)
-
-  rmarkdown::render(
-    path,
-    output_format = "md_document",
-    output_dir = tempdir(),
-    output_file = md, quiet = TRUE
-  )
-
-  html <- markdown::markdownToHTML(md, fragment.only = TRUE)
-
-  Encoding(html) <- "UTF-8"
-
-  return(HTML(html))
-}
