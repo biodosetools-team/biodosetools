@@ -12,9 +12,7 @@ mod_fitting_trans_ui <- function(id, label) {
   tabItem(
     class = "tabitem-container",
     tabName = label,
-
     h2("Translocations: Dose-effect fitting"),
-
     fluidRow(
       # Box: Stains color options ----
       box(
@@ -34,7 +32,6 @@ mod_fitting_trans_ui <- function(id, label) {
           id = ns("help_colors_modal"),
           title = "Help: Stain color data input",
           size = "large",
-
           body = tagList(
             include_help("trans/colors_data_input.md"),
             div(
@@ -44,7 +41,6 @@ mod_fitting_trans_ui <- function(id, label) {
             include_help("trans/colors_data_input_b.md")
           )
         ),
-
         fluidRow(
           col_12(
             awesomeRadio(
@@ -57,7 +53,6 @@ mod_fitting_trans_ui <- function(id, label) {
               ),
               selected = "male"
             ),
-
             selectizeInput(
               inputId = ns("trans_chromosome_select"),
               label = "Chromosomes",
@@ -67,16 +62,13 @@ mod_fitting_trans_ui <- function(id, label) {
               ),
               multiple = TRUE
             ),
-
             widget_label("Stain color scheme"),
             awesomeCheckbox(
               inputId = ns("trans_m_fish_scheme"),
-
               status = "info",
               label = "Use M-Fish",
               value = FALSE
             ),
-
             conditionalPanel(
               condition = "!input.trans_m_fish_scheme",
               ns = ns,
@@ -101,7 +93,6 @@ mod_fitting_trans_ui <- function(id, label) {
                 multiple = TRUE
               )
             ),
-
             br(),
             actionButton(
               ns("button_upd_chrom_table"),
@@ -111,7 +102,6 @@ mod_fitting_trans_ui <- function(id, label) {
           )
         )
       ),
-
       col_7_inner(
         # Box: Chromosome-color table ----
         box(
@@ -119,14 +109,12 @@ mod_fitting_trans_ui <- function(id, label) {
           title = "Chromosome data",
           status = "primary",
           collapsible = TRUE,
-
           fluidRow(
             col_12(
               div(
                 class = "hot-improved",
                 rHandsontableOutput(outputId = ns("chromosome_table"))
               ),
-
               br(),
               actionButton(
                 ns("button_calc_genome_fraction"),
@@ -143,7 +131,6 @@ mod_fitting_trans_ui <- function(id, label) {
           title = "Genomic conversion factor",
           status = "success",
           collapsible = TRUE,
-
           fluidRow(
             col_12(
               uiOutput(ns("genome_fraction"))
@@ -152,7 +139,6 @@ mod_fitting_trans_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       # Box: Data input options ----
       box(
@@ -172,7 +158,6 @@ mod_fitting_trans_ui <- function(id, label) {
           id = ns("help_count_data_modal"),
           title = "Help: Count data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -202,7 +187,6 @@ mod_fitting_trans_ui <- function(id, label) {
             )
           )
         ),
-
         fluidRow(
           col_12(
             # Name of translocations
@@ -215,7 +199,6 @@ mod_fitting_trans_ui <- function(id, label) {
             # Load file checkbox
             awesomeCheckbox(
               inputId = ns("load_count_data_check"),
-
               status = "info",
               label = "Load data from file",
               value = FALSE
@@ -224,7 +207,6 @@ mod_fitting_trans_ui <- function(id, label) {
             # Full/aggregated data checkbox
             awesomeCheckbox(
               inputId = ns("use_aggr_count_data_check"),
-
               status = "info",
               width = "100%",
               label = "Only provide total number of translocations",
@@ -288,7 +270,6 @@ mod_fitting_trans_ui <- function(id, label) {
           id = ns("help_fitting_options_modal"),
           title = "Help: Fitting options",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -318,7 +299,6 @@ mod_fitting_trans_ui <- function(id, label) {
             # )
           )
         ),
-
         fluidRow(
           col_12(
             # Fitting formula
@@ -355,11 +335,9 @@ mod_fitting_trans_ui <- function(id, label) {
       box(
         width = 12,
         title = "Irradiation conditions",
-
         status = "primary",
         collapsible = TRUE,
         collapsed = TRUE,
-
         col_6(
           class = "col-inner-textinput-left",
           textInput(
@@ -416,7 +394,6 @@ mod_fitting_trans_ui <- function(id, label) {
         title = "Data input",
         status = "primary",
         collapsible = TRUE,
-
         div(
           class = "hot-improved",
           rHandsontableOutput(ns("count_data_hot"))
@@ -475,8 +452,6 @@ mod_fitting_trans_ui <- function(id, label) {
         )
       )
     ),
-
-
     fluidRow(
       col_6_inner(
         # tabBox: Fit results ----
@@ -484,15 +459,12 @@ mod_fitting_trans_ui <- function(id, label) {
           id = ns("fit_results_tabs"),
           width = 12,
           side = "left",
-
           tabPanel(
             title = "Result of curve fit",
             h5("Fit formula"),
             uiOutput(ns("fit_formula_tex")),
-
             h5("Model"),
             uiOutput(ns("fit_model_summary")),
-
             br(),
             h5("Coefficients"),
             div(
@@ -500,7 +472,6 @@ mod_fitting_trans_ui <- function(id, label) {
               rHandsontableOutput(ns("fit_coeffs"))
             )
           ),
-
           tabPanel(
             title = "Summary statistics",
             h5("Model-level statistics"),
@@ -508,14 +479,12 @@ mod_fitting_trans_ui <- function(id, label) {
               class = "hot-improved",
               rHandsontableOutput(ns("fit_model_statistics"))
             ),
-
             br(),
             h5("Correlation matrix"),
             div(
               class = "hot-improved",
               rHandsontableOutput(ns("fit_cor_mat"))
             ),
-
             br(),
             h5("Variance-covariance matrix"),
             div(
@@ -551,7 +520,6 @@ mod_fitting_trans_ui <- function(id, label) {
             id = ns("help_fit_data_save_modal"),
             title = "Help: Export results",
             size = "large",
-
             body = tagList(
               # Option selection
               radioGroupButtons(

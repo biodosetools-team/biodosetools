@@ -65,9 +65,9 @@ calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #' @return Translocation rate.
 #' @export
 calculate_trans_rate_sigurdson <- function(cells, genome_fraction, age_value,
-                                             sex_bool = FALSE, sex_value = "none",
-                                             smoker_bool = FALSE,
-                                             ethnicity_value = "none", region_value = "none") {
+                                           sex_bool = FALSE, sex_value = "none",
+                                           smoker_bool = FALSE,
+                                           ethnicity_value = "none", region_value = "none") {
   age_trans_frequency <- function(age) {
     trans_frequency <- exp(-7.925) + exp(-9.284) * (age * exp(0.01062 * age))
     return(trans_frequency)

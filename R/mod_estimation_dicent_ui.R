@@ -12,9 +12,7 @@ mod_estimation_dicent_ui <- function(id, label) {
   tabItem(
     class = "tabitem-container",
     tabName = label,
-
     h2("Dicentrics: Dose estimation"),
-
     fluidRow(
       # Box: Curve fitting options ----
       box(
@@ -34,7 +32,6 @@ mod_estimation_dicent_ui <- function(id, label) {
           id = ns("help_fit_data_modal"),
           title = "Help: Fitting data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -59,7 +56,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             )
           )
         ),
-
         fluidRow(
           col_12(
             # Load data from file
@@ -91,7 +87,6 @@ mod_estimation_dicent_ui <- function(id, label) {
                 style = "margin-left: -10px; margin-bottom: 0px;",
                 label = "Generate tables"
               ),
-
               br(),
               br(),
               widget_label("Coefficients"),
@@ -99,7 +94,6 @@ mod_estimation_dicent_ui <- function(id, label) {
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
-
               br(),
               awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
@@ -108,7 +102,6 @@ mod_estimation_dicent_ui <- function(id, label) {
                 value = FALSE
               )
             ),
-
             conditionalPanel(
               condition = "input.use_var_cov_matrix",
               ns = ns,
@@ -146,12 +139,10 @@ mod_estimation_dicent_ui <- function(id, label) {
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-
         tabPanel(
           title = "Result of curve fit",
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
-
           h5("Coefficients"),
           div(
             class = "hot-improved",
@@ -170,13 +161,11 @@ mod_estimation_dicent_ui <- function(id, label) {
             ),
             br()
           ),
-
           h5("Correlation matrix"),
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_cor_mat"))
           ),
-
           br(),
           h5("Variance-covariance matrix"),
           div(
@@ -186,7 +175,6 @@ mod_estimation_dicent_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       # Box: Data input options ----
       box(
@@ -206,7 +194,6 @@ mod_estimation_dicent_ui <- function(id, label) {
           id = ns("help_cases_data_modal"),
           title = "Help: Cases data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -230,7 +217,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             )
           )
         ),
-
         fluidRow(
           col_12(
             # Load data from file
@@ -320,7 +306,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             id = ns("help_estimation_options_modal"),
             title = "Help: Dose estimation options",
             size = "large",
-
             body = tagList(
               # Option selection
               radioGroupButtons(
@@ -390,7 +375,6 @@ mod_estimation_dicent_ui <- function(id, label) {
               selected = "whole-body"
             )
           ),
-
           br(),
           br(),
 
@@ -417,7 +401,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             conditionalPanel(
               condition = "input.assessment_select == 'partial-body'",
               ns = ns,
-
               selectInput(
                 ns("error_method_partial_select"),
                 label = "Partial-body error method",
@@ -436,7 +419,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             conditionalPanel(
               condition = "input.assessment_select == 'hetero'",
               ns = ns,
-
               selectInput(
                 ns("error_method_hetero_select"),
                 label = "Heterogeneous error method",
@@ -454,7 +436,6 @@ mod_estimation_dicent_ui <- function(id, label) {
           conditionalPanel(
             condition = "input.exposure_select == 'protracted'",
             ns = ns,
-
             br(),
 
             # Irradiation time
@@ -490,7 +471,6 @@ mod_estimation_dicent_ui <- function(id, label) {
           conditionalPanel(
             condition = "input.assessment_select != 'whole-body'",
             ns = ns,
-
             br(),
 
             # Coefficient input selection
@@ -507,9 +487,7 @@ mod_estimation_dicent_ui <- function(id, label) {
                 selected = "d0"
               )
             ),
-
             widget_sep(),
-
             div(
               class = "side-widget",
               # Input gamma
@@ -549,19 +527,16 @@ mod_estimation_dicent_ui <- function(id, label) {
               )
             )
           ),
-
           conditionalPanel(
             condition = "input.assessment_select == 'whole-body'",
             ns = ns,
             br()
           ),
-
           conditionalPanel(
             condition = "input.assessment_select != 'whole-body'",
             ns = ns,
             br()
           ),
-
           actionButton(
             ns("button_estimate"),
             class = "options-button",
@@ -570,7 +545,6 @@ mod_estimation_dicent_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       col_6_inner(
         # tabBox: Estimation results ----
@@ -594,7 +568,6 @@ mod_estimation_dicent_ui <- function(id, label) {
             id = ns("help_fit_data_save_modal"),
             title = "Help: Export results",
             size = "large",
-
             body = tagList(
               # Contents
               include_help("save/estimation_data_save_report.md")

@@ -12,9 +12,7 @@ mod_estimation_trans_ui <- function(id, label) {
   tabItem(
     class = "tabitem-container",
     tabName = label,
-
     h2("Translocations: Dose estimation"),
-
     fluidRow(
       # Box: Curve fitting options ----
       box(
@@ -34,7 +32,6 @@ mod_estimation_trans_ui <- function(id, label) {
           id = ns("help_fit_data_modal"),
           title = "Help: Fitting data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -60,7 +57,6 @@ mod_estimation_trans_ui <- function(id, label) {
             include_help("trans/fit_data_estimation.md")
           )
         ),
-
         fluidRow(
           col_12(
             # Load data from file
@@ -85,7 +81,6 @@ mod_estimation_trans_ui <- function(id, label) {
                   selected = "lin-quad"
                 )
               ),
-
               widget_sep(),
               actionButton(
                 ns("button_gen_table"),
@@ -93,7 +88,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 style = "margin-left: -10px; margin-bottom: 0px;",
                 label = "Generate tables"
               ),
-
               br(),
               br(),
               selectInput(
@@ -106,11 +100,9 @@ mod_estimation_trans_ui <- function(id, label) {
                 selected = "measured_freq"
               )
             ),
-
             conditionalPanel(
               condition = "!input.load_fit_data_check & input.frequency_select == 'measured_freq'",
               ns = ns,
-
               numericInput(
                 ns("fit_genome_fraction"),
                 "Genomic conversion factor",
@@ -120,17 +112,14 @@ mod_estimation_trans_ui <- function(id, label) {
                 step = 0.001
               )
             ),
-
             conditionalPanel(
               condition = "!input.load_fit_data_check",
               ns = ns,
-
               widget_label("Coefficients"),
               div(
                 class = "hot-improved",
                 rHandsontableOutput(ns("fit_coeffs_hot"))
               ),
-
               br(),
               awesomeCheckbox(
                 inputId = ns("use_var_cov_matrix"),
@@ -139,7 +128,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 value = FALSE
               )
             ),
-
             conditionalPanel(
               condition = "input.use_var_cov_matrix",
               ns = ns,
@@ -177,16 +165,13 @@ mod_estimation_trans_ui <- function(id, label) {
         id = ns("fit_results_tabs"),
         width = 7,
         side = "left",
-
         tabPanel(
           title = "Result of curve fit",
           h5("Fit formula"),
           uiOutput(ns("fit_formula_tex")),
-
           br(),
           h5("Translocation frequency"),
           uiOutput(ns("fit_trans_frequency_message")),
-
           br(),
           h5("Full genome coefficients"),
           div(
@@ -206,13 +191,11 @@ mod_estimation_trans_ui <- function(id, label) {
             ),
             br()
           ),
-
           h5("Correlation matrix"),
           div(
             class = "hot-improved",
             rHandsontableOutput(ns("fit_cor_mat"))
           ),
-
           br(),
           h5("Variance-covariance matrix"),
           div(
@@ -222,7 +205,6 @@ mod_estimation_trans_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       # Box: Stains color options ----
       box(
@@ -242,7 +224,6 @@ mod_estimation_trans_ui <- function(id, label) {
           id = ns("help_colors_modal"),
           title = "Help: Stain color data input",
           size = "large",
-
           body = tagList(
             include_help("trans/colors_data_input.md"),
             div(
@@ -252,7 +233,6 @@ mod_estimation_trans_ui <- function(id, label) {
             include_help("trans/colors_data_input_b.md")
           )
         ),
-
         fluidRow(
           col_12(
             awesomeRadio(
@@ -265,7 +245,6 @@ mod_estimation_trans_ui <- function(id, label) {
               ),
               selected = "male"
             ),
-
             selectizeInput(
               inputId = ns("trans_chromosome_select"),
               label = "Chromosomes",
@@ -275,7 +254,6 @@ mod_estimation_trans_ui <- function(id, label) {
               ),
               multiple = TRUE
             ),
-
             widget_label("Stain color scheme"),
             awesomeCheckbox(
               inputId = ns("trans_m_fish_scheme"),
@@ -283,7 +261,6 @@ mod_estimation_trans_ui <- function(id, label) {
               label = "Use M-Fish",
               value = FALSE
             ),
-
             conditionalPanel(
               condition = "!input.trans_m_fish_scheme",
               ns = ns,
@@ -307,7 +284,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 multiple = TRUE
               )
             ),
-
             br(),
             actionButton(
               ns("button_upd_chrom_table"),
@@ -317,7 +293,6 @@ mod_estimation_trans_ui <- function(id, label) {
           )
         )
       ),
-
       col_7_inner(
         # Box: Chromosome-color table ----
         box(
@@ -325,14 +300,12 @@ mod_estimation_trans_ui <- function(id, label) {
           title = "Chromosome data",
           status = "primary",
           collapsible = TRUE,
-
           fluidRow(
             col_12(
               div(
                 class = "hot-improved",
                 rHandsontableOutput(outputId = ns("chromosome_table"))
               ),
-
               br(),
               actionButton(
                 ns("button_calc_genome_fraction"),
@@ -346,11 +319,9 @@ mod_estimation_trans_ui <- function(id, label) {
         # Box: Conversion factor to full genome ----
         box(
           width = 12,
-
           title = "Genomic conversion factor",
           status = "success",
           collapsible = TRUE,
-
           fluidRow(
             col_12(
               uiOutput(ns("genome_fraction"))
@@ -359,7 +330,6 @@ mod_estimation_trans_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       # Box: Data input options ----
       box(
@@ -379,7 +349,6 @@ mod_estimation_trans_ui <- function(id, label) {
           id = ns("help_cases_data_modal"),
           title = "Help: Cases data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -409,7 +378,6 @@ mod_estimation_trans_ui <- function(id, label) {
             )
           )
         ),
-
         fluidRow(
           col_12(
             # Name of translocations
@@ -506,7 +474,6 @@ mod_estimation_trans_ui <- function(id, label) {
             div(
               class = "side-widget",
               style = "padding-right: 10px;",
-
               numericInput(
                 ns("trans_confounder_age"),
                 width = 75,
@@ -516,7 +483,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 step = 1
               )
             ),
-
             div(
               class = "side-widget",
               style = "max-width: 140px; margin-right: 5px;",
@@ -527,7 +493,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 value = FALSE
               )
             ),
-
             div(
               class = "side-widget",
               style = "max-width: 140px; margin-right: 5px;",
@@ -538,7 +503,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 value = FALSE
               )
             ),
-
             div(
               class = "side-widget",
               style = "padding-right: 10px;",
@@ -560,7 +524,6 @@ mod_estimation_trans_ui <- function(id, label) {
                 selected = "none"
               )
             ),
-
             div(
               class = "side-widget",
               style = "padding-right: 10px;",
@@ -584,7 +547,6 @@ mod_estimation_trans_ui <- function(id, label) {
               )
             )
           ),
-
           conditionalPanel(
             condition = "input.trans_confounders & input.trans_confounders_type == 'manual'",
             ns = ns,
@@ -628,7 +590,6 @@ mod_estimation_trans_ui <- function(id, label) {
             id = ns("help_estimation_options_modal"),
             title = "Help: Dose estimation options",
             size = "large",
-
             body = tagList(
               # Option selection
               radioGroupButtons(
@@ -722,7 +683,6 @@ mod_estimation_trans_ui <- function(id, label) {
             conditionalPanel(
               condition = "input.assessment_select == 'partial-body'",
               ns = ns,
-
               selectInput(
                 ns("error_method_partial_select"),
                 label = "Partial-body error method",
@@ -739,7 +699,6 @@ mod_estimation_trans_ui <- function(id, label) {
           conditionalPanel(
             condition = "input.exposure_select == 'protracted'",
             ns = ns,
-
             br(),
 
             # Irradiation time
@@ -775,7 +734,6 @@ mod_estimation_trans_ui <- function(id, label) {
           conditionalPanel(
             condition = "input.assessment_select != 'whole-body'",
             ns = ns,
-
             br(),
 
             # Coefficient input selection
@@ -792,9 +750,7 @@ mod_estimation_trans_ui <- function(id, label) {
                 selected = "d0"
               )
             ),
-
             widget_sep(),
-
             div(
               class = "side-widget",
               # Input gamma
@@ -834,19 +790,16 @@ mod_estimation_trans_ui <- function(id, label) {
               )
             )
           ),
-
           conditionalPanel(
             condition = "input.assessment_select == 'whole-body'",
             ns = ns,
             br()
           ),
-
           conditionalPanel(
             condition = "input.assessment_select != 'whole-body'",
             ns = ns,
             br()
           ),
-
           actionButton(
             ns("button_estimate"),
             class = "options-button",
@@ -855,7 +808,6 @@ mod_estimation_trans_ui <- function(id, label) {
         )
       )
     ),
-
     fluidRow(
       col_6_inner(
         # tabBox: Estimation results ----
@@ -879,7 +831,6 @@ mod_estimation_trans_ui <- function(id, label) {
             id = ns("help_fit_data_save_modal"),
             title = "Help: Export results",
             size = "large",
-
             body = tagList(
               # Contents
               include_help("save/estimation_data_save_report.md")

@@ -472,7 +472,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
         # Add additional values to list
         results_list[["gg_curve"]] <- NULL
-        results_list[["biodosetools_version"]] <- utils::packageVersion(pkg = 'biodosetools')
+        results_list[["biodosetools_version"]] <- utils::packageVersion(pkg = "biodosetools")
 
         # Export RDS file
         saveRDS(results_list, file = file)

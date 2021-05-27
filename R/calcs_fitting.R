@@ -16,9 +16,9 @@
 #'
 #' @return Model statistics data frame
 calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
-                                 response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
-                                 Y = NULL, mu = NULL, n = NULL, npar = NULL,
-                                 genome_fraction = NULL, calc_type = c("fitting", "estimation")) {
+                                  response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
+                                  Y = NULL, mu = NULL, n = NULL, npar = NULL,
+                                  genome_fraction = NULL, calc_type = c("fitting", "estimation")) {
   # Validate parameters
   link <- match.arg(link)
   type <- match.arg(type)

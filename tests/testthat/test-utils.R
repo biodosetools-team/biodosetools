@@ -169,4 +169,3 @@ test_that("correct_boundary works", {
   expect_equal(correct_boundary(0.5), 0.5)
   expect_equal(correct_boundary(1.5), 1)
 })
-

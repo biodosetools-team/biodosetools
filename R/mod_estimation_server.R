@@ -965,7 +965,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       id = session$ns("help_dose_mixed_yields_modal"),
       title = "Help: Heterogeneous exposures",
       size = "large",
-
       body = tagList(
         include_help("estimation/dose_mixed_yields.md")
       )
@@ -977,13 +976,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         id = "estimation_results_tabs",
         width = 12,
         side = "left",
-
         title = help_modal_button(
           container = "tabbox",
           session$ns("help_dose_mixed_yields"),
           session$ns("help_dose_mixed_yields_modal")
         ),
-
         tabPanel(
           title = "Whole-body",
           h5("Whole-body exposure estimation"),
@@ -1011,13 +1008,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         id = "estimation_results_tabs",
         width = 12,
         side = "left",
-
         title = help_modal_button(
           container = "tabbox",
           session$ns("help_dose_mixed_yields"),
           session$ns("help_dose_mixed_yields_modal")
         ),
-
         tabPanel(
           title = "Whole-body",
           h5("Whole-body exposure estimation"),
@@ -1050,7 +1045,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_partial"))
           ),
-
           br(),
           h5("Initial fraction of irradiated cells"),
           div(
@@ -1072,13 +1066,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         id = "estimation_results_tabs",
         width = 12,
         side = "left",
-
         title = help_modal_button(
           container = "tabbox",
           session$ns("help_dose_mixed_yields"),
           session$ns("help_dose_mixed_yields_modal")
         ),
-
         tabPanel(
           title = "Whole-body",
           h5("Whole-body exposure estimation"),
@@ -1106,7 +1098,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_mixing_prop_hetero"))
           ),
-
           br(),
           h5("Heterogeneous exposure estimation"),
           div(
@@ -1118,7 +1109,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             class = "hot-improved",
             rHandsontableOutput(session$ns("est_doses_hetero"))
           ),
-
           br(),
           h5("Initial fraction of irradiated cells"),
           div(

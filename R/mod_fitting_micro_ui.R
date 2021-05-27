@@ -12,9 +12,7 @@ mod_fitting_micro_ui <- function(id, label) {
   tabItem(
     class = "tabitem-container",
     tabName = label,
-
     h2("Micronuclei: Dose-effect fitting"),
-
     fluidRow(
       # Box: Data input options ----
       box(
@@ -34,7 +32,6 @@ mod_fitting_micro_ui <- function(id, label) {
           id = ns("help_count_data_modal"),
           title = "Help: Count data input",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -64,7 +61,6 @@ mod_fitting_micro_ui <- function(id, label) {
             )
           )
         ),
-
         fluidRow(
           col_12(
             # Load file checkbox
@@ -141,7 +137,6 @@ mod_fitting_micro_ui <- function(id, label) {
           id = ns("help_fitting_options_modal"),
           title = "Help: Fitting options",
           size = "large",
-
           body = tagList(
             # Option selection
             radioGroupButtons(
@@ -171,7 +166,6 @@ mod_fitting_micro_ui <- function(id, label) {
             # )
           )
         ),
-
         fluidRow(
           col_12(
             # Fitting formula
@@ -209,11 +203,9 @@ mod_fitting_micro_ui <- function(id, label) {
       box(
         width = 12,
         title = "Irradiation conditions",
-
         status = "primary",
         collapsible = TRUE,
         collapsed = TRUE,
-
         col_6(
           class = "col-inner-textinput-left",
           textInput(
@@ -270,7 +262,6 @@ mod_fitting_micro_ui <- function(id, label) {
         title = "Data input",
         status = "primary",
         collapsible = TRUE,
-
         div(
           class = "hot-improved",
           rHandsontableOutput(ns("count_data_hot"))
@@ -313,8 +304,6 @@ mod_fitting_micro_ui <- function(id, label) {
         )
       )
     ),
-
-
     fluidRow(
       col_6_inner(
         # tabBox: Fit results ----
@@ -322,15 +311,12 @@ mod_fitting_micro_ui <- function(id, label) {
           id = ns("fit_results_tabs"),
           width = 12,
           side = "left",
-
           tabPanel(
             title = "Result of curve fit",
             h5("Fit formula"),
             uiOutput(ns("fit_formula_tex")),
-
             h5("Model"),
             uiOutput(ns("fit_model_summary")),
-
             br(),
             h5("Coefficients"),
             div(
@@ -345,14 +331,12 @@ mod_fitting_micro_ui <- function(id, label) {
               class = "hot-improved",
               rHandsontableOutput(ns("fit_model_statistics"))
             ),
-
             br(),
             h5("Correlation matrix"),
             div(
               class = "hot-improved",
               rHandsontableOutput(ns("fit_cor_mat"))
             ),
-
             br(),
             h5("Variance-covariance matrix"),
             div(
@@ -388,7 +372,6 @@ mod_fitting_micro_ui <- function(id, label) {
             id = ns("help_fit_data_save_modal"),
             title = "Help: Export results",
             size = "large",
-
             body = tagList(
               # Option selection
               radioGroupButtons(

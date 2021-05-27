@@ -112,24 +112,44 @@ calculate_decision_threshold_table <- function(fit_results_list, decision_thresh
     dplyr::rowwise() %>%
     dplyr::mutate(
       X95 = calculate_decision_threshold(
-        fit_results_list, cells = .data$N,
-        count_data, model_formula, model_family, frequency_select,
-        conf_int = 0.95, aberr_module
+        fit_results_list,
+        cells = .data$N,
+        count_data,
+        model_formula,
+        model_family,
+        frequency_select,
+        conf_int = 0.95,
+        aberr_module
       )[1],
       D95 = calculate_decision_threshold(
-        fit_results_list, cells = .data$N,
-        count_data, model_formula, model_family, frequency_select,
-        conf_int = 0.95, aberr_module
+        fit_results_list,
+        cells = .data$N,
+        count_data,
+        model_formula,
+        model_family,
+        frequency_select,
+        conf_int = 0.95,
+        aberr_module
       )[2] * 1000,
       X83 = calculate_decision_threshold(
-        fit_results_list, cells = .data$N,
-        count_data, model_formula, model_family, frequency_select,
-        conf_int = 0.83, aberr_module
+        fit_results_list,
+        cells = .data$N,
+        count_data,
+        model_formula,
+        model_family,
+        frequency_select,
+        conf_int = 0.83,
+        aberr_module
       )[1],
       D83 = calculate_decision_threshold(
-        fit_results_list, cells = .data$N,
-        count_data, model_formula, model_family, frequency_select,
-        conf_int = 0.83, aberr_module
+        fit_results_list,
+        cells = .data$N,
+        count_data,
+        model_formula,
+        model_family,
+        frequency_select,
+        conf_int = 0.83,
+        aberr_module
       )[2] * 1000
     ) %>%
     dplyr::mutate(

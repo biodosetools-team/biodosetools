@@ -90,7 +90,12 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
   type <- match.arg(type)
 
   # Calculate factor per type
-  type_factor <- switch(type, "estimate" = 0, "lower" = 1, "upper" = -1)
+  type_factor <- switch(
+    type,
+    "estimate" = 0,
+    "lower" = 1,
+    "upper" = -1
+  )
 
   # Calculate yield
   yield <- yield_fun(dose, general_fit_coeffs, protracted_g_value) +
@@ -239,9 +244,9 @@ correct_boundary <- function(x) {
 #' @return ggplot object
 #' @export
 plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_mat,
-                                     protracted_g_value, conf_int_yield, conf_int_curve,
-                                     conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
-                                     aberr_name) {
+                                      protracted_g_value, conf_int_yield, conf_int_curve,
+                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
+                                      aberr_name) {
   # Rightmost limit of the plot
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
