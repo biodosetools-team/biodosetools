@@ -7,5 +7,6 @@ The report contains:
 - Case description
 - Results of the dose estimation
 - Dose estimation plot
+- Additional comments
 
-The report can be downloaded in `.HTML` and `.DOCX`.
+The report can be downloaded in `.PDF` and `.DOCX`.

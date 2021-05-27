@@ -3,10 +3,10 @@
 The report contains:
 
 - Original count data used
-- Results of the curve fitting
+- Results of the dose-effect fitting
 - Summary statistics
-- Detection limits
-- Curve plot
+- Irradiation conditions
+- Dose-effect plot
 
-The report can be downloaded in `.HTML` and `.DOCX`. The `.HTML` report allows the user to download the `RDS` object with the fitting results.
+The report can be downloaded in `.PDF` and `.DOCX`.
 
