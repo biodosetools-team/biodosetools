@@ -5,6 +5,7 @@
 * Major simplification of report rendering process; abandoned HTML output.
 * Added custom {pkgdown} theme for more consistent branding.
 * Added preliminary citation to README.
+* Moved packages required only for reports to `Suggests` field in `DESCRIPTION` file.
 
 ## New features
 
@@ -29,6 +30,7 @@
 
 * `inner_column()`, to fix padding of boxes inside columns.
 * `widget_sep()`, to insert `div(class = "widget-sep", br())` calls.
+* `widget_sep_vert()` to insert `div(style = "height: 8px;")` calls.
 * `names_from_model_formula()`, to parse `rhandsontable()` Unicode row and column coefficient names.
 * `parse_model_formula()` to get raw and TeX formulae from `model_formula`.
 * `calculate_trans_rate_sigurdson()` and `calculate_trans_rate_manual()` to calculate translocation rates.
@@ -63,6 +65,7 @@
 * Replaced `column(width = X)` calls by `col_X()` in UI modules.
 * Added `tabitem-container` class to `tabItem()` page containers for fixed `max-width` while keeping responsive UI.
 * Added `col-inner-textinput-*` CSS classes for Irradiation conditions `textInput()` widgets' containers.
+* Added `sep-widget-download` and `sep-widget-format` CSS classes to unify download and format select buttons into a single widget.
 
 
 # biodosetools 3.4.0 (2020-10-11)
