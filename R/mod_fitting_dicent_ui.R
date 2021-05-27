@@ -270,13 +270,17 @@ mod_fitting_dicent_ui <- function(id, label) {
             widget_sep()
           )
         ),
-        downloadButton(ns("save_count_data"), class = "side-widget", "Save count data"),
+        downloadButton(
+          ns("save_count_data"),
+          class = "side-widget-download",
+          label = "Save count data"
+        ),
         div(
-          class = "side-widget-tall",
+          class = "side-widget-format",
           selectInput(
             ns("save_count_data_format"),
             label = NULL,
-            width = "85px",
+            width = "75px",
             choices = list(".csv", ".tex"),
             selected = ".csv"
           )
@@ -388,22 +392,30 @@ mod_fitting_dicent_ui <- function(id, label) {
           ),
 
           # Download fit data & report
-          downloadButton(ns("save_fit_data"), class = "side-widget", "Save fitting data"),
+          downloadButton(
+            ns("save_fit_data"),
+            class = "side-widget-download",
+            label = "Save fitting data"
+          ),
           div(
-            class = "side-widget-tall",
+            class = "side-widget-format",
             selectInput(
               ns("save_fit_data_format"),
               label = NULL,
-              width = "85px",
+              width = "75px",
               choices = list(".rds"),
               selected = ".rds"
             )
           ),
+          widget_sep_vert(),
           # Download report
-          widget_sep(),
-          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+          downloadButton(
+            ns("save_report"),
+            class = "export-button side-widget-download",
+            label = "Download report"
+          ),
           div(
-            class = "side-widget-tall",
+            class = "side-widget-format",
             selectInput(
               ns("save_report_format"),
               label = NULL,
@@ -422,15 +434,21 @@ mod_fitting_dicent_ui <- function(id, label) {
         collapsible = TRUE,
 
         # Plot
-        plotOutput(ns("plot")),
+        plotOutput(
+          ns("plot")
+        ),
         # Download plot
-        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        downloadButton(
+          ns("save_plot"),
+          class = "results-button side-widget-download",
+          label = "Save plot"
+        ),
         div(
-          class = "side-widget-tall",
+          class = "side-widget-format",
           selectInput(
             ns("save_plot_format"),
             label = NULL,
-            width = "85px",
+            width = "75px",
             choices = list(".png", ".pdf"),
             selected = ".png"
           )
