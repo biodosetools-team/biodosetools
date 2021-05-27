@@ -64,3 +64,8 @@ widget_label <- function(label, margin_bottom = 0, font_size = 14) {
 widget_sep <- function() {
   div(class = "widget-sep", br())
 }
+
+#' @noRd
+widget_sep_vert <- function() {
+  div(style = "height: 8px;")
+}
