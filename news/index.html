@@ -133,6 +133,7 @@
 <li>Major simplification of report rendering process; abandoned HTML output.</li>
 <li>Added custom {pkgdown} theme for more consistent branding.</li>
 <li>Added preliminary citation to README.</li>
+<li>Moved packages required only for reports to <code>Suggests</code> field in <code>DESCRIPTION</code> file.</li>
 </ul>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
@@ -168,6 +169,8 @@
 <code>inner_column()</code>, to fix padding of boxes inside columns.</li>
 <li>
 <code>widget_sep()</code>, to insert <code>div(class = "widget-sep", br())</code> calls.</li>
+<li>
+<code>widget_sep_vert()</code> to insert <code>div(style = "height: 8px;")</code> calls.</li>
 <li>
 <code>names_from_model_formula()</code>, to parse <code>rhandsontable()</code> Unicode row and column coefficient names.</li>
 <li>
@@ -218,6 +221,7 @@
 <li>Replaced <code>column(width = X)</code> calls by <code>col_X()</code> in UI modules.</li>
 <li>Added <code>tabitem-container</code> class to <code>tabItem()</code> page containers for fixed <code>max-width</code> while keeping responsive UI.</li>
 <li>Added <code>col-inner-textinput-*</code> CSS classes for Irradiation conditions <code>textInput()</code> widgets’ containers.</li>
+<li>Added <code>sep-widget-download</code> and <code>sep-widget-format</code> CSS classes to unify download and format select buttons into a single widget.</li>
 </ul>
 </div>
 </div>
