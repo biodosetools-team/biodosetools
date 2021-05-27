@@ -42,7 +42,26 @@
 .side-widget-tall {
   display: inline-block;
   vertical-align: bottom;
-  margin-bottom: -20px;
+  margin-bottom: -21px;
+}
+
+.side-widget-download {
+  display: inline-block;
+  vertical-align: top;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.side-widget-format {
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -21px;
+  margin-left: -5px;
+
+  .selectize-input {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
 }
 
 .widget-sep {
