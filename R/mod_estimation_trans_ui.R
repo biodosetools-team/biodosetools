@@ -90,7 +90,8 @@ mod_estimation_trans_ui <- function(id, label) {
               actionButton(
                 ns("button_gen_table"),
                 class = "options-button",
-                style = "margin-left: -10px; margin-bottom: 2px;", "Generate tables"
+                style = "margin-left: -10px; margin-bottom: 0px;",
+                label = "Generate tables"
               ),
 
               br(),
@@ -857,9 +858,13 @@ mod_estimation_trans_ui <- function(id, label) {
           ),
 
           # Download report
-          downloadButton(ns("save_report"), class = "export-button", "Download report"),
+          downloadButton(
+            ns("save_report"),
+            class = "export-button side-widget-download",
+            label = "Download report"
+          ),
           div(
-            class = "side-widget-tall",
+            class = "side-widget-format",
             selectInput(
               ns("save_report_format"),
               label = NULL,
@@ -880,13 +885,17 @@ mod_estimation_trans_ui <- function(id, label) {
         # Plot
         plotOutput(ns("plot")),
         # Download plot
-        downloadButton(ns("save_plot"), class = "results-button side-widget", "Save plot"),
+        downloadButton(
+          ns("save_plot"),
+          class = "results-button side-widget-download",
+          label = "Save plot"
+        ),
         div(
-          class = "side-widget-tall",
+          class = "side-widget-format",
           selectInput(
             ns("save_plot_format"),
             label = NULL,
-            width = "85px",
+            width = "75px",
             choices = list(".png", ".pdf"),
             selected = ".png"
           )
