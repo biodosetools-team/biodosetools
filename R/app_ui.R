@@ -152,7 +152,8 @@ dashboard_home <- function() {
 
         # GitHub icon
         actionButton(
-          inputId = "github_link", label = "Source code",
+          inputId = "github_link",
+          label = "Source code",
           icon = icon("github"),
           class = "home-button",
           onclick = "window.open('https://github.com/biodosetools-team/biodosetools/', '_blank')"
@@ -161,7 +162,8 @@ dashboard_home <- function() {
 
         # Wiki/Documentation icon
         actionButton(
-          inputId = "wiki_link", label = "Documentation",
+          inputId = "wiki_link",
+          label = "Documentation",
           icon = icon("book"),
           class = "home-button",
           onclick = "window.open('https://biodosetools-team.github.io/documentation/', '_blank')"
@@ -170,7 +172,8 @@ dashboard_home <- function() {
 
         # Report bugs
         actionButton(
-          inputId = "wiki_link", label = "Report issue",
+          inputId = "wiki_link",
+          label = "Report issue",
           icon = icon("bug"),
           class = "home-button",
           onclick = "window.open('https://github.com/biodosetools-team/biodosetools/issues/new/', '_blank')"

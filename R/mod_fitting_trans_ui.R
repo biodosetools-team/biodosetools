@@ -103,7 +103,11 @@ mod_fitting_trans_ui <- function(id, label) {
             ),
 
             br(),
-            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+            actionButton(
+              ns("button_upd_chrom_table"),
+              class = "options-button",
+              label = "Generate table"
+            )
           )
         )
       ),
@@ -127,7 +131,7 @@ mod_fitting_trans_ui <- function(id, label) {
               actionButton(
                 ns("button_calc_genome_fraction"),
                 class = "inputs-button",
-                "Calculate fraction"
+                label = "Calculate fraction"
               )
             )
           )
@@ -231,12 +235,20 @@ mod_fitting_trans_ui <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_count_data_check",
               ns = ns,
-              numericInput(ns("num_doses"), "Number of doses", value = 11)
+              numericInput(
+                ns("num_doses"),
+                label = "Number of doses",
+                value = 11
+              )
             ),
             conditionalPanel(
               condition = "!input.load_count_data_check & !input.use_aggr_count_data_check",
               ns = ns,
-              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
+              numericInput(
+                ns("num_aberrs"),
+                label = "Maximum number of translocations per cell",
+                value = 5
+              )
             ),
             # Load from file ----
             conditionalPanel(
@@ -249,7 +261,11 @@ mod_fitting_trans_ui <- function(id, label) {
               )
             ),
             # Buttons
-            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
+            actionButton(
+              ns("button_upd_table"),
+              class = "options-button",
+              label = "Generate table"
+            )
           )
         )
       ),
@@ -324,7 +340,11 @@ mod_fitting_trans_ui <- function(id, label) {
               selected = "automatic"
             ) # ,
             # Decision thresholds
-            # textInput(ns("decision_threshold_cells"), "Cells for decision thresholds", value = "150 500 1000")
+            # textInput(
+            #   ns("decision_threshold_cells"),
+            #   label ="Cells for decision thresholds",
+            #   value = "150 500 1000"
+            # )
           )
         )
       )
@@ -409,7 +429,11 @@ mod_fitting_trans_ui <- function(id, label) {
           conditionalPanel(
             condition = "!input.use_aggr_count_data_check",
             ns = ns,
-            actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters"),
+            actionButton(
+              ns("button_upd_params"),
+              class = "inputs-button",
+              label = "Calculate parameters"
+            ),
             widget_sep()
           )
         ),
@@ -429,7 +453,11 @@ mod_fitting_trans_ui <- function(id, label) {
           )
         ),
         widget_sep_vert(),
-        actionButton(ns("button_fit"), class = "inputs-button", "Calculate fitting"),
+        actionButton(
+          ns("button_fit"),
+          class = "inputs-button",
+          label = "Calculate fitting"
+        ),
         div(
           class = "side-widget-tall",
           # Translocation frequency

@@ -155,11 +155,19 @@ mod_estimation_trans_ui <- function(id, label) {
             conditionalPanel(
               condition = "input.load_fit_data_check",
               ns = ns,
-              fileInput(ns("load_fit_data"), label = "File input", accept = c(".rds"))
+              fileInput(
+                ns("load_fit_data"),
+                label = "File input",
+                accept = c(".rds")
+              )
             ),
 
             # Buttons
-            actionButton(ns("button_view_fit_data"), class = "options-button", "Preview data")
+            actionButton(
+              ns("button_view_fit_data"),
+              class = "options-button",
+              label = "Preview data"
+            )
           )
         )
       ),
@@ -301,7 +309,11 @@ mod_estimation_trans_ui <- function(id, label) {
             ),
 
             br(),
-            actionButton(ns("button_upd_chrom_table"), class = "options-button", "Generate table")
+            actionButton(
+              ns("button_upd_chrom_table"),
+              class = "options-button",
+              "Generate table"
+            )
           )
         )
       ),
@@ -325,7 +337,7 @@ mod_estimation_trans_ui <- function(id, label) {
               actionButton(
                 ns("button_calc_genome_fraction"),
                 class = "inputs-button",
-                "Calculate fraction"
+                label = "Calculate fraction"
               )
             )
           )
@@ -419,13 +431,25 @@ mod_estimation_trans_ui <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_case_data_check",
               ns = ns,
-              # numericInput(ns("num_cases"), "Number of cases", value = 1),
-              numericInput(ns("num_aberrs"), "Maximum number of translocations per cell", value = 5)
+              # numericInput(
+              #   ns("num_cases"),
+              #   label = "Number of cases",
+              #   value = 1
+              # ),
+              numericInput(
+                ns("num_aberrs"),
+                label = "Maximum number of translocations per cell",
+                value = 5
+              )
             ),
             conditionalPanel(
               condition = "input.load_case_data_check",
               ns = ns,
-              fileInput(ns("load_case_data"), label = "File input", accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat"))
+              fileInput(
+                ns("load_case_data"),
+                label = "File input",
+                accept = c("txt/csv", "text/comma-separated-values", "text/plain", ".csv", ".txt", ".dat")
+              )
             ),
 
             # Confounders selection
@@ -458,7 +482,11 @@ mod_estimation_trans_ui <- function(id, label) {
             ),
 
             # Buttons
-            actionButton(ns("button_upd_table"), class = "options-button", "Generate table")
+            actionButton(
+              ns("button_upd_table"),
+              class = "options-button",
+              label = "Generate table"
+            )
           )
         )
       ),
@@ -575,7 +603,11 @@ mod_estimation_trans_ui <- function(id, label) {
           ),
           # Button
           br(),
-          actionButton(ns("button_upd_params"), class = "inputs-button", "Calculate parameters")
+          actionButton(
+            ns("button_upd_params"),
+            class = "inputs-button",
+            label = "Calculate parameters"
+          )
         ),
 
         # Box: Estimation options ----
@@ -815,7 +847,11 @@ mod_estimation_trans_ui <- function(id, label) {
             br()
           ),
 
-          actionButton(ns("button_estimate"), class = "options-button", "Estimate dose")
+          actionButton(
+            ns("button_estimate"),
+            class = "options-button",
+            label = "Estimate dose"
+          )
         )
       )
     ),
