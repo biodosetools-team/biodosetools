@@ -91,7 +91,7 @@ mod_fitting_micro_ui <- function(id, label) {
               numericInput(
                 ns("num_doses"),
                 label = "Number of doses",
-                value = 11
+                value = 10
               )
             ),
             conditionalPanel(

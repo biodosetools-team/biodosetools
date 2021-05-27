@@ -238,7 +238,7 @@ mod_fitting_trans_ui <- function(id, label) {
               numericInput(
                 ns("num_doses"),
                 label = "Number of doses",
-                value = 11
+                value = 10
               )
             ),
             conditionalPanel(
