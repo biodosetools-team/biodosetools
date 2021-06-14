@@ -204,6 +204,11 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   # Calculate variance of lambda
   disp <- case_data[["DI"]]
 
+  # Correct value when there's no aberrations
+  if (is.nan(disp) | is.na(disp)) {
+    disp <- Inf
+  }
+
   if (disp >= 1) {
     # Use empirical error sqrt(var / N) if disp >= 1
     if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
