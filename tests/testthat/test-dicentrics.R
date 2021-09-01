@@ -2,7 +2,7 @@
 
 test_that("fit with full count data works", {
   # Example from IAEA (2011)
-  dic_count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
+  dic_count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
     utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 

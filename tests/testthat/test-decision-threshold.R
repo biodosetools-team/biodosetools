@@ -4,7 +4,7 @@ test_that("calculate_decision_threshold_* for dicentrics work", {
   fit_results_list <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
     readRDS()
 
-  count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
+  count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
     utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 
@@ -31,7 +31,7 @@ test_that("calculate_decision_threshold_* for translocations work", {
   fit_results_list <- app_sys("extdata", "translocations-fitting-data-2020-10-10.rds") %>%
     readRDS()
 
-  count_data <- app_sys("extdata", "count-data-IAEA.csv") %>%
+  count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
     utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 
