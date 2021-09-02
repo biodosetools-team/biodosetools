@@ -71,7 +71,7 @@ test_that("fit with full count data works", {
 
 test_that("fit with aggregated count data works", {
   # Example from IAEA (2011)
-  dic_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
+  dic_count_data <- app_sys("extdata", "count-data-barquinero-1995-aggr.csv") %>%
     utils::read.csv() %>%
     dplyr::mutate(
       D = as.numeric(.data$D)
