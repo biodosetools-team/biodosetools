@@ -59,14 +59,14 @@ test_that("calculate_genome_fraction works", {
 
 test_that("fit with full count data works", {
   # Example from IAEA (2011)
-  trans_count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
+  trans_count_data <- app_sys("extdata", "count-data-rodriguez-2004.csv") %>%
     utils::read.csv() %>%
     calculate_aberr_table(type = "count")
 
   # Expected outputs
-  expect_equal(trans_count_data$N, c(5000L, 5002L, 2008L, 2002L, 1832L, 1168L, 562L, 333L, 193L, 103L, 59L))
-  expect_equal(trans_count_data$X, c(8L, 14L, 22L, 55L, 100L, 109L, 100L, 103L, 108L, 103L, 107L))
-  expect_equal(which(unname(trans_count_data$u) > 1.96), c(3))
+  expect_equal(trans_count_data$N, c(4356L, 3324L, 3069L, 3072L, 2111L, 2124L, 1043L, 718L, 781L, 397L, 395L))
+  expect_equal(trans_count_data$X, c(6L, 15L, 18L, 33L, 40L, 50L, 56L, 71L, 157L, 147L, 180L))
+  expect_equal(which(unname(trans_count_data$u) > 1.96), c(9))
 
   # Fitting (glm)
   model_formula <- list_fitting_formulas()[[1]]
@@ -90,7 +90,7 @@ test_that("fit with full count data works", {
   expect_gt(ncol(trans_count_data), 3)
   expect_equal(fit_results_list$fit_raw_data, as.matrix(trans_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
-  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -2.52)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
 
   # Fitting (maxlik)
@@ -110,7 +110,7 @@ test_that("fit with full count data works", {
 
 test_that("fit with aggregated count data works", {
   # Example from IAEA (2011)
-  trans_count_data <- app_sys("extdata", "count-data-aggr-IAEA.csv") %>%
+  trans_count_data <- app_sys("extdata", "count-data-rodriguez-2004-aggr.csv") %>%
     utils::read.csv() %>%
     dplyr::mutate(
       D = as.numeric(.data$D)
@@ -118,8 +118,8 @@ test_that("fit with aggregated count data works", {
 
   # Expected outputs
   expect_equal(ncol(trans_count_data), 3)
-  expect_equal(trans_count_data$N, c(5000L, 5002L, 2008L, 2002L, 1832L, 1168L, 562L, 333L, 193L, 103L, 59L))
-  expect_equal(trans_count_data$X, c(8L, 14L, 22L, 55L, 100L, 109L, 100L, 103L, 108L, 103L, 107L))
+  expect_equal(trans_count_data$N, c(4356L, 3324L, 3069L, 3072L, 2111L, 2124L, 1043L, 718L, 781L, 397L, 395L))
+  expect_equal(trans_count_data$X, c(6L, 15L, 18L, 33L, 40L, 50L, 56L, 71L, 157L, 147L, 180L))
 
   # Fitting (glm)
   model_formula <- list_fitting_formulas()[[1]]
@@ -144,7 +144,7 @@ test_that("fit with aggregated count data works", {
   expect_equal(fit_results_list$fit_algorithm, "glm")
   expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
   expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
-  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -2.52)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
 
   # Fitting (maxlik)
