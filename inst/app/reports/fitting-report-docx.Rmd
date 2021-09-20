@@ -101,9 +101,10 @@ if (aberr_module == "translocations") {
 
 ```{r count-data, echo=FALSE}
 data <- count_data %>%
-  biodosetools:::fix_count_data_names(type = "count", output = "kable") %>%
-  render_table(align = "c")
+  biodosetools:::fix_count_data_names(type = "count", output = "kable")
 
+data %>% 
+  render_table(align = "c")
 # TODO: handle u > 1.96 highlighting
 ```
 
