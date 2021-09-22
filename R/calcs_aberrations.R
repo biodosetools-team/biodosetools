@@ -169,8 +169,8 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
         X = calculate_aberr_power(., power = 1),
         X2 = calculate_aberr_power(., power = 2),
         var = calculate_aberr_var(.data$X, .data$X2, .data$N),
-        std_err = sqrt(.data$var / .data$N),
         mean = calculate_aberr_mean(.data$X, .data$N),
+        std_err = sqrt(.data$var / .data$N),
         DI = calculate_aberr_disp_index(.data$mean, .data$var),
         u = calculate_aberr_u_value(.data$X, .data$N, .data$mean, .data$var, assessment_u = assessment_u)
       ) %>%

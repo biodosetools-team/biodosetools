@@ -136,11 +136,10 @@ test_that("processing case data works", {
 
   # Specific to dicentrics/micronuclei
   case_data <- case_data %>%
-    dplyr::mutate(
+    dplyr::rename(
       y = .data$mean,
       y_err = .data$std_err
-    ) %>%
-    dplyr::select(-.data$mean, -.data$std_err)
+    )
 
   # Colnames validation
   case_data_cols <- colnames(case_data)
@@ -149,7 +148,7 @@ test_that("processing case data works", {
   # Expected outcomes
   expect_equal(case_data_cols[1:2], c("N", "X"))
   expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 4, 1)])))
-  expect_equal(case_data_cols[seq(case_data_cols_len - 3, case_data_cols_len, 1)], c("DI", "u", "y", "y_err"))
+  expect_equal(case_data_cols[seq(case_data_cols_len - 3, case_data_cols_len, 1)], c("y", "y_err", "DI", "u"))
 
   # Dose estimation
   aberr_module <- "dicentrics"

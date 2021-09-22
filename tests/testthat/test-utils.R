@@ -122,11 +122,10 @@ test_that("fix_count_data_names for case data works", {
   genome_fraction <- 0.585
 
   case_data <- case_data %>%
-    dplyr::mutate(
+    dplyr::rename(
       Fp = .data$mean,
       Fp_err = .data$std_err
     ) %>%
-    dplyr::select(-.data$mean, -.data$std_err) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(
         # "sigurdson" ~ calculate_trans_rate_sigurdson(...),
@@ -148,7 +147,7 @@ test_that("fix_count_data_names for case data works", {
   )
   expect_equal(
     case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)],
-    c("$\\sigma^{2} / \\bar{y}$", "$u$", "$F_{P}$", "$\\sigma_{P} / \\sqrt{N}$", "$X_{C}$", "$F_{G}$", "$\\sigma_{G} / \\sqrt{N}$")
+    c("$F_{P}$", "$\\sigma_{P} / \\sqrt{N}$", "$\\sigma^{2} / \\bar{y}$", "$u$", "$X_{C}$", "$F_{G}$", "$\\sigma_{G} / \\sqrt{N}$")
   )
 })
 

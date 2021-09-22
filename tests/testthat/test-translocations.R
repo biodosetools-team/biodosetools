@@ -179,11 +179,10 @@ test_that("processing case data works", {
   genome_fraction <- 0.585
 
   case_data <- case_data %>%
-    dplyr::mutate(
+    dplyr::rename(
       Fp = .data$mean,
       Fp_err = .data$std_err
     ) %>%
-    dplyr::select(-.data$mean, -.data$std_err) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(
         # "sigurdson" ~ calculate_trans_rate_sigurdson(...),
@@ -201,7 +200,7 @@ test_that("processing case data works", {
   # Expected outcomes
   expect_equal(case_data_cols[1:2], c("N", "X"))
   expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 7, 1)])))
-  expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("DI", "u", "Fp", "Fp_err", "Xc", "Fg", "Fg_err"))
+  expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("Fp", "Fp_err", "DI", "u", "Xc", "Fg", "Fg_err"))
 
   # Dose estimation
   aberr_module <- "translocations"
