@@ -272,6 +272,20 @@ plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_ma
       yield_upp = calculate_yield(.data$dose, type = "upper", general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int_curve)
     )
 
+  # Parse assessment legend
+  browser()
+  color_breaks <- c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2")
+  color_labels <- c(
+    paste("Whole-body", conf_int_text_whole),
+    paste("Partial-body", conf_int_text_partial),
+    paste("Heterogeneous 1", conf_int_text_hetero),
+    paste("Heterogeneous 2", conf_int_text_hetero)
+  )
+  color_indices <- est_full_doses$type %>%
+    unique() %>%
+    paste(collapse = "|") %>%
+    grep(color_breaks)
+
   # Make base plot
   gg_curve <- ggplot2::ggplot(curves_data) +
     # Fitted curve
@@ -307,13 +321,8 @@ plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_ma
       ) %>%
         .[1:4] %>%
         `names<-`(c("Partial-body", "Heterogeneous 1", "Heterogeneous 2", "Whole-body")),
-      breaks = c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2"),
-      labels = c(
-        paste("Whole-body", conf_int_text_whole),
-        paste("Partial-body", conf_int_text_partial),
-        paste("Heterogeneous 1", conf_int_text_hetero),
-        paste("Heterogeneous 2", conf_int_text_hetero)
-      )
+      breaks = color_breaks[color_indices],
+      labels = color_labels[color_indices]
     ) +
     # Estimation level
     ggplot2::scale_shape_manual(
