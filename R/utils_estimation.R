@@ -273,7 +273,6 @@ plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_ma
     )
 
   # Parse assessment legend
-  browser()
   color_breaks <- c("Whole-body", "Partial-body", "Heterogeneous 1", "Heterogeneous 2")
   color_labels <- c(
     paste("Whole-body", conf_int_text_whole),
