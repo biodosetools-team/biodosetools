@@ -225,6 +225,7 @@ test_that("processing case data works", {
     gamma = 1 / 2.7
   )
 
+  set.seed(1)
   results_hetero <- estimate_hetero(
     case_data,
     fit_coeffs,
