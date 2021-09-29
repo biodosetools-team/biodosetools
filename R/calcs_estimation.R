@@ -40,8 +40,8 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' Whole-body dose estimation using Merkle's method.
 #'
 #' @param case_data Case data in data frame form
-#' @param conf_int_yield Confidence interval of the yield
-#' @param conf_int_curve Confidence interval of the curve
+#' @param conf_int_yield Confidence interval of the yield, 83% by default
+#' @param conf_int_curve Confidence interval of the curve, 83% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
@@ -50,7 +50,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield, conf_int_curve, protracted_g_value, genome_fraction = 1, aberr_module) {
+estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve  = 0.83, protracted_g_value, genome_fraction = 1, aberr_module) {
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -134,7 +134,8 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
   # Return objects
   results_list <- list(
     est_doses = est_doses,
-    AIC = AIC
+    AIC = AIC,
+    conf_int = c(yield = conf_int_yield, curve = conf_int_curve)
   )
 
   return(results_list)
@@ -147,7 +148,7 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval
+#' @param conf_int Confidence interval, 95% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param aberr_module Aberration module
@@ -155,7 +156,7 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
 #' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                      conf_int, protracted_g_value, cov = TRUE, aberr_module) {
+                                      conf_int = 0.95, protracted_g_value, cov = TRUE, aberr_module) {
   # Parse parameters and coefficients
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
@@ -270,7 +271,8 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   # Return objects
   results_list <- list(
     est_doses = est_doses,
-    AIC = AIC
+    AIC = AIC,
+    conf_int = conf_int
   )
 
   return(results_list)
@@ -283,7 +285,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval
+#' @param conf_int Confidence interval, 95% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param genome_fraction Genomic fraction used in translocations, else 1
@@ -293,7 +295,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
 estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                     conf_int, protracted_g_value, cov = TRUE,
+                                     conf_int = 0.95, protracted_g_value, cov = TRUE,
                                      genome_fraction = 1, aberr_module, gamma) {
 
   # Function to get the fisher information matrix
@@ -496,7 +498,8 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
   results_list <- list(
     est_doses = est_doses,
     est_frac = est_frac,
-    AIC = AIC
+    AIC = AIC,
+    conf_int = conf_int
   )
 
   return(results_list)
@@ -814,7 +817,8 @@ estimate_hetero <- function(case_data, fit_coeffs, fit_var_cov_mat,
     est_yields = est_yields,
     est_doses = est_doses,
     est_frac = est_frac,
-    AIC = AIC
+    AIC = AIC,
+    conf_int = c(yield = conf_int_yield, curve = conf_int_curve)
   )
 
   return(results_list)
