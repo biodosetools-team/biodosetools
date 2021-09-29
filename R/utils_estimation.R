@@ -228,25 +228,65 @@ correct_boundary <- function(x) {
 
 # Curve function ----
 
+#' @noRd
+parse_conf_int_text <- function(conf_int) {
+  if (length(conf_int) == 1) {
+    conf_int_text <- paste0("(", round(100 * conf_int, 0), "%", ")")
+  } else if (length(conf_int) == 2) {
+    conf_int_text <- paste0(
+      "(", round(100 * conf_int[["curve"]], 0), "%",
+      "-", round(100 * conf_int[["yield"]], 0), "%", ")"
+    )
+  } else {
+    conf_int_text <- NULL
+  }
+  return(conf_int_text)
+}
+
 #' Plot dose estimation curve
 #'
-#' @param est_full_doses Data frame with yields and dose estimations. It requires dose, yield, type, level columns
-#' @param protracted_g_value Protracted G(x) value
-#' @param conf_int_yield Confidence interval of the yield
-#' @param conf_int_curve Confidence interval of the curve
+#' @param est_doses List of dose estimations results from \code{estimate_*()} family of functions
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int_text_whole Text to display confidence interval for whole-body estimation
-#' @param conf_int_text_partial Text to display confidence interval for partial-body estimation
-#' @param conf_int_text_hetero Text to display confidence interval for heterogeneous estimation
+#' @param protracted_g_value Protracted G(x) value
+#' @param conf_int_curve Confidence interval of the curve
 #' @param aberr_name Name of the aberration to use in the y-axis
 #'
 #' @return ggplot object
 #' @export
-plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_mat,
-                                      protracted_g_value, conf_int_yield, conf_int_curve,
-                                      conf_int_text_whole, conf_int_text_partial, conf_int_text_hetero,
+plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
+                                      protracted_g_value, conf_int_curve,
                                       aberr_name) {
+  # Parse dose estimation list
+  methods <- names(est_doses)
+
+  est_full_doses <- data.frame(
+    dose = c(
+      if ("whole" %in% methods) est_doses$whole$est_doses[["dose"]],
+      if ("partial" %in% methods) est_doses$partial$est_doses[["dose"]],
+      if ("hetero" %in% methods) est_doses$hetero$est_doses[["dose1"]],
+      if ("hetero" %in% methods) est_doses$hetero$est_doses[["dose2"]]
+    ),
+    yield = c(
+      if ("whole" %in% methods) est_doses$whole$est_doses[["yield"]],
+      if ("partial" %in% methods) est_doses$partial$est_doses[["yield"]],
+      if ("hetero" %in% methods) est_doses$hetero$est_yields[["yield1"]],
+      if ("hetero" %in% methods) est_doses$hetero$est_yields[["yield2"]]
+    ),
+    type = c(
+      if ("whole" %in% methods) rep("Whole-body", 3),
+      if ("partial" %in% methods) rep("Partial-body", 3),
+      if ("hetero" %in% methods) rep("Heterogeneous 1", 3),
+      if ("hetero" %in% methods) rep("Heterogeneous 2", 3)
+    ),
+    level = c("Lower", "Estimate", "Upper")
+  )
+
+  # Parse confidence intervals
+  conf_int_text_whole <- parse_conf_int_text(est_doses$whole$conf_int)
+  conf_int_text_partial <- parse_conf_int_text(est_doses$partial$conf_int)
+  conf_int_text_hetero <- parse_conf_int_text(est_doses$hetero$conf_int)
+
   # Rightmost limit of the plot
   max_dose <- 1.05 * est_full_doses[["dose"]] %>%
     ifelse(is.na(.), 0, .) %>%
@@ -257,10 +297,9 @@ plot_estimated_dose_curve <- function(est_full_doses, fit_coeffs, fit_var_cov_ma
   general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
   # Correct CIs
+  # TODO: parse from est_doses
   conf_int_curve <- conf_int_curve %>%
     correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "curve")
-  conf_int_yield <- conf_int_yield %>%
-    correct_conf_int(general_fit_var_cov_mat, protracted_g_value, type = "yield")
 
   # Plot data from curves
   curves_data <- data.frame(
