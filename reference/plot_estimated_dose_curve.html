@@ -131,15 +131,11 @@
     </div>
 
     <pre class="usage"><span class='fu'>plot_estimated_dose_curve</span><span class='op'>(</span>
-  <span class='va'>est_full_doses</span>,
+  <span class='va'>est_doses</span>,
   <span class='va'>fit_coeffs</span>,
   <span class='va'>fit_var_cov_mat</span>,
   <span class='va'>protracted_g_value</span>,
-  <span class='va'>conf_int_yield</span>,
   <span class='va'>conf_int_curve</span>,
-  <span class='va'>conf_int_text_whole</span>,
-  <span class='va'>conf_int_text_partial</span>,
-  <span class='va'>conf_int_text_hetero</span>,
   <span class='va'>aberr_name</span>
 <span class='op'>)</span></pre>
 
@@ -147,8 +143,8 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>est_full_doses</th>
-      <td><p>Data frame with yields and dose estimations. It requires dose, yield, type, level columns</p></td>
+      <th>est_doses</th>
+      <td><p>List of dose estimations results from <code>estimate_*()</code> family of functions</p></td>
     </tr>
     <tr>
       <th>fit_coeffs</th>
@@ -163,24 +159,8 @@
       <td><p>Protracted G(x) value</p></td>
     </tr>
     <tr>
-      <th>conf_int_yield</th>
-      <td><p>Confidence interval of the yield</p></td>
-    </tr>
-    <tr>
       <th>conf_int_curve</th>
       <td><p>Confidence interval of the curve</p></td>
-    </tr>
-    <tr>
-      <th>conf_int_text_whole</th>
-      <td><p>Text to display confidence interval for whole-body estimation</p></td>
-    </tr>
-    <tr>
-      <th>conf_int_text_partial</th>
-      <td><p>Text to display confidence interval for partial-body estimation</p></td>
-    </tr>
-    <tr>
-      <th>conf_int_text_hetero</th>
-      <td><p>Text to display confidence interval for heterogeneous estimation</p></td>
     </tr>
     <tr>
       <th>aberr_name</th>
