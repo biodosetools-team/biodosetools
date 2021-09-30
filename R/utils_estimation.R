@@ -227,21 +227,6 @@ correct_boundary <- function(x) {
 
 # Curve function ----
 
-#' @noRd
-parse_conf_int_text <- function(conf_int) {
-  if (length(conf_int) == 1) {
-    conf_int_text <- paste0("(", round(100 * conf_int, 0), "%", ")")
-  } else if (length(conf_int) == 2) {
-    conf_int_text <- paste0(
-      "(", round(100 * conf_int[["curve"]], 0), "%",
-      "-", round(100 * conf_int[["yield"]], 0), "%", ")"
-    )
-  } else {
-    conf_int_text <- NULL
-  }
-  return(conf_int_text)
-}
-
 #' Plot dose estimation curve
 #'
 #' @param est_doses List of dose estimations results from \code{estimate_*()} family of functions
@@ -256,27 +241,29 @@ parse_conf_int_text <- function(conf_int) {
 plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
                                       protracted_g_value, conf_int_curve,
                                       aberr_name) {
-  # Parse dose estimation list
-  methods <- names(est_doses)
+  # Validate est_doses names
+  assessments <- names(est_doses)
+  match_names(assessments, c("whole", "partial", "hetero"))
 
+  # Parse dose estimation list
   est_full_doses <- data.frame(
     dose = c(
-      if ("whole" %in% methods) est_doses$whole$est_doses[["dose"]],
-      if ("partial" %in% methods) est_doses$partial$est_doses[["dose"]],
-      if ("hetero" %in% methods) est_doses$hetero$est_doses[["dose1"]],
-      if ("hetero" %in% methods) est_doses$hetero$est_doses[["dose2"]]
+      if ("whole" %in% assessments) est_doses$whole$est_doses[["dose"]],
+      if ("partial" %in% assessments) est_doses$partial$est_doses[["dose"]],
+      if ("hetero" %in% assessments) est_doses$hetero$est_doses[["dose1"]],
+      if ("hetero" %in% assessments) est_doses$hetero$est_doses[["dose2"]]
     ),
     yield = c(
-      if ("whole" %in% methods) est_doses$whole$est_doses[["yield"]],
-      if ("partial" %in% methods) est_doses$partial$est_doses[["yield"]],
-      if ("hetero" %in% methods) est_doses$hetero$est_yields[["yield1"]],
-      if ("hetero" %in% methods) est_doses$hetero$est_yields[["yield2"]]
+      if ("whole" %in% assessments) est_doses$whole$est_doses[["yield"]],
+      if ("partial" %in% assessments) est_doses$partial$est_doses[["yield"]],
+      if ("hetero" %in% assessments) est_doses$hetero$est_yields[["yield1"]],
+      if ("hetero" %in% assessments) est_doses$hetero$est_yields[["yield2"]]
     ),
     type = c(
-      if ("whole" %in% methods) rep("Whole-body", 3),
-      if ("partial" %in% methods) rep("Partial-body", 3),
-      if ("hetero" %in% methods) rep("Heterogeneous 1", 3),
-      if ("hetero" %in% methods) rep("Heterogeneous 2", 3)
+      if ("whole" %in% assessments) rep("Whole-body", 3),
+      if ("partial" %in% assessments) rep("Partial-body", 3),
+      if ("hetero" %in% assessments) rep("Heterogeneous 1", 3),
+      if ("hetero" %in% assessments) rep("Heterogeneous 2", 3)
     ),
     level = c("Lower", "Estimate", "Upper")
   )

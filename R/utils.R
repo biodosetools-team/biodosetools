@@ -227,3 +227,28 @@ generalise_fit_var_cov_mat <- function(fit_var_cov_mat) {
 
   return(general_fit_var_cov_mat)
 }
+
+#' Parse confidence intervals into text form
+#' @noRd
+parse_conf_int_text <- function(conf_int) {
+  if (length(conf_int) == 1) {
+    conf_int_text <- paste0("(", round(100 * conf_int, 0), "%", ")")
+  } else if (length(conf_int) == 2) {
+    conf_int_text <- paste0(
+      "(", round(100 * conf_int[["curve"]], 0), "%",
+      "-", round(100 * conf_int[["yield"]], 0), "%", ")"
+    )
+  } else {
+    conf_int_text <- NULL
+  }
+  return(conf_int_text)
+}
+
+#' Validate names
+#' @noRd
+match_names <- function(x, lookup) {
+  unmatched <- x[-grep(paste(lookup, collapse = "|"), x)]
+  if (length(unmatched) > 0) {
+    stop("Valid names are ", paste(lookup, collapse = ", "))
+  }
+}
