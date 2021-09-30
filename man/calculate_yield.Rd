@@ -24,7 +24,7 @@ calculate_yield(
 
 \item{protracted_g_value}{Protracted G(x) value}
 
-\item{conf_int}{Confidence interval}
+\item{conf_int}{Curve confidence interval}
 }
 \value{
 Yield

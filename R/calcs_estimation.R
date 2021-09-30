@@ -40,8 +40,8 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' Whole-body dose estimation using Merkle's method.
 #'
 #' @param case_data Case data in data frame form
-#' @param conf_int_yield Confidence interval of the yield, 83% by default
-#' @param conf_int_curve Confidence interval of the curve, 83% by default
+#' @param conf_int_yield Confidence interval of the yield, 83\% by default
+#' @param conf_int_curve Confidence interval of the curve, 83\% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
@@ -148,7 +148,7 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval, 95% by default
+#' @param conf_int Confidence interval, 95\% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param aberr_module Aberration module
@@ -285,7 +285,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval, 95% by default
+#' @param conf_int Confidence interval, 95\% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param genome_fraction Genomic fraction used in translocations, else 1

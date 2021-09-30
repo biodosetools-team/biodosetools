@@ -8,7 +8,7 @@ estimate_partial_dolphin(
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
-  conf_int,
+  conf_int = 0.95,
   protracted_g_value,
   cov = TRUE,
   genome_fraction = 1,
@@ -23,7 +23,7 @@ estimate_partial_dolphin(
 
 \item{fit_var_cov_mat}{Fitting variance-covariance matrix}
 
-\item{conf_int}{Confidence interval}
+\item{conf_int}{Confidence interval, 95\% by default}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

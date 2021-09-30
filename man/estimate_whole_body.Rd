@@ -8,8 +8,8 @@ estimate_whole_body(
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
-  conf_int_yield,
-  conf_int_curve,
+  conf_int_yield = 0.83,
+  conf_int_curve = 0.83,
   protracted_g_value,
   genome_fraction = 1,
   aberr_module
@@ -22,9 +22,9 @@ estimate_whole_body(
 
 \item{fit_var_cov_mat}{Fitting variance-covariance matrix}
 
-\item{conf_int_yield}{Confidence interval of the yield}
+\item{conf_int_yield}{Confidence interval of the yield, 83\% by default}
 
-\item{conf_int_curve}{Confidence interval of the curve}
+\item{conf_int_curve}{Confidence interval of the curve, 83\% by default}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

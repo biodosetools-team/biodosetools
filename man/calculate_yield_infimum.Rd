@@ -18,7 +18,7 @@ calculate_yield_infimum(
 
 \item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
 
-\item{conf_int}{Confidence interval}
+\item{conf_int}{Curve confidence interval}
 }
 \value{
 Yield infimum

@@ -15,5 +15,5 @@ R_factor(general_fit_coeffs, conf_int = 0.95)
 R regression confidence factor
 }
 \description{
-Calculate R regression confidence factor depeding on selected confidence interval and type of fit.
+Calculate R regression confidence factor depending on selected confidence interval and type of fit.
 }
