@@ -164,30 +164,6 @@ test_that("processing case data works", {
   # Protraction (acute exposure)
   protracted_g_value <- 1
 
-  # CI: Whole-body assessment (Merkle's method)
-  conf_int_curve_merkle <- 0.83
-  conf_int_yield_merkle <- conf_int_curve_merkle
-  conf_int_text_whole <- paste0(
-    "(", round(100 * conf_int_curve_merkle, 0), "%",
-    "-", round(100 * conf_int_yield_merkle, 0), "%", ")"
-  )
-
-  # CI: Whole-body assessment (Delta method)
-  conf_int_delta <- 0.95
-  conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
-
-  # CI: Partial-body assessment
-  conf_int_dolphin <- 0.95
-  conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
-
-  # CI: Heterogeneous assessment
-  conf_int_curve_hetero <- 0.83
-  conf_int_yield_hetero <- conf_int_curve_hetero
-  conf_int_text_hetero <- paste0(
-    "(", round(100 * conf_int_curve_hetero, 0), "%",
-    "-", round(100 * conf_int_yield_hetero, 0), "%", ")"
-  )
-
   # Parse genome fraction
   parsed_genome_fraction <- 1
 
@@ -196,8 +172,8 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int_yield = conf_int_curve_merkle,
-    conf_int_curve = conf_int_yield_merkle,
+    conf_int_yield = 0.83,
+    conf_int_curve = 0.83,
     protracted_g_value,
     parsed_genome_fraction,
     aberr_module
@@ -207,7 +183,7 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int = conf_int_delta,
+    conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
     aberr_module
@@ -217,7 +193,7 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int = conf_int_dolphin,
+    conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
     genome_fraction = parsed_genome_fraction,
@@ -230,8 +206,8 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int_yield_hetero,
-    conf_int_curve_hetero,
+    conf_int_yield = 0.83,
+    conf_int_curve = 0.83,
     protracted_g_value,
     gamma = 1 / 2.7,
     gamma_error = 0
@@ -265,23 +241,15 @@ test_that("processing case data works", {
   expect_equal(results_hetero$est_doses["lower", "dose2"], 0)
 
   # Plot
-  est_full_doses <- data.frame(
-    dose = c(results_whole_merkle$est_doses[["dose"]], results_hetero$est_doses[["dose1"]], results_hetero$est_doses[["dose2"]]),
-    yield = c(results_whole_merkle$est_doses[["yield"]], results_hetero$est_yields[["yield1"]], results_hetero$est_yields[["yield2"]]),
-    type = c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
-    level = rep(c("Lower", "Estimate", "Upper"), 3)
-  )
-
   gg_curve <- plot_estimated_dose_curve(
-    est_full_doses,
+    est_doses = list(
+      whole = results_whole_merkle,
+      hetero = results_hetero
+    ),
     fit_coeffs,
     fit_var_cov_mat,
     protracted_g_value,
-    conf_int_yield = conf_int_yield_merkle,
-    conf_int_curve = conf_int_curve_merkle,
-    conf_int_text_whole,
-    conf_int_text_partial,
-    conf_int_text_hetero,
+    conf_int_curve = 0.83,
     aberr_name = to_title(aberr_module)
   )
 

@@ -216,24 +216,6 @@ test_that("processing case data works", {
   # Protraction (acute exposure)
   protracted_g_value <- 1
 
-  # CI: Whole-body assessment (Merkle's method)
-  conf_int_curve_merkle <- 0.83
-  conf_int_yield_merkle <- conf_int_curve_merkle
-  conf_int_text_whole <- paste0(
-    "(", round(100 * conf_int_curve_merkle, 0), "%",
-    "-", round(100 * conf_int_yield_merkle, 0), "%", ")"
-  )
-
-  # CI: Whole-body assessment (Delta method)
-  conf_int_curve_delta <- 0.83
-  conf_int_yield_delta <- conf_int_curve_delta
-  conf_int_delta <- 0.95
-  conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
-
-  # CI: Partial-body assessment
-  conf_int_dolphin <- 0.95
-  conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
-
   # Parse genome fraction
   parsed_genome_fraction <- 0.585
 
@@ -242,8 +224,8 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int_yield = conf_int_curve_merkle,
-    conf_int_curve = conf_int_yield_merkle,
+    conf_int_yield = 0.83,
+    conf_int_curve = 0.83,
     protracted_g_value,
     parsed_genome_fraction,
     aberr_module
@@ -253,7 +235,7 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int = conf_int_delta,
+    conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
     aberr_module
@@ -263,7 +245,7 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int = conf_int_dolphin,
+    conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
     genome_fraction = parsed_genome_fraction,
@@ -289,4 +271,21 @@ test_that("processing case data works", {
   expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
   expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
   expect_equal(round(results_partial$AIC, 3), 8.838)
+
+  # Plot
+  gg_curve <- plot_estimated_dose_curve(
+    est_doses = list(
+      whole = results_whole_delta,
+      partial = results_partial
+    ),
+    fit_coeffs,
+    fit_var_cov_mat,
+    protracted_g_value,
+    conf_int_curve = 0.83,
+    aberr_name = to_title(aberr_module)
+  )
+
+  # Expected outcomes
+  expect_equal(names(gg_curve$labels), c("colour", "shape", "x", "y", "ymin", "ymax"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Assessment", "Estimation", "Dose (Gy)", "Translocations/cells", "yield_low", "yield_upp"))
 })
