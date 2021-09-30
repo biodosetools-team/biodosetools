@@ -681,44 +681,19 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Confidence intervals ----
 
-    # Select whole-body CI depending on selected method
+    # Select CIs depending on selected method
     if (grepl("merkle", error_method, fixed = TRUE)) {
       conf_int_curve <- paste0("0.", gsub("\\D", "", error_method)) %>% as.numeric()
       conf_int_yield <- conf_int_curve
-
-      # Parse CI text for plot legend
-      conf_int_text_whole <- paste0(
-        "(", round(100 * conf_int_curve, 0), "%",
-        "-", round(100 * conf_int_yield, 0), "%", ")"
-      )
     } else if (error_method == "delta") {
       conf_int_curve <- 0.83
-      conf_int_yield <- conf_int_curve
       conf_int_delta <- 0.95
-
-      # Parse CI text for plot legend
-      conf_int_text_whole <- paste0("(", round(100 * conf_int_delta, 0), "%", ")")
     }
-
-    # Initialise partial-body and heterogeneous CI text for plot legend
-    conf_int_text_partial <- NULL
-    conf_int_text_hetero <- NULL
-
-    # Select partial-body and heterogeneous CI depending on selected method
     if (assessment == "partial-body") {
       conf_int_dolphin <- 0.95
-
-      # Parse CI text for plot legend
-      conf_int_text_partial <- paste0("(", round(100 * conf_int_dolphin, 0), "%", ")")
     } else if (assessment == "hetero") {
       conf_int_curve_hetero <- paste0("0.", gsub("\\D", "", error_method_hetero)) %>% as.numeric()
       conf_int_yield_hetero <- conf_int_curve_hetero
-
-      # Parse CI text for plot legend
-      conf_int_text_hetero <- paste0(
-        "(", round(100 * conf_int_curve_hetero, 0), "%",
-        "-", round(100 * conf_int_yield_hetero, 0), "%", ")"
-      )
     }
 
     # Calculations ----
@@ -822,26 +797,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
-      est_full_doses <- data.frame(
-        dose = c(est_doses_whole[["dose"]]),
-        yield = c(est_doses_whole[["yield"]]),
-        type = c(rep("Whole-body", 3)),
-        level = rep(c("Lower", "Estimate", "Upper"), 1)
-      )
+      est_doses <- list(whole = results_whole)
     } else if (assessment == "partial-body") {
-      est_full_doses <- data.frame(
-        dose = c(est_doses_whole[["dose"]], est_doses_partial[["dose"]]),
-        yield = c(est_doses_whole[["yield"]], est_doses_partial[["yield"]]),
-        type = c(rep("Whole-body", 3), rep("Partial-body", 3)),
-        level = rep(c("Lower", "Estimate", "Upper"), 2)
-      )
+      est_doses <- list(whole = results_whole, partial = results_partial)
     } else if (assessment == "hetero") {
-      est_full_doses <- data.frame(
-        dose = c(est_doses_whole[["dose"]], est_doses_hetero[["dose1"]], est_doses_hetero[["dose2"]]),
-        yield = c(est_doses_whole[["yield"]], est_yields_hetero[["yield1"]], est_yields_hetero[["yield2"]]),
-        type = c(rep("Whole-body", 3), rep("Heterogeneous 1", 3), rep("Heterogeneous 2", 3)),
-        level = rep(c("Lower", "Estimate", "Upper"), 3)
-      )
+      est_doses <- list(whole = results_whole, hetero = results_hetero)
     }
 
     # Name of the aberration to use in the y-axis
@@ -854,15 +814,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Get dose estimation curve
     gg_curve <- plot_estimated_dose_curve(
-      est_full_doses,
+      est_doses,
       fit_coeffs,
       fit_var_cov_mat,
       protracted_g_value,
-      conf_int_yield,
-      conf_int_curve,
-      conf_int_text_whole,
-      conf_int_text_partial,
-      conf_int_text_hetero,
+      conf_int_curve = conf_int_curve,
       aberr_name
     )
 
