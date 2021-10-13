@@ -394,9 +394,6 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
       deriv_coeff_beta <- 0
     }
 
-    # Get the covariance matrix for the parameters of the ZIP distribution
-    cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
-
     if (fit_is_lq) {
       cov_extended <- matrix(0, nrow = 5, ncol = 5)
       cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
@@ -454,7 +451,6 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
       general_fit_coeffs, est_doses["estimate", ],
       dose_var = "dose", yield_var = "yield", fit_link = "identity"
     )
-
 
     # Get estimate for fraction irradiated
     F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
