@@ -71,7 +71,7 @@ app_server <- function(input, output, session) {
     id = "fitting_trans_ui",
     module = mod_fitting_results_server,
     aberr_module = "translocations",
-    genome_fraction = transFittingFraction
+    genome_factor = transFittingFraction
   )
 
   # Dose Estimation
@@ -87,7 +87,7 @@ app_server <- function(input, output, session) {
     id = "estimation_trans_ui",
     module = mod_estimation_case_hot_server,
     aberr_module = "translocations",
-    genome_fraction = transEstimateFraction
+    genome_factor = transEstimateFraction
   )
 
   callModule(
@@ -103,7 +103,7 @@ app_server <- function(input, output, session) {
     id = "estimation_trans_ui",
     module = mod_estimation_results_server,
     aberr_module = "translocations",
-    genome_fraction = transEstimateFraction
+    genome_factor = transEstimateFraction
   )
 
   # Micronuclei Modules ----

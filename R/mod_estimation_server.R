@@ -3,7 +3,7 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_fraction Genomic fraction used in translocations.
+#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @noRd
@@ -155,7 +155,7 @@ mod_estimation_fit_curve_hot_server <- function(input, output, session, stringsA
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_fraction Genomic fraction used in translocations.
+#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @noRd
@@ -178,11 +178,11 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
 
         # Additional info for translocations module
         if (aberr_module == "translocations") {
-          fit_genome_fraction <- fit_results_list[["genome_fraction"]]
+          fit_genome_factor <- fit_results_list[["genome_factor"]]
 
           # Message about used translocation frequency
           if (fit_results_list[["frequency_select"]] == "measured_freq") {
-            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(fit_genome_fraction, 3), ".")
+            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(fit_genome_factor, 3), ".")
           } else {
             trans_frequency_message <- "The provided fitting curve is already full genome."
           }
@@ -192,18 +192,18 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
           if (fit_results_list[["frequency_select"]] == "measured_freq") {
 
             # Update coefficients
-            fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_fraction
-            fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_fraction
+            fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
+            fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
 
             # Update variance-covariance matrix
-            fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
+            fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
 
             # Update model-specific statistics
             fit_results_list[["fit_model_statistics"]] <- calculate_model_stats(
               model_data = fit_results_list[["fit_raw_data"]],
               fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
               response = "yield", link = "identity", type = "theory",
-              genome_fraction = fit_genome_fraction,
+              genome_factor = fit_genome_factor,
               calc_type = "estimation"
             )
           }
@@ -247,14 +247,14 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
         # Conversion of coefficients and statistics
         if (aberr_module == "translocations") {
           if (input$frequency_select == "measured_freq") {
-            fit_genome_fraction <- input$fit_genome_fraction
+            fit_genome_factor <- input$fit_genome_factor
 
             # Update coefficients
-            fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_fraction
-            fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_fraction
+            fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_factor
+            fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_factor
 
             # Update variance-covariance matrix
-            fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
+            fit_var_cov_mat <- fit_var_cov_mat / fit_genome_factor^2
           }
         }
 
@@ -269,7 +269,7 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
         if (aberr_module == "translocations") {
           # Message about used translocation frequency
           if (input$frequency_select == "measured_freq") {
-            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_genome_fraction, ".")
+            trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", input$fit_genome_factor, ".")
           } else {
             trans_frequency_message <- "The provided fitting curve is already full genome."
           }
@@ -378,12 +378,12 @@ mod_estimation_fit_curve_server <- function(input, output, session, stringsAsFac
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_fraction Genomic fraction used in translocations.
+#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @importFrom rlang .data
 #' @noRd
-mod_estimation_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimation_case_hot_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_factor = NULL) {
 
   # Reset table ----
   table_reset <- reactiveValues(value = 0)
@@ -472,7 +472,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
             ) %>%
             dplyr::select(-.data$mean, -.data$std_err)
         } else if (aberr_module == "translocations") {
-          genome_fraction <- genome_fraction$genome_fraction()
+          genome_factor <- genome_factor$genome_factor()
 
           mytable <- mytable %>%
             dplyr::mutate(
@@ -484,7 +484,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
               Xc = dplyr::case_when(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson" ~
                 calculate_trans_rate_sigurdson(
-                  .data$N, genome_fraction,
+                  .data$N, genome_factor,
                   age_value = input$trans_confounder_age,
                   sex_bool = input$trans_confounder_sex,
                   sex_value = input$trans_sex,
@@ -493,11 +493,11 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
                   region_value = input$trans_confounder_region
                 ),
                 input$trans_confounders & input$trans_confounders_type == "manual" ~
-                calculate_trans_rate_manual(.data$N, genome_fraction, input$trans_expected_aberr_value),
+                calculate_trans_rate_manual(.data$N, genome_factor, input$trans_expected_aberr_value),
                 TRUE ~ 0
               ),
-              Fg = correct_negative_vals(.data$X - .data$Xc) / (.data$N * genome_fraction),
-              Fg_err = .data$Fp_err / sqrt(genome_fraction)
+              Fg = correct_negative_vals(.data$X - .data$Xc) / (.data$N * genome_factor),
+              Fg_err = .data$Fp_err / sqrt(genome_factor)
             )
         }
 
@@ -552,12 +552,12 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_fraction Genomic fraction used in translocations.
+#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @importFrom rlang .data
 #' @noRd
-mod_estimation_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_estimation_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_factor = NULL) {
   data <- reactive({
 
     # Calcs: get variables ----
@@ -592,17 +592,17 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
       # Additional info for translocations module
       if (aberr_module == "translocations") {
-        fit_genome_fraction <- fit_results_list[["genome_fraction"]]
+        fit_genome_factor <- fit_results_list[["genome_factor"]]
 
         # Conversion of coefficients and statistics
         if (fit_results_list[["frequency_select"]] == "measured_freq") {
 
           # Update coefficients
-          fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_fraction
-          fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_fraction
+          fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
+          fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
 
           # Update variance-covariance matrix
-          fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_fraction^2
+          fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
         }
       }
     } else {
@@ -639,14 +639,14 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Conversion of coefficients and statistics
       if (aberr_module == "translocations") {
         if (input$frequency_select == "measured_freq") {
-          fit_genome_fraction <- input$fit_genome_fraction
+          fit_genome_factor <- input$fit_genome_factor
 
           # Update coefficients
-          fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_fraction
-          fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_fraction
+          fit_coeffs[, "estimate"] <- fit_coeffs[, "estimate"] / fit_genome_factor
+          fit_coeffs[, "std.error"] <- fit_coeffs[, "std.error"] / fit_genome_factor
 
           # Update variance-covariance matrix
-          fit_var_cov_mat <- fit_var_cov_mat / fit_genome_fraction^2
+          fit_var_cov_mat <- fit_var_cov_mat / fit_genome_factor^2
         }
       }
 
@@ -700,9 +700,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Parse genome fraction
     if (aberr_module == "translocations") {
-      parsed_genome_fraction <- genome_fraction$genome_fraction()
+      parsed_genome_factor <- genome_factor$genome_factor()
     } else {
-      parsed_genome_fraction <- 1
+      parsed_genome_factor <- 1
     }
 
     # Calculate whole-body results
@@ -715,7 +715,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         conf_int_yield,
         conf_int_curve,
         protracted_g_value,
-        parsed_genome_fraction,
+        parsed_genome_factor,
         aberr_module
       )
     } else if (error_method == "delta") {
@@ -752,7 +752,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         conf_int_dolphin,
         protracted_g_value,
         cov = TRUE,
-        parsed_genome_fraction,
+        parsed_genome_factor,
         aberr_module,
         gamma
       )
@@ -888,7 +888,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Additional results if using translocations
     if (aberr_module == "translocations") {
-      est_results_list[["genome_fraction"]] <- genome_fraction$genome_fraction()
+      est_results_list[["genome_factor"]] <- genome_factor$genome_factor()
       est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
       est_results_list[["trans_sex"]] <- input$trans_sex
 

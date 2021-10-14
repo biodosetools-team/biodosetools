@@ -45,12 +45,12 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param protracted_g_value Protracted G(x) value
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param genome_fraction Genomic fraction used in translocations, else 1
+#' @param genome_factor Genomic conversion factor used in translocations, else 1
 #' @param aberr_module Aberration module Aberration module
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve  = 0.83, protracted_g_value, genome_fraction = 1, aberr_module) {
+estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve  = 0.83, protracted_g_value, genome_factor = 1, aberr_module) {
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -80,8 +80,8 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
   aberr_low <- aberr_row[1]
   aberr_upp <- aberr_row[2]
 
-  yield_low <- aberr_low / (cells * genome_fraction)
-  yield_upp <- aberr_upp / (cells * genome_fraction)
+  yield_low <- aberr_low / (cells * genome_factor)
+  yield_upp <- aberr_upp / (cells * genome_factor)
   # TODO: possible modification IAEA§9.7.3
 
   # Correct "unrootable" yields
@@ -288,7 +288,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param conf_int Confidence interval, 95\% by default
 #' @param protracted_g_value Protracted G(x) value
 #' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
-#' @param genome_fraction Genomic fraction used in translocations, else 1
+#' @param genome_factor Genomic conversion factor used in translocations, else 1
 #' @param aberr_module Aberration module
 #' @param gamma Survival coefficient of irradiated cells
 #'
@@ -296,7 +296,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @export
 estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                      conf_int = 0.95, protracted_g_value, cov = TRUE,
-                                     genome_fraction = 1, aberr_module, gamma) {
+                                     genome_factor = 1, aberr_module, gamma) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -359,7 +359,7 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
     }, c(1e-16, 100))$root
 
     if (aberr_module == "translocations") {
-      lambda_est <- lambda_est / genome_fraction
+      lambda_est <- lambda_est / genome_factor
     }
 
     pi_est <- aberr / (lambda_est * cells)

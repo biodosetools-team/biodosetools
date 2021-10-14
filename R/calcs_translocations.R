@@ -8,7 +8,7 @@
 #' @return Fraction of genome hybridised.
 #' @export
 #' @importFrom rlang .data
-calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
+calculate_genome_factor <- function(dna_table, chromosome, color, sex) {
   # Construct color/chromosome table
   color_table <- cbind(
     color,
@@ -23,20 +23,20 @@ calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
   full_table <- dplyr::inner_join(color_table, dna_table, by = "chromosome") %>%
     dplyr::group_by(.data$color) %>%
     dplyr::summarise(
-      genome_fraction = sum(base::get(paste0("fraction_", sex)))
+      genome_factor = sum(base::get(paste0("fraction_", sex)))
     )
 
   # Calculate first sum
   single_sum <- full_table %>%
-    dplyr::select(.data$genome_fraction) %>%
+    dplyr::select(.data$genome_factor) %>%
     dplyr::summarise(
-      single_sum = sum(.data$genome_fraction * (1 - .data$genome_fraction))
+      single_sum = sum(.data$genome_factor * (1 - .data$genome_factor))
     ) %>%
     dplyr::pull(.data$single_sum)
 
   # Calculate second sum
   if (nrow(full_table) >= 2) {
-    cross_sum <- full_table[["genome_fraction"]] %>%
+    cross_sum <- full_table[["genome_factor"]] %>%
       utils::combn(2) %>%
       t() %>%
       as.data.frame() %>%
@@ -54,7 +54,7 @@ calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #' Calculate Sigurdson's translocation rate
 #'
 #' @param cells Number of cells \code{N}
-#' @param genome_fraction Genomic fraction used in translocations
+#' @param genome_factor Genomic conversion factor used in translocations
 #' @param age_value Age of the individual
 #' @param sex_bool If \code{TRUE}, \code{sex_value} will be used
 #' @param sex_value Sex of the individual, either "male" of "female"
@@ -64,7 +64,7 @@ calculate_genome_fraction <- function(dna_table, chromosome, color, sex) {
 #'
 #' @return Translocation rate.
 #' @export
-calculate_trans_rate_sigurdson <- function(cells, genome_fraction, age_value,
+calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
                                            sex_bool = FALSE, sex_value = "none",
                                            smoker_bool = FALSE,
                                            ethnicity_value = "none", region_value = "none") {
@@ -86,7 +86,7 @@ calculate_trans_rate_sigurdson <- function(cells, genome_fraction, age_value,
   region_trans_frequency <- region_trans_list[[region_value]]
 
   # Expected aberrations
-  expected_aberr <- cells * genome_fraction *
+  expected_aberr <- cells * genome_factor *
     age_trans_frequency(age_value) *
     sex_trans_frequency *
     smoke_trans_frequency *
@@ -99,14 +99,14 @@ calculate_trans_rate_sigurdson <- function(cells, genome_fraction, age_value,
 #' Calculate manual translocation rate
 #'
 #' @param cells Number of cells \code{N}
-#' @param genome_fraction Genomic fraction used in translocations
+#' @param genome_factor Genomic conversion factor used in translocations
 #' @param expected_aberr_value Expected aberrations
 #'
 #' @return Translocation rate.
 #' @export
-calculate_trans_rate_manual <- function(cells, genome_fraction, expected_aberr_value) {
+calculate_trans_rate_manual <- function(cells, genome_factor, expected_aberr_value) {
   # Expected aberrations
-  expected_aberr <- expected_aberr_value * cells * genome_fraction
+  expected_aberr <- expected_aberr_value * cells * genome_factor
 
   return(expected_aberr)
 }

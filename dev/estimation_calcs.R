@@ -120,7 +120,7 @@ conf_int_yield <- conf_int_yield %>%
 
 
 # Parse genome fraction
-parsed_genome_fraction <- 1
+parsed_genome_factor <- 1
 
 # Calculations ----
 
@@ -131,6 +131,6 @@ results_whole <- estimate_whole_body(
   conf_int_yield,
   conf_int_curve,
   protracted_g_value,
-  parsed_genome_fraction,
+  parsed_genome_factor,
   aberr_module = "dicentrics"
 )

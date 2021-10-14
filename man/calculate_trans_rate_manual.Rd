@@ -4,12 +4,12 @@
 \alias{calculate_trans_rate_manual}
 \title{Calculate manual translocation rate}
 \usage{
-calculate_trans_rate_manual(cells, genome_fraction, expected_aberr_value)
+calculate_trans_rate_manual(cells, genome_factor, expected_aberr_value)
 }
 \arguments{
 \item{cells}{Number of cells \code{N}}
 
-\item{genome_fraction}{Genomic fraction used in translocations}
+\item{genome_factor}{Genomic conversion factor used in translocations}
 
 \item{expected_aberr_value}{Expected aberrations}
 }

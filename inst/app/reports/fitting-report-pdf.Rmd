@@ -66,7 +66,7 @@ irr_conds <- params$fit_results_list[["irr_conds"]]
 # detection_lims <- params$fit_results_list[["detection_lims"]]
 
 # Translocations
-genome_fraction <- params$fit_results_list[["genome_fraction"]]
+genome_factor <- params$fit_results_list[["genome_factor"]]
 chromosome_table <- params$fit_results_list[["chromosome_table"]]
 trans_sex <- params$fit_results_list[["trans_sex"]]
 frequency_select <- params$fit_results_list[["frequency_select"]]
@@ -150,7 +150,7 @@ data %>%
 `r if (aberr_module == "translocations") {"## Genomic conversion factor"}`
 
 `r if (aberr_module == "translocations") {
-  paste0("The genomic conversion factor to full genome is ", as.character(round(genome_fraction, 3)), ".")
+  paste0("The genomic conversion factor to full genome is ", as.character(round(genome_factor, 3)), ".")
 }
 `
 

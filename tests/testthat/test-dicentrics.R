@@ -165,7 +165,7 @@ test_that("processing case data works", {
   protracted_g_value <- 1
 
   # Parse genome fraction
-  parsed_genome_fraction <- 1
+  parsed_genome_factor <- 1
 
   # Calculations
   results_whole_merkle <- estimate_whole_body(
@@ -175,7 +175,7 @@ test_that("processing case data works", {
     conf_int_yield = 0.83,
     conf_int_curve = 0.83,
     protracted_g_value,
-    parsed_genome_fraction,
+    parsed_genome_factor,
     aberr_module
   )
 
@@ -196,7 +196,7 @@ test_that("processing case data works", {
     conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
-    genome_fraction = parsed_genome_fraction,
+    genome_factor = parsed_genome_factor,
     aberr_module,
     gamma = 1 / 2.7
   )

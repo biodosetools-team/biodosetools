@@ -117,9 +117,9 @@ mod_fitting_trans_ui <- function(id, label) {
               ),
               br(),
               actionButton(
-                ns("button_calc_genome_fraction"),
+                ns("button_calc_genome_factor"),
                 class = "inputs-button",
-                label = "Calculate fraction"
+                label = "Calculate factor"
               )
             )
           )
@@ -133,7 +133,7 @@ mod_fitting_trans_ui <- function(id, label) {
           collapsible = TRUE,
           fluidRow(
             col_12(
-              uiOutput(ns("genome_fraction"))
+              uiOutput(ns("genome_factor"))
             )
           )
         )

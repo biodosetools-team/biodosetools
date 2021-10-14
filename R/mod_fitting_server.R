@@ -191,12 +191,12 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_fraction Genomic fraction used in translocations.
+#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @importFrom rlang .data
 #' @noRd
-mod_fitting_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_fraction = NULL) {
+mod_fitting_results_server <- function(input, output, session, stringsAsFactors, aberr_module, genome_factor = NULL) {
 
   # Calculations ----
 
@@ -215,7 +215,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
     if (aberr_module == "translocations") {
       frequency_select <- input$frequency_select
       chromosome_table <- hot_to_r(input$chromosome_table)
-      genome_fraction <- genome_fraction$genome_fraction()
+      genome_factor <- genome_factor$genome_factor()
 
       # Modify N for translocations using full genome frequency
       if (frequency_select == "full_gen_freq") {
@@ -224,7 +224,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         isolate({
           count_data <- count_data %>%
             dplyr::mutate(
-              N = .data$N * genome_fraction
+              N = .data$N * genome_factor
             )
         })
       }
@@ -268,7 +268,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
       # Additional results if using translocations
       if (aberr_module == "translocations") {
-        results_list[["genome_fraction"]] <- genome_fraction
+        results_list[["genome_factor"]] <- genome_factor
         results_list[["chromosome_table"]] <- chromosome_table
         results_list[["frequency_select"]] <- frequency_select
         results_list[["trans_sex"]] <- input$trans_sex

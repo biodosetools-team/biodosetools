@@ -11,23 +11,23 @@
 #' @param mu mu response required in constraint-maxlik-optimization)
 #' @param n number of parameters (required in constraint-maxlik-optimization)
 #' @param npar number of parameters (required in constraint-maxlik-optimization)
-#' @param genome_fraction Genomic fraction used in translocations
+#' @param genome_factor Genomic conversion factor used in translocations
 #' @param calc_type Calculation type, either "fitting" or "estimation"
 #'
 #' @return Model statistics data frame
 calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
                                   response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                   Y = NULL, mu = NULL, n = NULL, npar = NULL,
-                                  genome_fraction = NULL, calc_type = c("fitting", "estimation")) {
+                                  genome_factor = NULL, calc_type = c("fitting", "estimation")) {
   # Validate parameters
   link <- match.arg(link)
   type <- match.arg(type)
   calc_type <- match.arg(calc_type)
 
   # Auxiliary functions
-  renormalise_model_data <- function(model_data, genome_fraction, calc_type) {
+  renormalise_model_data <- function(model_data, genome_factor, calc_type) {
     if (calc_type == "estimation") {
-      model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] * genome_fraction)
+      model_data[["X"]] <- model_data[["X"]] / (model_data[["N"]] * genome_factor)
     } else if (calc_type == "fitting") {
       model_data[["aberr"]] <- model_data[["aberr"]] / model_data[["coeff_C"]]
       model_data[["coeff_alpha"]] <- model_data[["coeff_alpha"]] / model_data[["coeff_C"]]
@@ -66,7 +66,7 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
   if (type == "theory") {
     # Renormalise data if necessary
     if (response == "yield") {
-      model_data <- renormalise_model_data(model_data, genome_fraction, calc_type)
+      model_data <- renormalise_model_data(model_data, genome_factor, calc_type)
     }
 
     # Generalised fit coefficients
@@ -270,7 +270,7 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y = NULL, mu = NULL, n = NULL, npar = NULL,
-    genome_fraction = NULL, calc_type = "fitting"
+    genome_factor = NULL, calc_type = "fitting"
   )
 
   # Correct p-values depending on model dispersion
@@ -514,7 +514,7 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y = Y, mu = mu, n = n, npar = npar,
-    genome_fraction = NULL, calc_type = "fitting"
+    genome_factor = NULL, calc_type = "fitting"
   )
 
   # Correct p-values depending on model dispersion

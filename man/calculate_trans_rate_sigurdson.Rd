@@ -6,7 +6,7 @@
 \usage{
 calculate_trans_rate_sigurdson(
   cells,
-  genome_fraction,
+  genome_factor,
   age_value,
   sex_bool = FALSE,
   sex_value = "none",
@@ -18,7 +18,7 @@ calculate_trans_rate_sigurdson(
 \arguments{
 \item{cells}{Number of cells \code{N}}
 
-\item{genome_fraction}{Genomic fraction used in translocations}
+\item{genome_factor}{Genomic conversion factor used in translocations}
 
 \item{age_value}{Age of the individual}
 

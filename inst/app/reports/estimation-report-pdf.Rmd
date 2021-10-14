@@ -80,7 +80,7 @@ results_comments <- params$est_results_list[["results_comments"]]
 gg_curve <- params$est_results_list[["gg_curve"]]
 
 # Translocations
-genome_fraction <- params$est_results_list[["genome_fraction"]]
+genome_factor <- params$est_results_list[["genome_factor"]]
 chromosome_table <- params$est_results_list[["chromosome_table"]]
 trans_sex <- params$est_results_list[["trans_sex"]]
 confounders <- params$est_results_list[["confounders"]]
@@ -158,7 +158,7 @@ if (aberr_module == "translocations") {
 `r if (aberr_module == "translocations") {"## Genomic conversion factor"}`
 
 `r if (aberr_module == "translocations") {
-  paste0("The genomic conversion factor to full genome is ", as.character(round(genome_fraction, 3)), ".")
+  paste0("The genomic conversion factor to full genome is ", as.character(round(genome_factor, 3)), ".")
 }
 `
 

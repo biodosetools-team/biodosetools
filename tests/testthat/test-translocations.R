@@ -4,7 +4,7 @@ test_that("calculate_trans_rate_sigurdson works", {
   # Default parameters for confounders
   default_rate <- calculate_trans_rate_sigurdson(
     cells = 100,
-    genome_fraction = 0.3,
+    genome_factor = 0.3,
     age_value = 25,
     sex_bool = FALSE,
     sex_value = "none",
@@ -16,7 +16,7 @@ test_that("calculate_trans_rate_sigurdson works", {
   # Adding confounders will result in a higher rate
   other_rate <- calculate_trans_rate_sigurdson(
     cells = 100,
-    genome_fraction = 0.3,
+    genome_factor = 0.3,
     age_value = 25,
     sex_bool = TRUE,
     sex_value = "male",
@@ -33,7 +33,7 @@ test_that("calculate_trans_rate_manual works", {
   # Translocation frequency per cell
   rate <- calculate_trans_rate_manual(
     cells = 100,
-    genome_fraction = 0.3,
+    genome_factor = 0.3,
     expected_aberr_value = 0.00339
   )
 
@@ -41,9 +41,9 @@ test_that("calculate_trans_rate_manual works", {
   expect_equal(round(rate, 3), 0.102)
 })
 
-test_that("calculate_genome_fraction works", {
+test_that("calculate_genome_factor works", {
   # Example from IAEA (2011)
-  genome_fraction <- calculate_genome_fraction(
+  genome_factor <- calculate_genome_factor(
     dna_table = dna_content_fractions_morton,
     chromosome = c(1, 2, 4, 3, 5, 6),
     color = c(rep("Red", 3), rep("Green", 3)),
@@ -51,7 +51,7 @@ test_that("calculate_genome_fraction works", {
   )
 
   # Expected output
-  expect_equal(round(genome_fraction, 3), 0.585)
+  expect_equal(round(genome_factor, 3), 0.585)
 })
 
 
@@ -176,7 +176,7 @@ test_that("processing case data works", {
   )
 
   # Specific to translocations
-  genome_fraction <- 0.585
+  genome_factor <- 0.585
 
   case_data <- case_data %>%
     dplyr::rename(
@@ -189,8 +189,8 @@ test_that("processing case data works", {
         # "manual" ~ calculate_trans_rate_manual(...),
         TRUE ~ 0
       ),
-      Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
-      Fg_err = .data$Fp_err / sqrt(genome_fraction)
+      Fg = (.data$X - .data$Xc) / (.data$N * genome_factor),
+      Fg_err = .data$Fp_err / sqrt(genome_factor)
     )
 
   # Colnames validation
@@ -217,7 +217,7 @@ test_that("processing case data works", {
   protracted_g_value <- 1
 
   # Parse genome fraction
-  parsed_genome_fraction <- 0.585
+  parsed_genome_factor <- 0.585
 
   # Calculations
   results_whole_merkle <- estimate_whole_body(
@@ -227,7 +227,7 @@ test_that("processing case data works", {
     conf_int_yield = 0.83,
     conf_int_curve = 0.83,
     protracted_g_value,
-    parsed_genome_fraction,
+    parsed_genome_factor,
     aberr_module
   )
 
@@ -248,7 +248,7 @@ test_that("processing case data works", {
     conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
-    genome_fraction = parsed_genome_fraction,
+    genome_factor = parsed_genome_factor,
     aberr_module,
     gamma = 1 / 2.7
   )

@@ -119,7 +119,7 @@ test_that("fix_count_data_names for case data works", {
   )
 
   # Specific to translocations
-  genome_fraction <- 0.585
+  genome_factor <- 0.585
 
   case_data <- case_data %>%
     dplyr::rename(
@@ -132,8 +132,8 @@ test_that("fix_count_data_names for case data works", {
         # "manual" ~ calculate_trans_rate_manual(...),
         TRUE ~ 0
       ),
-      Fg = (.data$X - .data$Xc) / (.data$N * genome_fraction),
-      Fg_err = .data$Fp_err / sqrt(genome_fraction)
+      Fg = (.data$X - .data$Xc) / (.data$N * genome_factor),
+      Fg_err = .data$Fp_err / sqrt(genome_factor)
     )
 
   case_data_cols <- fix_count_data_names(case_data, type = "case", output = "kable") %>%

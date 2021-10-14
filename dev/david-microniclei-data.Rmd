@@ -1,0 +1,82 @@
+---
+title: "Notebook"
+author: "Alfredo Hernández"
+date: "2021-01-01"
+output: no
+---
+
+# Initial set-up
+
+```{r setup, message=FALSE, include=FALSE}
+# Load packages
+library(tidyverse)
+library(biodosetools)
+
+# Additional options
+theme_set(theme_light())
+```
+
+```{r th-dose-merkle-coeffs, include=FALSE}
+fit_results <- system.file("extdata", "dicentrics-fitting-data-2020-10-10.rds", package = "biodosetools") %>% readRDS()
+fit_coeffs <- fit_results[["fit_coeffs"]]
+fit_var_cov_mat <- fit_results[["fit_var_cov_mat"]]
+```
+
+```{r}
+fit_coeffs <- data.frame(
+  estimate = c(0.0096, 0.0172, 0.0110),
+  std.error = c(0.0012, 0.0032, 0.0010)
+) %>% 
+  `rownames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+```
+
+
+```{r th-dose-merkle-case, include=FALSE}
+case_data <- data.frame(
+  C0 = 997, C1 = 3, C2 = 0, C3 = 0, C4 = 0, C5 = 0
+) %>%
+  dplyr::rename_with(
+    .fn = toupper,
+    .cols = dplyr::everything()
+  ) %>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = dplyr::starts_with("C"),
+      .fns = as.integer
+    )
+  ) %>%
+  dplyr::select(
+    dplyr::starts_with("C")
+  ) %>% 
+  calculate_aberr_table(
+    type = "case",
+    assessment_u = 1
+  ) %>%
+  dplyr::rename(y = mean, y_err = std_err)
+```
+
+```{r th-dose-partial-results, include=FALSE}
+results_partial_dolphin <- estimate_partial_dolphin(
+  case_data,
+  fit_coeffs,
+  fit_var_cov_mat,
+  conf_int = 0.95,
+  protracted_g_value = 1,
+  genome_fraction = 1,
+  aberr_module = "dicentrics",
+  gamma = 1 / 2.7
+)
+```
+
+
+```{r th-dose-partial-curve, echo=FALSE, dev="tikz", fig.cap = "A dose-effect calibration curve used to estimate dose uncertainties using Dolphin's method", fig.height=2.5}
+theory_plot_estimated_dose_curve(
+  est_doses = list(partial = results_partial_dolphin),
+  fit_coeffs,
+  fit_var_cov_mat,
+  protracted_g_value = 1,
+  conf_int_curve = 0,
+  aberr_name = "Dicentrics",
+  show_projections = FALSE
+)
+```

@@ -75,10 +75,10 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
 
   # Calculate genomic fraction ----
 
-  genome_fraction <- reactive({
+  genome_factor <- reactive({
 
     # Create button dependency for updating dimensions
-    input$button_calc_genome_fraction
+    input$button_calc_genome_factor
 
     isolate({
       dna_table <- biodosetools::dna_content_fractions_morton
@@ -105,28 +105,28 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
       color <- chromosome_table_clean[["Stain"]]
     }
 
-    genome_fraction <- calculate_genome_fraction(dna_table, chromosome, color, sex)
+    genome_factor <- calculate_genome_factor(dna_table, chromosome, color, sex)
 
-    return(genome_fraction)
+    return(genome_factor)
   })
 
   # Output ----
-  output$genome_fraction <- renderUI({
-    if (input$button_calc_genome_fraction <= 0) {
+  output$genome_factor <- renderUI({
+    if (input$button_calc_genome_factor <= 0) {
       return(NULL)
     }
 
-    genome_fraction_value <- genome_fraction()
-    genome_fraction_text <- paste0(
+    genome_factor_value <- genome_factor()
+    genome_factor_text <- paste0(
       "The genomic conversion factor to full genome is ",
-      as.character(round(genome_fraction_value, 3)),
+      as.character(round(genome_factor_value, 3)),
       "."
     )
 
-    return(genome_fraction_text)
+    return(genome_factor_text)
   })
 
   return(
-    list(genome_fraction = reactive(genome_fraction()))
+    list(genome_factor = reactive(genome_factor()))
   )
 }

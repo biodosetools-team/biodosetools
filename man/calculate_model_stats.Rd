@@ -16,7 +16,7 @@ calculate_model_stats(
   mu = NULL,
   n = NULL,
   npar = NULL,
-  genome_fraction = NULL,
+  genome_factor = NULL,
   calc_type = c("fitting", "estimation")
 )
 }
@@ -43,7 +43,7 @@ calculate_model_stats(
 
 \item{npar}{number of parameters (required in constraint-maxlik-optimization)}
 
-\item{genome_fraction}{Genomic fraction used in translocations}
+\item{genome_factor}{Genomic conversion factor used in translocations}
 
 \item{calc_type}{Calculation type, either "fitting" or "estimation"}
 }
