@@ -1,0 +1,46 @@
+url:
+
+home:
+  title: Biodose Tools
+  links:
+  - text: Read documentation
+    href: https://biodosetools-team.github.io/documentation/
+
+authors:
+  Alfredo Hernández:
+    href: https://aldomann.com
+
+template:
+  bootstrap: 5
+  params:
+    bootswatch: flatly
+
+reference:
+- title: Shiny app
+  desc:  Run Biodose Tools Shiny app.
+  contents:
+  - run_app
+
+- title: Fitting
+  desc: Fit and visualise calibration dose-effect curve.
+  contents:
+  - fit
+  - plot_fit_dose_curve
+
+- title: Dose estimation
+  desc: Estimate and visualise uncertainties on dose estimations.
+  contents:
+  - estimate_whole_body
+  - estimate_whole_body_delta
+  - estimate_partial_dolphin
+  - estimate_hetero
+  - plot_estimated_dose_curve
+
+- title: Auxiliary
+  desc: Auxiliary functions used in the fitting and dose estimation pipelines.
+  contents:
+  - calculate_aberr_table
+  - protracted_g_function
+  - calculate_genome_fraction
+  - calculate_trans_rate_manual
+  - calculate_trans_rate_sigurdson
