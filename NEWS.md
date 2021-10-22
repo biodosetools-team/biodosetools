@@ -1,3 +1,39 @@
+# biodosetools 3.5.0.9000
+
+* Major rewrite of `plot_estimated_dose_curve()` function.
+* Added {markdown} as suggested dependency.
+* Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.
+* Use consistently genomic conversion factor or `genome_factor` across all functions, help dialogues, and reports.
+
+## New features
+
+* Return `conf_int` in `estimate_*()` family of functions.
+* Parse `est_full_doses$type` in `plot_estimated_dose_curve()` function so unused assessments are not shown in legend.
+* Added `match_names()` function to match est_doses list names when calling `plot_estimated_dose_curve()`.
+* Updated `plot_estimated_dose_curve()` to automatically build `est_full_doses` object from list of dose estimation results, added `parse_conf_int_text()` auxiliary function.
+
+## Bug fixes
+
+* Correct dispersion index value on `estimate_whole_body_delta()` when there's no aberrations.
+* Fixed issue in missing count data in DOCX fitting report.
+* Removed double calculation of `cov_est` in `estimate_partial_dolphin()`.
+
+## Improvements
+
+* Fixed order of output case data columns in `calculate_aberr_table()` so they match the final output in Shiny.
+* Renamed `count-data-IAEA.csv` to `count-data-barquinero-1995.csv` from Barquinero et al. (1995) <https://doi.org/10.1016/0027-5107(94)00150-4>.
+* Added `count-data-rodriguez-2004.csv` for total translocations fom Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
+* Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
+
+## UI Improvements
+
+* Added new `side-widget-*` CSS classes to better style file download/format buttons.
+* Added `widget_sep_vert()` function.
+* Use new `sep-widget_*` CSS classes in fitting UI modules.
+* Updated report help modals text.
+* Using new `side-widget-*` CSS classes in dose estimation UI modules.
+
+
 # biodosetools 3.5.0 (2021-05-26)
 
 * Added unit tests for to check code coverage and to validate that the code performs as expected.
