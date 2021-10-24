@@ -11,7 +11,7 @@ output: no
 devtools::load_all()
 ```
 
-```{r get-results}
+```{r fn-get-results}
 get_results <- function(data) {
   case_data <- calculate_aberr_table(
     data = data,
@@ -48,14 +48,16 @@ get_results <- function(data) {
   parsed_genome_factor <- 1
 
   # Calculations
-  results_whole_delta <- estimate_whole_body_delta(
+  results_partial <- estimate_partial_dolphin(
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
     conf_int = 0.95,
     protracted_g_value,
     cov = TRUE,
-    aberr_module
+    genome_factor = parsed_genome_factor,
+    aberr_module,
+    gamma = 1 / 2.7
   )
 
   set.seed(1)
@@ -81,23 +83,52 @@ get_results <- function(data) {
     gamma = 1 / 2.7,
     gamma_error = 0
   )
-
+  
   return(
     list(
-      # old = results_hetero$est_yields,
-      # new = results_hetero_new$est_yields,
-      old1 = c(results_hetero$est_yields[2, 1], results_hetero$est_yields[3, 1] - results_hetero$est_yields[2, 1]) %>% round(2),
-      old2 = c(results_hetero$est_yields[2, 2], results_hetero$est_yields[3, 2] - results_hetero$est_yields[2, 2]) %>% round(2),
-      new1 = c(results_hetero_new$est_yields[2, 1], results_hetero_new$est_yields[3, 1] - results_hetero_new$est_yields[2, 1]) %>% round(2),
-      new2 = c(results_hetero_new$est_yields[2, 2], results_hetero_new$est_yields[3, 2] - results_hetero_new$est_yields[2, 2]) %>% round(2)
+      partial = results_partial,
+      hetero_old = results_hetero,
+      hetero_new = results_hetero_new
     )
   )
 }
 ```
 
+```{r fn-parse-resutls}
+parse_results <- function(results) {
+  data <- data.frame(
+    assessment = c("partial", "hetero 1 (old)", "hetero 2 (old)", "hetero 1 (new)", "hetero 2 (new)"),
+    yield_est = c(
+      results$partial$est_doses[2, 1],
+      results$hetero_old$est_yields[2, 1],
+      results$hetero_old$est_yields[2, 2],
+      results$hetero_new$est_yields[2, 1],
+      results$hetero_new$est_yields[2, 2]
+    ),
+    std_error = c(
+      results$partial$est_doses[3, 1] - results$partial$est_doses[2, 1],
+      results$hetero_old$est_yields[3, 1] - results$hetero_old$est_yields[2, 1],
+      results$hetero_old$est_yields[3, 2] - results$hetero_old$est_yields[2, 2],
+      results$hetero_new$est_yields[3, 1] - results$hetero_new$est_yields[2, 1],
+      results$hetero_new$est_yields[3, 2] - results$hetero_new$est_yields[2, 2]
+    ),
+    yield_upp = c(
+      results$partial$est_doses[3, 1],
+      results$hetero_old$est_yields[3, 1],
+      results$hetero_old$est_yields[3, 2],
+      results$hetero_new$est_yields[3, 1],
+      results$hetero_new$est_yields[3, 2]
+    )
+  )
+
+  return(data)
+}
+```
+
+
 # Results
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 get_results(
   data.frame(
     C0 = 302,
@@ -107,7 +138,8 @@ get_results(
     C4 = 1,
     C5 = 0
   )
-)
+) %>% 
+  parse_results()
 ```
 
 ```{r}
@@ -120,7 +152,8 @@ get_results(
     C4 = 0,
     C5 = 0
   )
-)
+) %>% 
+  parse_results()
 ```
 
 ```{r}
@@ -133,6 +166,7 @@ get_results(
     C4 = 0,
     C5 = 0
   )
-)
+) %>% 
+  parse_results()
 ```
 
