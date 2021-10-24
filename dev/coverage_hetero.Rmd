@@ -1,0 +1,138 @@
+---
+title: "Yield coverage factor in heterogeneous estimation"
+author: "Alfredo Hernández"
+date: "2021-01-01"
+output: no
+---
+
+# Initial set-up
+
+```{r setup, message=FALSE, include=FALSE}
+devtools::load_all()
+```
+
+```{r get-results}
+get_results <- function(data) {
+  case_data <- calculate_aberr_table(
+    data = data,
+    type = "case",
+    assessment_u = 1
+  )
+
+  # Specific to dicentrics/micronuclei
+  case_data <- case_data %>%
+    dplyr::rename(
+      y = .data$mean,
+      y_err = .data$std_err
+    )
+
+  # Colnames validation
+  case_data_cols <- colnames(case_data)
+  case_data_cols_len <- length(case_data_cols)
+
+  # Dose estimation
+  aberr_module <- "dicentrics"
+
+  fit_results_list <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
+    readRDS()
+
+  # Parse fitting data
+  fit_coeffs <- fit_results_list[["fit_coeffs"]]
+  fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+  fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
+
+  # Protraction (acute exposure)
+  protracted_g_value <- 1
+
+  # Parse genome fraction
+  parsed_genome_factor <- 1
+
+  # Calculations
+  results_whole_delta <- estimate_whole_body_delta(
+    case_data,
+    fit_coeffs,
+    fit_var_cov_mat,
+    conf_int = 0.95,
+    protracted_g_value,
+    cov = TRUE,
+    aberr_module
+  )
+
+  set.seed(1)
+  results_hetero <- estimate_hetero(
+    case_data,
+    fit_coeffs,
+    fit_var_cov_mat,
+    conf_int_yield = 0.83,
+    conf_int_curve = 0.83,
+    protracted_g_value,
+    gamma = 1 / 2.7,
+    gamma_error = 0
+  )
+
+  set.seed(1)
+  results_hetero_new <- estimate_hetero_new(
+    case_data,
+    fit_coeffs,
+    fit_var_cov_mat,
+    conf_int_yield = 0.83,
+    conf_int_curve = 0.83,
+    protracted_g_value,
+    gamma = 1 / 2.7,
+    gamma_error = 0
+  )
+
+  return(
+    list(
+      # old = results_hetero$est_yields,
+      # new = results_hetero_new$est_yields,
+      old1 = c(results_hetero$est_yields[2, 1], results_hetero$est_yields[3, 1] - results_hetero$est_yields[2, 1]) %>% round(2),
+      old2 = c(results_hetero$est_yields[2, 2], results_hetero$est_yields[3, 2] - results_hetero$est_yields[2, 2]) %>% round(2),
+      new1 = c(results_hetero_new$est_yields[2, 1], results_hetero_new$est_yields[3, 1] - results_hetero_new$est_yields[2, 1]) %>% round(2),
+      new2 = c(results_hetero_new$est_yields[2, 2], results_hetero_new$est_yields[3, 2] - results_hetero_new$est_yields[2, 2]) %>% round(2)
+    )
+  )
+}
+```
+
+# Results
+
+```{r}
+get_results(
+  data.frame(
+    C0 = 302,
+    C1 = 28,
+    C2 = 22,
+    C3 = 8,
+    C4 = 1,
+    C5 = 0
+  )
+)
+```
+
+```{r}
+get_results(
+  data.frame(
+    C0 = 337,
+    C1 = 25,
+    C2 = 27,
+    C3 = 7,
+    C4 = 0,
+    C5 = 0
+  )
+)
+```
+
+```{r}
+get_results(
+  data.frame(
+    C0 = 470,
+    C1 = 47,
+    C2 = 9,
+    C3 = 0,
+    C4 = 0,
+    C5 = 0
+  )
+)
+```
+
