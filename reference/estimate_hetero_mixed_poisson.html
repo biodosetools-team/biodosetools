@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Whole-body dose estimation (delta method) — estimate_whole_body_delta • biodosetools</title>
+<title>Heterogeneous dose estimation (Mixed Poisson model) — estimate_hetero_mixed_poisson • biodosetools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Whole-body dose estimation (delta method) — estimate_whole_body_delta" />
-<meta property="og:description" content="Whole-body dose estimation using delta method." />
+<meta property="og:title" content="Heterogeneous dose estimation (Mixed Poisson model) — estimate_hetero_mixed_poisson" />
+<meta property="og:description" content="Heterogeneous dose estimation." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -121,23 +121,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Whole-body dose estimation (delta method)</h1>
+    <h1>Heterogeneous dose estimation (Mixed Poisson model)</h1>
     <small class="dont-index">Source: <a href='https://github.com/biodosetools-team/biodosetools/blob/master/R/calcs_estimation.R'><code>R/calcs_estimation.R</code></a></small>
-    <div class="hidden name"><code>estimate_whole_body_delta.Rd</code></div>
+    <div class="hidden name"><code>estimate_hetero_mixed_poisson.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Whole-body dose estimation using delta method.</p>
+    <p>Heterogeneous dose estimation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>estimate_whole_body_delta</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>estimate_hetero_mixed_poisson</span><span class='op'>(</span>
   <span class='va'>case_data</span>,
   <span class='va'>fit_coeffs</span>,
   <span class='va'>fit_var_cov_mat</span>,
-  conf_int <span class='op'>=</span> <span class='fl'>0.95</span>,
+  <span class='va'>conf_int_yield</span>,
+  <span class='va'>conf_int_curve</span>,
   <span class='va'>protracted_g_value</span>,
-  cov <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  <span class='va'>aberr_module</span>
+  <span class='va'>gamma</span>,
+  <span class='va'>gamma_error</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -156,26 +157,30 @@
       <td><p>Fitting variance-covariance matrix</p></td>
     </tr>
     <tr>
-      <th>conf_int</th>
-      <td><p>Confidence interval, 95% by default</p></td>
+      <th>conf_int_yield</th>
+      <td><p>Confidence interval of the yield</p></td>
+    </tr>
+    <tr>
+      <th>conf_int_curve</th>
+      <td><p>Confidence interval of the curve</p></td>
     </tr>
     <tr>
       <th>protracted_g_value</th>
       <td><p>Protracted G(x) value</p></td>
     </tr>
     <tr>
-      <th>cov</th>
-      <td><p>Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used</p></td>
+      <th>gamma</th>
+      <td><p>Survival coefficient of irradiated cells</p></td>
     </tr>
     <tr>
-      <th>aberr_module</th>
-      <td><p>Aberration module</p></td>
+      <th>gamma_error</th>
+      <td><p>Error of the survival coefficient of irradiated cells</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List containing estimated doses data frame and AIC</p>
+    <p>List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
