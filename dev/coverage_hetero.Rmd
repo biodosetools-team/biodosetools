@@ -11,6 +11,313 @@ output: no
 devtools::load_all()
 ```
 
+```{r fn-estimate-hetero-new}
+estimate_hetero_new <- function(case_data, fit_coeffs, fit_var_cov_mat,
+                                conf_int_yield, conf_int_curve, protracted_g_value,
+                                gamma, gamma_error) {
+
+  # Select translocation counts
+  counts <- case_data[1, ] %>%
+    dplyr::select(dplyr::contains("C")) %>%
+    as.numeric()
+
+  # Get fitting model variables
+  cells <- case_data[["N"]]
+  cells_0 <- case_data[["C0"]]
+  cells_1 <- case_data[["C1"]]
+
+  # Likelihood function
+  loglik <- function(coeffs) {
+    loglik <- sum(log(coeffs[1] * stats::dpois(y, coeffs[2]) + (1 - coeffs[1]) * stats::dpois(y, coeffs[3])))
+
+    return(-loglik)
+  }
+
+  # Function to calculate fractions of irradiated blood
+  get_fraction <- function(g, f, mu1, mu2) {
+    dose1_est <- project_yield(
+      yield = mu1,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+
+    if (mu2 <= 0.01) {
+      dose2_est <- 0
+    } else {
+      dose2_est <- project_yield(
+        yield = mu2,
+        type = "estimate",
+        general_fit_coeffs = general_fit_coeffs,
+        general_fit_var_cov_mat = NULL,
+        protracted_g_value = protracted_g_value,
+        conf_int = 0
+      )
+    }
+
+    frac <- f / (f + (1 - f) * exp(g * (dose2_est - dose1_est)))
+
+    return(frac)
+  }
+
+  # If there are no cells with > 1 dic, the results include only NAs
+  # This should be handled somewhere downstream
+  if (cells - (cells_0 + cells_1) == 0) {
+    # Estimated yields
+    est_yields <- data.frame(
+      yield1 = rep(NA, 3),
+      yield2 = rep(NA, 3)
+    )
+
+    # Estimated mixing proportion
+    est_mixing_prop <- data.frame(
+      y_estimate = rep(NA, 2),
+      y_std_err = rep(NA, 2),
+      f_estimate = rep(NA, 2),
+      f_std_err = rep(NA, 2)
+    )
+
+    # Estimated doses
+    est_doses <- data.frame(
+      dose1 = rep(NA, 3),
+      dose2 = rep(NA, 3)
+    )
+
+    # Estimated fraction
+    est_frac <- data.frame(
+      estimate = rep(NA, 2),
+      std_err = rep(NA, 2)
+    )
+  } else {
+    # Get cases data and store in vector y
+    y <- rep(seq(0, length(counts) - 1, 1), counts)
+    x <- c(rep(1, length(y)))
+
+    fit <- mixtools::poisregmixEM(y, x, addintercept = FALSE, k = 2)
+
+    # Generalised fit coefficients and variance-covariance matrix
+    general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+    general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+    # Parse fitting coefficients
+    coeff_C <- general_fit_coeffs[[1]]
+    coeff_alpha <- general_fit_coeffs[[2]]
+    coeff_beta <- general_fit_coeffs[[3]]
+
+    # Input of the variance-covariance matrix of the parameters
+    sigma <- numeric(49)
+    dim(sigma) <- c(7, 7)
+    sigma[1, 1] <- general_fit_var_cov_mat[1, 1]
+    sigma[2, 2] <- general_fit_var_cov_mat[2, 2]
+    sigma[3, 3] <- general_fit_var_cov_mat[3, 3]
+    sigma[1, 2] <- general_fit_var_cov_mat[1, 2]
+    sigma[1, 3] <- general_fit_var_cov_mat[1, 3]
+    sigma[2, 3] <- general_fit_var_cov_mat[2, 3]
+    sigma[2, 1] <- sigma[1, 2]
+    sigma[3, 1] <- sigma[1, 3]
+    sigma[3, 2] <- sigma[2, 3]
+    sigma[4, 4] <- gamma_error
+
+    # Calculate Maximum Likielihood Estimation
+    MLE <- stats::optim(
+      par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
+      fn = loglik,
+      method = c("L-BFGS-B"),
+      lower = c(0.01, 0.01, 0.01),
+      upper = c(0.99, Inf, Inf),
+      hessian = TRUE
+    )
+
+    st <- solve(MLE$hessian)
+    yield1_est <- MLE$par[2]
+    yield2_est <- MLE$par[3]
+    frac1 <- MLE$par[1]
+
+    if (yield1_est < yield2_est) {
+      yield1_est <- MLE$par[3]
+      yield2_est <- MLE$par[2]
+      frac1 <- 1 - frac1
+      stm <- st
+      stm[2, 2] <- st[3, 3]
+      stm[3, 3] <- st[2, 2]
+      stm[1, 2] <- st[1, 3]
+      stm[1, 3] <- st[1, 2]
+      stm[2, 1] <- stm[1, 2]
+      stm[3, 1] <- stm[1, 3]
+      st <- stm
+    }
+
+    # WIP: This is not requiered yet
+    # sigma[5, 5] <- st[1, 1]
+    # sigma[6, 6] <- st[2, 2]
+    # sigma[7, 7] <- st[3, 3]
+    # sigma[5, 6] <- st[1, 2]
+    # sigma[5, 7] <- st[1, 3]
+    # sigma[6, 7] <- st[2, 3]
+    # sigma[6, 5] <- st[1, 2]
+    # sigma[7, 5] <- st[1, 3]
+    # sigma[7, 6] <- st[2, 3]
+
+    # Estimated parameters and its standard errors
+    estim <- c(frac1, yield1_est, yield2_est)
+    std_estim <- sqrt(diag(st))
+
+    yield1_low <- yield1_est - stats::qnorm(conf_int_yield + (1 - conf_int_yield) / 2) * std_estim[2]
+    yield1_upp <- yield1_est + stats::qnorm(conf_int_yield + (1 - conf_int_yield) / 2) * std_estim[2]
+
+    yield2_low <- yield2_est - stats::qnorm(conf_int_yield + (1 - conf_int_yield) / 2) * std_estim[3]
+    yield2_upp <- yield2_est + stats::qnorm(conf_int_yield + (1 - conf_int_yield) / 2) * std_estim[3]
+
+    # Correct "unrootable" yields
+    yield1_est <- correct_yield(yield1_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield1_low <- correct_yield(yield1_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield1_upp <- correct_yield(yield1_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+
+    yield2_est <- correct_yield(yield2_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield2_low <- correct_yield(yield2_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    yield2_upp <- correct_yield(yield2_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+
+    est_yields <- data.frame(
+      yield1 = c(yield1_low, yield1_est, yield1_upp),
+      yield2 = c(yield2_low, yield2_est, yield2_upp)
+    ) %>%
+      `row.names<-`(c("lower", "estimate", "upper"))
+
+    # Estimated mixing proportion
+    est_mixing_prop <- data.frame(
+      y_estimate = c(estim[2], estim[3]),
+      y_std_err = c(std_estim[2], std_estim[3]),
+      f_estimate = c(estim[1], 1 - estim[1]),
+      f_std_err = rep(std_estim[1], 2)
+    ) %>%
+      `row.names<-`(c("dose1", "dose2"))
+
+    # Estimated received doses
+    dose1_est <- project_yield(
+      yield = yield1_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+    dose1_low <- project_yield(
+      yield = yield1_low,
+      type = "lower",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+    dose1_upp <- project_yield(
+      yield = yield1_upp,
+      type = "upper",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+
+    dose2_est <- project_yield(
+      yield = yield2_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+    dose2_low <- project_yield(
+      yield = yield2_low,
+      type = "lower",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+    dose2_upp <- project_yield(
+      yield = yield2_upp,
+      type = "upper",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = general_fit_var_cov_mat,
+      protracted_g_value = protracted_g_value,
+      conf_int = conf_int_curve
+    )
+
+    est_doses <- data.frame(
+      dose1 = c(dose1_low, dose1_est, dose1_upp),
+      dose2 = c(dose2_low, dose2_est, dose2_upp)
+    ) %>%
+      `row.names<-`(c("lower", "estimate", "upper"))
+
+    # Estimated fraction of irradiated blood for dose dose1
+    F1_est <- get_fraction(gamma, frac1, yield1_est, yield2_est)
+    F1_est <- correct_boundary(F1_est)
+    F2_est <- 1 - F1_est
+
+    # Approximated standard error
+    F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
+
+    est_frac <- data.frame(
+      estimate = c(F1_est, F2_est),
+      std_err = rep(F1_est_sd, 2)
+    ) %>%
+      `row.names<-`(c("dose1", "dose2"))
+
+    # Calculate AIC as a GOF indicator
+    est_doses_AIC <- data.frame(
+      dose = est_doses["estimate", ] %>% as.numeric(),
+      yield = est_yields["estimate", ] %>% as.numeric()
+    )
+
+    AIC <- AIC_from_data(
+      general_fit_coeffs, est_doses_AIC,
+      dose_var = "dose", yield_var = "yield", fit_link = "identity"
+    )
+
+    # WIP: This is not required yet
+    # Gradient
+    # h <- 0.000001
+    # if (yield2_est > 0.01) {
+    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
+    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+    #   c8 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est + h) - F) / h
+    #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
+    #   sqrt(t(grad) %*% sigma %*% grad)
+    # }
+    # if (yield2_est <= 0.01) {
+    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
+    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
+    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
+    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
+    #   grad <- c(c1, c2, c3, c5, c6, c7)
+    #   sigma2 <- sigma[1:6, 1:6]
+    #   sqrt(t(grad) %*% sigma2 %*% grad)
+    # }
+  }
+
+  # Return objects
+  results_list <- list(
+    est_mixing_prop = est_mixing_prop,
+    est_yields = est_yields,
+    est_doses = est_doses,
+    est_frac = est_frac,
+    AIC = AIC,
+    conf_int = c(yield = conf_int_yield, curve = conf_int_curve)
+  )
+
+  return(results_list)
+}
+
+```
+
 ```{r fn-get-results}
 get_results <- function(data) {
   case_data <- calculate_aberr_table(
@@ -94,8 +401,8 @@ get_results <- function(data) {
 }
 ```
 
-```{r fn-parse-resutls}
-parse_results <- function(results) {
+```{r fn-parse-yields}
+parse_yields <- function(results) {
   data <- data.frame(
     assessment = c("partial", "hetero 1 (old)", "hetero 2 (old)", "hetero 1 (new)", "hetero 2 (new)"),
     yield_est = c(
@@ -112,6 +419,13 @@ parse_results <- function(results) {
       results$hetero_new$est_yields[3, 1] - results$hetero_new$est_yields[2, 1],
       results$hetero_new$est_yields[3, 2] - results$hetero_new$est_yields[2, 2]
     ),
+    yield_low = c(
+      results$partial$est_doses[1, 1],
+      results$hetero_old$est_yields[1, 1],
+      results$hetero_old$est_yields[1, 2],
+      results$hetero_new$est_yields[1, 1],
+      results$hetero_new$est_yields[1, 2]
+    ),
     yield_upp = c(
       results$partial$est_doses[3, 1],
       results$hetero_old$est_yields[3, 1],
@@ -125,11 +439,49 @@ parse_results <- function(results) {
 }
 ```
 
+```{r fn-parse-doses}
+parse_doses <- function(results) {
+  data <- data.frame(
+    assessment = c("partial", "hetero 1 (old)", "hetero 2 (old)", "hetero 1 (new)", "hetero 2 (new)"),
+    dose_est = c(
+      results$partial$est_doses[2, 2],
+      results$hetero_old$est_doses[2, 1],
+      results$hetero_old$est_doses[2, 2],
+      results$hetero_new$est_doses[2, 1],
+      results$hetero_new$est_doses[2, 2]
+    ),
+    std_error = c(
+      results$partial$est_doses[3, 2] - results$partial$est_doses[2, 2],
+      results$hetero_old$est_doses[3, 1] - results$hetero_old$est_doses[2, 1],
+      results$hetero_old$est_doses[3, 2] - results$hetero_old$est_doses[2, 2],
+      results$hetero_new$est_doses[3, 1] - results$hetero_new$est_doses[2, 1],
+      results$hetero_new$est_doses[3, 2] - results$hetero_new$est_doses[2, 2]
+    ),
+    dose_low = c(
+      results$partial$est_doses[1, 2],
+      results$hetero_old$est_doses[1, 1],
+      results$hetero_old$est_doses[1, 2],
+      results$hetero_new$est_doses[1, 1],
+      results$hetero_new$est_doses[1, 2]
+    ),
+    dose_upp = c(
+      results$partial$est_doses[3, 2],
+      results$hetero_old$est_doses[3, 1],
+      results$hetero_old$est_doses[3, 2],
+      results$hetero_new$est_doses[3, 1],
+      results$hetero_new$est_doses[3, 2]
+    )
+  )
+
+  return(data)
+}
+```
+
 
 # Results
 
-```{r message=FALSE, warning=FALSE}
-get_results(
+```{r M0F4, message=FALSE, warning=FALSE}
+m0f4 <- get_results(
   data.frame(
     C0 = 302,
     C1 = 28,
@@ -138,12 +490,14 @@ get_results(
     C4 = 1,
     C5 = 0
   )
-) %>% 
-  parse_results()
+)
+
+parse_yields(m0f4)
+parse_doses(m0f4)
 ```
 
-```{r}
-get_results(
+```{r M4F0, message=FALSE, warning=FALSE}
+m4f0 <- get_results(
   data.frame(
     C0 = 337,
     C1 = 25,
@@ -152,12 +506,14 @@ get_results(
     C4 = 0,
     C5 = 0
   )
-) %>% 
-  parse_results()
+)
+
+parse_yields(m4f0)
+parse_doses(m4f0)
 ```
 
-```{r}
-get_results(
+```{r M2F0, message=FALSE, warning=FALSE}
+m2f0 <- get_results(
   data.frame(
     C0 = 470,
     C1 = 47,
@@ -166,7 +522,9 @@ get_results(
     C4 = 0,
     C5 = 0
   )
-) %>% 
-  parse_results()
+)
+
+parse_yields(m2f0)
+parse_doses(m2f0)
 ```
 
