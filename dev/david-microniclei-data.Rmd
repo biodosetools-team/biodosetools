@@ -10,18 +10,22 @@ output: no
 ```{r setup, message=FALSE, include=FALSE}
 # Load packages
 library(tidyverse)
-library(biodosetools)
+# library(biodosetools)
+devtools::load_all()
 
 # Additional options
 theme_set(theme_light())
 ```
+
+# Dose estimation
 
 ```{r fit-coeffs}
 fit_coeffs <- data.frame(
   estimate = c(0.0096, 0.0172, 0.0110),
   std.error = c(0.0012, 0.0032, 0.0010)
 ) %>%
-  `rownames<-`(c("coeff_C", "coeff_alpha", "coeff_beta"))
+  `rownames<-`(c("coeff_C", "coeff_alpha", "coeff_beta")) %>% 
+  as.matrix()
 
 fit_var_cov_mat <- matrix(
   0,
@@ -63,15 +67,25 @@ case_data <- data.frame(
 case_data
 ```
 
+```{r whole-merkle-results, include=FALSE}
+results_whole_merkle <- estimate_whole_body_merkle(
+  case_data, 
+  fit_coeffs,
+  fit_var_cov_mat,
+  protracted_g_value = 1,
+  aberr_module = "dicentrics"
+)
+```
 
 ```{r whole-delta-results, include=FALSE}
 results_whole_delta <- estimate_whole_body_delta(
   case_data, 
-  fit_coeffs, 
+  fit_coeffs,
   fit_var_cov_mat,
   conf_int = 0.95, 
-  protracted_g_value = 1, cov = TRUE, 
-  "dicentrics"
+  protracted_g_value = 1, 
+  cov = TRUE, 
+  aberr_module = "dicentrics"
 )
 ```
 
@@ -79,6 +93,7 @@ results_whole_delta <- estimate_whole_body_delta(
 case_data
 fit_coeffs
 fit_var_cov_mat
+results_whole_merkle$est_doses
 results_whole_delta$est_doses
 ```
 
@@ -92,3 +107,62 @@ plot_estimated_dose_curve(
   aberr_name = "Dicentrics"
 )
 ```
+
+# Check curve
+
+```{r read-parameters}
+# Generalised fit coefficients and variance-covariance matrix
+general_fit_coeffs <- biodosetools:::generalise_fit_coeffs(fit_coeffs[, "estimate"])
+general_fit_var_cov_mat <- biodosetools:::generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+coeff_C <- general_fit_coeffs[[1]]
+coeff_alpha <- general_fit_coeffs[[2]]
+coeff_beta <- general_fit_coeffs[[3]]
+protracted_g_value <- 1
+
+lambda_est <- case_data[["y"]]
+
+lambda_est_corr <- correct_yield(lambda_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int = 0)
+```
+
+```{r}
+# lambda_est <- biodosetools:::correct_yield(lambda_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int = 0.95)
+lambda_est <- 0.5
+```
+
+
+```{r estimate-dose}
+# Update coeff_beta to correct for protracted exposures
+coeff_beta <- coeff_beta * protracted_g_value
+
+# Auxiliary variable
+z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
+
+# Get estimate for dose
+dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
+dose_est
+```
+
+```{r}
+biodosetools:::project_yield(
+  yield = 0,
+  type = "estimate",
+  general_fit_coeffs = general_fit_coeffs,
+  general_fit_var_cov_mat = NULL,
+  protracted_g_value = protracted_g_value,
+  conf_int = 0
+)
+```
+
+
+```{r}
+    dose_est <- project_yield(
+      yield = lambda_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+```
+
