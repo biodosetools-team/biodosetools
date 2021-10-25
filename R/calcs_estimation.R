@@ -85,9 +85,12 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat, c
   # TODO: possible modification IAEA§9.7.3
 
   # Correct "unrootable" yields
-  yield_est <- correct_yield(yield_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-  yield_low <- correct_yield(yield_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-  yield_upp <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+  yield_est_corr <- correct_yield(yield_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+  if (yield_est_corr < yield_est) {
+    yield_est <- 0
+    yield_low <- 0
+    yield_upp <- 0
+  }
 
   # Calculate projections
   dose_est <- project_yield(
@@ -253,6 +256,17 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   dose_low <- correct_negative_vals(dose_low)
   dose_est <- correct_negative_vals(dose_est)
   dose_upp <- correct_negative_vals(dose_upp)
+
+  # Correct "unrootable" yields and respective doses
+  lambda_est_corr <- correct_yield(lambda_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int = 0)
+  if (lambda_est_corr < lambda_est) {
+    lambda_est <- 0
+    lambda_low <- 0
+    lambda_upp <- 0
+    dose_est <- 0
+    dose_low <- 0
+    dose_upp <- 0
+  }
 
   # Whole-body estimation results
   est_doses <- data.frame(
