@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcs_estimation.R
 \name{estimate_whole_body_delta}
 \alias{estimate_whole_body_delta}
-\title{Whole-body dose estimation}
+\title{Whole-body dose estimation (delta method)}
 \usage{
 estimate_whole_body_delta(
   case_data,
@@ -33,5 +33,5 @@ estimate_whole_body_delta(
 List containing estimated doses data frame and AIC
 }
 \description{
-Whole-body dose estimation using Delta method.
+Whole-body dose estimation using delta method.
 }

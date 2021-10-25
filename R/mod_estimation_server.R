@@ -708,7 +708,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       message("\nPerforming whole-body dose estimation (Merkle)...")
-      results_whole <- estimate_whole_body(
+      results_whole <- estimate_whole_body_merkle(
         case_data,
         fit_coeffs,
         fit_var_cov_mat,
@@ -745,7 +745,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
       # Calculate partial results
       message("\nPerforming partial-body dose estimation (Dolphin)...")
-      results_partial <- estimate_partial_dolphin(
+      results_partial <- estimate_partial_body_dolphin(
         case_data,
         fit_coeffs,
         fit_var_cov_mat,
@@ -773,7 +773,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
       # Calculate heterogeneous result
       message("\nPerforming heterogeneous dose estimation...")
-      results_hetero <- estimate_hetero(
+      results_hetero <- estimate_hetero_mixed_poisson(
         case_data,
         fit_coeffs,
         fit_var_cov_mat,

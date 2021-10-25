@@ -30,10 +30,10 @@ reference:
 - title: Dose estimation
   desc: Estimate and visualise uncertainties on dose estimations.
   contents:
-  - estimate_whole_body
+  - estimate_whole_body_merkle
   - estimate_whole_body_delta
-  - estimate_partial_dolphin
-  - estimate_hetero
+  - estimate_partial_body_dolphin
+  - estimate_hetero_mixed_poisson
   - plot_estimated_dose_curve
 
 - title: Auxiliary

@@ -35,7 +35,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 
 # Dose estimation functions ----
 
-#' Whole-body dose estimation
+#' Whole-body dose estimation (Merkle's method)
 #'
 #' Whole-body dose estimation using Merkle's method.
 #'
@@ -50,7 +50,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
-estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve  = 0.83, protracted_g_value, genome_factor = 1, aberr_module) {
+estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve = 0.83, protracted_g_value, genome_factor = 1, aberr_module) {
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -141,9 +141,9 @@ estimate_whole_body <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int
   return(results_list)
 }
 
-#' Whole-body dose estimation
+#' Whole-body dose estimation (delta method)
 #'
-#' Whole-body dose estimation using Delta method.
+#' Whole-body dose estimation using delta method.
 #'
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
@@ -175,7 +175,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   # Detect fitting model
   fit_is_lq <- isFALSE(coeff_beta == 0)
 
-  # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
+  # Calculate dose and derivatives depending on linear/linear-quadratic fitting model
   if (fit_is_lq) {
     # Update coeff_beta to correct for protracted exposures
     coeff_beta <- coeff_beta * protracted_g_value
@@ -278,9 +278,9 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   return(results_list)
 }
 
-#' Partial-body dose estimation
+#' Partial-body dose estimation (Dolphin's method)
 #'
-#' Partial-body dose estimation using Dolphin method.
+#' Partial-body dose estimation using Dolphin's method.
 #'
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
@@ -294,9 +294,9 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #'
 #' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                     conf_int = 0.95, protracted_g_value, cov = TRUE,
-                                     genome_factor = 1, aberr_module, gamma) {
+estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
+                                          conf_int = 0.95, protracted_g_value, cov = TRUE,
+                                          genome_factor = 1, aberr_module, gamma) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -501,7 +501,7 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
   return(results_list)
 }
 
-#' Heterogeneous dose estimation
+#' Heterogeneous dose estimation (Mixed Poisson model)
 #'
 #' Heterogeneous dose estimation.
 #'
@@ -516,9 +516,9 @@ estimate_partial_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #'
 #' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
-estimate_hetero <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                            conf_int_yield, conf_int_curve, protracted_g_value,
-                            gamma, gamma_error) {
+estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat,
+                                          conf_int_yield, conf_int_curve, protracted_g_value,
+                                          gamma, gamma_error) {
 
   # Select translocation counts
   counts <- case_data[1, ] %>%

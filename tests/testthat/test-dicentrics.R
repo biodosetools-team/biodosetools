@@ -168,7 +168,7 @@ test_that("processing case data works", {
   parsed_genome_factor <- 1
 
   # Calculations
-  results_whole_merkle <- estimate_whole_body(
+  results_whole_merkle <- estimate_whole_body_merkle(
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
@@ -189,7 +189,7 @@ test_that("processing case data works", {
     aberr_module
   )
 
-  results_partial <- estimate_partial_dolphin(
+  results_partial <- estimate_partial_body_dolphin(
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
@@ -202,7 +202,7 @@ test_that("processing case data works", {
   )
 
   set.seed(1)
-  results_hetero <- estimate_hetero(
+  results_hetero <- estimate_hetero_mixed_poisson(
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
