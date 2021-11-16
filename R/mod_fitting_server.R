@@ -259,7 +259,10 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
         aberr_name
       )
 
-      message("\nDone!")
+      cli::cli_alert_success("Fitting performed successfully")
+      showNotification(
+        ui = "Fitting performed successfully"
+      )
 
       # Make list of results to return
       results_list <- fit_results_list

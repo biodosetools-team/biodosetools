@@ -822,7 +822,10 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       aberr_name
     )
 
-    message("\nDone!")
+    cli::cli_alert_success("Dose estimation performed successfully")
+    showNotification(
+      ui = "Dose estimation performed successfully"
+    )
 
     # Return list ----
 
