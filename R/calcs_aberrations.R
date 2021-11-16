@@ -17,22 +17,24 @@ NULL
 
 #' @rdname calculate_aberr
 calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
-  aberr <- purrr::map_df(
-    data %>%
-      .[grep(aberr_prefix, names(.))] %>%
-      t() %>%
-      as.data.frame(),
-    ~ . *
-      data %>%
-        .[grep(aberr_prefix, names(.))] %>%
-        names() %>%
-        regmatches(., regexpr("[0-9]+", .)) %>%
-        as.numeric() %>%
-        .^power
-  ) %>%
+  # Prepare data
+  aberr_data <- data %>%
+    .[grep(aberr_prefix, names(.))] %>%
     t() %>%
-    rowSums() %>%
-    as.integer()
+    as.data.frame()
+
+  powers <- aberr_data %>%
+    rownames() %>%
+    regmatches(., regexpr("[0-9]+", .)) %>%
+    as.numeric() %>%
+    `^`(power)
+
+  # Calculate aberration powers
+  aberr <- numeric(length = ncol(aberr_data))
+
+  for (i in 1:ncol(aberr_data)) {
+    aberr[i] <- sum(aberr_data[, i] * powers)
+  }
 
   return(aberr)
 }

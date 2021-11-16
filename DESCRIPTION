@@ -25,7 +25,6 @@ Imports:
     maxLik,
     mixtools,
     msm,
-    purrr,
     rhandsontable,
     rlang (>= 0.4.0),
     rmarkdown,
