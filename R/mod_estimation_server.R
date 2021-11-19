@@ -563,6 +563,12 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     # Calcs: get variables ----
     input$button_estimate
 
+    # Initialise progress object
+    cli::cli_h1("Dose estimation calculations")
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message = "Performing dose estimation", value = 0)
+
     isolate({
       # Fit data
       load_fit_data <- input$load_fit_data_check
@@ -587,6 +593,10 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     }
 
     # Get fitting data ----
+
+    cli::cli_alert_info("Parsing dose-effect curve...")
+    progress$set(detail = "Parsing dose-effect curve", value = 1 / 6)
+    Sys.sleep(0.3)
     if (load_fit_data) {
       fit_results_list <- readRDS(fit_data$datapath)
 
@@ -707,7 +717,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
-      message("\nPerforming whole-body dose estimation (Merkle)...")
+      cli::cli_alert_info("Performing whole-body dose estimation (Merkle's method)...")
+      progress$set(detail = "Performing whole-body dose estimation (Merkle's method)", value = 2 / 6)
+      Sys.sleep(0.3)
       results_whole <- estimate_whole_body_merkle(
         case_data,
         fit_coeffs,
@@ -719,7 +731,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         aberr_module
       )
     } else if (error_method == "delta") {
-      message("\nPerforming whole-body dose estimation (Delta)...")
+      cli::cli_alert_info("Performing whole-body dose estimation (delta method)...")
+      progress$set(detail = "Performing whole-body dose estimation (delta method)", value = 2 / 6)
+      Sys.sleep(0.3)
       results_whole <- estimate_whole_body_delta(
         case_data,
         fit_coeffs,
@@ -744,7 +758,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       }
 
       # Calculate partial results
-      message("\nPerforming partial-body dose estimation (Dolphin)...")
+      cli::cli_alert_info("Performing partial-body dose estimation (Dolphin's method)...")
+      progress$set(detail = "Performing partial-body dose estimation (Dolphin's method)", value = 3 / 6)
+      Sys.sleep(0.3)
       results_partial <- estimate_partial_body_dolphin(
         case_data,
         fit_coeffs,
@@ -772,7 +788,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       }
 
       # Calculate heterogeneous result
-      message("\nPerforming heterogeneous dose estimation...")
+      cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
+      progress$set(detail = "Performing heterogeneous dose estimation (mixed Poisson model)", value = 3 / 6)
+      Sys.sleep(0.3)
       results_hetero <- estimate_hetero_mixed_poisson(
         case_data,
         fit_coeffs,
@@ -793,7 +811,9 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     }
 
     # Make plot ----
-    message("\nPlotting dose estimation results...")
+    cli::cli_alert_info("Plotting dose estimation results...")
+    progress$set(detail = "Plotting dose estimation results", value = 4 / 6)
+    Sys.sleep(0.3)
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
@@ -822,12 +842,11 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       aberr_name
     )
 
-    cli::cli_alert_success("Dose estimation performed successfully")
-    showNotification(
-      ui = "Dose estimation performed successfully"
-    )
-
     # Return list ----
+
+    cli::cli_alert_info("Processing results")
+    progress$set(detail = "Processing results", value = 5 / 6)
+    Sys.sleep(0.3)
 
     # Make basic list of results to return
     est_results_list <- list(
@@ -909,6 +928,12 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         est_results_list[["confounders"]] <- input$trans_expected_aberr_value
       }
     }
+
+    cli::cli_alert_success("Dose estimation performed successfully")
+    progress$set(detail = "Done", value = 1)
+    showNotification(
+      ui = "Dose estimation performed successfully"
+    )
 
     return(est_results_list)
   })
