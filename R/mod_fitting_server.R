@@ -204,6 +204,12 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   data <- reactive({
     input$button_fit
 
+    # Initialise progress object
+    cli::cli_h1("Dose-effect fitting calculations")
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message = "Performing fitting", value = 0)
+
     isolate({
       count_data <- hot_to_r(input$count_data_hot)
 
@@ -235,7 +241,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
 
     isolate({
       # Calculate dose-effect fitting curve
-      message("\nPerforming dose-effect fitting...")
+      cli::cli_alert_info("Performing dose-effect fitting...")
+      progress$set(detail = "Performing dose-effect fitting", value = 1 / 4)
       fit_results_list <- fit(
         count_data,
         model_formula,
@@ -253,15 +260,11 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       }
 
       # Get dose estimation curve
-      message("\nPlotting fitting results...")
+      cli::cli_alert_info("Plotting fitting results...")
+      progress$set(detail = "Plotting fitting results", value = 2 / 4)
       gg_curve <- plot_fit_dose_curve(
         fit_results_list,
         aberr_name
-      )
-
-      cli::cli_alert_success("Fitting performed successfully")
-      showNotification(
-        ui = "Fitting performed successfully"
       )
 
       # Make list of results to return
@@ -286,6 +289,8 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
       # )
 
       # Add irradiation conditions
+      cli::cli_alert_info("Storing irradiation conditions...")
+      progress$set(detail = "Storing irradiation conditions", value = 3 / 4)
       results_list[["irr_conds"]] <- list(
         irradiator_name = c(
           label = "Name of the irradiator used",
@@ -319,6 +324,12 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
           label = "Beam characteristics",
           text = input$irr_cond_beam_characteristics
         )
+      )
+
+      cli::cli_alert_success("Fitting performed successfully")
+      progress$set(detail = "Done", value = 1)
+      showNotification(
+        ui = "Fitting performed successfully"
       )
 
       return(results_list)
