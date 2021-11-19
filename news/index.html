@@ -129,7 +129,9 @@
 <a href="#biodosetools-3509000" class="anchor"></a>biodosetools 3.5.0.9000</h1>
 <ul>
 <li>Major rewrite of <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function.</li>
+<li>Added progress notifications to UI.</li>
 <li>Added {markdown} as suggested dependency.</li>
+<li>Added {cli} as dependency.</li>
 <li>Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.</li>
 <li>Use consistently genomic conversion factor or <code>genome_factor</code> across all functions, help dialogues, and reports.</li>
 </ul>
@@ -160,6 +162,8 @@
 <li>Renamed <code>count-data-IAEA.csv</code> to <code>count-data-barquinero-1995.csv</code> from Barquinero et al. (1995) <a href="https://doi.org/10.1016/0027-5107(94)00150-4" class="uri">https://doi.org/10.1016/0027-5107(94)00150-4</a>.</li>
 <li>Added <code>count-data-rodriguez-2004.csv</code> for total translocations fom Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="uri">https://doi.org/10.1667/RR3198</a>.</li>
 <li>Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="uri">https://doi.org/10.1667/RR3198</a>.</li>
+<li>Rewrote <code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code> to remove {purrr} dependency and reduce computation time by 4.</li>
+<li>Replaced <code><a href="https://rdrr.io/r/base/message.html">message()</a></code> calls with appropriate <code>cli::cli_*()</code> calls.</li>
 </ul>
 </div>
 <div id="ui-improvements" class="section level2">
@@ -171,6 +175,7 @@
 <li>Use new <code>sep-widget_*</code> CSS classes in fitting UI modules.</li>
 <li>Updated report help modals text.</li>
 <li>Using new <code>side-widget-*</code> CSS classes in dose estimation UI modules.</li>
+<li>Added progress notifications to calculations via <code><a href="https://rdrr.io/pkg/shiny/man/Progress.html">shiny::Progress</a></code>.</li>
 </ul>
 </div>
 </div>
