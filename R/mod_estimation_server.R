@@ -596,7 +596,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     cli::cli_alert_info("Parsing dose-effect curve...")
     progress$set(detail = "Parsing dose-effect curve", value = 1 / 6)
-    Sys.sleep(0.3)
     if (load_fit_data) {
       fit_results_list <- readRDS(fit_data$datapath)
 
@@ -718,8 +717,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     # Calculate whole-body results
     if (grepl("merkle", error_method, fixed = TRUE)) {
       cli::cli_alert_info("Performing whole-body dose estimation (Merkle's method)...")
-      progress$set(detail = "Performing whole-body dose estimation (Merkle's method)", value = 2 / 6)
-      Sys.sleep(0.3)
+      progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
       results_whole <- estimate_whole_body_merkle(
         case_data,
         fit_coeffs,
@@ -732,8 +730,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       )
     } else if (error_method == "delta") {
       cli::cli_alert_info("Performing whole-body dose estimation (delta method)...")
-      progress$set(detail = "Performing whole-body dose estimation (delta method)", value = 2 / 6)
-      Sys.sleep(0.3)
+      progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
       results_whole <- estimate_whole_body_delta(
         case_data,
         fit_coeffs,
@@ -759,8 +756,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
       # Calculate partial results
       cli::cli_alert_info("Performing partial-body dose estimation (Dolphin's method)...")
-      progress$set(detail = "Performing partial-body dose estimation (Dolphin's method)", value = 3 / 6)
-      Sys.sleep(0.3)
+      progress$set(detail = "Performing partial-body dose estimation", value = 3 / 6)
       results_partial <- estimate_partial_body_dolphin(
         case_data,
         fit_coeffs,
@@ -789,8 +785,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
       # Calculate heterogeneous result
       cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
-      progress$set(detail = "Performing heterogeneous dose estimation (mixed Poisson model)", value = 3 / 6)
-      Sys.sleep(0.3)
+      progress$set(detail = "Performing heterogeneous dose estimation", value = 3 / 6)
       results_hetero <- estimate_hetero_mixed_poisson(
         case_data,
         fit_coeffs,
@@ -813,7 +808,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     # Make plot ----
     cli::cli_alert_info("Plotting dose estimation results...")
     progress$set(detail = "Plotting dose estimation results", value = 4 / 6)
-    Sys.sleep(0.3)
 
     # Data set for dose plotting
     if (assessment == "whole-body") {
@@ -846,7 +840,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     cli::cli_alert_info("Processing results")
     progress$set(detail = "Processing results", value = 5 / 6)
-    Sys.sleep(0.3)
 
     # Make basic list of results to return
     est_results_list <- list(

@@ -1,7 +1,9 @@
 # biodosetools 3.5.0.9000
 
 * Major rewrite of `plot_estimated_dose_curve()` function.
+* Added progress notifications to UI.
 * Added {markdown} as suggested dependency.
+* Added {cli} as dependency.
 * Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.
 * Use consistently genomic conversion factor or `genome_factor` across all functions, help dialogues, and reports.
 
@@ -24,6 +26,8 @@
 * Renamed `count-data-IAEA.csv` to `count-data-barquinero-1995.csv` from Barquinero et al. (1995) <https://doi.org/10.1016/0027-5107(94)00150-4>.
 * Added `count-data-rodriguez-2004.csv` for total translocations fom Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
 * Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
+* Rewrote `calculate_aberr_power()` to remove {purrr} dependency and reduce computation time by 4.
+* Replaced `message()` calls with appropriate `cli::cli_*()` calls.
 
 ## UI Improvements
 
@@ -32,6 +36,7 @@
 * Use new `sep-widget_*` CSS classes in fitting UI modules.
 * Updated report help modals text.
 * Using new `side-widget-*` CSS classes in dose estimation UI modules.
+* Added progress notifications to calculations via `shiny::Progress`.
 
 
 # biodosetools 3.5.0 (2021-05-26)
