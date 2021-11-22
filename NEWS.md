@@ -1,7 +1,7 @@
 # biodosetools 3.5.0.9000
 
 * Major rewrite of `plot_estimated_dose_curve()` function.
-* Added progress notifications to UI.
+* Added progress and alert notifications to UI.
 * Added {markdown} as suggested dependency.
 * Added {cli} as dependency.
 * Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.
@@ -19,6 +19,7 @@
 * Correct dispersion index value on `estimate_whole_body_delta()` when there's no aberrations.
 * Fixed issue in missing count data in DOCX fitting report.
 * Removed double calculation of `cov_est` in `estimate_partial_dolphin()`.
+* Wrapped mixed Poisson model dose estimation in `try()` to ensure convergence (up to 5 tries).
 
 ## Improvements
 
