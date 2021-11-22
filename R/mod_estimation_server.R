@@ -786,16 +786,22 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Calculate heterogeneous result
       cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
       progress$set(detail = "Performing heterogeneous dose estimation", value = 3 / 6)
-      results_hetero <- estimate_hetero_mixed_poisson(
-        case_data,
-        fit_coeffs,
-        fit_var_cov_mat,
-        conf_int_yield_hetero,
-        conf_int_curve_hetero,
-        protracted_g_value,
-        gamma,
-        gamma_error
-      )
+      # Wrap mixed Poisson model in try() to ensure convergence
+      for (i in 1:5) {
+        try({
+          results_hetero <- estimate_hetero_mixed_poisson(
+            case_data,
+            fit_coeffs,
+            fit_var_cov_mat,
+            conf_int_yield = 0.83,
+            conf_int_curve = 0.83,
+            protracted_g_value,
+            gamma = 1 / 2.7,
+            gamma_error = 0
+          )
+          break # break/exit the for-loop
+        })
+      }
 
       # Parse results
       est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
