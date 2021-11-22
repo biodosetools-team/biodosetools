@@ -786,6 +786,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Calculate heterogeneous result
       cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
       progress$set(detail = "Performing heterogeneous dose estimation", value = 3 / 6)
+
       # Wrap mixed Poisson model in try() to ensure convergence
       for (i in 1:5) {
         try({
@@ -801,6 +802,13 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
           )
           break # break/exit the for-loop
         })
+      }
+      if (!exists("results_hetero")) {
+        cli::cli_alert_danger("The algorithm did not converge!")
+        showNotification(
+          ui = "The algorithm did not converge!\nPlease try again.",
+          type = "error"
+        )
       }
 
       # Parse results
