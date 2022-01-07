@@ -45,6 +45,6 @@ reference:
   contents:
   - calculate_aberr_table
   - protracted_g_function
-  - calculate_genome_fraction
-  - calculate_trans_rate_manual
+  - calculate_genome_factor
   - calculate_trans_rate_sigurdson
+  - calculate_trans_rate_manual
