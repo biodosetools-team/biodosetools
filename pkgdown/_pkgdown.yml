@@ -11,8 +11,13 @@ authors:
     href: https://aldomann.com
 
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: litera
+  bslib:
+    primary: "#2fc27e"
+    base_font: {google: "Nunito Sans"}
+    heading_font: {google: "Nunito"}
+    code_font: {google: "Fira Code"}
 
 reference:
 - title: Shiny app
