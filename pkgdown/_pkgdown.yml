@@ -48,3 +48,28 @@ reference:
   - calculate_genome_factor
   - calculate_trans_rate_sigurdson
   - calculate_trans_rate_manual
+
+- title: internal
+  contents:
+  - AIC_from_data
+  - R_factor
+  - biodosetools
+  - calculate_decision_threshold
+  - calculate_model_stats
+  - calculate_yield
+  - calculate_yield_infimum
+  - correct_boundary
+  - correct_conf_int
+  - correct_negative_vals
+  - correct_yield
+  - dna_content_fractions_ihgsc
+  - dna_content_fractions_morton
+  - fit_glm_method
+  - fit_maxlik_method
+  - gardner_confidence_table
+  - include_help
+  - load_rmd_report
+  - prepare_maxlik_count_data
+  - project_yield
+  - yield_error_fun
+  - yield_fun
