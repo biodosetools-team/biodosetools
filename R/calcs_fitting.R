@@ -219,17 +219,8 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
   fit_formula <- stats::as.formula(fit_formula_raw)
 
   # Perform automatic fit calculation
-  if (model_family == "poisson") {
-    # Poisson model
-    fit_results <- stats::glm(
-      formula = fit_formula,
-      family = stats::poisson(link = fit_link),
-      data = model_data
-    )
-    fit_dispersion <- NULL
-    fit_final_model <- "poisson"
-  } else if (model_family == "automatic" | model_family == "quasipoisson") {
-    # Automatic and quasi-Poisson model
+  if (model_family == "automatic") {
+    # Automatic (quasi-Poisson) model
     fit_results <- stats::glm(
       formula = fit_formula,
       family = stats::quasipoisson(link = fit_link),
@@ -239,7 +230,7 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
     fit_final_model <- "quasipoisson"
 
     # Check if Poisson model is more suitable
-    if (fit_dispersion <= 1 & aberr_module != "micronuclei") {
+    if (fit_dispersion <= 1) {
       fit_results <- stats::glm(
         formula = fit_formula,
         family = stats::poisson(link = fit_link),
@@ -248,6 +239,24 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
       fit_dispersion <- NULL
       fit_final_model <- "poisson"
     }
+  } else if (model_family == "poisson") {
+    # Poisson model
+    fit_results <- stats::glm(
+      formula = fit_formula,
+      family = stats::poisson(link = fit_link),
+      data = model_data
+    )
+    fit_dispersion <- NULL
+    fit_final_model <- "poisson"
+  } else if (model_family == "quasipoisson") {
+    # Quasi-Poisson model
+    fit_results <- stats::glm(
+      formula = fit_formula,
+      family = stats::quasipoisson(link = fit_link),
+      data = model_data
+    )
+    fit_dispersion <- summary(fit_results)$dispersion
+    fit_final_model <- "quasipoisson"
   } else if (model_family == "nb2") {
     fit_results <- MASS::glm.nb(
       formula = fit_formula,
