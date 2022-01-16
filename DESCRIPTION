@@ -11,7 +11,7 @@ Description: Biodose Tools is an open-source Shiny App that aims
     to be a tool to perform all different tests and calculations needed by
     Biological Dosimetry Laboratories.
 License: GPL-3
-URL: https://github.com/biodosetools-team/biodosetools/
+URL: https://biodosetools-team.github.io/biodosetools/, https://github.com/biodosetools-team/biodosetools/
 BugReports: 
     https://github.com/biodosetools-team/biodosetools/issues/
 Depends: 
