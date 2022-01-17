@@ -10,7 +10,6 @@ estimate_whole_body_delta(
   fit_var_cov_mat,
   conf_int = 0.95,
   protracted_g_value,
-  cov = TRUE,
   aberr_module
 )
 }
@@ -24,8 +23,6 @@ estimate_whole_body_delta(
 \item{conf_int}{Confidence interval, 95\% by default}
 
 \item{protracted_g_value}{Protracted G(x) value}
-
-\item{cov}{Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used}
 
 \item{aberr_module}{Aberration module}
 }

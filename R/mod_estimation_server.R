@@ -737,7 +737,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         fit_var_cov_mat,
         conf_int_delta,
         protracted_g_value,
-        cov = TRUE,
         aberr_module
       )
     }

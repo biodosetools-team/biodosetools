@@ -153,13 +153,12 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat, c
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param conf_int Confidence interval, 95\% by default
 #' @param protracted_g_value Protracted G(x) value
-#' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param aberr_module Aberration module
 #'
 #' @return List containing estimated doses data frame and AIC
 #' @export
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                      conf_int = 0.95, protracted_g_value, cov = TRUE, aberr_module) {
+                                      conf_int = 0.95, protracted_g_value, aberr_module) {
   # Parse parameters and coefficients
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
@@ -178,31 +177,12 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   # Detect fitting model
   fit_is_lq <- isFALSE(coeff_beta == 0)
 
-  # Calculate dose and derivatives depending on linear/linear-quadratic fitting model
+  # Get estimate for dose depending on linear/linear-quadratic fitting model
   if (fit_is_lq) {
-    # Update coeff_beta to correct for protracted exposures
-    coeff_beta <- coeff_beta * protracted_g_value
-
-    # Auxiliary variable
     z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
-
-    # Get estimate for dose
     dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
-
-    # Derivatives of regression curve coefs
-    deriv_lambda <- (z)^(-0.5)
-    deriv_coeff_C <- -(z)^(-0.5)
-    deriv_coeff_alpha <- (1 / (2 * coeff_beta)) * (-1 + coeff_alpha * z^(-0.5))
-    deriv_coeff_beta <- protracted_g_value * (4 * coeff_beta * (lambda_est - coeff_C) * (z^(-0.5)) + 2 * coeff_alpha - 2 * z^(0.5)) / (4 * coeff_beta^2)
   } else {
-    # Get estimate for dose
     dose_est <- (lambda_est - coeff_C) / coeff_alpha
-
-    # Derivatives of regression curve coefs
-    deriv_lambda <- 1 / coeff_alpha
-    deriv_coeff_C <- -(1 / coeff_alpha)
-    deriv_coeff_alpha <- (coeff_C - lambda_est) / coeff_alpha^2
-    deriv_coeff_beta <- 0
   }
 
   # Calculate variance of lambda
@@ -229,26 +209,32 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
   lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
-  if (cov) {
-    dose_est_var <-
-      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
-      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
-      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
-      (deriv_lambda^2) * (lambda_est_sd^2) +
-      2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
-      2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
-      2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
+  # Get standard error of fraction irradiated by deltamethod()
+  if (fit_is_lq) {
+    # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
+    formula <- paste(
+      "~", "(-x2 + sqrt(x2^2 + 4 * x3 *", protracted_g_value, "* (x4 - x1)))", "/",
+      "(2 * x3 *", protracted_g_value, ")",
+      sep = ""
+    )
   } else {
-    dose_est_var <-
-      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
-      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
-      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
-      (deriv_lambda^2) * (lambda_est_sd^2)
+    # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
+    formula <- "~ (x4 - x1) / x2"
   }
 
+  cov_extended <- matrix(0, ncol = 4, nrow = 4)
+  cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
+  cov_extended[4, 4] <- lambda_est_sd^2
+
+  dose_est_sd <- msm::deltamethod(
+    g = stats::as.formula(formula),
+    mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
+    cov = cov_extended
+  )
+
   # Get confidence interval of dose estimates
-  dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
-  dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+  dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * dose_est_sd
+  dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * dose_est_sd
 
   # Correct negative values
   lambda_low <- correct_negative_vals(lambda_low)

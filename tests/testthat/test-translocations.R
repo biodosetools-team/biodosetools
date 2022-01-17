@@ -237,7 +237,6 @@ test_that("processing case data works", {
     fit_var_cov_mat,
     conf_int = 0.95,
     protracted_g_value,
-    cov = TRUE,
     aberr_module
   )
 
