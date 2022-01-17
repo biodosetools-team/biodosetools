@@ -222,7 +222,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
     formula <- "~ (x4 - x1) / x2"
   }
 
-  cov_extended <- matrix(0, ncol = 4, nrow = 4)
+  cov_extended <- matrix(0, nrow = 4, ncol = 4)
   cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
   cov_extended[4, 4] <- lambda_est_sd^2
 
@@ -619,17 +619,8 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     coeff_beta <- general_fit_coeffs[[3]]
 
     # Input of the variance-covariance matrix of the parameters
-    sigma <- numeric(49)
-    dim(sigma) <- c(7, 7)
-    sigma[1, 1] <- general_fit_var_cov_mat[1, 1]
-    sigma[2, 2] <- general_fit_var_cov_mat[2, 2]
-    sigma[3, 3] <- general_fit_var_cov_mat[3, 3]
-    sigma[1, 2] <- general_fit_var_cov_mat[1, 2]
-    sigma[1, 3] <- general_fit_var_cov_mat[1, 3]
-    sigma[2, 3] <- general_fit_var_cov_mat[2, 3]
-    sigma[2, 1] <- sigma[1, 2]
-    sigma[3, 1] <- sigma[1, 3]
-    sigma[3, 2] <- sigma[2, 3]
+    sigma <- matrix(0, nrow = 7, ncol = 7)
+    sigma[1:3, 1:3] <- general_fit_var_cov_mat
     sigma[4, 4] <- gamma_error
 
     # Calculate Maximum Likielihood Estimation
