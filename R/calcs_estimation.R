@@ -469,23 +469,31 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     # Get estimate for fraction irradiated
     F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
-    # Get standard error of fraction irradiated by deltamethod
+    # Get standard error of fraction irradiated by deltamethod()
     if (fit_is_lq) {
-      # x5: pi_est, x4: lambda_est, x1: C, x2: alpha, x3: beta
+      # Formula parameters: {x1, x2, x3, x4, x5} = {C, alpha, beta, lambda_est, pi_est}
       formula <- paste(
-        "~ x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")) /
-            (1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
+        "~", "x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, "))", "/",
+        "(1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(
+        g = stats::as.formula(formula),
+        mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
+        cov = cov_extended
+      )
     } else {
-      # x4: pi_est, x3: lambda_est, x1: C, x2: alpha
+      # Formula parameters: {x1, x2, x3, x4} = {C, alpha, lambda_est, pi_est}
       formula <- paste(
-        "~ x4 * exp((x3 - x1) / (x2 *", d0, ")) /
-            (1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0, ")))",
+        "~", "x4 * exp((x3 - x1) / (x2 *", d0, "))", "/",
+        "1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(stats::as.formula(formula), mean = c(coeff_C, coeff_alpha, lambda_est, pi_est), cov = cov_extended)
+      F_est_sd <- msm::deltamethod(
+        g = stats::as.formula(formula),
+        mean = c(coeff_C, coeff_alpha, lambda_est, pi_est),
+        cov = cov_extended
+      )
     }
 
     # Get confidence interval of fraction irradiated
