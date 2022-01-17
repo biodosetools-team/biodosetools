@@ -74,6 +74,8 @@
 <li>Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="external-link uri">https://doi.org/10.1667/RR3198</a>.</li>
 <li>Rewrote <code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code> to remove {purrr} dependency and reduce computation time by 4.</li>
 <li>Replaced <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> calls with appropriate <code>cli::cli_*()</code> calls.</li>
+<li>Split quasi-Poisson from automatic fitting in <code><a href="../reference/fit_glm_method.html">fit_glm_method()</a></code>, as it is otherwise confusing.</li>
+<li>Updated <code>\sigma</code> to <code>\hat{\sigma}</code> in <code>fix_count_data_names()</code> and respective tests.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="ui-improvements-3-5-0-9000">UI Improvements<a class="anchor" aria-label="anchor" href="#ui-improvements-3-5-0-9000"></a></h3>
@@ -83,6 +85,7 @@
 <li>Updated report help modals text.</li>
 <li>Using new <code>side-widget-*</code> CSS classes in dose estimation UI modules.</li>
 <li>Added progress notifications to calculations via <code><a href="https://rdrr.io/pkg/shiny/man/Progress.html" class="external-link">shiny::Progress</a></code>.</li>
+<li>Updated <code>_pkgdown.yml</code> and simplified <code>extra.css</code> thanks to Bootstrap 5 support in {pkgdown} 2.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
