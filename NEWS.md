@@ -29,6 +29,8 @@
 * Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
 * Rewrote `calculate_aberr_power()` to remove {purrr} dependency and reduce computation time by 4.
 * Replaced `message()` calls with appropriate `cli::cli_*()` calls.
+* Split quasi-Poisson from automatic fitting in `fit_glm_method()`, as it is otherwise confusing.
+* Updated `\sigma` to `\hat{\sigma}` in `fix_count_data_names()` and respective tests.
 
 ## UI Improvements
 
@@ -38,6 +40,7 @@
 * Updated report help modals text.
 * Using new `side-widget-*` CSS classes in dose estimation UI modules.
 * Added progress notifications to calculations via `shiny::Progress`.
+* Updated `_pkgdown.yml` and simplified `extra.css` thanks to Bootstrap 5 support in {pkgdown} 2.0.
 
 
 # biodosetools 3.5.0 (2021-05-26)
