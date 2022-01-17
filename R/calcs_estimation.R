@@ -619,7 +619,7 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     coeff_beta <- general_fit_coeffs[[3]]
 
     # Input of the variance-covariance matrix of the parameters
-    sigma <- matrix(0, nrow = 7, ncol = 7)
+    sigma <- matrix(0, nrow = 4, ncol = 4)
     sigma[1:3, 1:3] <- general_fit_var_cov_mat
     sigma[4, 4] <- gamma_error
 
@@ -651,17 +651,6 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       stm[3, 1] <- stm[1, 3]
       st <- stm
     }
-
-    # WIP: This is not requiered yet
-    # sigma[5, 5] <- st[1, 1]
-    # sigma[6, 6] <- st[2, 2]
-    # sigma[7, 7] <- st[3, 3]
-    # sigma[5, 6] <- st[1, 2]
-    # sigma[5, 7] <- st[1, 3]
-    # sigma[6, 7] <- st[2, 3]
-    # sigma[6, 5] <- st[1, 2]
-    # sigma[7, 5] <- st[1, 3]
-    # sigma[7, 6] <- st[2, 3]
 
     # Estimated parameters and its standard errors
     estim <- c(frac1, yield1_est, yield2_est)
@@ -778,32 +767,6 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       general_fit_coeffs, est_doses_AIC,
       dose_var = "dose", yield_var = "yield", fit_link = "identity"
     )
-
-    # WIP: This is not required yet
-    # Gradient
-    # h <- 0.000001
-    # if (yield2_est > 0.01) {
-    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
-    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-    #   c8 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est + h) - F) / h
-    #   grad <- c(c1, c2, c3, c5, c6, c7, c8)
-    #   sqrt(t(grad) %*% sigma %*% grad)
-    # }
-    # if (yield2_est <= 0.01) {
-    #   c1 <- (get_fraction(coeff_C + h, coeff_alpha, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c2 <- (get_fraction(coeff_C, coeff_alpha + h, coeff_beta, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c3 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta + h, gamma, frac1, yield1_est, yield2_est) - F) / h
-    #   c5 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gam + h, frac1, yield1_est, yield2_est) - F) / h
-    #   c6 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1 + h, yield1_est, yield2_est) - F) / h
-    #   c7 <- (get_fraction(coeff_C, coeff_alpha, coeff_beta, gamma, frac1, yield1_est + h, yield2_est) - F) / h
-    #   grad <- c(c1, c2, c3, c5, c6, c7)
-    #   sigma2 <- sigma[1:6, 1:6]
-    #   sqrt(t(grad) %*% sigma2 %*% grad)
-    # }
   }
 
   # Return objects
