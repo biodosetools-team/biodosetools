@@ -10,7 +10,6 @@ estimate_partial_body_dolphin(
   fit_var_cov_mat,
   conf_int = 0.95,
   protracted_g_value,
-  cov = TRUE,
   genome_factor = 1,
   aberr_module,
   gamma
@@ -26,8 +25,6 @@ estimate_partial_body_dolphin(
 \item{conf_int}{Confidence interval, 95\% by default}
 
 \item{protracted_g_value}{Protracted G(x) value}
-
-\item{cov}{Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used}
 
 \item{genome_factor}{Genomic conversion factor used in translocations, else 1}
 

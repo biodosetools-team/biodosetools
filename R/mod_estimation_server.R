@@ -762,7 +762,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         fit_var_cov_mat,
         conf_int_dolphin,
         protracted_g_value,
-        cov = TRUE,
         parsed_genome_factor,
         aberr_module,
         gamma

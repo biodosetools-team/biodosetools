@@ -194,7 +194,6 @@ test_that("processing case data works", {
     fit_var_cov_mat,
     conf_int = 0.95,
     protracted_g_value,
-    cov = TRUE,
     genome_factor = parsed_genome_factor,
     aberr_module,
     gamma = 1 / 2.7

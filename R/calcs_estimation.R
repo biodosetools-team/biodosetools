@@ -287,7 +287,6 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
 #' @param conf_int Confidence interval, 95\% by default
 #' @param protracted_g_value Protracted G(x) value
-#' @param cov Whether the covariances of the regression coefficients should be considered, otherwise only the diagonal of the covariance matrix is used
 #' @param genome_factor Genomic conversion factor used in translocations, else 1
 #' @param aberr_module Aberration module
 #' @param gamma Survival coefficient of irradiated cells
@@ -295,7 +294,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
 estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                          conf_int = 0.95, protracted_g_value, cov = TRUE,
+                                          conf_int = 0.95, protracted_g_value,
                                           genome_factor = 1, aberr_module, gamma) {
 
   # Function to get the fisher information matrix
@@ -411,22 +410,14 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
     lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
-    if (cov) {
-      dose_est_var <-
-        (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
-        (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
-        (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
-        (deriv_lambda^2) * (lambda_est_sd^2) +
-        2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
-        2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
-        2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
-    } else {
-      dose_est_var <-
-        (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
-        (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
-        (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
-        (deriv_lambda^2) * (lambda_est_sd^2)
-    }
+    dose_est_var <-
+      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
+      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
+      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
+      (deriv_lambda^2) * (lambda_est_sd^2) +
+      2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
+      2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
+      2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
 
     # Get confidence interval of dose estimates
     dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
