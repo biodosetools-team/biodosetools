@@ -90,7 +90,7 @@ test_that("fix_count_data_names for count data works", {
   )
   expect_equal(
     count_data_cols[seq(count_data_cols_len - 3, count_data_cols_len, 1)],
-    c("$\\bar{y}$", "$\\sigma^{2}$", "$\\sigma^{2} / \\bar{y}$", "$u$")
+    c("$\\bar{y}$", "$\\hat{\\sigma}^{2}$", "$\\hat{\\sigma}^{2} / \\bar{y}$", "$u$")
   )
 })
 
@@ -147,7 +147,7 @@ test_that("fix_count_data_names for case data works", {
   )
   expect_equal(
     case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)],
-    c("$F_{P}$", "$\\sigma_{P} / \\sqrt{N}$", "$\\sigma^{2} / \\bar{y}$", "$u$", "$X_{C}$", "$F_{G}$", "$\\sigma_{G} / \\sqrt{N}$")
+    c("$F_{P}$", "$\\hat{\\sigma}_{P} / \\sqrt{N}$", "$\\hat{\\sigma}^{2} / \\bar{y}$", "$u$", "$X_{C}$", "$F_{G}$", "$\\hat{\\sigma}_{G} / \\sqrt{N}$")
   )
 })
 

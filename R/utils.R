@@ -134,8 +134,8 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
       gsub("^mean$", "$\\\\bar{y}$", .) %>%
-      gsub("^var$", "$\\\\sigma^{2}$", .) %>%
-      gsub("^DI$", "$\\\\sigma^{2} / \\\\bar{y}$", .) %>%
+      gsub("^var$", "$\\\\hat{\\\\sigma}^{2}$", .) %>%
+      gsub("^DI$", "$\\\\hat{\\\\sigma}^{2} / \\\\bar{y}$", .) %>%
       gsub("^u$", "$u$", .)
 
     if (ncol(data) > 3) {
@@ -148,13 +148,13 @@ fix_count_data_names <- function(data, type = c("count", "case"), output = "kabl
       gsub("^N$", "$N$", .) %>%
       gsub("^X$", "$X$", .) %>%
       gsub("^y$", "$y$", .) %>%
-      gsub("^y_err$", "$\\\\sigma_{y} / \\\\sqrt{N}$", .) %>%
+      gsub("^y_err$", "$\\\\hat{\\\\sigma}_{y} / \\\\sqrt{N}$", .) %>%
       gsub("^Fp$", "$F_{P}$", .) %>%
-      gsub("^Fp_err$", "$\\\\sigma_{P} / \\\\sqrt{N}$", .) %>%
+      gsub("^Fp_err$", "$\\\\hat{\\\\sigma}_{P} / \\\\sqrt{N}$", .) %>%
       gsub("^Fg$", "$F_{G}$", .) %>%
       gsub("^Xc$", "$X_{C}$", .) %>%
-      gsub("^Fg_err$", "$\\\\sigma_{G} / \\\\sqrt{N}$", .) %>%
-      gsub("^DI$", "$\\\\sigma^{2} / \\\\bar{y}$", .) %>%
+      gsub("^Fg_err$", "$\\\\hat{\\\\sigma}_{G} / \\\\sqrt{N}$", .) %>%
+      gsub("^DI$", "$\\\\hat{\\\\sigma}^{2} / \\\\bar{y}$", .) %>%
       gsub("^u$", "$u$", .)
 
     colnames(data) <- c(other_headers[1:2], counts_headers, other_headers[3:length(other_headers)])
