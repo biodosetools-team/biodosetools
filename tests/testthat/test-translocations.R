@@ -273,14 +273,21 @@ test_that("processing case data works", {
   expect_equal(round(results_whole_delta$AIC, 3), 8.223)
 
   expect_equal(results_whole_merkle$est_doses["estimate", "yield"], results_whole_delta$est_doses["estimate", "yield"])
-  # TODO: check theory
-  # expect_lt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
-  # expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
+  expect_gt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
+  expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
+
+  expect_true(all(round(results_whole_merkle$est_doses$yield, 3) == c(1.171, 1.295, 1.429)))
+  expect_true(all(round(results_whole_merkle$est_doses$dose, 3) == c(3.936, 4.367, 4.882)))
+  expect_true(all(round(results_whole_delta$est_doses$yield, 3) == c(1.106, 1.295, 1.484)))
+  expect_true(all(round(results_whole_delta$est_doses$dose, 3) == c(3.974, 4.367, 4.759)))
 
   # Expected outputs (partial-body)
   expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
   expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
   expect_equal(round(results_partial$AIC, 3), 8.838)
+
+  expect_true(all(round(results_partial$est_doses$yield, 3) == c(2.147, 2.546, 2.945)))
+  expect_true(all(round(results_partial$est_doses$dose, 3) == c(5.596, 6.189, 6.782)))
 
   # Plot
   gg_curve <- plot_estimated_dose_curve(

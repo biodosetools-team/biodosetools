@@ -241,10 +241,18 @@ test_that("processing case data works", {
   expect_gt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
   expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
 
+  expect_true(all(round(results_whole_merkle$est_doses$yield, 3) == c(0.240, 0.277, 0.319)))
+  expect_true(all(round(results_whole_merkle$est_doses$dose, 3) == c(1.712, 1.931, 2.187)))
+  expect_true(all(round(results_whole_delta$est_doses$yield, 3) == c(0.205, 0.277, 0.349)))
+  expect_true(all(round(results_whole_delta$est_doses$dose, 3) == c(1.648, 1.931, 2.214)))
+
   # Expected outputs (partial-body)
   expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
   expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
   expect_equal(round(results_partial$AIC, 3), 8.133)
+
+  expect_true(all(round(results_partial$est_doses$yield, 3) == c(0.835, 1.168, 1.500)))
+  expect_true(all(round(results_partial$est_doses$dose, 3) == c(3.493, 4.138, 4.783)))
 
   # Expected outputs (heterogeneous)
   expect_equal(colnames(results_hetero$est_yields), c("yield1", "yield2"))
@@ -252,8 +260,13 @@ test_that("processing case data works", {
   expect_equal(colnames(results_hetero$est_doses), c("dose1", "dose2"))
   expect_equal(rownames(results_hetero$est_doses), c("lower", "estimate", "upper"))
   expect_equal(round(results_hetero$AIC, 3), 8.264)
-  expect_equal(results_hetero$est_yields["lower", "yield2"], 0)
-  expect_equal(results_hetero$est_doses["lower", "dose2"], 0)
+
+  expect_true(all(round(results_hetero$est_yields$yield1, 3) == c(0.957, 1.210, 1.462)))
+  expect_true(all(round(results_hetero$est_yields$yield2, 3) == c(0, 0.010, 0.052)))
+  expect_true(all(round(results_hetero$est_doses$dose1, 3) == c(3.547, 4.215, 4.942)))
+  expect_true(all(round(results_hetero$est_doses$dose2, 3) == c(0, 0.241, 0.795)))
+  expect_true(all(round(results_hetero$est_frac$estimate, 3) == c(0.578, 0.422)))
+  expect_true(all(round(results_hetero$est_frac$std_err, 3) == c(0.092, 0.092)))
 
   # Plot
   gg_curve <- plot_estimated_dose_curve(
