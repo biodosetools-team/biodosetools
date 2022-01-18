@@ -175,6 +175,62 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
   return(projected_dose)
 }
 
+# Delta method functions ----
+
+#' Get standard errors using delta method
+#'
+#' Delta method for approximating the standard error of a transformation $g(X)$ of a random variable $X = (x1, x2, ...)$, given estimates of the mean and covariance matrix of $X$.
+#'
+#' @param fit_is_lq Whether the fit is linear quadratic (\code{TRUE}) or linear (\code{FALSE})
+#' @param variable Variable resulting of the transformation $g(X)$
+#' @param mean_estimate The estimated mean of $X$
+#' @param cov_estimate The estimated covariance matrix of $X$
+#' @param protracted_g_value Protracted $G(x)$ value
+#'
+#' @return A numeric value containing the standard error of the dose estimate
+get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction"),
+                                    mean_estimate, cov_estimate,
+                                    protracted_g_value = NA, d0 = NA) {
+  variable <- match.arg(variable)
+
+  if (variable == "dose") {
+    if (fit_is_lq) {
+      # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
+      formula <- paste(
+        "~", "(-x2 + sqrt(x2^2 + 4 * x3 *", protracted_g_value, "* (x4 - x1)))", "/",
+        "(2 * x3 *", protracted_g_value, ")",
+        sep = ""
+      )
+    } else {
+      # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
+      formula <- "~ (x4 - x1) / x2"
+    }
+  } else if (variable == "fraction") {
+    if (fit_is_lq) {
+      # Formula parameters: {x1, x2, x3, x4, x5} = {C, alpha, beta, lambda_est, pi_est}
+      formula <- paste(
+        "~", "x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, "))", "/",
+        "(1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
+        sep = ""
+      )
+    } else {
+      # Formula parameters: {x1, x2, x4, x5} = {C, alpha, lambda_est, pi_est}
+      formula <- paste(
+        "~", "x5 * exp((x4 - x1) / (x2 *", d0, "))", "/",
+        "1 - x5 + x5 * exp((x4 - x1) / (x2 *", d0, ")))",
+        sep = ""
+      )
+    }
+  }
+
+  dose_est_sd <- msm::deltamethod(
+    g = stats::as.formula(formula),
+    mean = mean_estimate,
+    cov = cov_estimate
+  )
+
+  return(dose_est_sd)
+}
 
 # Correction functions ----
 

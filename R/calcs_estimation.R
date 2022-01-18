@@ -208,30 +208,17 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
     conf_int = 0
   )
 
-  # Detect fitting model
-  fit_is_lq <- isFALSE(coeff_beta == 0)
-
   # Get standard error of dose estimate by deltamethod()
-  if (fit_is_lq) {
-    # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
-    formula <- paste(
-      "~", "(-x2 + sqrt(x2^2 + 4 * x3 *", protracted_g_value, "* (x4 - x1)))", "/",
-      "(2 * x3 *", protracted_g_value, ")",
-      sep = ""
-    )
-  } else {
-    # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
-    formula <- "~ (x4 - x1) / x2"
-  }
-
   cov_extended <- matrix(0, nrow = 4, ncol = 4)
   cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
   cov_extended[4, 4] <- lambda_est_sd^2
 
-  dose_est_sd <- msm::deltamethod(
-    g = stats::as.formula(formula),
-    mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
-    cov = cov_extended
+  dose_est_sd <- get_deltamethod_std_err(
+    fit_is_lq = isFALSE(coeff_beta == 0),
+    variable = "dose",
+    mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
+    cov_estimate = cov_extended,
+    protracted_g_value = protracted_g_value
   )
 
   # Get confidence interval of dose estimates
@@ -337,9 +324,6 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
   coeff_alpha <- general_fit_coeffs[[2]]
   coeff_beta <- general_fit_coeffs[[3]]
 
-  # Detect fitting model
-  fit_is_lq <- isFALSE(coeff_beta == 0)
-
   # If there are no cells with > 1 dic, the results include only NAs
   # This should be handled somewhere downstream
   if (cells - (cells_0 + cells_1) == 0) {
@@ -386,26 +370,16 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     )
 
     # Get standard error of dose estimate by deltamethod()
-    if (fit_is_lq) {
-      # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
-      formula <- paste(
-        "~", "(-x2 + sqrt(x2^2 + 4 * x3 *", protracted_g_value, "* (x4 - x1)))", "/",
-        "(2 * x3 *", protracted_g_value, ")",
-        sep = ""
-      )
-    } else {
-      # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
-      formula <- "~ (x4 - x1) / x2"
-    }
-
     cov_extended <- matrix(0, nrow = 4, ncol = 4)
     cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
     cov_extended[4, 4] <- lambda_est_sd^2
 
-    dose_est_sd <- msm::deltamethod(
-      g = stats::as.formula(formula),
-      mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
-      cov = cov_extended
+    dose_est_sd <- get_deltamethod_std_err(
+      fit_is_lq = isFALSE(coeff_beta == 0),
+      variable = "dose",
+      mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
+      cov_estimate = cov_extended,
+      protracted_g_value = protracted_g_value
     )
 
     # Get confidence interval of dose estimates
@@ -436,30 +410,16 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     F_est <- pi_est * exp(dose_est / d0) / (1 - pi_est + pi_est * exp(dose_est / d0))
 
     # Get standard error of fraction irradiated by deltamethod()
-    if (fit_is_lq) {
-      # Formula parameters: {x1, x2, x3, x4, x5} = {C, alpha, beta, lambda_est, pi_est}
-      formula <- paste(
-        "~", "x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, "))", "/",
-        "(1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
-        sep = ""
-      )
-    } else {
-      # Formula parameters: {x1, x2, x4, x5} = {C, alpha, lambda_est, pi_est}
-      formula <- paste(
-        "~", "x5 * exp((x4 - x1) / (x2 *", d0, "))", "/",
-        "1 - x5 + x5 * exp((x4 - x1) / (x2 *", d0, ")))",
-        sep = ""
-      )
-    }
-
     cov_extended_F <- matrix(0, nrow = 5, ncol = 5)
     cov_extended_F[1:3, 1:3] <- general_fit_var_cov_mat
     cov_extended_F[4:5, 4:5] <- cov_est
 
-    F_est_sd <- msm::deltamethod(
-      g = stats::as.formula(formula),
-      mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
-      cov = cov_extended_F
+    F_est_sd <- get_deltamethod_std_err(
+      fit_is_lq = isFALSE(coeff_beta == 0),
+      variable = "fraction",
+      mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
+      cov_estimate = cov_extended_F,
+      d0 = d0
     )
 
     # Get confidence interval of fraction irradiated
