@@ -166,25 +166,6 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
     lambda_est <- case_data[["Fg"]]
   }
 
-  # Generalised fit coefficients and variance-covariance matrix
-  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
-  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
-
-  coeff_C <- general_fit_coeffs[[1]]
-  coeff_alpha <- general_fit_coeffs[[2]]
-  coeff_beta <- general_fit_coeffs[[3]]
-
-  # Detect fitting model
-  fit_is_lq <- isFALSE(coeff_beta == 0)
-
-  # Get estimate for dose depending on linear/linear-quadratic fitting model
-  if (fit_is_lq) {
-    z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
-    dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
-  } else {
-    dose_est <- (lambda_est - coeff_C) / coeff_alpha
-  }
-
   # Calculate variance of lambda
   disp <- case_data[["DI"]]
 
@@ -209,7 +190,28 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
   lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
   lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
-  # Get standard error of fraction irradiated by deltamethod()
+  # Generalised fit coefficients and variance-covariance matrix
+  general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
+  general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
+
+  coeff_C <- general_fit_coeffs[[1]]
+  coeff_alpha <- general_fit_coeffs[[2]]
+  coeff_beta <- general_fit_coeffs[[3]]
+
+  # Calculate dose projection
+  dose_est <- project_yield(
+    yield = lambda_est,
+    type = "estimate",
+    general_fit_coeffs = general_fit_coeffs,
+    general_fit_var_cov_mat = NULL,
+    protracted_g_value = protracted_g_value,
+    conf_int = 0
+  )
+
+  # Detect fitting model
+  fit_is_lq <- isFALSE(coeff_beta == 0)
+
+  # Get standard error of dose estimate by deltamethod()
   if (fit_is_lq) {
     # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
     formula <- paste(
