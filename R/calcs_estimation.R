@@ -613,28 +613,21 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       hessian = TRUE
     )
 
-    st <- solve(MLE$hessian)
+    cov_fisher <- solve(MLE$hessian)
+    frac1 <- MLE$par[1]
     yield1_est <- MLE$par[2]
     yield2_est <- MLE$par[3]
-    frac1 <- MLE$par[1]
 
     if (yield1_est < yield2_est) {
       yield1_est <- MLE$par[3]
       yield2_est <- MLE$par[2]
       frac1 <- 1 - frac1
-      stm <- st
-      stm[2, 2] <- st[3, 3]
-      stm[3, 3] <- st[2, 2]
-      stm[1, 2] <- st[1, 3]
-      stm[1, 3] <- st[1, 2]
-      stm[2, 1] <- stm[1, 2]
-      stm[3, 1] <- stm[1, 3]
-      st <- stm
+      cov_fisher <- cov_fisher[c(1,3,2), c(1,3,2)]
     }
 
     # Estimated parameters and its standard errors
     estim <- c(frac1, yield1_est, yield2_est)
-    std_estim <- sqrt(diag(st))
+    std_estim <- sqrt(diag(cov_fisher))
 
     yield1_low <- yield1_est - std_estim[2]
     yield1_upp <- yield1_est + std_estim[2]
@@ -729,7 +722,7 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     F2_est <- 1 - F1_est
 
     # Approximated standard error
-    F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + st[1, 1] / (frac1^2 * (1 - frac1)^2))
+    F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + cov_fisher[1, 1] / (frac1^2 * (1 - frac1)^2))
 
     est_frac <- data.frame(
       estimate = c(F1_est, F2_est),
