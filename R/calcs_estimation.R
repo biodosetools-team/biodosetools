@@ -368,43 +368,6 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     # Get the covariance matrix for the parameters of the ZIP distribution
     cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
 
-    # Calculate dose and derivatives dependig on linear/linear-quadratic fitting model
-    if (fit_is_lq) {
-      # Update coeff_beta to correct for protracted exposures
-      coeff_beta <- coeff_beta * protracted_g_value
-
-      # Auxiliary variable
-      z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
-
-      # Get estimate for dose
-      dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
-
-      # Derivatives of regression curve coefs
-      deriv_lambda <- (z)^(-0.5)
-      deriv_coeff_C <- -(z)^(-0.5)
-      deriv_coeff_alpha <- (1 / (2 * coeff_beta)) * (-1 + coeff_alpha * z^(-0.5))
-      deriv_coeff_beta <- protracted_g_value * (4 * coeff_beta * (lambda_est - coeff_C) * (z^(-0.5)) + 2 * coeff_alpha - 2 * z^(0.5)) / (4 * coeff_beta^2)
-    } else {
-      # Get estimate for dose
-      dose_est <- (lambda_est - coeff_C) / coeff_alpha
-
-      # Derivatives of regression curve coefs
-      deriv_lambda <- 1 / coeff_alpha
-      deriv_coeff_C <- -(1 / coeff_alpha)
-      deriv_coeff_alpha <- (coeff_C - lambda_est) / coeff_alpha^2
-      deriv_coeff_beta <- 0
-    }
-
-    if (fit_is_lq) {
-      cov_extended <- matrix(0, nrow = 5, ncol = 5)
-      cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
-      cov_extended[4:5, 4:5] <- cov_est
-    } else {
-      cov_extended <- matrix(0, nrow = 4, ncol = 4)
-      cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
-      cov_extended[3:4, 3:4] <- cov_est
-    }
-
     # Get variance of lambda based on delta methods (see Savage et al.)
     lambda_est_sd <- sqrt(cov_est[1, 1])
 
@@ -412,18 +375,42 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
     lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
 
-    dose_est_var <-
-      (deriv_coeff_C^2) * general_fit_var_cov_mat[1, 1] +
-      (deriv_coeff_alpha^2) * general_fit_var_cov_mat[2, 2] +
-      (deriv_coeff_beta^2) * general_fit_var_cov_mat[3, 3] +
-      (deriv_lambda^2) * (lambda_est_sd^2) +
-      2 * (deriv_coeff_C * deriv_coeff_alpha) * general_fit_var_cov_mat[1, 2] +
-      2 * (deriv_coeff_C * deriv_coeff_beta) * general_fit_var_cov_mat[1, 3] +
-      2 * (deriv_coeff_alpha * deriv_coeff_beta) * general_fit_var_cov_mat[2, 3]
+    # Calculate dose projection
+    dose_est <- project_yield(
+      yield = lambda_est,
+      type = "estimate",
+      general_fit_coeffs = general_fit_coeffs,
+      general_fit_var_cov_mat = NULL,
+      protracted_g_value = protracted_g_value,
+      conf_int = 0
+    )
+
+    # Get standard error of dose estimate by deltamethod()
+    if (fit_is_lq) {
+      # Formula parameters: {x1, x2, x3, x4} = {C, alpha, beta, lambda_est}
+      formula <- paste(
+        "~", "(-x2 + sqrt(x2^2 + 4 * x3 *", protracted_g_value, "* (x4 - x1)))", "/",
+        "(2 * x3 *", protracted_g_value, ")",
+        sep = ""
+      )
+    } else {
+      # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
+      formula <- "~ (x4 - x1) / x2"
+    }
+
+    cov_extended <- matrix(0, nrow = 4, ncol = 4)
+    cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
+    cov_extended[4, 4] <- lambda_est_sd^2
+
+    dose_est_sd <- msm::deltamethod(
+      g = stats::as.formula(formula),
+      mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est),
+      cov = cov_extended
+    )
 
     # Get confidence interval of dose estimates
-    dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
-    dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * sqrt(dose_est_var)
+    dose_low <- dose_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * dose_est_sd
+    dose_upp <- dose_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * dose_est_sd
 
     # Correct negative values
     lambda_low <- correct_negative_vals(lambda_low)
@@ -456,24 +443,24 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
         "(1 - x5 + x5 * exp((-x2 + sqrt(x2^2 + 4 * x3 * (x4 - x1))) / (2 * x3 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(
-        g = stats::as.formula(formula),
-        mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
-        cov = cov_extended
-      )
     } else {
-      # Formula parameters: {x1, x2, x3, x4} = {C, alpha, lambda_est, pi_est}
+      # Formula parameters: {x1, x2, x4, x5} = {C, alpha, lambda_est, pi_est}
       formula <- paste(
-        "~", "x4 * exp((x3 - x1) / (x2 *", d0, "))", "/",
-        "1 - x4 + x4 * exp((x3 - x1) / (x2 *", d0, ")))",
+        "~", "x5 * exp((x4 - x1) / (x2 *", d0, "))", "/",
+        "1 - x5 + x5 * exp((x4 - x1) / (x2 *", d0, ")))",
         sep = ""
       )
-      F_est_sd <- msm::deltamethod(
-        g = stats::as.formula(formula),
-        mean = c(coeff_C, coeff_alpha, lambda_est, pi_est),
-        cov = cov_extended
-      )
     }
+
+    cov_extended_F <- matrix(0, nrow = 5, ncol = 5)
+    cov_extended_F[1:3, 1:3] <- general_fit_var_cov_mat
+    cov_extended_F[4:5, 4:5] <- cov_est
+
+    F_est_sd <- msm::deltamethod(
+      g = stats::as.formula(formula),
+      mean = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
+      cov = cov_extended_F
+    )
 
     # Get confidence interval of fraction irradiated
     F_upp <- F_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * F_est_sd
