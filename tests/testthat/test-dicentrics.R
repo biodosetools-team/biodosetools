@@ -33,8 +33,13 @@ test_that("fit with full count data works", {
   expect_gt(ncol(dic_count_data), 3)
   expect_equal(fit_results_list$fit_raw_data, as.matrix(dic_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+
   expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
   expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "estimate"]), 4) == c(0.0013, 0.0210, 0.0630)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0005, 0.0052, 0.0040)))
+  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(2.2e-07, 2.66e-05, 1.606e-05)))
+
   expect_true(is.null(fit_results_list$fit_dispersion) & grepl("A Poisson", fit_results_list$fit_model_summary))
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, dic_count_data$D)
@@ -50,8 +55,13 @@ test_that("fit with full count data works", {
 
   # Expected results
   expect_equal(fit_results_list$fit_algorithm, "glm")
+
   expect_true(all(dim(fit_results_list$fit_cor_mat) == c(2, 2)))
   expect_true(all(dim(fit_results_list$fit_coeffs) == c(2, 4)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "estimate"]), 4) == c(0.0010, 0.0541)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0011, 0.0115)))
+  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(1.32e-06, 1.3171e-04)))
+
   expect_true(fit_results_list$fit_dispersion > 1 & grepl("A quasi\\-Poisson", fit_results_list$fit_model_summary))
 
   # Fitting (maxlik)
@@ -103,6 +113,13 @@ test_that("fit with aggregated count data works", {
   # Expected outputs
   expect_equal(fit_results_list$fit_raw_data, as.matrix(dic_count_data))
   expect_equal(fit_results_list$fit_algorithm, "glm")
+
+  expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
+  expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "estimate"]), 4) == c(0.0013, 0.0210, 0.0630)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0005, 0.0052, 0.0040)))
+  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(2.2e-07, 2.66e-05, 1.606e-05)))
+
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -4.66)
   expect_equal(gg_curve$data$dose, dic_count_data$D)
 
