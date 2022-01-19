@@ -782,8 +782,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             fit_var_cov_mat,
             conf_int = 0.95,
             protracted_g_value,
-            gamma = 1 / 2.7,
-            gamma_error = 0
+            gamma = gamma,
+            gamma_error = gamma_error
           )
           break # break/exit the for-loop
         })
