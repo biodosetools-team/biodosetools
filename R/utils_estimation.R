@@ -188,7 +188,7 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 #' @param protracted_g_value Protracted $G(x)$ value
 #'
 #' @return A numeric value containing the standard error of the dose estimate
-get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction"),
+get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction_partial", "fraction_hetero"),
                                     mean_estimate, cov_estimate,
                                     protracted_g_value = NA, d0 = NA) {
   variable <- match.arg(variable)
@@ -205,7 +205,7 @@ get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction"),
       # Formula parameters: {x1, x2, x4} = {C, alpha, lambda_est}
       formula <- "~ (x4 - x1) / x2"
     }
-  } else if (variable == "fraction") {
+  } else if (variable == "fraction_partial") {
     if (fit_is_lq) {
       # Formula parameters: {x1, x2, x3, x4, x5} = {C, alpha, beta, lambda_est, pi_est}
       formula <- paste(
@@ -221,6 +221,9 @@ get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction"),
         sep = ""
       )
     }
+  } else if (variable == "fraction_hetero") {
+    # Formula parameters: {x1, x2, x3, x4} =  {gamma, frac, D1, D2}
+    formula <- "~ x2 / (x2 + (1 - x2) * exp(x1 * (x4 - x3)))"
   }
 
   dose_est_sd <- msm::deltamethod(

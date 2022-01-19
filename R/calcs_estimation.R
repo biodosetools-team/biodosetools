@@ -416,7 +416,7 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 
     F_est_sd <- get_deltamethod_std_err(
       fit_is_lq = isFALSE(coeff_beta == 0),
-      variable = "fraction",
+      variable = "fraction_partial",
       mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, lambda_est, pi_est),
       cov_estimate = cov_extended_F,
       d0 = d0
