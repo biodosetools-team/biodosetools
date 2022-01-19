@@ -584,14 +584,14 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     }
 
     # Estimated parameters and its standard errors
-    estim <- c(frac1, yield1_est, yield2_est)
-    std_estim <- sqrt(diag(cov_fisher))
+    estim_fisher <- c(frac1, yield1_est, yield2_est)
+    std_fisher <- sqrt(diag(cov_fisher))
 
-    yield1_low <- yield1_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[2]
-    yield1_upp <- yield1_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[2]
+    yield1_low <- yield1_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_fisher[2]
+    yield1_upp <- yield1_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_fisher[2]
 
-    yield2_low <- yield2_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[3]
-    yield2_upp <- yield2_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[3]
+    yield2_low <- yield2_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_fisher[3]
+    yield2_upp <- yield2_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_fisher[3]
 
     # Correct negative values
     yield1_est <- correct_negative_vals(yield1_est)
@@ -609,10 +609,10 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
 
     # Estimated mixing proportion
     est_mixing_prop <- data.frame(
-      y_estimate = c(estim[2], estim[3]),
-      y_std_err = c(std_estim[2], std_estim[3]),
-      f_estimate = c(estim[1], 1 - estim[1]),
-      f_std_err = rep(std_estim[1], 2)
+      y_estimate = c(estim_fisher[2], estim_fisher[3]),
+      y_std_err = c(std_fisher[2], std_fisher[3]),
+      f_estimate = c(estim_fisher[1], 1 - estim_fisher[1]),
+      f_std_err = rep(std_fisher[1], 2)
     ) %>%
       `row.names<-`(c("dose1", "dose2"))
 
@@ -639,8 +639,8 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     cov_extended <- matrix(0, nrow = 4, ncol = 4)
     cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
     cov_extended1 <- cov_extended2 <- cov_extended
-    cov_extended1[4, 4] <- std_estim[2]^2
-    cov_extended2[4, 4] <- std_estim[3]^2
+    cov_extended1[4, 4] <- cov_fisher[2, 2]
+    cov_extended2[4, 4] <- cov_fisher[3, 3]
 
     dose1_est_sd <- get_deltamethod_std_err(
       fit_is_lq = isFALSE(coeff_beta == 0),
