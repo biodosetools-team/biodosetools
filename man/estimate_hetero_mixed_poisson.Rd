@@ -8,8 +8,7 @@ estimate_hetero_mixed_poisson(
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
-  conf_int_yield,
-  conf_int_curve,
+  conf_int,
   protracted_g_value,
   gamma,
   gamma_error
@@ -22,9 +21,7 @@ estimate_hetero_mixed_poisson(
 
 \item{fit_var_cov_mat}{Fitting variance-covariance matrix}
 
-\item{conf_int_yield}{Confidence interval of the yield}
-
-\item{conf_int_curve}{Confidence interval of the curve}
+\item{conf_int}{Confidence interval of the yield}
 
 \item{protracted_g_value}{Protracted G(x) value}
 

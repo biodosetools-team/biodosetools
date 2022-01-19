@@ -6,7 +6,7 @@
 \usage{
 get_deltamethod_std_err(
   fit_is_lq,
-  variable = c("dose", "fraction"),
+  variable = c("dose", "fraction_partial", "fraction_hetero"),
   mean_estimate,
   cov_estimate,
   protracted_g_value = NA,
