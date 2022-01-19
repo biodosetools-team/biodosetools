@@ -424,10 +424,9 @@ mod_estimation_dicent_ui <- function(id, label) {
                 label = "Heterogeneous error method",
                 width = "250px",
                 choices = list(
-                  "Merkle's method (83%-83%)" = "merkle-83",
-                  "Merkle's method (95%-95%)" = "merkle-95"
+                  "Delta method (95%)" = "delta"
                 ),
-                selected = "merkle-83"
+                selected = "delta"
               )
             )
           ),

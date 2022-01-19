@@ -585,12 +585,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Get error/calculation methods
     error_method <- input$error_method_whole_select
-    # if (assessment == "partial-body") {
-    #   error_method_partial <- input$error_method_partial_select
-    # }
-    if (assessment == "hetero") {
-      error_method_hetero <- input$error_method_hetero_select
-    }
 
     # Get fitting data ----
 
@@ -698,12 +692,6 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       conf_int_curve <- 0.83
       conf_int_delta <- 0.95
     }
-    if (assessment == "partial-body") {
-      conf_int_dolphin <- 0.95
-    } else if (assessment == "hetero") {
-      conf_int_curve_hetero <- paste0("0.", gsub("\\D", "", error_method_hetero)) %>% as.numeric()
-      conf_int_yield_hetero <- conf_int_curve_hetero
-    }
 
     # Calculations ----
 
@@ -760,7 +748,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         case_data,
         fit_coeffs,
         fit_var_cov_mat,
-        conf_int_dolphin,
+        conf_int = 0.95,
         protracted_g_value,
         parsed_genome_factor,
         aberr_module,
@@ -792,7 +780,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             case_data,
             fit_coeffs,
             fit_var_cov_mat,
-            conf_int_yield = 0.95,
+            conf_int = 0.95,
             protracted_g_value,
             gamma = 1 / 2.7,
             gamma_error = 0
