@@ -49,6 +49,15 @@ z <- coeff_alpha^2 + 4 * coeff_beta * (lambda_est - coeff_C)
 # Get estimate for dose
 dose_est <- (-coeff_alpha + sqrt(z)) / (2 * coeff_beta)
 
+dose_est_proj <- project_yield(
+  yield = lambda_est,
+  type = "estimate",
+  general_fit_coeffs = general_fit_coeffs,
+  general_fit_var_cov_mat = NULL,
+  protracted_g_value = protracted_g_value,
+  conf_int = 0
+)
+
 # Derivatives of regression curve coefs
 deriv_lambda <- (z)^(-0.5)
 deriv_coeff_C <- -(z)^(-0.5)
@@ -122,6 +131,15 @@ protracted_g_value <- 1
 
 # Get estimate for dose
 dose_est <- (lambda_est - coeff_C) / coeff_alpha
+
+dose_est_proj <- project_yield(
+  yield = lambda_est,
+  type = "estimate",
+  general_fit_coeffs = general_fit_coeffs,
+  general_fit_var_cov_mat = NULL,
+  protracted_g_value = protracted_g_value,
+  conf_int = 0
+)
 
 # Derivatives of regression curve coefs
 deriv_lambda <- 1 / coeff_alpha
