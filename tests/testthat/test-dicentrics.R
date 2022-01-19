@@ -265,7 +265,7 @@ test_that("processing case data works", {
   expect_true(all(round(results_hetero$est_doses$dose1, 3) ==   c(3.295, 4.215, 5.134)))
   expect_true(all(round(results_hetero$est_doses$dose2, 3) ==   c(0, 0.241, 1.835)))
   expect_true(all(round(results_hetero$est_frac$estimate, 3) == c(0.578, 0.422)))
-  expect_true(all(round(results_hetero$est_frac$std_err, 3) == c(0.092, 0.092)))
+  expect_true(all(round(results_hetero$est_frac$std_err, 3) == c(0.127, 0.127)))
 
   # Plot
   gg_curve <- plot_estimated_dose_curve(

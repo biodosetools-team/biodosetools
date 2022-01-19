@@ -556,11 +556,6 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     coeff_alpha <- general_fit_coeffs[[2]]
     coeff_beta <- general_fit_coeffs[[3]]
 
-    # Input of the variance-covariance matrix of the parameters
-    sigma <- matrix(0, nrow = 4, ncol = 4)
-    sigma[1:3, 1:3] <- general_fit_var_cov_mat
-    sigma[4, 4] <- gamma_error
-
     # Calculate Maximum Likielihood Estimation
     MLE <- stats::optim(
       par = c(fit$lambda[1], exp(fit$beta)[1], exp(fit$beta)[2]),
@@ -580,7 +575,7 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       yield1_est <- MLE$par[3]
       yield2_est <- MLE$par[2]
       frac1 <- 1 - frac1
-      cov_fisher <- cov_fisher[c(1,3,2), c(1,3,2)]
+      cov_fisher <- cov_fisher[c(1, 3, 2), c(1, 3, 2)]
     }
 
     # Estimated parameters and its standard errors
@@ -683,8 +678,16 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     F1_est <- correct_boundary(F1_est)
     F2_est <- 1 - F1_est
 
-    # Approximated standard error
-    F1_est_sd <- F1_est * (1 - F1_est) * sqrt((dose2_est - dose1_est)^2 * sigma[4, 4] + cov_fisher[1, 1] / (frac1^2 * (1 - frac1)^2))
+    # Get standard error of fraction irradiated by deltamethod()
+    cov_extended_F <- matrix(0, nrow = 4, ncol = 4)
+    diag(cov_extended_F) <- c(gamma_error^2, cov_fisher[1, 1], dose1_est_sd^2, dose2_est_sd^2)
+
+    F1_est_sd <- get_deltamethod_std_err(
+      fit_is_lq = NULL,
+      variable = "fraction_hetero",
+      mean_estimate = c(gamma, frac1, dose1_est, dose2_est),
+      cov_estimate = cov_extended_F
+    )
 
     est_frac <- data.frame(
       estimate = c(F1_est, F2_est),
