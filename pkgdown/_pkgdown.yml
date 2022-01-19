@@ -67,6 +67,7 @@ reference:
   - fit_glm_method
   - fit_maxlik_method
   - gardner_confidence_table
+  - get_deltamethod_std_err
   - include_help
   - load_rmd_report
   - prepare_maxlik_count_data
