@@ -7,7 +7,7 @@
 #' @export
 plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
   # Read objects from fit results list
-  count_data <- fit_results_list[["fit_raw_data"]] %>% as.data.frame()
+  count_data <- as.data.frame(fit_results_list[["fit_raw_data"]])
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
 

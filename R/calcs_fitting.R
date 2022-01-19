@@ -96,7 +96,7 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
   } else if (type == "raw" & fit_algorithm == "glm") {
     # Get model-specific statistics
     fit_model_statistics <- cbind(
-      logLik = stats::logLik(glm_results) %>% as.numeric(),
+      logLik = as.numeric(stats::logLik(glm_results)),
       deviance = stats::deviance(glm_results),
       df = stats::df.residual(glm_results),
       AIC = stats::AIC(glm_results),
@@ -334,7 +334,7 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
   # Return objects
   fit_results_list <- list(
     # Raw data
-    fit_raw_data = count_data %>% as.matrix(),
+    fit_raw_data = as.matrix(count_data),
     # Formulas
     fit_formula_raw = fit_formula_raw,
     fit_formula_tex = fit_formula_tex,
@@ -550,7 +550,7 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+      p.value = 2 * 2 * stats::pt(-abs(t_value), as.numeric(fit_model_statistics[, "df"]))
     ) %>%
       `row.names<-`(names(fit_coeffs_vec))
 
@@ -566,7 +566,7 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_model_statistics[, "df"] %>% as.numeric())
+      p.value = 2 * 2 * stats::pt(-abs(t_value), as.numeric(fit_model_statistics[, "df"]))
     ) %>%
       `row.names<-`(names(fit_coeffs_vec))
 
@@ -585,7 +585,7 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
   # Return objects
   fit_results_list <- list(
     # Raw data
-    fit_raw_data = data_aggr %>% as.matrix(),
+    fit_raw_data = as.matrix(data_aggr),
     # Formulas
     fit_formula_raw = fit_formula_raw,
     fit_formula_tex = fit_formula_tex,

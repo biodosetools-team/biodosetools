@@ -697,8 +697,8 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
 
     # Calculate AIC as a GOF indicator
     est_doses_AIC <- data.frame(
-      dose = est_doses["estimate", ] %>% as.numeric(),
-      yield = est_yields["estimate", ] %>% as.numeric()
+      dose = as.numeric(est_doses["estimate", ]),
+      yield = as.numeric(est_yields["estimate", ])
     )
 
     AIC <- AIC_from_data(

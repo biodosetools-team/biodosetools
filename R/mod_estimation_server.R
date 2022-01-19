@@ -692,7 +692,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Select CIs depending on selected method
     if (grepl("merkle", error_method, fixed = TRUE)) {
-      conf_int_curve <- paste0("0.", gsub("\\D", "", error_method)) %>% as.numeric()
+      conf_int_curve <- as.numeric(paste0("0.", gsub("\\D", "", error_method)))
       conf_int_yield <- conf_int_curve
     } else if (error_method == "delta") {
       conf_int_curve <- 0.83
