@@ -221,8 +221,7 @@ test_that("processing case data works", {
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
-    conf_int_yield = 0.83,
-    conf_int_curve = 0.83,
+    conf_int = 0.95,
     protracted_g_value,
     gamma = 1 / 2.7,
     gamma_error = 0
@@ -261,10 +260,10 @@ test_that("processing case data works", {
   expect_equal(rownames(results_hetero$est_doses), c("lower", "estimate", "upper"))
   expect_equal(round(results_hetero$AIC, 3), 8.264)
 
-  expect_true(all(round(results_hetero$est_yields$yield1, 3) == c(0.957, 1.210, 1.462)))
-  expect_true(all(round(results_hetero$est_yields$yield2, 3) == c(0, 0.010, 0.052)))
-  expect_true(all(round(results_hetero$est_doses$dose1, 3) == c(3.547, 4.215, 4.942)))
-  expect_true(all(round(results_hetero$est_doses$dose2, 3) == c(0, 0.241, 0.795)))
+  expect_true(all(round(results_hetero$est_yields$yield1, 3) == c(0.714, 1.210, 1.705)))
+  expect_true(all(round(results_hetero$est_yields$yield2, 3) == c(0, 0.010, 0.092)))
+  expect_true(all(round(results_hetero$est_doses$dose1, 3) ==   c(3.295, 4.215, 5.134)))
+  expect_true(all(round(results_hetero$est_doses$dose2, 3) ==   c(0, 0.241, 1.835)))
   expect_true(all(round(results_hetero$est_frac$estimate, 3) == c(0.578, 0.422)))
   expect_true(all(round(results_hetero$est_frac$std_err, 3) == c(0.092, 0.092)))
 

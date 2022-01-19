@@ -792,8 +792,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             case_data,
             fit_coeffs,
             fit_var_cov_mat,
-            conf_int_yield = 0.83,
-            conf_int_curve = 0.83,
+            conf_int_yield = 0.95,
             protracted_g_value,
             gamma = 1 / 2.7,
             gamma_error = 0

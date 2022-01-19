@@ -456,8 +456,7 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 #' @param case_data Case data in data frame form
 #' @param fit_coeffs Fitting coefficients matrix
 #' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int_yield Confidence interval of the yield
-#' @param conf_int_curve Confidence interval of the curve
+#' @param conf_int Confidence interval of the yield
 #' @param protracted_g_value Protracted G(x) value
 #' @param gamma Survival coefficient of irradiated cells
 #' @param gamma_error Error of the survival coefficient of irradiated cells
@@ -465,9 +464,8 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 #' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
 #' @export
 estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                          conf_int_yield, conf_int_curve, protracted_g_value,
+                                          conf_int, protracted_g_value,
                                           gamma, gamma_error) {
-
   # Select translocation counts
   counts <- case_data[1, ] %>%
     dplyr::select(dplyr::contains("C")) %>%
@@ -589,20 +587,19 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     estim <- c(frac1, yield1_est, yield2_est)
     std_estim <- sqrt(diag(cov_fisher))
 
-    yield1_low <- yield1_est - std_estim[2]
-    yield1_upp <- yield1_est + std_estim[2]
+    yield1_low <- yield1_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[2]
+    yield1_upp <- yield1_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[2]
 
-    yield2_low <- yield2_est - std_estim[3]
-    yield2_upp <- yield2_est + std_estim[3]
+    yield2_low <- yield2_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[3]
+    yield2_upp <- yield2_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * std_estim[3]
 
-    # Correct "unrootable" yields
-    yield1_est <- correct_yield(yield1_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-    yield1_low <- correct_yield(yield1_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-    yield1_upp <- correct_yield(yield1_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-
-    yield2_est <- correct_yield(yield2_est, "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-    yield2_low <- correct_yield(yield2_low, "lower", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
-    yield2_upp <- correct_yield(yield2_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    # Correct negative values
+    yield1_est <- correct_negative_vals(yield1_est)
+    yield1_low <- correct_negative_vals(yield1_low)
+    yield1_upp <- correct_negative_vals(yield1_upp)
+    yield2_est <- correct_negative_vals(yield2_est)
+    yield2_low <- correct_negative_vals(yield2_low)
+    yield2_upp <- correct_negative_vals(yield2_upp)
 
     est_yields <- data.frame(
       yield1 = c(yield1_low, yield1_est, yield1_upp),
@@ -628,22 +625,6 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       protracted_g_value = protracted_g_value,
       conf_int = 0
     )
-    dose1_low <- project_yield(
-      yield = yield1_low,
-      type = "lower",
-      general_fit_coeffs = general_fit_coeffs,
-      general_fit_var_cov_mat = general_fit_var_cov_mat,
-      protracted_g_value = protracted_g_value,
-      conf_int = conf_int_curve
-    )
-    dose1_upp <- project_yield(
-      yield = yield1_upp,
-      type = "upper",
-      general_fit_coeffs = general_fit_coeffs,
-      general_fit_var_cov_mat = general_fit_var_cov_mat,
-      protracted_g_value = protracted_g_value,
-      conf_int = conf_int_curve
-    )
 
     dose2_est <- project_yield(
       yield = yield2_est,
@@ -653,22 +634,43 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
       protracted_g_value = protracted_g_value,
       conf_int = 0
     )
-    dose2_low <- project_yield(
-      yield = yield2_low,
-      type = "lower",
-      general_fit_coeffs = general_fit_coeffs,
-      general_fit_var_cov_mat = general_fit_var_cov_mat,
-      protracted_g_value = protracted_g_value,
-      conf_int = conf_int_curve
+
+    # Get standard error of dose estimate by deltamethod()
+    cov_extended <- matrix(0, nrow = 4, ncol = 4)
+    cov_extended[1:3, 1:3] <- general_fit_var_cov_mat
+    cov_extended1 <- cov_extended2 <- cov_extended
+    cov_extended1[4, 4] <- std_estim[2]^2
+    cov_extended2[4, 4] <- std_estim[3]^2
+
+    dose1_est_sd <- get_deltamethod_std_err(
+      fit_is_lq = isFALSE(coeff_beta == 0),
+      variable = "dose",
+      mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, yield1_est),
+      cov_estimate = cov_extended1,
+      protracted_g_value = protracted_g_value
     )
-    dose2_upp <- project_yield(
-      yield = yield2_upp,
-      type = "upper",
-      general_fit_coeffs = general_fit_coeffs,
-      general_fit_var_cov_mat = general_fit_var_cov_mat,
-      protracted_g_value = protracted_g_value,
-      conf_int = conf_int_curve
+
+    dose2_est_sd <- get_deltamethod_std_err(
+      fit_is_lq = isFALSE(coeff_beta == 0),
+      variable = "dose",
+      mean_estimate = c(coeff_C, coeff_alpha, coeff_beta, yield2_est),
+      cov_estimate = cov_extended2,
+      protracted_g_value = protracted_g_value
     )
+
+    # Get confidence interval of dose estimates
+    dose1_low <- dose1_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * dose1_est_sd
+    dose1_upp <- dose1_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * dose1_est_sd
+    dose2_upp <- dose2_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * dose2_est_sd
+    dose2_low <- dose2_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * dose2_est_sd
+
+    # Correct negative values
+    dose1_est <- correct_negative_vals(dose1_est)
+    dose1_low <- correct_negative_vals(dose1_low)
+    dose1_upp <- correct_negative_vals(dose1_upp)
+    dose2_est <- correct_negative_vals(dose2_est)
+    dose2_low <- correct_negative_vals(dose2_low)
+    dose2_upp <- correct_negative_vals(dose2_upp)
 
     est_doses <- data.frame(
       dose1 = c(dose1_low, dose1_est, dose1_upp),
@@ -709,7 +711,7 @@ estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat
     est_doses = est_doses,
     est_frac = est_frac,
     AIC = AIC,
-    conf_int = c(yield = conf_int_yield, curve = conf_int_curve)
+    conf_int = conf_int
   )
 
   return(results_list)
