@@ -2,11 +2,20 @@ Package: biodosetools
 Title: Shiny App To Be Used By Biological Dosimetry Laboratories
 Version: 3.5.0.9000
 Authors@R: 
-    person(given = "Alfredo",
+    c(person(given = "Alfredo",
            family = "Hernández",
            role = c("aut", "cre"),
            email = "aldomann.designs@gmail.com",
-           comment = c(ORCID = "0000-0002-2660-4545"))
+           comment = c(ORCID = "0000-0002-2660-4545")),
+      person(given = "David",
+           family = "Endesfelder",
+           role = c("aut"),
+           email = "dendesfelder@bfs.de"),
+      person(given = "Pere",
+           family = "Puig",
+           role = c("aut"),
+           email = "ppuig@mat.uab.cat",
+           comment = c(ORCID = "0000-0002-6607-9642")))
 Description: Biodose Tools is an open-source Shiny App that aims
     to be a tool to perform all different tests and calculations needed by
     Biological Dosimetry Laboratories.
