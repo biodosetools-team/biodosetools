@@ -9,7 +9,7 @@
 [![pkgdown Workflow
 Status](https://github.com/biodosetools-team/biodosetools/workflows/pkgdown/badge.svg)](https://biodosetools-team.github.io/biodosetools/)
 [![Codecov test
-coverage](https://codecov.io/gh/biodosetools-team/biodosetools/branch/master/graph/badge.svg)](https://codecov.io/gh/biodosetools-team/biodosetools?branch=master)
+coverage](https://codecov.io/gh/biodosetools-team/biodosetools/branch/master/graph/badge.svg)](https://app.codecov.io/gh/biodosetools-team/biodosetools?branch=master)
 <!-- badges: end -->
 
 ## Overview
