@@ -23,6 +23,8 @@ get_deltamethod_std_err(
 \item{cov_estimate}{The estimated covariance matrix of $X$}
 
 \item{protracted_g_value}{Protracted $G(x)$ value}
+
+\item{d0}{Survival coefficient of irradiated cells}
 }
 \value{
 A numeric value containing the standard error of the dose estimate

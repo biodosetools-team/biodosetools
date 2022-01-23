@@ -186,6 +186,7 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 #' @param mean_estimate The estimated mean of $X$
 #' @param cov_estimate The estimated covariance matrix of $X$
 #' @param protracted_g_value Protracted $G(x)$ value
+#' @param d0 Survival coefficient of irradiated cells
 #'
 #' @return A numeric value containing the standard error of the dose estimate
 get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction_partial", "fraction_hetero"),
