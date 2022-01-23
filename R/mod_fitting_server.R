@@ -477,7 +477,7 @@ mod_fitting_results_server <- function(input, output, session, stringsAsFactors,
   # Export fit coefficients ----
   output$save_fit_data <- downloadHandler(
     filename = function() {
-      paste(aberr_module, "-fitting-data-", Sys.Date(), input$save_fit_data_format, sep = "")
+      paste(aberr_module, "-fitting-results-", Sys.Date(), input$save_fit_data_format, sep = "")
     },
     content = function(file) {
       if (input$save_fit_data_format == ".rds") {
