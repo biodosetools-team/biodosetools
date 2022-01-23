@@ -4,21 +4,21 @@
 \alias{calculate_decision_threshold}
 \title{Calculate decision thresholds}
 \arguments{
-\item{fit_results_list}{List of fit results}
+\item{fit_results_list}{List of fit results.}
 
-\item{cells}{N}
+\item{cells}{Number of cells \code{N}.}
 
-\item{count_data}{Count data in data frame form}
+\item{count_data}{Count data in data frame form.}
 
-\item{model_formula}{Model formula}
+\item{model_formula}{Model formula.}
 
-\item{model_family}{Model family}
+\item{model_family}{Model family.}
 
-\item{frequency_select}{Whether to use measured frequency or full genome frequency}
+\item{frequency_select}{Whether to use measured frequency or full genome frequency.}
 
-\item{conf_int}{CI}
+\item{conf_int}{Confidence interval.}
 
-\item{aberr_module}{Aberration module}
+\item{aberr_module}{Aberration module.}
 }
 \description{
 Calculate decision thresholds

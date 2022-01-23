@@ -13,19 +13,21 @@ fit_glm_method(
 )
 }
 \arguments{
-\item{count_data}{Count data in data frame form}
+\item{count_data}{Count data in data frame form.}
 
-\item{model_formula}{Model formula}
+\item{model_formula}{Model formula.}
 
-\item{model_family}{Model family}
+\item{model_family}{Model family.}
 
-\item{fit_link}{Family link}
+\item{fit_link}{Family link.}
 
-\item{aberr_module}{Aberration module}
+\item{aberr_module}{Aberration module.}
 }
 \value{
-List object containing GLM fit results
+List object containing GLM fit results.
 }
 \description{
-Perform GLM (Generalised Linear Model) fitting
+Method based on the paper by Edwards, A. A. et al. (1979). Radiation induced
+chromosome aberrations and the Poisson distribution. Radiation and
+Environmental Biophysics, 16(2), 89-100. <doi:10.1007/BF01323216>.
 }

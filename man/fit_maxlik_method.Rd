@@ -13,22 +13,22 @@ fit_maxlik_method(
 )
 }
 \arguments{
-\item{data}{Count data}
+\item{data}{Count data.}
 
-\item{model_formula}{Model formula}
+\item{model_formula}{Model formula.}
 
-\item{model_family}{Model family}
+\item{model_family}{Model family.}
 
-\item{fit_link}{Family link}
+\item{fit_link}{Family link.}
 
-\item{aberr_module}{Aberration module}
+\item{aberr_module}{Aberration module.}
 }
 \value{
-List object containing maxLik fit results
+List object containing maxLik fit results.
 }
 \description{
 Method based on the paper by Oliveira, M. et al. (2016). Zero-inflated
 regression models for radiation-induced chromosome aberration data:
-A comparative study. Biometrical Journal, 58(2), 259–279.
-<doi:10.1002/bimj.201400233>
+A comparative study. Biometrical Journal, 58(2), 259-279.
+<doi:10.1002/bimj.201400233>.
 }

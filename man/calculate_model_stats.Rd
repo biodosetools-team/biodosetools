@@ -21,34 +21,34 @@ calculate_model_stats(
 )
 }
 \arguments{
-\item{model_data}{Data of the model}
+\item{model_data}{Data of the model.}
 
-\item{fit_coeffs_vec}{Vector of fitting coefficients}
+\item{fit_coeffs_vec}{Vector of fitting coefficients.}
 
-\item{glm_results}{Results of glm}
+\item{glm_results}{Results of glm.}
 
-\item{fit_algorithm}{String of the algorithm used}
+\item{fit_algorithm}{String of the algorithm used.}
 
-\item{response}{Type of response}
+\item{response}{Type of response.}
 
-\item{link}{Fit link}
+\item{link}{Fit link.}
 
-\item{type}{Theoretical or raw glm model statistics}
+\item{type}{Theoretical or raw glm model statistics.}
 
-\item{Y}{Y response (required in constraint-maxlik-optimization)}
+\item{Y}{Y response (required in constraint-maxlik-optimization).}
 
-\item{mu}{mu response required in constraint-maxlik-optimization)}
+\item{mu}{mu response required in constraint-maxlik-optimization).}
 
-\item{n}{number of parameters (required in constraint-maxlik-optimization)}
+\item{n}{number of parameters (required in constraint-maxlik-optimization).}
 
-\item{npar}{number of parameters (required in constraint-maxlik-optimization)}
+\item{npar}{number of parameters (required in constraint-maxlik-optimization).}
 
-\item{genome_factor}{Genomic conversion factor used in translocations}
+\item{genome_factor}{Genomic conversion factor used in translocations.}
 
-\item{calc_type}{Calculation type, either "fitting" or "estimation"}
+\item{calc_type}{Calculation type, either "fitting" or "estimation".}
 }
 \value{
-Model statistics data frame
+Data frame of model statistics.
 }
 \description{
 Calculate model statistics

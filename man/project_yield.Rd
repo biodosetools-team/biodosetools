@@ -9,25 +9,25 @@ project_yield(
   type = "estimate",
   general_fit_coeffs,
   general_fit_var_cov_mat = NULL,
-  protracted_g_value,
+  protracted_g_value = 1,
   conf_int = 0.95
 )
 }
 \arguments{
-\item{yield}{Yield to be projected}
+\item{yield}{Yield to be projected.}
 
-\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper".}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix.}
 
-\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{conf_int}{Curve confidence interval}
+\item{conf_int}{Curve confidence interval, 95\% by default.}
 }
 \value{
-Numeric value of projected dose
+Numeric value of projected dose.
 }
 \description{
 Project yield into dose-effect fitting curve

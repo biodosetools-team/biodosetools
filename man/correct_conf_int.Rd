@@ -7,24 +7,24 @@
 correct_conf_int(
   conf_int,
   general_fit_var_cov_mat,
-  protracted_g_value,
+  protracted_g_value = 1,
   type,
   dose = seq(0, 10, 0.2)
 )
 }
 \arguments{
-\item{conf_int}{Confidence interval}
+\item{conf_int}{Confidence interval.}
 
-\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper".}
 
-\item{dose}{Dose}
+\item{dose}{Numeric value of dose.}
 }
 \value{
-Corrected confidence interval
+Numeric value of corrected confidence interval.
 }
 \description{
 Correct yield confidence interval if simple method is required.

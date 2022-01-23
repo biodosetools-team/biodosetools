@@ -8,26 +8,26 @@ plot_estimated_dose_curve(
   est_doses,
   fit_coeffs,
   fit_var_cov_mat,
-  protracted_g_value,
+  protracted_g_value = 1,
   conf_int_curve,
   aberr_name
 )
 }
 \arguments{
-\item{est_doses}{List of dose estimations results from \code{estimate_*()} family of functions}
+\item{est_doses}{List of dose estimations results from \code{estimate_*()} family of functions.}
 
-\item{fit_coeffs}{Fitting coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix.}
 
-\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{conf_int_curve}{Confidence interval of the curve}
+\item{conf_int_curve}{Confidence interval of the curve.}
 
-\item{aberr_name}{Name of the aberration to use in the y-axis}
+\item{aberr_name}{Name of the aberration to use in the y-axis.}
 }
 \value{
-ggplot object
+\code{ggplot2} object.
 }
 \description{
 Plot dose estimation curve

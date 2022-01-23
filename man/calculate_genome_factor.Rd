@@ -2,22 +2,25 @@
 % Please edit documentation in R/calcs_translocations.R
 \name{calculate_genome_factor}
 \alias{calculate_genome_factor}
-\title{Calculate genome fraction}
+\title{Calculate genomic conversion factor}
 \usage{
-calculate_genome_factor(dna_table, chromosome, color, sex)
+calculate_genome_factor(dna_table, chromosomes, colors, sex)
 }
 \arguments{
-\item{dna_table}{DNA content fractions table.}
+\item{dna_table}{DNA content fractions table. Can be \code{dna_content_fractions_morton} or \code{dna_content_table_ihgsc}.}
 
-\item{chromosome}{Chromosomes.}
+\item{chromosomes}{Vector of stained chromosomes.}
 
-\item{color}{Color of the stains.}
+\item{colors}{Vector of colors of the stains.}
 
-\item{sex}{Sex of the individual}
+\item{sex}{Sex of the individual.}
 }
 \value{
-Fraction of genome hybridised.
+Numeric value of genomic conversion factor.
 }
 \description{
-Calculate genome fraction
+Method based on the paper by Lucas, J. N. et al. (1992). Rapid Translocation
+Frequency Analysis in Humans Decades after Exposure to Ionizing Radiation.
+International Journal of Radiation Biology, 62(1), 53-63.
+<doi:10.1080/09553009214551821>.
 }

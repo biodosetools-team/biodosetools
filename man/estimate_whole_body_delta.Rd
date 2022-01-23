@@ -9,26 +9,28 @@ estimate_whole_body_delta(
   fit_coeffs,
   fit_var_cov_mat,
   conf_int = 0.95,
-  protracted_g_value,
+  protracted_g_value = 1,
   aberr_module
 )
 }
 \arguments{
-\item{case_data}{Case data in data frame form}
+\item{case_data}{Case data in data frame form.}
 
-\item{fit_coeffs}{Fitting coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix.}
 
-\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix.}
 
-\item{conf_int}{Confidence interval, 95\% by default}
+\item{conf_int}{Confidence interval, 95\% by default.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{aberr_module}{Aberration module}
+\item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame and AIC
+List containing estimated doses data frame and AIC.
 }
 \description{
-Whole-body dose estimation using delta method.
+Method based on 2001 manual by the International Atomic Energy Agency (IAEA).
+Cytogenetic Analysis for Radiation Dose Assessment, Technical Reports Series
+(2001). Retrieved from \url{https://www.iaea.org/publications/6303/cytogenetic-analysis-for-radiation-dose-assessment}.
 }

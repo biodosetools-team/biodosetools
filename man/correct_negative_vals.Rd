@@ -7,10 +7,10 @@
 correct_negative_vals(x)
 }
 \arguments{
-\item{x}{Numeric value}
+\item{x}{Numeric value.}
 }
 \value{
-Numeric value corrected to zero if negative
+Numeric value corrected to zero if negative.
 }
 \description{
 Correct negative values

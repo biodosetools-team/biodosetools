@@ -10,31 +10,33 @@ estimate_whole_body_merkle(
   fit_var_cov_mat,
   conf_int_yield = 0.83,
   conf_int_curve = 0.83,
-  protracted_g_value,
+  protracted_g_value = 1,
   genome_factor = 1,
   aberr_module
 )
 }
 \arguments{
-\item{case_data}{Case data in data frame form}
+\item{case_data}{Case data in data frame form.}
 
-\item{fit_coeffs}{Fitting coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix.}
 
-\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix.}
 
-\item{conf_int_yield}{Confidence interval of the yield, 83\% by default}
+\item{conf_int_yield}{Confidence interval of the yield, 83\% by default.}
 
-\item{conf_int_curve}{Confidence interval of the curve, 83\% by default}
+\item{conf_int_curve}{Confidence interval of the curve, 83\% by default.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{genome_factor}{Genomic conversion factor used in translocations, else 1}
+\item{genome_factor}{Genomic conversion factor used in translocations, else 1.}
 
-\item{aberr_module}{Aberration module Aberration module}
+\item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame and AIC
+List containing estimated doses data frame and AIC.
 }
 \description{
-Whole-body dose estimation using Merkle's method.
+Method based on the paper by Merkle, W. (1983). Statistical methods in
+regression and calibration analysis of chromosome aberration data. Radiation
+and Environmental Biophysics, 21(3), 217-233. <doi:10.1007/BF01323412>.
 }

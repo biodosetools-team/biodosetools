@@ -7,10 +7,10 @@
 correct_boundary(x)
 }
 \arguments{
-\item{x}{Numeric value}
+\item{x}{Numeric value.}
 }
 \value{
-Numeric value in [0, 1] range
+Numeric value in [0, 1] range.
 }
 \description{
 Correct boundary of irradiated fractions to be bounded by 0 and 1

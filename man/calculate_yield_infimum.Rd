@@ -12,16 +12,16 @@ calculate_yield_infimum(
 )
 }
 \arguments{
-\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper".}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix.}
 
-\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix.}
 
-\item{conf_int}{Curve confidence interval}
+\item{conf_int}{Curve confidence interval, 95\% by default.}
 }
 \value{
-Yield infimum
+Numeric value of yield infimum.
 }
 \description{
 Calculate theoretical yield infimum

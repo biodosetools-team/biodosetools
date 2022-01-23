@@ -13,18 +13,18 @@ correct_yield(
 )
 }
 \arguments{
-\item{yield}{Yield}
+\item{yield}{Numeric value of yield.}
 
-\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper"}
+\item{type}{Type of yield calculation. Can be "estimate", "lower", or "upper".}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix.}
 
-\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix}
+\item{general_fit_var_cov_mat}{Generalised variance-covariance matrix.}
 
-\item{conf_int}{Curve confidence interval}
+\item{conf_int}{Curve confidence interval.}
 }
 \value{
-Numeric value of corrected yield
+Numeric value of corrected yield.
 }
 \description{
 Correct yields if they are below the curve

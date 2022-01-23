@@ -7,14 +7,14 @@
 calculate_trans_rate_manual(cells, genome_factor, expected_aberr_value)
 }
 \arguments{
-\item{cells}{Number of cells \code{N}}
+\item{cells}{Number of cells \code{N}.}
 
-\item{genome_factor}{Genomic conversion factor used in translocations}
+\item{genome_factor}{Genomic conversion factor.}
 
-\item{expected_aberr_value}{Expected aberrations}
+\item{expected_aberr_value}{Expected aberrations.}
 }
 \value{
-Translocation rate.
+Numeric value of translocation rate.
 }
 \description{
 Calculate manual translocation rate

@@ -9,32 +9,35 @@ estimate_partial_body_dolphin(
   fit_coeffs,
   fit_var_cov_mat,
   conf_int = 0.95,
-  protracted_g_value,
+  protracted_g_value = 1,
   genome_factor = 1,
-  aberr_module,
-  gamma
+  gamma,
+  aberr_module
 )
 }
 \arguments{
-\item{case_data}{Case data in data frame form}
+\item{case_data}{Case data in data frame form.}
 
-\item{fit_coeffs}{Fitting coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix.}
 
-\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix.}
 
-\item{conf_int}{Confidence interval, 95\% by default}
+\item{conf_int}{Confidence interval, 95\% by default.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{genome_factor}{Genomic conversion factor used in translocations, else 1}
+\item{genome_factor}{Genomic conversion factor used in translocations, else 1.}
 
-\item{aberr_module}{Aberration module}
+\item{gamma}{Survival coefficient of irradiated cells.}
 
-\item{gamma}{Survival coefficient of irradiated cells}
+\item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
+List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC.
 }
 \description{
-Partial-body dose estimation using Dolphin's method.
+Method based on the paper by Dolphin, G. W. (1969). Biological Dosimetry with
+Particular Reference to Chromosome Aberration Analysis: A Review of Methods.
+International Atomic Energy Agency (IAEA) Retrieved from
+\url{https://inis.iaea.org/search/search.aspx?orig_q=RN:45029080}.
 }

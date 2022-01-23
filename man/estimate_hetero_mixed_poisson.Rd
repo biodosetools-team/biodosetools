@@ -8,30 +8,32 @@ estimate_hetero_mixed_poisson(
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
-  conf_int,
-  protracted_g_value,
+  conf_int = 0.95,
+  protracted_g_value = 1,
   gamma,
   gamma_error
 )
 }
 \arguments{
-\item{case_data}{Case data in data frame form}
+\item{case_data}{Case data in data frame form.}
 
-\item{fit_coeffs}{Fitting coefficients matrix}
+\item{fit_coeffs}{Fitting coefficients matrix.}
 
-\item{fit_var_cov_mat}{Fitting variance-covariance matrix}
+\item{fit_var_cov_mat}{Fitting variance-covariance matrix.}
 
-\item{conf_int}{Confidence interval of the yield}
+\item{conf_int}{Confidence interval, 95\% by default.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{gamma}{Survival coefficient of irradiated cells}
+\item{gamma}{Survival coefficient of irradiated cells.}
 
-\item{gamma_error}{Error of the survival coefficient of irradiated cells}
+\item{gamma_error}{Error of the survival coefficient of irradiated cells.}
 }
 \value{
-List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
+List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC.
 }
 \description{
-Heterogeneous dose estimation.
+Method based on the paper by Pujol, M. et al. (2016). A New Model for
+Biological Dose Assessment in Cases of Heterogeneous Exposures to Ionizing
+Radiation. Radiation Research, 185(2), 151-162. <doi:10.1667/RR14145.1>.
 }

@@ -16,25 +16,28 @@ calculate_trans_rate_sigurdson(
 )
 }
 \arguments{
-\item{cells}{Number of cells \code{N}}
+\item{cells}{Number of cells \code{N}.}
 
-\item{genome_factor}{Genomic conversion factor used in translocations}
+\item{genome_factor}{Genomic conversion factor.}
 
-\item{age_value}{Age of the individual}
+\item{age_value}{Age of the individual.}
 
-\item{sex_bool}{If \code{TRUE}, \code{sex_value} will be used}
+\item{sex_bool}{If \code{TRUE}, \code{sex_value} will be used.}
 
-\item{sex_value}{Sex of the individual, either "male" of "female"}
+\item{sex_value}{Sex of the individual, either "male" of "female".}
 
-\item{smoker_bool}{Whether the individual smokes or not}
+\item{smoker_bool}{Whether the individual smokes or not.}
 
-\item{ethnicity_value}{Ethnicity of the individual}
+\item{ethnicity_value}{Ethnicity of the individual.}
 
-\item{region_value}{Region of the individual}
+\item{region_value}{Region of the individual.}
 }
 \value{
-Translocation rate.
+Numeric value of translocation rate.
 }
 \description{
-Calculate Sigurdson's translocation rate
+Method based on the paper by Sigurdson, A. J. et al. (2008). International
+study of factors affecting human chromosome translocations. Mutation
+Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
+<doi:10.1016/j.mrgentox.2008.01.005>.
 }

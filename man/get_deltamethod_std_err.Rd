@@ -14,21 +14,21 @@ get_deltamethod_std_err(
 )
 }
 \arguments{
-\item{fit_is_lq}{Whether the fit is linear quadratic (\code{TRUE}) or linear (\code{FALSE})}
+\item{fit_is_lq}{Whether the fit is linear quadratic (\code{TRUE}) or linear (\code{FALSE}).}
 
-\item{variable}{Variable resulting of the transformation $g(X)$}
+\item{variable}{Variable resulting of the transformation \eqn{g(X)}.}
 
-\item{mean_estimate}{The estimated mean of $X$}
+\item{mean_estimate}{The estimated mean of \eqn{X}.}
 
-\item{cov_estimate}{The estimated covariance matrix of $X$}
+\item{cov_estimate}{The estimated covariance matrix of \eqn{X}.}
 
-\item{protracted_g_value}{Protracted $G(x)$ value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 
-\item{d0}{Survival coefficient of irradiated cells}
+\item{d0}{Survival coefficient of irradiated cells.}
 }
 \value{
-A numeric value containing the standard error of the dose estimate
+Numeric value containing the standard error of the dose estimate.
 }
 \description{
-Delta method for approximating the standard error of a transformation $g(X)$ of a random variable $X = (x1, x2, ...)$, given estimates of the mean and covariance matrix of $X$.
+Delta method for approximating the standard error of a transformation \eqn{g(X)} of a random variable \eqn{X = (x1, x2, ...)}, given estimates of the mean and covariance matrix of \eqn{X}.
 }

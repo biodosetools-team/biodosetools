@@ -7,12 +7,12 @@
 plot_fit_dose_curve(fit_results_list, aberr_name)
 }
 \arguments{
-\item{fit_results_list}{List of fit results}
+\item{fit_results_list}{List of fit results.}
 
-\item{aberr_name}{Name of the aberration to use in the y-axis}
+\item{aberr_name}{Name of the aberration to use in the y-axis.}
 }
 \value{
-ggplot object
+\code{ggplot2} object.
 }
 \description{
 Plot fit dose curve

@@ -4,17 +4,17 @@
 \alias{yield_fun}
 \title{Calculate yield}
 \usage{
-yield_fun(dose, general_fit_coeffs, protracted_g_value)
+yield_fun(dose, general_fit_coeffs, protracted_g_value = 1)
 }
 \arguments{
-\item{dose}{Dose}
+\item{dose}{Numeric value of dose.}
 
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix.}
 
-\item{protracted_g_value}{Protracted G(x) value}
+\item{protracted_g_value}{Protracted \eqn{G(x)} value.}
 }
 \value{
-Yield
+Numeric value of yield.
 }
 \description{
 Calculate yield

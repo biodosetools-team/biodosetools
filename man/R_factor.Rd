@@ -7,12 +7,12 @@
 R_factor(general_fit_coeffs, conf_int = 0.95)
 }
 \arguments{
-\item{general_fit_coeffs}{Generalised fit coefficients matrix}
+\item{general_fit_coeffs}{Generalised fit coefficients matrix.}
 
-\item{conf_int}{Confidence interval}
+\item{conf_int}{Confidence interval, 95\% by default.}
 }
 \value{
-R regression confidence factor
+Numeric value of R regression confidence factor.
 }
 \description{
 Calculate R regression confidence factor depending on selected confidence interval and type of fit.
