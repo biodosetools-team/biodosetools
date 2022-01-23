@@ -25,7 +25,7 @@
 
 * Fixed order of output case data columns in `calculate_aberr_table()` so they match the final output in Shiny.
 * Renamed `count-data-IAEA.csv` to `count-data-barquinero-1995.csv` from Barquinero et al. (1995) <https://doi.org/10.1016/0027-5107(94)00150-4>.
-* Added `count-data-rodriguez-2004.csv` for total translocations fom Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
+* Added `count-data-rodriguez-2004.csv` for total translocations from Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
 * Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <https://doi.org/10.1667/RR3198>.
 * Rewrote `calculate_aberr_power()` to remove {purrr} dependency and reduce computation time by 4.
 * Replaced `message()` calls with appropriate `cli::cli_*()` calls.
@@ -86,7 +86,7 @@
 
 ## Function refactoring
 
-* Refactored `get_decision_threshold()` functoin to `calculate_decision_threshold()`, and added `calculate_decision_threshold_table()` wrapper function.
+* Refactored `get_decision_threshold()` function to `calculate_decision_threshold()`, and added `calculate_decision_threshold_table()` wrapper function.
 * Refactored `calculate_decision_threshold_*()` functions to remove `input` argument.
 * Refactored `get_*()` translocation functions to `calculate_*()` for better consistency.
 * Refactored `get_*_dose_curve()` functions to `plot_*_dose_curve()` for more clarity.
@@ -102,7 +102,7 @@
 * Changed structure of modules to `mod_<calc_type>_<aberration>_*()`.
 * Generalised `get_model_statistics()` function so that local `get_model_statistics()` definition could be removed from `mod_estimate_fit_curve_server()` module.
 * Multiple (18 files) `<aberration>-<module>-<format>.Rmd` report templates have been merged into `<module>-<format>.Rmd` (4 files).
-* Use `correct_negative_vals()` to ensure correct dose estimation when `X < Xc` in translocations asay.
+* Use `correct_negative_vals()` to ensure correct dose estimation when `X < Xc` in translocations assay.
 * Replaced all `*_at()` and `*_if()` occurrences by their {dplyr} 1.0.0 equivalents.
 
 ## UI Improvements
@@ -129,7 +129,7 @@
 * Fixed error in genome_fraction parsing for translocations in `estimate_partial_dolphin()`.
 * Fixed count/case data standard error column names replacements.
 * Fixed minipage issue when using more than 12 columns in {knitr} tables with column name replacements, by using `format = "latex", escape = FALSE` parameters in `kable()` call.
-* Supress YAML warning when using `!expr` in PDF reports. See https://github.com/rstudio/rstudio/issues/7545.
+* Suppress YAML warning when using `!expr` in PDF reports. See https://github.com/rstudio/rstudio/issues/7545.
 
 ## New functions
 
@@ -164,7 +164,7 @@
 
 # biodosetools 3.3.0 (2020-07-27)
 
-Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made de code a lot more robust.
+Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made the code a lot more robust.
 
 ## New features
 
@@ -172,7 +172,7 @@ Initial migration of the app into a {golem} R package. This means Biodose Tools 
 * Migrated UI from {shinydashboard} to {bs4Dash}.
 * Modals are now built with {bsplus} instead of {shinyBS}.
 * Functions and internal data are documented using {roxygen2}.
-* Added {pkgdown} support to build {biodosetool}'s website automatically.
+* Added {pkgdown} support to build {biodosetools}'s website automatically.
 * All custom theming is done through SASS and CSS instead of R code injection.
 
 ## New functions
@@ -519,9 +519,9 @@ First public beta for laboratories and research centres.
 * Check if yield projection into dose is mathematically possible. Negative values of yield or dose are changed to zero as well.
 * Added modification to Merkle's yield error function when using protracted exposures.
 * Implemented protracted exposure for partial body dose estimation.
-* Added automatic poisson/quasipoison selection on fitting.
+* Added automatic Poisson/quasi-Poisson selection on fitting.
 * Correct p-values depending on fitting model dispersion.
-* Added automatic correction of confidence intervals to use "simplfied" Merkle method if necessary.
+* Added automatic correction of confidence intervals to use "simplified" Merkle's method if necessary.
 
 ## Fixes
 
