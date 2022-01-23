@@ -21,6 +21,15 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -56,7 +65,7 @@
   type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"estimate"</span>, <span class="st">"lower"</span>, <span class="st">"upper"</span><span class="op">)</span>,
   <span class="va">general_fit_coeffs</span>,
   general_fit_var_cov_mat <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">protracted_g_value</span>,
+  protracted_g_value <span class="op">=</span> <span class="fl">1</span>,
   conf_int <span class="op">=</span> <span class="fl">0.95</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -64,21 +73,21 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>dose</dt>
-<dd><p>Dose</p></dd>
+<dd><p>Numeric value of dose.</p></dd>
 <dt>type</dt>
-<dd><p>Type of yield calculation. Can be "estimate", "lower", or "upper"</p></dd>
+<dd><p>Type of yield calculation. Can be "estimate", "lower", or "upper".</p></dd>
 <dt>general_fit_coeffs</dt>
-<dd><p>Generalised fit coefficients matrix</p></dd>
+<dd><p>Generalised fit coefficients matrix.</p></dd>
 <dt>general_fit_var_cov_mat</dt>
-<dd><p>Generalised variance-covariance matrix</p></dd>
+<dd><p>Generalised variance-covariance matrix.</p></dd>
 <dt>protracted_g_value</dt>
-<dd><p>Protracted G(x) value</p></dd>
+<dd><p>Protracted \(G(x)\) value.</p></dd>
 <dt>conf_int</dt>
-<dd><p>Curve confidence interval</p></dd>
+<dd><p>Curve confidence interval, 95% by default.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Yield</p>
+    <p>Numeric value of yield.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

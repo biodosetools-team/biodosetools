@@ -21,6 +21,15 @@
       <ul class="navbar-nav me-auto"><li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+  </div>
+</li>
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -47,11 +56,14 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.5.0.9000" id="biodosetools-3509000">biodosetools 3.5.0.9000<a class="anchor" aria-label="anchor" href="#biodosetools-3509000"></a></h2>
 <ul><li>Major rewrite of <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function.</li>
+<li>Delta method calculations are now all done via <code><a href="https://rdrr.io/pkg/msm/man/deltamethod.html" class="external-link">msm::deltamethod()</a></code>.</li>
 <li>Added progress and alert notifications to UI.</li>
 <li>Added {markdown} as suggested dependency.</li>
 <li>Added {cli} as dependency.</li>
 <li>Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.</li>
 <li>Use consistently genomic conversion factor or <code>genome_factor</code> across all functions, help dialogues, and reports.</li>
+<li>Added R-CMD check GitHub Action.</li>
+<li>Added vignettes.</li>
 </ul><div class="section level3">
 <h3 id="new-features-3-5-0-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-3-5-0-9000"></a></h3>
 <ul><li>Return <code>conf_int</code> in <code>estimate_*()</code> family of functions.</li>
@@ -65,17 +77,26 @@
 <li>Fixed issue in missing count data in DOCX fitting report.</li>
 <li>Removed double calculation of <code>cov_est</code> in <code>estimate_partial_dolphin()</code>.</li>
 <li>Wrapped mixed Poisson model dose estimation in <code><a href="https://rdrr.io/r/base/try.html" class="external-link">try()</a></code> to ensure convergence (up to 5 tries).</li>
+<li>Mixed Poisson model <code><a href="../reference/estimate_hetero_mixed_poisson.html">estimate_hetero_mixed_poisson()</a></code> uses exact delta methods for dose and fraction irradiated, as described in paper by Pujol et al. (2016) <a href="doi:10.1667/RR14145.1" class="uri">doi:10.1667/RR14145.1</a>.</li>
+<li>Fixed <code>gamma</code> and <code>gamma_error</code> parsing when calling <code><a href="../reference/estimate_hetero_mixed_poisson.html">estimate_hetero_mixed_poisson()</a></code> in <code>mod_estimation_results_server()</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-3-5-0-9000">New functions<a class="anchor" aria-label="anchor" href="#new-functions-3-5-0-9000"></a></h3>
+<ul><li>
+<code><a href="../reference/get_deltamethod_std_err.html">get_deltamethod_std_err()</a></code>: auxiliary function to wrap all <code><a href="https://rdrr.io/pkg/msm/man/deltamethod.html" class="external-link">msm::deltamethod()</a></code> calls.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-3-5-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-5-0-9000"></a></h3>
-<ul><li>Fixed order of output case data columns in <code><a href="../reference/calculate_aberr.html">calculate_aberr_table()</a></code> so they match the final output in Shiny.</li>
+<ul><li>Fixed order of output case data columns in <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> so they match the final output in Shiny.</li>
 <li>Renamed <code>count-data-IAEA.csv</code> to <code>count-data-barquinero-1995.csv</code> from Barquinero et al. (1995) <a href="https://doi.org/10.1016/0027-5107(94)00150-4" class="external-link uri">https://doi.org/10.1016/0027-5107(94)00150-4</a>.</li>
-<li>Added <code>count-data-rodriguez-2004.csv</code> for total translocations fom Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="external-link uri">https://doi.org/10.1667/RR3198</a>.</li>
+<li>Added <code>count-data-rodriguez-2004.csv</code> for total translocations from Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="external-link uri">https://doi.org/10.1667/RR3198</a>.</li>
 <li>Updated translocations fitting unit tests to use data from Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="external-link uri">https://doi.org/10.1667/RR3198</a>.</li>
 <li>Rewrote <code><a href="../reference/calculate_aberr.html">calculate_aberr_power()</a></code> to remove {purrr} dependency and reduce computation time by 4.</li>
 <li>Replaced <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> calls with appropriate <code>cli::cli_*()</code> calls.</li>
 <li>Split quasi-Poisson from automatic fitting in <code><a href="../reference/fit_glm_method.html">fit_glm_method()</a></code>, as it is otherwise confusing.</li>
 <li>Updated <code>\sigma</code> to <code>\hat{\sigma}</code> in <code>fix_count_data_names()</code> and respective tests.</li>
+<li>Updated unit tests to test individual values both in dose-effect fitting and dose estimation.</li>
+<li>Use <code>*-fitting-results-*.rds</code> instead of <code>*-fitting-data-*.rds</code> when exporting RDS objects in <code>mod_fitting_results_server()</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="ui-improvements-3-5-0-9000">UI Improvements<a class="anchor" aria-label="anchor" href="#ui-improvements-3-5-0-9000"></a></h3>
@@ -85,7 +106,7 @@
 <li>Updated report help modals text.</li>
 <li>Using new <code>side-widget-*</code> CSS classes in dose estimation UI modules.</li>
 <li>Added progress notifications to calculations via <code><a href="https://rdrr.io/pkg/shiny/man/Progress.html" class="external-link">shiny::Progress</a></code>.</li>
-<li>Updated <code>_pkgdown.yml</code> and simplified <code>extra.css</code> thanks to Bootstrap 5 support in {pkgdown} 2.0.</li>
+<li>Updated <code>_pkgdown.yml</code> and simplified <code>extra.css</code> thanks to Bootstrap 5 support in {pkgdown} 2.0.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -131,7 +152,7 @@
 <li>
 <code><a href="../reference/calculate_trans_rate_sigurdson.html">calculate_trans_rate_sigurdson()</a></code> and <code><a href="../reference/calculate_trans_rate_manual.html">calculate_trans_rate_manual()</a></code> to calculate translocation rates.</li>
 <li>
-<code><a href="../reference/calculate_aberr.html">calculate_aberr_table()</a></code> wrapper, to calculate aberration tables for count and cases data.</li>
+<code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> wrapper, to calculate aberration tables for count and cases data.</li>
 <li>
 <code><a href="../reference/calculate_aberr.html">init_aberr_table()</a></code>, to initialise aberration distribution tables in fitting and estimation server modules.</li>
 <li>
@@ -141,7 +162,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="function-refactoring-3-5-0">Function refactoring<a class="anchor" aria-label="anchor" href="#function-refactoring-3-5-0"></a></h3>
-<ul><li>Refactored <code>get_decision_threshold()</code> functoin to <code><a href="../reference/calculate_decision_threshold.html">calculate_decision_threshold()</a></code>, and added <code>calculate_decision_threshold_table()</code> wrapper function.</li>
+<ul><li>Refactored <code>get_decision_threshold()</code> function to <code><a href="../reference/calculate_decision_threshold.html">calculate_decision_threshold()</a></code>, and added <code>calculate_decision_threshold_table()</code> wrapper function.</li>
 <li>Refactored <code>calculate_decision_threshold_*()</code> functions to remove <code>input</code> argument.</li>
 <li>Refactored <code>get_*()</code> translocation functions to <code>calculate_*()</code> for better consistency.</li>
 <li>Refactored <code>get_*_dose_curve()</code> functions to <code>plot_*_dose_curve()</code> for more clarity.</li>
@@ -157,7 +178,7 @@
 <li>Changed structure of modules to <code>mod_&lt;calc_type&gt;_&lt;aberration&gt;_*()</code>.</li>
 <li>Generalised <code>get_model_statistics()</code> function so that local <code>get_model_statistics()</code> definition could be removed from <code>mod_estimate_fit_curve_server()</code> module.</li>
 <li>Multiple (18 files) <code>&lt;aberration&gt;-&lt;module&gt;-&lt;format&gt;.Rmd</code> report templates have been merged into <code>&lt;module&gt;-&lt;format&gt;.Rmd</code> (4 files).</li>
-<li>Use <code><a href="../reference/correct_negative_vals.html">correct_negative_vals()</a></code> to ensure correct dose estimation when <code>X &lt; Xc</code> in translocations asay.</li>
+<li>Use <code><a href="../reference/correct_negative_vals.html">correct_negative_vals()</a></code> to ensure correct dose estimation when <code>X &lt; Xc</code> in translocations assay.</li>
 <li>Replaced all <code>*_at()</code> and <code>*_if()</code> occurrences by their {dplyr} 1.0.0 equivalents.</li>
 </ul></div>
 <div class="section level3">
@@ -183,7 +204,7 @@
 <li>Fixed error in genome_fraction parsing for translocations in <code>estimate_partial_dolphin()</code>.</li>
 <li>Fixed count/case data standard error column names replacements.</li>
 <li>Fixed minipage issue when using more than 12 columns in {knitr} tables with column name replacements, by using <code>format = "latex", escape = FALSE</code> parameters in <code>kable()</code> call.</li>
-<li>Supress YAML warning when using <code>!expr</code> in PDF reports. See <a href="https://github.com/rstudio/rstudio/issues/7545" class="external-link uri">https://github.com/rstudio/rstudio/issues/7545</a>.</li>
+<li>Suppress YAML warning when using <code>!expr</code> in PDF reports. See <a href="https://github.com/rstudio/rstudio/issues/7545" class="external-link uri">https://github.com/rstudio/rstudio/issues/7545</a>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-functions-3-4-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-3-4-0"></a></h3>
@@ -226,14 +247,14 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.3.0" id="biodosetools-330-2020-07-27">biodosetools 3.3.0 (2020-07-27)<a class="anchor" aria-label="anchor" href="#biodosetools-330-2020-07-27"></a></h2>
-<p>Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made de code a lot more robust.</p>
+<p>Initial migration of the app into a {golem} R package. This means Biodose Tools is also available as a regular R package in case the user wants to build their own R scripts. This also reduced lots of code redundancies, and made the code a lot more robust.</p>
 <div class="section level3">
 <h3 id="new-features-3-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-3-3-0"></a></h3>
 <ul><li>App is now a {golem} R package.</li>
 <li>Migrated UI from {shinydashboard} to {bs4Dash}.</li>
 <li>Modals are now built with {bsplus} instead of {shinyBS}.</li>
 <li>Functions and internal data are documented using {roxygen2}.</li>
-<li>Added {pkgdown} support to build {biodosetool}’s website automatically.</li>
+<li>Added {pkgdown} support to build {biodosetools}’s website automatically.</li>
 <li>All custom theming is done through SASS and CSS instead of R code injection.</li>
 </ul></div>
 <div class="section level3">
@@ -602,9 +623,9 @@
 <li>Check if yield projection into dose is mathematically possible. Negative values of yield or dose are changed to zero as well.</li>
 <li>Added modification to Merkle’s yield error function when using protracted exposures.</li>
 <li>Implemented protracted exposure for partial body dose estimation.</li>
-<li>Added automatic poisson/quasipoison selection on fitting.</li>
+<li>Added automatic Poisson/quasi-Poisson selection on fitting.</li>
 <li>Correct p-values depending on fitting model dispersion.</li>
-<li>Added automatic correction of confidence intervals to use “simplfied” Merkle method if necessary.</li>
+<li>Added automatic correction of confidence intervals to use “simplified” Merkle’s method if necessary.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-1-0-0">Fixes<a class="anchor" aria-label="anchor" href="#fixes-1-0-0"></a></h3>

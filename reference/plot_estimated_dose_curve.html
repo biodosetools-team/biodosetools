@@ -21,6 +21,15 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -55,7 +64,7 @@
   <span class="va">est_doses</span>,
   <span class="va">fit_coeffs</span>,
   <span class="va">fit_var_cov_mat</span>,
-  <span class="va">protracted_g_value</span>,
+  protracted_g_value <span class="op">=</span> <span class="fl">1</span>,
   <span class="va">conf_int_curve</span>,
   <span class="va">aberr_name</span>
 <span class="op">)</span></code></pre></div>
@@ -64,21 +73,21 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>est_doses</dt>
-<dd><p>List of dose estimations results from <code>estimate_*()</code> family of functions</p></dd>
+<dd><p>List of dose estimations results from <code>estimate_*()</code> family of functions.</p></dd>
 <dt>fit_coeffs</dt>
-<dd><p>Fitting coefficients matrix</p></dd>
+<dd><p>Fitting coefficients matrix.</p></dd>
 <dt>fit_var_cov_mat</dt>
-<dd><p>Fitting variance-covariance matrix</p></dd>
+<dd><p>Fitting variance-covariance matrix.</p></dd>
 <dt>protracted_g_value</dt>
-<dd><p>Protracted G(x) value</p></dd>
+<dd><p>Protracted \(G(x)\) value.</p></dd>
 <dt>conf_int_curve</dt>
-<dd><p>Confidence interval of the curve</p></dd>
+<dd><p>Confidence interval of the curve.</p></dd>
 <dt>aberr_name</dt>
-<dd><p>Name of the aberration to use in the y-axis</p></dd>
+<dd><p>Name of the aberration to use in the y-axis.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>ggplot object</p>
+    <p><code>ggplot2</code> object.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

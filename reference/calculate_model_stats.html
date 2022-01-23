@@ -21,6 +21,15 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -71,35 +80,35 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>model_data</dt>
-<dd><p>Data of the model</p></dd>
+<dd><p>Data of the model.</p></dd>
 <dt>fit_coeffs_vec</dt>
-<dd><p>Vector of fitting coefficients</p></dd>
+<dd><p>Vector of fitting coefficients.</p></dd>
 <dt>glm_results</dt>
-<dd><p>Results of glm</p></dd>
+<dd><p>Results of glm.</p></dd>
 <dt>fit_algorithm</dt>
-<dd><p>String of the algorithm used</p></dd>
+<dd><p>String of the algorithm used.</p></dd>
 <dt>response</dt>
-<dd><p>Type of response</p></dd>
+<dd><p>Type of response.</p></dd>
 <dt>link</dt>
-<dd><p>Fit link</p></dd>
+<dd><p>Fit link.</p></dd>
 <dt>type</dt>
-<dd><p>Theoretical or raw glm model statistics</p></dd>
+<dd><p>Theoretical or raw glm model statistics.</p></dd>
 <dt>Y</dt>
-<dd><p>Y response (required in constraint-maxlik-optimization)</p></dd>
+<dd><p>Y response (required in constraint-maxlik-optimization).</p></dd>
 <dt>mu</dt>
-<dd><p>mu response required in constraint-maxlik-optimization)</p></dd>
+<dd><p>mu response required in constraint-maxlik-optimization).</p></dd>
 <dt>n</dt>
-<dd><p>number of parameters (required in constraint-maxlik-optimization)</p></dd>
+<dd><p>number of parameters (required in constraint-maxlik-optimization).</p></dd>
 <dt>npar</dt>
-<dd><p>number of parameters (required in constraint-maxlik-optimization)</p></dd>
+<dd><p>number of parameters (required in constraint-maxlik-optimization).</p></dd>
 <dt>genome_factor</dt>
-<dd><p>Genomic conversion factor used in translocations</p></dd>
+<dd><p>Genomic conversion factor used in translocations.</p></dd>
 <dt>calc_type</dt>
-<dd><p>Calculation type, either "fitting" or "estimation"</p></dd>
+<dd><p>Calculation type, either "fitting" or "estimation".</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Model statistics data frame</p>
+    <p>Data frame of model statistics.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

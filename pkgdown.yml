@@ -1,6 +1,10 @@
 pandoc: 2.7.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
-articles: {}
-last_built: 2022-01-23T15:21Z
+articles:
+  dicent-estimation: dicent-estimation.html
+  dicent-fitting: dicent-fitting.html
+  trans-estimation: trans-estimation.html
+  trans-fitting: trans-fitting.html
+last_built: 2022-01-23T23:53Z
 
