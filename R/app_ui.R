@@ -96,26 +96,28 @@ dashboard_sidebar <- function() {
         )
       ),
       # Micronuclei
-      menuItem(
-        text = "Micronuclei",
-        tabName = "menu-item-micro",
-        icon = icon("dot-circle"),
-        # Modules
+      if (golem::app_dev()) {
         menuItem(
-          text = "Fitting",
-          tabName = "tab-fitting-micro",
-          icon = icon("cog"),
-          badgeLabel = "wip",
-          badgeColor = "green"
-        ),
-        menuItem(
-          text = "Dose estimation",
-          tabName = "tab-estimation-micro",
-          icon = icon("calculator"),
-          badgeLabel = "wip",
-          badgeColor = "green"
+          text = "Micronuclei",
+          tabName = "menu-item-micro",
+          icon = icon("dot-circle"),
+          # Modules
+          menuItem(
+            text = "Fitting",
+            tabName = "tab-fitting-micro",
+            icon = icon("cog"),
+            badgeLabel = "wip",
+            badgeColor = "green"
+          ),
+          menuItem(
+            text = "Dose estimation",
+            tabName = "tab-estimation-micro",
+            icon = icon("calculator"),
+            badgeLabel = "wip",
+            badgeColor = "green"
+          )
         )
-      )
+      }
     ),
 
     # Other tools section

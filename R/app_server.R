@@ -108,36 +108,38 @@ app_server <- function(input, output, session) {
 
   # Micronuclei Modules ----
 
-  # Fitting
-  callModule(
-    id = "fitting_micro_ui",
-    module = mod_fitting_counts_hot_server,
-    aberr_module = "micronuclei"
-  )
-  callModule(
-    id = "fitting_micro_ui",
-    module = mod_fitting_results_server,
-    aberr_module = "micronuclei"
-  )
+  if (golem::app_dev()) {
+    # Fitting
+    callModule(
+      id = "fitting_micro_ui",
+      module = mod_fitting_counts_hot_server,
+      aberr_module = "micronuclei"
+    )
+    callModule(
+      id = "fitting_micro_ui",
+      module = mod_fitting_results_server,
+      aberr_module = "micronuclei"
+    )
 
-  # Dose Estimation
-  callModule(
-    id = "estimation_micro_ui",
-    module = mod_estimation_case_hot_server,
-    aberr_module = "micronuclei"
-  )
-  callModule(
-    id = "estimation_micro_ui",
-    module = mod_estimation_fit_curve_hot_server
-  )
-  callModule(
-    id = "estimation_micro_ui",
-    module = mod_estimation_fit_curve_server,
-    aberr_module = "micronuclei"
-  )
-  callModule(
-    id = "estimation_micro_ui",
-    module = mod_estimation_results_server,
-    aberr_module = "micronuclei"
-  )
+    # Dose Estimation
+    callModule(
+      id = "estimation_micro_ui",
+      module = mod_estimation_case_hot_server,
+      aberr_module = "micronuclei"
+    )
+    callModule(
+      id = "estimation_micro_ui",
+      module = mod_estimation_fit_curve_hot_server
+    )
+    callModule(
+      id = "estimation_micro_ui",
+      module = mod_estimation_fit_curve_server,
+      aberr_module = "micronuclei"
+    )
+    callModule(
+      id = "estimation_micro_ui",
+      module = mod_estimation_results_server,
+      aberr_module = "micronuclei"
+    )
+  }
 }
