@@ -187,6 +187,10 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 
 #' Perform GLM (Generalised Linear Model) fitting
 #'
+#' Method based on the paper by Edwards, A. A. et al. (1979). Radiation induced
+#' chromosome aberrations and the Poisson distribution. Radiation and
+#' Environmental Biophysics, 16(2), 89-100. <doi:10.1007/BF01323216>.
+#'
 #' @param count_data Count data in data frame form.
 #' @param model_formula Model formula.
 #' @param model_family Model family.
@@ -357,8 +361,8 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
 #'
 #' Method based on the paper by Oliveira, M. et al. (2016). Zero-inflated
 #' regression models for radiation-induced chromosome aberration data:
-#' A comparative study. Biometrical Journal, 58(2), 259–279.
-#' <doi:10.1002/bimj.201400233>
+#' A comparative study. Biometrical Journal, 58(2), 259-279.
+#' <doi:10.1002/bimj.201400233>.
 #'
 #' @param data Count data.
 #' @param model_formula Model formula.
@@ -606,14 +610,25 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
 
 #' Perform dose-effect fitting algorithm
 #'
-#' Wrapper for fit_glm_method() and fit_maxlik_method() functions.
+#' Perform dose-effect fitting. A generalized linear model (GLM) is used by
+#' default, with a maximum likelihood estimation (MLE) as a fallback method.
+#'
+#' The GLM method is based on the paper by Edwards, A. A. et al. (1979).
+#' Radiation induced chromosome aberrations and the Poisson distribution.
+#' Radiation and Environmental Biophysics, 16(2), 89-100.
+#' <doi:10.1007/BF01323216>.
+#'
+#' The MLE method is based on the paperby Oliveira, M. et al. (2016).
+#' Zero-inflated regression models for radiation-induced chromosome aberration
+#' data: A comparative study. Biometrical Journal, 58(2), 259-279.
+#' <doi:10.1002/bimj.201400233>.
 #'
 #' @param count_data Count data in data frame form.
 #' @param model_formula Model formula.
 #' @param model_family Model family.
 #' @param fit_link Family link.
 #' @param aberr_module Aberration module.
-#' @param algorithm Optional selection of algorithm to be used, either "glm" or "maxlik". By default, "glm" is used, with "maxlik" as a fallback method.
+#' @param algorithm Optional selection of algorithm to be used, either "glm" (for GLM) or "maxlik" (for MLE). By default, "glm" is used, with "maxlik" as a fallback method.
 #'
 #' @return List object containing fit results either using GLM or maxLik optimization.
 #' @export

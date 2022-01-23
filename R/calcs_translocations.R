@@ -1,5 +1,10 @@
 #' Calculate genomic conversion factor
 #'
+#' Method based on the paper by Lucas, J. N. et al. (1992). Rapid Translocation
+#' Frequency Analysis in Humans Decades after Exposure to Ionizing Radiation.
+#' International Journal of Radiation Biology, 62(1), 53-63.
+#' <doi:10.1080/09553009214551821>.
+#'
 #' @param dna_table DNA content fractions table. Can be \code{dna_content_fractions_morton} or \code{dna_content_table_ihgsc}.
 #' @param chromosomes Vector of stained chromosomes.
 #' @param colors Vector of colors of the stains.
@@ -48,6 +53,11 @@ calculate_genome_factor <- function(dna_table, chromosomes, colors, sex) {
 }
 
 #' Calculate Sigurdson's translocation rate
+#'
+#' Method based on the paper by Sigurdson, A. J. et al. (2008). International
+#' study of factors affecting human chromosome translocations. Mutation
+#' Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
+#' <doi:10.1016/j.mrgentox.2008.01.005>.
 #'
 #' @param cells Number of cells \code{N}.
 #' @param genome_factor Genomic conversion factor.
@@ -102,7 +112,7 @@ calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
 #' @export
 calculate_trans_rate_manual <- function(cells, genome_factor, expected_aberr_value) {
   # Expected aberrations
-  expected_aberr <- expected_aberr_value * cells * genome_factor
+  expected_aberr <-cells * genome_factor * expected_aberr_value
 
   return(expected_aberr)
 }

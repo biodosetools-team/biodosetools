@@ -37,7 +37,9 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 
 #' Whole-body dose estimation (Merkle's method)
 #'
-#' Whole-body dose estimation using Merkle's method.
+#' Method based on the paper by Merkle, W. (1983). Statistical methods in
+#' regression and calibration analysis of chromosome aberration data. Radiation
+#' and Environmental Biophysics, 21(3), 217-233. <doi:10.1007/BF01323412>.
 #'
 #' @param case_data Case data in data frame form.
 #' @param conf_int_yield Confidence interval of the yield, 83\% by default.
@@ -148,7 +150,9 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
 
 #' Whole-body dose estimation (delta method)
 #'
-#' Whole-body dose estimation using delta method.
+#' Method based on 2001 manual by the International Atomic Energy Agency (IAEA).
+#' Cytogenetic Analysis for Radiation Dose Assessment, Technical Reports Series
+#' (2001). Retrieved from \url{https://www.iaea.org/publications/6303/cytogenetic-analysis-for-radiation-dose-assessment}.
 #'
 #' @param case_data Case data in data frame form.
 #' @param fit_coeffs Fitting coefficients matrix.
@@ -271,7 +275,10 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 
 #' Partial-body dose estimation (Dolphin's method)
 #'
-#' Partial-body dose estimation using Dolphin's method.
+#' Method based on the paper by Dolphin, G. W. (1969). Biological Dosimetry with
+#' Particular Reference to Chromosome Aberration Analysis: A Review of Methods.
+#' International Atomic Energy Agency (IAEA) Retrieved from
+#' \url{https://inis.iaea.org/search/search.aspx?orig_q=RN:45029080}.
 #'
 #' @param case_data Case data in data frame form.
 #' @param fit_coeffs Fitting coefficients matrix.
@@ -353,8 +360,6 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 
     # Get the covariance matrix for the parameters of the ZIP distribution
     cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
-
-    # Get variance of lambda based on delta methods (see Savage et al.)
     lambda_est_sd <- sqrt(cov_est[1, 1])
 
     # Get confidence interval of lambda estimates
@@ -453,7 +458,9 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 
 #' Heterogeneous dose estimation (Mixed Poisson model)
 #'
-#' Heterogeneous dose estimation.
+#' Method based on the paper by Pujol, M. et al. (2016). A New Model for
+#' Biological Dose Assessment in Cases of Heterogeneous Exposures to Ionizing
+#' Radiation. Radiation Research, 185(2), 151-162. <doi:10.1667/RR14145.1>.
 #'
 #' @param case_data Case data in data frame form.
 #' @param fit_coeffs Fitting coefficients matrix.

@@ -2,6 +2,11 @@
 
 #' Calculate protracted function \eqn{G(x)}
 #'
+#' Calculation based on the paper by Lea, D. E. & Catcheside, D. G. (1942). The
+#' mechanism of the induction by radiation of chromosome aberrations
+#' in\emph{Tradescantia}. Journal of Genetics, 44(2-3), 216-245.
+#' <doi:10.1007/BF02982830>.
+#'
 #' @param time Time over which the irradiation occurred.
 #' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours (default value).
 #'
