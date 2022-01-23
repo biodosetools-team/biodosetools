@@ -54,6 +54,7 @@ reference:
   - AIC_from_data
   - R_factor
   - biodosetools
+  - calculate_aberr
   - calculate_decision_threshold
   - calculate_model_stats
   - calculate_yield
