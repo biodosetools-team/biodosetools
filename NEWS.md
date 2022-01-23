@@ -1,11 +1,14 @@
 # biodosetools 3.5.0.9000
 
 * Major rewrite of `plot_estimated_dose_curve()` function.
+* Delta method calculations are now all done via `msm::deltamethod()`.
 * Added progress and alert notifications to UI.
 * Added {markdown} as suggested dependency.
 * Added {cli} as dependency.
 * Tweaked references section in {pkgdown} site to only include exported functions organised by topic/usage.
 * Use consistently genomic conversion factor or `genome_factor` across all functions, help dialogues, and reports.
+* Added R-CMD check GitHub Action.
+* Added vignettes.
 
 ## New features
 
@@ -20,6 +23,12 @@
 * Fixed issue in missing count data in DOCX fitting report.
 * Removed double calculation of `cov_est` in `estimate_partial_dolphin()`.
 * Wrapped mixed Poisson model dose estimation in `try()` to ensure convergence (up to 5 tries).
+* Mixed Poisson model `estimate_hetero_mixed_poisson()` uses exact delta methods for dose and fraction irradiated, as described in paper by Pujol et al. (2016) <doi:10.1667/RR14145.1>.
+* Fixed `gamma` and `gamma_error` parsing when calling `estimate_hetero_mixed_poisson()` in `mod_estimation_results_server()`.
+
+## New functions
+
+* `get_deltamethod_std_err()`: auxiliary function to wrap all `msm::deltamethod()` calls.
 
 ## Improvements
 
@@ -31,6 +40,8 @@
 * Replaced `message()` calls with appropriate `cli::cli_*()` calls.
 * Split quasi-Poisson from automatic fitting in `fit_glm_method()`, as it is otherwise confusing.
 * Updated `\sigma` to `\hat{\sigma}` in `fix_count_data_names()` and respective tests.
+* Updated unit tests to test individual values both in dose-effect fitting and dose estimation.
+* Use `*-fitting-results-*.rds` instead of `*-fitting-data-*.rds` when exporting RDS objects in `mod_fitting_results_server()`.
 
 ## UI Improvements
 
@@ -40,7 +51,7 @@
 * Updated report help modals text.
 * Using new `side-widget-*` CSS classes in dose estimation UI modules.
 * Added progress notifications to calculations via `shiny::Progress`.
-* Updated `_pkgdown.yml` and simplified `extra.css` thanks to Bootstrap 5 support in {pkgdown} 2.0.
+* Updated `_pkgdown.yml` and simplified `extra.css` thanks to Bootstrap 5 support in {pkgdown} 2.0.0.
 
 
 # biodosetools 3.5.0 (2021-05-26)
