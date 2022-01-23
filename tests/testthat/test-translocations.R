@@ -45,8 +45,8 @@ test_that("calculate_genome_factor works", {
   # Example from IAEA (2011)
   genome_factor <- calculate_genome_factor(
     dna_table = dna_content_fractions_morton,
-    chromosome = c(1, 2, 4, 3, 5, 6),
-    color = c(rep("Red", 3), rep("Green", 3)),
+    chromosomes = c(1, 2, 4, 3, 5, 6),
+    colors = c(rep("Red", 3), rep("Green", 3)),
     sex = "male"
   )
 
@@ -259,8 +259,8 @@ test_that("processing case data works", {
     conf_int = 0.95,
     protracted_g_value,
     genome_factor = parsed_genome_factor,
-    aberr_module,
-    gamma = 1 / 2.7
+    gamma = 1 / 2.7,
+    aberr_module
   )
 
   # Expected outputs (whole-body)

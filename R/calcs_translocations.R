@@ -1,23 +1,19 @@
-#' Calculate genome fraction
+#' Calculate genomic conversion factor
 #'
-#' @param dna_table DNA content fractions table.
-#' @param chromosome Chromosomes.
-#' @param color Color of the stains.
-#' @param sex Sex of the individual
+#' @param dna_table DNA content fractions table. Can be \code{dna_content_fractions_morton} or \code{dna_content_table_ihgsc}.
+#' @param chromosomes Vector of stained chromosomes.
+#' @param colors Vector of colors of the stains.
+#' @param sex Sex of the individual.
 #'
-#' @return Fraction of genome hybridised.
+#' @return Numeric value of genomic conversion factor.
 #' @export
 #' @importFrom rlang .data
-calculate_genome_factor <- function(dna_table, chromosome, color, sex) {
+calculate_genome_factor <- function(dna_table, chromosomes, colors, sex) {
   # Construct color/chromosome table
-  color_table <- cbind(
-    color,
-    chromosome
-  ) %>%
-    as.data.frame() %>%
-    dplyr::mutate(
-      chromosome = as.character(chromosome)
-    )
+  color_table <- data.frame(
+    color = colors,
+    chromosome = as.character(chromosomes)
+  )
 
   # Full table
   full_table <- dplyr::inner_join(color_table, dna_table, by = "chromosome") %>%
@@ -53,16 +49,16 @@ calculate_genome_factor <- function(dna_table, chromosome, color, sex) {
 
 #' Calculate Sigurdson's translocation rate
 #'
-#' @param cells Number of cells \code{N}
-#' @param genome_factor Genomic conversion factor used in translocations
-#' @param age_value Age of the individual
-#' @param sex_bool If \code{TRUE}, \code{sex_value} will be used
-#' @param sex_value Sex of the individual, either "male" of "female"
-#' @param smoker_bool Whether the individual smokes or not
-#' @param ethnicity_value Ethnicity of the individual
-#' @param region_value Region of the individual
+#' @param cells Number of cells \code{N}.
+#' @param genome_factor Genomic conversion factor.
+#' @param age_value Age of the individual.
+#' @param sex_bool If \code{TRUE}, \code{sex_value} will be used.
+#' @param sex_value Sex of the individual, either "male" of "female".
+#' @param smoker_bool Whether the individual smokes or not.
+#' @param ethnicity_value Ethnicity of the individual.
+#' @param region_value Region of the individual.
 #'
-#' @return Translocation rate.
+#' @return Numeric value of translocation rate.
 #' @export
 calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
                                            sex_bool = FALSE, sex_value = "none",
@@ -98,11 +94,11 @@ calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
 
 #' Calculate manual translocation rate
 #'
-#' @param cells Number of cells \code{N}
-#' @param genome_factor Genomic conversion factor used in translocations
-#' @param expected_aberr_value Expected aberrations
+#' @param cells Number of cells \code{N}.
+#' @param genome_factor Genomic conversion factor.
+#' @param expected_aberr_value Expected aberrations.
 #'
-#' @return Translocation rate.
+#' @return Numeric value of translocation rate.
 #' @export
 calculate_trans_rate_manual <- function(cells, genome_factor, expected_aberr_value) {
   # Expected aberrations

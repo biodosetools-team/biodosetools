@@ -1,19 +1,19 @@
 #' Calculate decision thresholds
 #'
-#' @param fit_results_list List of fit results
-#' @param cells N
-#' @param count_data Count data in data frame form
-#' @param model_formula Model formula
-#' @param model_family Model family
-#' @param frequency_select Whether to use measured frequency or full genome frequency
-#' @param conf_int CI
-#' @param aberr_module Aberration module
+#' @param fit_results_list List of fit results.
+#' @param cells Number of cells \code{N}.
+#' @param count_data Count data in data frame form.
+#' @param model_formula Model formula.
+#' @param model_family Model family.
+#' @param frequency_select Whether to use measured frequency or full genome frequency.
+#' @param conf_int Confidence interval.
+#' @param aberr_module Aberration module.
 #' @name calculate_decision_threshold
 NULL
 # > NULL
 
 #' @rdname calculate_decision_threshold
-#' @return A vector with aberr_test and dose_est
+#' @return A vector with \code{aberr_test} and \code{dose_est}.
 #' @noRd
 calculate_decision_threshold <- function(fit_results_list, cells,
                                          count_data, model_formula, model_family,
@@ -91,7 +91,7 @@ calculate_decision_threshold <- function(fit_results_list, cells,
 }
 
 #' @rdname calculate_decision_threshold
-#' @return A vector with aberr_test and dose_est
+#' @return A vector with \code{aberr_test} and \code{dose_est}.
 #' @noRd
 #' @importFrom rlang .data
 calculate_decision_threshold_table <- function(fit_results_list, decision_threshold_cells,

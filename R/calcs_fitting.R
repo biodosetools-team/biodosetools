@@ -1,20 +1,20 @@
 #' Calculate model statistics
 #'
-#' @param model_data Data of the model
-#' @param fit_coeffs_vec Vector of fitting coefficients
-#' @param glm_results Results of glm
-#' @param fit_algorithm String of the algorithm used
-#' @param response Type of response
-#' @param link Fit link
-#' @param type Theoretical or raw glm model statistics
-#' @param Y Y response (required in constraint-maxlik-optimization)
-#' @param mu mu response required in constraint-maxlik-optimization)
-#' @param n number of parameters (required in constraint-maxlik-optimization)
-#' @param npar number of parameters (required in constraint-maxlik-optimization)
-#' @param genome_factor Genomic conversion factor used in translocations
-#' @param calc_type Calculation type, either "fitting" or "estimation"
+#' @param model_data Data of the model.
+#' @param fit_coeffs_vec Vector of fitting coefficients.
+#' @param glm_results Results of glm.
+#' @param fit_algorithm String of the algorithm used.
+#' @param response Type of response.
+#' @param link Fit link.
+#' @param type Theoretical or raw glm model statistics.
+#' @param Y Y response (required in constraint-maxlik-optimization).
+#' @param mu mu response required in constraint-maxlik-optimization).
+#' @param n number of parameters (required in constraint-maxlik-optimization).
+#' @param npar number of parameters (required in constraint-maxlik-optimization).
+#' @param genome_factor Genomic conversion factor used in translocations.
+#' @param calc_type Calculation type, either "fitting" or "estimation".
 #'
-#' @return Model statistics data frame
+#' @return Data frame of model statistics.
 calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
                                   response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                   Y = NULL, mu = NULL, n = NULL, npar = NULL,
@@ -118,11 +118,11 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
 
 #' Prepare count data for max-likelihood optimization fitting
 #'
-#' @param count_data Count data in data frame form
-#' @param model_formula Model formula
-#' @param aberr_module Aberration module
+#' @param count_data Count data in data frame form.
+#' @param model_formula Model formula.
+#' @param aberr_module Aberration module.
 #'
-#' @return Parsed count data (data frame)
+#' @return Data frame of parsed count data.
 #' @importFrom rlang .data
 prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
   if (ncol(count_data) > 3 & aberr_module != "translocations") {
@@ -187,13 +187,13 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 
 #' Perform GLM (Generalised Linear Model) fitting
 #'
-#' @param count_data Count data in data frame form
-#' @param model_formula Model formula
-#' @param model_family Model family
-#' @param fit_link Family link
-#' @param aberr_module Aberration module
+#' @param count_data Count data in data frame form.
+#' @param model_formula Model formula.
+#' @param model_family Model family.
+#' @param fit_link Family link.
+#' @param aberr_module Aberration module.
 #'
-#' @return List object containing GLM fit results
+#' @return List object containing GLM fit results.
 fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
@@ -360,13 +360,13 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
 #' A comparative study. Biometrical Journal, 58(2), 259–279.
 #' <doi:10.1002/bimj.201400233>
 #'
-#' @param data Count data
-#' @param model_formula Model formula
-#' @param model_family Model family
-#' @param fit_link Family link
-#' @param aberr_module Aberration module
+#' @param data Count data.
+#' @param model_formula Model formula.
+#' @param model_family Model family.
+#' @param fit_link Family link.
+#' @param aberr_module Aberration module.
 #'
-#' @return List object containing maxLik fit results
+#' @return List object containing maxLik fit results.
 fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
   # Validate parameters
   model_family <- match.arg(model_family)
@@ -608,14 +608,14 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
 #'
 #' Wrapper for fit_glm_method() and fit_maxlik_method() functions.
 #'
-#' @param count_data Count data in data frame form
-#' @param model_formula Model formula
-#' @param model_family Model family
-#' @param fit_link Family link
-#' @param aberr_module Aberration module
+#' @param count_data Count data in data frame form.
+#' @param model_formula Model formula.
+#' @param model_family Model family.
+#' @param fit_link Family link.
+#' @param aberr_module Aberration module.
 #' @param algorithm Optional selection of algorithm to be used, either "glm" or "maxlik". By default, "glm" is used, with "maxlik" as a fallback method.
 #'
-#' @return List object containing fit results either using GLM or maxLik optimization
+#' @return List object containing fit results either using GLM or maxLik optimization.
 #' @export
 fit <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module, algorithm = c("glm", "maxlik")) {
   # Validate parameters

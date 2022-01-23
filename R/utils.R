@@ -1,13 +1,13 @@
 .onLoad <- function(libname, pkgname) {
-  # Supress YAML warning. See https://github.com/rstudio/rstudio/issues/7545
+  # Suppress YAML warning. See https://github.com/rstudio/rstudio/issues/7545
   options("yaml.eval.expr" = TRUE)
 }
 
 #' Parse raw and TeX formulae from model formula
 #'
-#' @param model_formula Model formula
+#' @param model_formula Model formula.
 #'
-#' @return List of raw and TeX formulae
+#' @return List of raw and TeX formulae.
 #' @noRd
 parse_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-no-int", "lin-no-int")) {
   # Validate parameters
@@ -39,9 +39,9 @@ parse_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-n
 
 #' Parse coefficient names from model formula
 #'
-#' Fix coefficient names (`coeff_C`, `coeff_alpha`, `coeff_beta`) on manual coeffiecient matrix.
+#' Fix coefficient names (\code{coeff_C}, \code{coeff_alpha}, \code{coeff_beta}) on manual coeffiecient matrix.
 #'
-#' @param model_formula Model formula
+#' @param model_formula Model formula.
 #'
 #' @return Vector of coefficient names
 #' @noRd
@@ -65,13 +65,13 @@ names_from_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-q
 
 #' Fix coefficient matrix names
 #'
-#' Fix coefficient names (`coeff_C`, `coeff_alpha`, `coeff_beta`) to display properly on reports.
+#' Fix coefficient names (\code{coeff_C}, \code{coeff_alpha}, \code{coeff_beta}) to display properly on reports.
 #'
 #' @param data Data frame or matrix.
 #' @param type Type of name replacement. Either "rows" or "cols".
 #' @param output Type of output in which the data is rendered. Either "kable" or "rhot".
 #'
-#' @return Data with fixed rownames and colnames.
+#' @return Data frame with fixed rownames and colnames.
 #' @noRd
 fix_coeff_names <- function(data, type = c("rows", "cols"), output = c("kable", "rhot")) {
   # Validate parameters
@@ -115,7 +115,7 @@ fix_coeff_names <- function(data, type = c("rows", "cols"), output = c("kable", 
 #' @param type Type of input data. Either "count" and "case".
 #' @param output Type of output in which the data is rendered. Only "kable" supported at the moment.
 #'
-#' @return Data with fixed colnames.
+#' @return Data frame with fixed colnames.
 #' @noRd
 fix_count_data_names <- function(data, type = c("count", "case"), output = "kable") {
   # Validate parameters

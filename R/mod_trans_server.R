@@ -89,8 +89,8 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
 
     # Modify pairs of chromosome/stain color depending on stain method
     if (color_scheme) {
-      chromosome <- as.character(chromosome_table[["Chromosome"]])
-      color <- paste("M-Fish", chromosome)
+      chromosomes <- as.character(chromosome_table[["Chromosome"]])
+      colors <- paste("M-Fish", chromosomes)
     } else {
       chromosome_table_melt <- chromosome_table %>%
         tidyr::pivot_longer(
@@ -101,11 +101,11 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
       chromosome_table_clean <- chromosome_table_melt %>%
         dplyr::filter(.data$Bool == TRUE)
 
-      chromosome <- as.character(chromosome_table_clean[["Chromosome"]])
-      color <- chromosome_table_clean[["Stain"]]
+      chromosomes <- as.character(chromosome_table_clean[["Chromosome"]])
+      colors <- chromosome_table_clean[["Stain"]]
     }
 
-    genome_factor <- calculate_genome_factor(dna_table, chromosome, color, sex)
+    genome_factor <- calculate_genome_factor(dna_table, chromosomes, colors, sex)
 
     return(genome_factor)
   })

@@ -2,8 +2,6 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
-#' @param aberr_module Aberration module.
-#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @noRd
@@ -155,7 +153,6 @@ mod_estimation_fit_curve_hot_server <- function(input, output, session, stringsA
 #' @param input,output,session Internal parameters for {shiny}.
 #' @param stringsAsFactors stringsAsFactors.
 #' @param aberr_module Aberration module.
-#' @param genome_factor Genomic conversion factor used in translocations.
 #'
 #' @import shiny rhandsontable
 #' @noRd
@@ -751,8 +748,8 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
         conf_int = 0.95,
         protracted_g_value,
         parsed_genome_factor,
-        aberr_module,
-        gamma
+        gamma,
+        aberr_module
       )
 
       # Parse results

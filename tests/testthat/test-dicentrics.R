@@ -212,8 +212,8 @@ test_that("processing case data works", {
     conf_int = 0.95,
     protracted_g_value,
     genome_factor = parsed_genome_factor,
-    aberr_module,
-    gamma = 1 / 2.7
+    gamma = 1 / 2.7,
+    aberr_module
   )
 
   set.seed(1)

@@ -1,13 +1,13 @@
 # Protracted function ----
 
-#' Calculate protracted function G(x)
+#' Calculate protracted function \eqn{G(x)}
 #'
-#' @param time Time over which the irradiation occurred
-#' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours
+#' @param time Time over which the irradiation occurred.
+#' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours (default value).
 #'
-#' @return G(x) numeric value
+#' @return Numeric value of \eqn{G(x)}.
 #' @export
-protracted_g_function <- function(time, time_0) {
+protracted_g_function <- function(time, time_0 = 2) {
   x <- time / time_0
   g_value <- (2 / x^2) * (x - 1 + exp(-x))
 
@@ -18,12 +18,12 @@ protracted_g_function <- function(time, time_0) {
 
 #' Calculate yield
 #'
-#' @param dose Dose
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param protracted_g_value Protracted G(x) value
+#' @param dose Numeric value of dose.
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
 #'
-#' @return Yield
-yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
+#' @return Numeric value of yield.
+yield_fun <- function(dose, general_fit_coeffs, protracted_g_value = 1) {
   yield <- general_fit_coeffs[[1]] +
     general_fit_coeffs[[2]] * dose +
     general_fit_coeffs[[3]] * dose^2 * protracted_g_value
@@ -35,10 +35,10 @@ yield_fun <- function(dose, general_fit_coeffs, protracted_g_value) {
 #'
 #' Calculate R regression confidence factor depending on selected confidence interval and type of fit.
 #'
-#' @param conf_int Confidence interval
-#' @param general_fit_coeffs Generalised fit coefficients matrix
+#' @param conf_int Confidence interval, 95\% by default.
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
 #'
-#' @return R regression confidence factor
+#' @return Numeric value of R regression confidence factor.
 R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
   chisq_df <- sum(general_fit_coeffs != 0)
   r_factor <- sqrt(stats::qchisq(conf_int, df = chisq_df))
@@ -50,12 +50,12 @@ R_factor <- function(general_fit_coeffs, conf_int = 0.95) {
 #'
 #' Calculate yield error using Merkle's method
 #'
-#' @param dose Dose
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
-#' @param protracted_g_value Protracted G(x) value
+#' @param dose Numeric value of dose.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
 #'
-#' @return Yield error
-yield_error_fun <- function(dose, general_fit_var_cov_mat = NULL, protracted_g_value) {
+#' @return Numeric value of yield error.
+yield_error_fun <- function(dose, general_fit_var_cov_mat = NULL, protracted_g_value = 1) {
   # Special case for yield estimate
   if (is.null(general_fit_var_cov_mat)) {
     return(0)
@@ -77,15 +77,15 @@ yield_error_fun <- function(dose, general_fit_var_cov_mat = NULL, protracted_g_v
 
 #' Calculate yield from dose
 #'
-#' @param dose Dose
-#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
-#' @param protracted_g_value Protracted G(x) value
-#' @param conf_int Curve confidence interval
+#' @param dose Numeric value of dose.
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper".
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param conf_int Curve confidence interval, 95\% by default.
 #'
-#' @return Yield
-calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+#' @return Numeric value of yield.
+calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value = 1, conf_int = 0.95) {
   # Validate parameters
   type <- match.arg(type)
 
@@ -107,12 +107,12 @@ calculate_yield <- function(dose, type = c("estimate", "lower", "upper"), genera
 
 #' Calculate theoretical yield infimum
 #'
-#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
-#' @param conf_int Curve confidence interval
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper".
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
+#' @param conf_int Curve confidence interval, 95\% by default.
 #'
-#' @return Yield infimum
+#' @return Numeric value of yield infimum.
 calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), general_fit_coeffs, general_fit_var_cov_mat = NULL, conf_int = 0.95) {
   # Calculate yield
   yield <- calculate_yield(0, type, general_fit_coeffs, general_fit_var_cov_mat, 1, conf_int)
@@ -124,14 +124,14 @@ calculate_yield_infimum <- function(type = c("estimate", "lower", "upper"), gene
 #'
 #' Correct yield confidence interval if simple method is required.
 #'
-#' @param conf_int Confidence interval
-#' @param protracted_g_value Protracted G(x) value
-#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param dose Dose
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
+#' @param conf_int Confidence interval.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper".
+#' @param dose Numeric value of dose.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
 #'
-#' @return Corrected confidence interval
-correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_value, type, dose = seq(0, 10, 0.2)) {
+#' @return Numeric value of corrected confidence interval.
+correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_value = 1, type, dose = seq(0, 10, 0.2)) {
   res <- general_fit_var_cov_mat[["coeff_C", "coeff_C"]] +
     general_fit_var_cov_mat[["coeff_alpha", "coeff_alpha"]] * dose^2 +
     general_fit_var_cov_mat[["coeff_beta", "coeff_beta"]] * dose^4 * protracted_g_value^2 +
@@ -153,15 +153,15 @@ correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_val
 
 #' Project yield into dose-effect fitting curve
 #'
-#' @param yield Yield to be projected
-#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
-#' @param protracted_g_value Protracted G(x) value
-#' @param conf_int Curve confidence interval
+#' @param yield Yield to be projected.
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper".
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param conf_int Curve confidence interval, 95\% by default.
 #'
-#' @return Numeric value of projected dose
-project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value, conf_int = 0.95) {
+#' @return Numeric value of projected dose.
+project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value = 1, conf_int = 0.95) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
 
   if (yield >= yield_inf) {
@@ -179,19 +179,20 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 
 #' Get standard errors using delta method
 #'
-#' Delta method for approximating the standard error of a transformation $g(X)$ of a random variable $X = (x1, x2, ...)$, given estimates of the mean and covariance matrix of $X$.
+#' Delta method for approximating the standard error of a transformation \eqn{g(X)} of a random variable \eqn{X = (x1, x2, ...)}, given estimates of the mean and covariance matrix of \eqn{X}.
 #'
-#' @param fit_is_lq Whether the fit is linear quadratic (\code{TRUE}) or linear (\code{FALSE})
-#' @param variable Variable resulting of the transformation $g(X)$
-#' @param mean_estimate The estimated mean of $X$
-#' @param cov_estimate The estimated covariance matrix of $X$
-#' @param protracted_g_value Protracted $G(x)$ value
-#' @param d0 Survival coefficient of irradiated cells
+#' @param fit_is_lq Whether the fit is linear quadratic (\code{TRUE}) or linear (\code{FALSE}).
+#' @param variable Variable resulting of the transformation \eqn{g(X)}.
+#' @param mean_estimate The estimated mean of \eqn{X}.
+#' @param cov_estimate The estimated covariance matrix of \eqn{X}.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param d0 Survival coefficient of irradiated cells.
 #'
-#' @return A numeric value containing the standard error of the dose estimate
+#' @return Numeric value containing the standard error of the dose estimate.
 get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction_partial", "fraction_hetero"),
                                     mean_estimate, cov_estimate,
                                     protracted_g_value = NA, d0 = NA) {
+  # Validate parameters
   variable <- match.arg(variable)
 
   if (variable == "dose") {
@@ -240,9 +241,9 @@ get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction_pa
 
 #' Correct negative values
 #'
-#' @param x Numeric value
+#' @param x Numeric value.
 #'
-#' @return Numeric value corrected to zero if negative
+#' @return Numeric value corrected to zero if negative.
 correct_negative_vals <- function(x) {
   x_corrected <- ifelse(x < 0, 0, x)
 
@@ -252,13 +253,13 @@ correct_negative_vals <- function(x) {
 
 #' Correct yields if they are below the curve
 #'
-#' @param yield Yield
-#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper"
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param general_fit_var_cov_mat Generalised variance-covariance matrix
-#' @param conf_int Curve confidence interval
+#' @param yield Numeric value of yield.
+#' @param type Type of yield calculation. Can be "estimate", "lower", or "upper".
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param general_fit_var_cov_mat Generalised variance-covariance matrix.
+#' @param conf_int Curve confidence interval.
 #'
-#' @return Numeric value of corrected yield
+#' @return Numeric value of corrected yield.
 correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat, conf_int) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
 
@@ -272,9 +273,9 @@ correct_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
 
 #' Correct boundary of irradiated fractions to be bounded by 0 and 1
 #'
-#' @param x Numeric value
+#' @param x Numeric value.
 #'
-#' @return Numeric value in [0, 1] range
+#' @return Numeric value in [0, 1] range.
 correct_boundary <- function(x) {
   if (x > 1) {
     return(1)
@@ -289,17 +290,17 @@ correct_boundary <- function(x) {
 
 #' Plot dose estimation curve
 #'
-#' @param est_doses List of dose estimations results from \code{estimate_*()} family of functions
-#' @param fit_coeffs Fitting coefficients matrix
-#' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param protracted_g_value Protracted G(x) value
-#' @param conf_int_curve Confidence interval of the curve
-#' @param aberr_name Name of the aberration to use in the y-axis
+#' @param est_doses List of dose estimations results from \code{estimate_*()} family of functions.
+#' @param fit_coeffs Fitting coefficients matrix.
+#' @param fit_var_cov_mat Fitting variance-covariance matrix.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param conf_int_curve Confidence interval of the curve.
+#' @param aberr_name Name of the aberration to use in the y-axis.
 #'
-#' @return ggplot object
+#' @return \code{ggplot2} object.
 #' @export
 plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
-                                      protracted_g_value, conf_int_curve,
+                                      protracted_g_value = 1, conf_int_curve,
                                       aberr_name) {
   # Validate est_doses names
   assessments <- names(est_doses)

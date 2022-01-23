@@ -1,9 +1,9 @@
 #' Plot fit dose curve
 #'
-#' @param fit_results_list List of fit results
-#' @param aberr_name Name of the aberration to use in the y-axis
+#' @param fit_results_list List of fit results.
+#' @param aberr_name Name of the aberration to use in the y-axis.
 #'
-#' @return ggplot object
+#' @return \code{ggplot2} object.
 #' @export
 plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
   # Read objects from fit results list

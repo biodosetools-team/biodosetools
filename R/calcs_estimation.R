@@ -1,14 +1,14 @@
 # AIC and logLik from data ----
 
-#' Calculate AIC (Akaike's ‘An Information Criterion’)
+#' Calculate AIC (Akaike's 'An Information Criterion')
 #'
-#' @param general_fit_coeffs Generalised fit coefficients matrix
-#' @param data Data (dose, yield) to calculate AIC from
-#' @param dose_var Name of the dose variable (enquoted)
-#' @param yield_var Name of the yield variable (enquoted)
-#' @param fit_link A specification for the model link function
+#' @param general_fit_coeffs Generalised fit coefficients matrix.
+#' @param data Data (dose, yield) to calculate AIC from.
+#' @param dose_var Name of the dose variable (enquoted).
+#' @param yield_var Name of the yield variable (enquoted).
+#' @param fit_link A specification for the model link function.
 #'
-#' @return Numeric value with the corresponding AIC
+#' @return Numeric value of AIC.
 AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
 
   # Manual log-likelihood function
@@ -39,18 +39,20 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #'
 #' Whole-body dose estimation using Merkle's method.
 #'
-#' @param case_data Case data in data frame form
-#' @param conf_int_yield Confidence interval of the yield, 83\% by default
-#' @param conf_int_curve Confidence interval of the curve, 83\% by default
-#' @param protracted_g_value Protracted G(x) value
-#' @param fit_coeffs Fitting coefficients matrix
-#' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param genome_factor Genomic conversion factor used in translocations, else 1
-#' @param aberr_module Aberration module Aberration module
+#' @param case_data Case data in data frame form.
+#' @param conf_int_yield Confidence interval of the yield, 83\% by default.
+#' @param conf_int_curve Confidence interval of the curve, 83\% by default.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param fit_coeffs Fitting coefficients matrix.
+#' @param fit_var_cov_mat Fitting variance-covariance matrix.
+#' @param genome_factor Genomic conversion factor used in translocations, else 1.
+#' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame and AIC
+#' @return List containing estimated doses data frame and AIC.
 #' @export
-estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat, conf_int_yield = 0.83, conf_int_curve = 0.83, protracted_g_value, genome_factor = 1, aberr_module) {
+estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
+                                       conf_int_yield = 0.83, conf_int_curve = 0.83,
+                                       protracted_g_value = 1, genome_factor = 1, aberr_module) {
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -148,17 +150,17 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat, c
 #'
 #' Whole-body dose estimation using delta method.
 #'
-#' @param case_data Case data in data frame form
-#' @param fit_coeffs Fitting coefficients matrix
-#' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval, 95\% by default
-#' @param protracted_g_value Protracted G(x) value
-#' @param aberr_module Aberration module
+#' @param case_data Case data in data frame form.
+#' @param fit_coeffs Fitting coefficients matrix.
+#' @param fit_var_cov_mat Fitting variance-covariance matrix.
+#' @param conf_int Confidence interval, 95\% by default.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame and AIC
+#' @return List containing estimated doses data frame and AIC.
 #' @export
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                      conf_int = 0.95, protracted_g_value, aberr_module) {
+                                      conf_int = 0.95, protracted_g_value = 1, aberr_module) {
   # Parse parameters and coefficients
   if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
     lambda_est <- case_data[["y"]]
@@ -271,20 +273,20 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #'
 #' Partial-body dose estimation using Dolphin's method.
 #'
-#' @param case_data Case data in data frame form
-#' @param fit_coeffs Fitting coefficients matrix
-#' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval, 95\% by default
-#' @param protracted_g_value Protracted G(x) value
-#' @param genome_factor Genomic conversion factor used in translocations, else 1
-#' @param aberr_module Aberration module
-#' @param gamma Survival coefficient of irradiated cells
+#' @param case_data Case data in data frame form.
+#' @param fit_coeffs Fitting coefficients matrix.
+#' @param fit_var_cov_mat Fitting variance-covariance matrix.
+#' @param conf_int Confidence interval, 95\% by default.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param genome_factor Genomic conversion factor used in translocations, else 1.
+#' @param gamma Survival coefficient of irradiated cells.
+#' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
+#' @return List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC.
 #' @export
 estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                          conf_int = 0.95, protracted_g_value,
-                                          genome_factor = 1, aberr_module, gamma) {
+                                          conf_int = 0.95, protracted_g_value = 1,
+                                          genome_factor = 1, gamma, aberr_module) {
 
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
@@ -453,18 +455,18 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 #'
 #' Heterogeneous dose estimation.
 #'
-#' @param case_data Case data in data frame form
-#' @param fit_coeffs Fitting coefficients matrix
-#' @param fit_var_cov_mat Fitting variance-covariance matrix
-#' @param conf_int Confidence interval of the yield
-#' @param protracted_g_value Protracted G(x) value
-#' @param gamma Survival coefficient of irradiated cells
-#' @param gamma_error Error of the survival coefficient of irradiated cells
+#' @param case_data Case data in data frame form.
+#' @param fit_coeffs Fitting coefficients matrix.
+#' @param fit_var_cov_mat Fitting variance-covariance matrix.
+#' @param conf_int Confidence interval, 95\% by default.
+#' @param protracted_g_value Protracted \eqn{G(x)} value.
+#' @param gamma Survival coefficient of irradiated cells.
+#' @param gamma_error Error of the survival coefficient of irradiated cells.
 #'
-#' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC
+#' @return List containing estimated mixing proportions data frame, estimated yields data frame, estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC.
 #' @export
 estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                          conf_int, protracted_g_value,
+                                          conf_int = 0.95, protracted_g_value = 1,
                                           gamma, gamma_error) {
   # Select translocation counts
   counts <- case_data[1, ] %>%
