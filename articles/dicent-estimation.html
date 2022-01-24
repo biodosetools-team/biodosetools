@@ -37,7 +37,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,10 +52,13 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <h6 class="dropdown-header" data-toc-skip>Dicentrics</h6>
     <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
-    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Translocations</h6>
     <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
   </div>
 </li>
 <li class="nav-item">
@@ -112,7 +115,7 @@
 <span class="co">#&gt; coeff_C     0.001280319 0.0004714055  2.715961 6.608367e-03</span>
 <span class="co">#&gt; coeff_alpha 0.021038724 0.0051576170  4.079156 4.519949e-05</span>
 <span class="co">#&gt; coeff_beta  0.063032534 0.0040073856 15.729091 9.557291e-56</span></code></pre></div>
-<p>Next we can choose to either load the case data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the number of cells (<span class="math inline">\(N\)</span>), number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), error (<span class="math inline">\(\sigma\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
+<p>Next we can choose to either load the case data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the number of cells (<span class="math inline">\(N\)</span>), number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), error (<span class="math inline">\(\hat{\sigma}\)</span>), dispersion index (<span class="math inline">\(\hat{\sigma}^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-dicentrics-estimate-02.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module" width="100%"><p class="caption">
 ‘Data input options’ and ‘Data input’ boxes in the dose estimation module

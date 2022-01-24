@@ -37,7 +37,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,10 +52,13 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <h6 class="dropdown-header" data-toc-skip>Dicentrics</h6>
     <a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a>
-    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
+    <a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Translocations</h6>
     <a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a>
+    <a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a>
   </div>
 </li>
 <li class="nav-item">
@@ -98,8 +101,8 @@
 </h3>
 <p>The first step is to either load the pre-calculated curve in <code>.rds</code> format obtained in the dose-effect fitting module or to input the curve coefficients manually. Clicking on “Preview data” will load the curve into the app and display it on the “Results” tabbed box.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-estimate-01.png" alt="Biodose Tools' dose estimation module" width="100%"><p class="caption">
-Biodose Tools’ dose estimation module
+<img src="figures/screenshot-translocations-estimate-01.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module" width="100%"><p class="caption">
+‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose estimation module
 </p>
 </div>
 <p>This step is accomplished in R by either using the results from <code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
@@ -115,8 +118,8 @@ Biodose Tools’ dose estimation module
 <p>To be able to fit the equivalent full genome case data, we need to calculate the genomic conversion factor.</p>
 <p>To do this, in the “Stain color options” box we select the sex of the individual, and the list of chromosomes and stains used for the translocation assay. Clicking on “Generate table” will show a table in the “Chromosome data” box in which we select the chromosome-stain pairs. Clicking on the “Calculate fraction” will calculate the genomic conversion factor.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-estimate-02.png" alt="Biodose Tools' dose estimation module" width="100%"><p class="caption">
-Biodose Tools’ dose estimation module
+<img src="figures/screenshot-translocations-estimate-02.png" alt="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose-effect fitting module" width="100%"><p class="caption">
+‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion factor’ boxes in the dose-effect fitting module
 </p>
 </div>
 <p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
@@ -132,8 +135,8 @@ Biodose Tools’ dose estimation module
 <span class="co">#&gt; [1] 0.5847343</span></code></pre></div>
 <p>Next we can choose to either load the case data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. If needed, the user can select to use confounders (either using Sigurdson’s method, or by inputting the translocation frequency per cell). Once the table is generated and filled, the “Calculate parameters” button will calculate the number of cells (<span class="math inline">\(N\)</span>), number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{F}_{p}\)</span>), error (<span class="math inline">\(\hat{\sigma}_{p}\)</span>), dispersion index (<span class="math inline">\(\hat{\sigma}^{2}/\bar{y}\)</span>), <span class="math inline">\(u\)</span>-value, expected translocation rate (<span class="math inline">\(X_{c}\)</span>), full genome mean (<span class="math inline">\(\bar{F}_{g}\)</span>), and full genome error (<span class="math inline">\(\hat{\sigma}_{g}\)</span>).</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-estimate-03.png" alt="Biodose Tools' dose estimation module" width="100%"><p class="caption">
-Biodose Tools’ dose estimation module
+<img src="figures/screenshot-translocations-estimate-03.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module" width="100%"><p class="caption">
+‘Data input options’ and ‘Data input’ boxes in the dose estimation module
 </p>
 </div>
 <p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
@@ -168,13 +171,13 @@ Biodose Tools’ dose estimation module
 </h3>
 <p>The final step is to select the dose estimation options. In the “Dose estimation options” box we can select type of exposure (acute or protracted), type of assessment (whole-body or partial-body), and error methods for each type of assessment.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-estimate-04.png" alt="Biodose Tools' dose estimation module" width="60%"><p class="caption">
-Biodose Tools’ dose estimation module
+<img src="figures/screenshot-translocations-estimate-04.png" alt="'Dose estimation options' box in the dose estimation module" width="60%"><p class="caption">
+‘Dose estimation options’ box in the dose estimation module
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-estimate-05.png" alt="Biodose Tools' dose estimation module" width="100%"><p class="caption">
-Biodose Tools’ dose estimation module
+<img src="figures/screenshot-translocations-estimate-05.png" alt="'Results' tabbed box, 'Curve plot' and 'Save results' boxes in the dose estimation module" width="100%"><p class="caption">
+‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose estimation module
 </p>
 </div>
 <p>To perform the dose estimation in R we can call the adequate <code>estimate_*()</code> functions. In this example, we will use <code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code>. First of all, however, we will need to load the fit coefficients and variance-covariance matrix:</p>
