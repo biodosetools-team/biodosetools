@@ -75,3 +75,16 @@ reference:
   - project_yield
   - yield_error_fun
   - yield_fun
+
+articles:
+- title: Articles
+  navbar: Dicentrics
+  contents:
+  - dicent-fitting
+  - dicent-estimation
+
+- title: Articles
+  navbar: Translocations
+  contents:
+  - trans-fitting
+  - trans-estimation
