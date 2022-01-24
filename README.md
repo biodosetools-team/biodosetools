@@ -16,8 +16,8 @@ coverage](https://codecov.io/gh/biodosetools-team/biodosetools/branch/master/gra
 
 Biodose Tools is an open source project that aims to be a tool to
 perform all different tests and calculations needed by biological
-dosimetry laboratories.. The app is developed using the
-[R](%22https://www.r-project.org/about.html%22) programming language and
+dosimetry laboratories. The app is developed using the
+[R](https://www.r-project.org/about.html) programming language and
 [Shiny](https://shiny.rstudio.com) as a framework to offer an online,
 easy-to-use solution. Although the intention is to provide the
 application as a website, all R routines are available as an R package,
