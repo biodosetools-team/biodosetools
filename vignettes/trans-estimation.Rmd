@@ -39,7 +39,7 @@ To be able to fit the equivalent full genome case data, we need to calculate the
 
 To do this, in the "Stain color options" box we select the sex of the individual, and the list of chromosomes and stains used for the translocation assay. Clicking on "Generate table" will show a table in the "Chromosome data" box in which we select the chromosome-stain pairs. Clicking on the "Calculate fraction" will calculate the genomic conversion factor.
 
-```{r sc-trans-estimate-02, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose-effect fitting module"}
+```{r sc-trans-estimate-02, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose estimation module"}
 knitr::include_graphics("figures/screenshot-translocations-estimate-02.png")
 ```
 
