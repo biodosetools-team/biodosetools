@@ -36,7 +36,7 @@ fit_results$fit_coeffs
 ```
 
 
-Next we can choose to either load the case data from a file (supported formats are `.csv`, `.dat`, and `.txt`) or to input the data manually. Once the table is generated and filled, the "Calculate parameters" button will calculate the number of cells ($N$), number of aberrations ($X$), as well as mean ($\bar{y}$), error ($\sigma$), dispersion index ($\sigma^{2}/\bar{y}$), and $u$-value.
+Next we can choose to either load the case data from a file (supported formats are `.csv`, `.dat`, and `.txt`) or to input the data manually. Once the table is generated and filled, the "Calculate parameters" button will calculate the number of cells ($N$), number of aberrations ($X$), as well as mean ($\bar{y}$), error ($\hat{\sigma}$), dispersion index ($\hat{\sigma}^{2}/\bar{y}$), and $u$-value.
 
 ```{r sc-dic-estimate-02, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Data input options' and 'Data input' boxes in the dose estimation module"}
 knitr::include_graphics("figures/screenshot-dicentrics-estimate-02.png")
