@@ -277,9 +277,9 @@ test_that("processing case data works", {
   expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
 
   expect_true(all(round(results_whole_merkle$est_doses$yield, 3) == c(1.171, 1.295, 1.429)))
-  expect_true(all(round(results_whole_merkle$est_doses$dose, 3) == c(3.936, 4.367, 4.882)))
+  expect_true(all(round(results_whole_merkle$est_doses$dose, 3) == c(4.027, 4.485, 5.048)))
   expect_true(all(round(results_whole_delta$est_doses$yield, 3) == c(1.106, 1.295, 1.484)))
-  expect_true(all(round(results_whole_delta$est_doses$dose, 3) == c(3.974, 4.367, 4.759)))
+  expect_true(all(round(results_whole_delta$est_doses$dose, 3) == c(4.068, 4.485, 4.902)))
 
   # Expected outputs (partial-body)
   expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
@@ -287,7 +287,7 @@ test_that("processing case data works", {
   expect_equal(round(results_partial$AIC, 3), 8.838)
 
   expect_true(all(round(results_partial$est_doses$yield, 3) == c(2.147, 2.546, 2.945)))
-  expect_true(all(round(results_partial$est_doses$dose, 3) == c(5.596, 6.189, 6.782)))
+  expect_true(all(round(results_partial$est_doses$dose, 3) == c(5.748, 6.388, 7.027)))
 
   # Plot
   gg_curve <- plot_estimated_dose_curve(
