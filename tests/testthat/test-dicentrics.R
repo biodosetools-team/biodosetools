@@ -170,7 +170,7 @@ test_that("processing case data works", {
   # Dose estimation
   aberr_module <- "dicentrics"
 
-  fit_results_list <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
+  fit_results_list <- app_sys("extdata", "dicentrics-fitting-results.rds") %>%
     readRDS()
 
   # Parse fitting data

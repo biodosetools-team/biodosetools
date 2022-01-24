@@ -55,7 +55,7 @@ test_that("parse_model_formula works", {
 
 # Formatting fixes ----
 
-fit_results <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
+fit_results <- app_sys("extdata", "dicentrics-fitting-results.rds") %>%
   readRDS()
 
 test_that("fix_coeff_names works", {

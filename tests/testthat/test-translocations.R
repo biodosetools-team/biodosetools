@@ -217,7 +217,7 @@ test_that("processing case data works", {
   # Dose estimation
   aberr_module <- "translocations"
 
-  fit_results_list <- app_sys("extdata", "translocations-fitting-data-2020-10-10.rds") %>%
+  fit_results_list <- app_sys("extdata", "translocations-fitting-results.rds") %>%
     readRDS()
 
   # Parse fitting data

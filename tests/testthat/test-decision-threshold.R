@@ -1,7 +1,7 @@
 # Decision thresholds ----
 
 test_that("calculate_decision_threshold_* for dicentrics work", {
-  fit_results_list <- app_sys("extdata", "dicentrics-fitting-data-2020-10-10.rds") %>%
+  fit_results_list <- app_sys("extdata", "dicentrics-fitting-results.rds") %>%
     readRDS()
 
   count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
@@ -28,7 +28,7 @@ test_that("calculate_decision_threshold_* for dicentrics work", {
 })
 
 test_that("calculate_decision_threshold_* for translocations work", {
-  fit_results_list <- app_sys("extdata", "translocations-fitting-data-2020-10-10.rds") %>%
+  fit_results_list <- app_sys("extdata", "translocations-fitting-results.rds") %>%
     readRDS()
 
   count_data <- app_sys("extdata", "count-data-barquinero-1995.csv") %>%
