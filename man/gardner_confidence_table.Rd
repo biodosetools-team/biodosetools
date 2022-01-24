@@ -13,7 +13,7 @@ A data frame with 1201 rows and 3 variables:
 }
 }
 \source{
-\url{https://doi.org/10.1093/biomet/46.3-4.441}
+\doi{10.1093/biomet/46.3-4.441}
 }
 \usage{
 gardner_confidence_table

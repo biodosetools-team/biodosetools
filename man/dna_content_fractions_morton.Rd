@@ -13,7 +13,7 @@ A data frame with 24 rows and 3 variables:
 }
 }
 \source{
-\url{https://doi.org/10.1073/pnas.88.17.7474}
+\doi{10.1073/pnas.88.17.7474}
 }
 \usage{
 dna_content_fractions_morton

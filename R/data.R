@@ -8,7 +8,7 @@
 #'   \item{s_low}{Lower confidence interval for the Poisson variable.}
 #'   \item{s_upp}{Upper confidence interval for the Poisson variable.}
 #' }
-#' @source \url{https://doi.org/10.1093/biomet/46.3-4.441}
+#' @source \doi{10.1093/biomet/46.3-4.441}
 "gardner_confidence_table"
 
 #' DNA Content Fractions of Human Chromosomes (Morton 1991)
@@ -22,7 +22,7 @@
 #'   \item{fraction_male}{Normalised content of megabases on male human DNA.}
 #'   \item{fraction_female}{Normalised content of megabases on female human DNA.}
 #' }
-#' @source \url{https://doi.org/10.1073/pnas.88.17.7474}
+#' @source \doi{10.1073/pnas.88.17.7474}
 "dna_content_fractions_morton"
 
 #' DNA Content Fractions of Human Chromosomes (IHGSC)
