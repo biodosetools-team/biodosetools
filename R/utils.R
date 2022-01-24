@@ -91,7 +91,7 @@ fix_coeff_names <- function(data, type = c("rows", "cols"), output = c("kable", 
   coeffs_old <- c("coeff_C", "coeff_alpha", "coeff_beta")
 
   if (output == "rhot") {
-    coeffs_new <- c("C", "\u03B1", "\u03B2")
+    coeffs_new <- c("C", rlang::as_utf8_character("\u03B1"), rlang::as_utf8_character("\u03B2"))
   } else if (output == "kable") {
     coeffs_new <- c("$C$", "$\\\\alpha$", "$\\\\beta$")
   }
@@ -187,13 +187,21 @@ to_title <- function(string) {
 list_fitting_formulas <- function() {
   fitting_formulas <- list(
     "Linear quadratic" = c(
-      "Y = C + \u03B1D + \u03B2D\u00B2" = "lin-quad"
-      # "Y = \u03B1D + \u03B2D\u00B2" = "lin-quad-no-int"
-    ),
+      "lin-quad"
+      # "lin-quad-no-int"
+    ) %>%
+      `names<-`(c(
+        rlang::as_utf8_character("Y = C + \u03B1D + \u03B2D\u00B2")
+        # rlang::as_utf8_character("Y = \u03B1D + \u03B2D\u00B2")
+      )),
     "Linear" = c(
-      "Y = C + \u03B1D" = "lin"
-      # "Y = \u03B1D" = "lin-no-int"
-    )
+      "lin"
+      # "lin-quad-no-int"
+    ) %>%
+      `names<-`(c(
+        rlang::as_utf8_character("Y = C + \u03B1D")
+        # rlang::as_utf8_character("Y = \u03B1D")
+      ))
   )
 
   return(fitting_formulas)
