@@ -25,6 +25,7 @@
 * Wrapped mixed Poisson model dose estimation in `try()` to ensure convergence (up to 5 tries).
 * Mixed Poisson model `estimate_hetero_mixed_poisson()` uses exact delta methods for dose and fraction irradiated, as described in paper by Pujol et al. (2016) <https://doi.org/10.1667/RR14145.1>.
 * Fixed `gamma` and `gamma_error` parsing when calling `estimate_hetero_mixed_poisson()` in `mod_estimation_results_server()`.
+* Wrap unicode characters (`\uxxxx`) in `rlang::as_utf8_character()` to avoid "unable to translate to native encoding" warning on Windows.
 
 ## New functions
 
