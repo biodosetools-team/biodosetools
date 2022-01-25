@@ -11,7 +11,12 @@ calculate_aberr_table(data, type = c("count", "case"), assessment_u = 1)
 
 \item{type}{Type of input data. Either "count" and "case".}
 
-\item{assessment_u}{Expected u-value of the assessment. For a Poisson distribution this should be unity.}
+\item{assessment_u}{Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.}
+}
+\value{
+Data frame containing cell count (\eqn{N}), aberrations (\eqn{X}),
+and other coefficients (dispersion index, \eqn{u}-value, ...), as well as
+raw count or case \code{data}.
 }
 \description{
 Calculate aberrations table

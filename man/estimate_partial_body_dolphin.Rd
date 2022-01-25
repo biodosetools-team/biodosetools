@@ -33,7 +33,8 @@ estimate_partial_body_dolphin(
 \item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame, estimated fraction of irradiated blood data frame, and AIC.
+List containing estimated doses data frame, estimated fraction of
+irradiated blood data frame, and AIC.
 }
 \description{
 Method based on the paper by Dolphin, G. W. (1969). Biological Dosimetry with

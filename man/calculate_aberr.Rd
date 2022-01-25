@@ -39,7 +39,7 @@ init_aberr_table(data, type = c("count", "case"), aberr_module)
 
 \item{var}{Variance.}
 
-\item{assessment_u}{Expected u-value of the assessment. For a Poisson distribution this should be unity.}
+\item{assessment_u}{Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.}
 
 \item{type}{Type of input data. Either "count" and "case".}
 

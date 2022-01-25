@@ -8,7 +8,7 @@
 #' @param N Number of cells analysed.
 #' @param mean Mean.
 #' @param var Variance.
-#' @param assessment_u Expected u-value of the assessment. For a Poisson distribution this should be unity.
+#' @param assessment_u Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.
 #' @param type Type of input data. Either "count" and "case".
 #' @param aberr_module Aberration module.
 #' @name calculate_aberr
@@ -141,7 +141,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
 #'
 #' @param data Count or case data.
 #' @param type Type of input data. Either "count" and "case".
-#' @param assessment_u Expected u-value of the assessment. For a Poisson distribution this should be unity.
+#' @param assessment_u Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.
 #'
 #' @return Data frame containing cell count (\eqn{N}), aberrations (\eqn{X}),
 #' and other coefficients (dispersion index, \eqn{u}-value, ...), as well as
