@@ -16,9 +16,8 @@ Authors@R:
            role = c("aut"),
            email = "ppuig@mat.uab.cat",
            comment = c(ORCID = "0000-0002-6607-9642")))
-Description: Biodose Tools is an open source project that aims
-    to be a tool to perform all different tests and calculations needed by
-    Biological Dosimetry Laboratories.
+Description: A tool to perform all different statistical tests and calculations 
+    needed by Biological Dosimetry Laboratories.
 License: GPL-3
 URL: https://biodosetools-team.github.io/biodosetools/, https://github.com/biodosetools-team/biodosetools/
 BugReports: 
