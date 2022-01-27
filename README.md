@@ -34,20 +34,35 @@ association, but contributions are always welcome.
 
 ## Installation
 
-<!-- You can install the released version of <package> from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("biodosetools") -->
-<!-- ``` -->
-<!-- And  -->
+You can install the released version of {biodosetools} from
+[CRAN](https://CRAN.R-project.org) with:
 
-The development version can be installed from
-[GitHub](https://github.com/) with:
+``` r
+install.packages("biodosetools")
+```
+
+Or install the development version from [GitHub](https://github.com/)
+with:
 
 ``` r
 devtools::install_github("biodosetools-team/biodosetools")
 ```
 
-<!-- ## Examples -->
+## Examples
+
+To run the Biodose Tools app locally, we can run the following command
+on the R console, which will invoke the Shiny user interface:
+
+``` r
+library(biodosetools)
+run_app()
+```
+
+Detailed examples using {biodosetools}’s Shiny user interface as well as
+its R API to perform dose-effect fitting and dose estimation for the
+dicentric and translocation assays are available on
+<https://biodosetools-team.github.io/biodosetools/> under the Articles
+section.
 
 ## Citation
 

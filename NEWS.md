@@ -1,4 +1,4 @@
-# biodosetools 3.5.0.9000
+# biodosetools 3.6.0
 
 * Major rewrite of `plot_estimated_dose_curve()` function.
 * Delta method calculations are now all done via `msm::deltamethod()`.
