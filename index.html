@@ -102,15 +102,21 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<!-- You can install the released version of <package> from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("biodosetools") -->
-<!-- ``` -->
-<!-- And  -->
-<p>The development version can be installed from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>You can install the released version of {biodosetools} from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"biodosetools"</span><span class="op">)</span></code></pre></div>
+<p>Or install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"biodosetools-team/biodosetools"</span><span class="op">)</span></code></pre></div>
-<!-- ## Examples -->
+</div>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
+<p>To run the Biodose Tools app locally, we can run the following command on the R console, which will invoke the Shiny user interface:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://biodosetools-team.github.io/biodosetools/" class="external-link">biodosetools</a></span><span class="op">)</span>
+<span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Detailed examples using {biodosetools}’s Shiny user interface as well as its R API to perform dose-effect fitting and dose estimation for the dicentric and translocation assays are available on <a href="https://biodosetools-team.github.io/biodosetools/" class="external-link uri">https://biodosetools-team.github.io/biodosetools/</a> under the Articles section.</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -120,18 +126,19 @@
 <p>A. Hernández, D. Endesfelder, J. Einbeck, P. Puig, A. Benadjaoud, M. Higueras, E. Ainsbury, G. Gruel, U. Kulka, L. Barrios &amp; J. F. Barquinero (2022). Biodose Tools: An R Shiny Application for Biological Dosimetry. URL <a href="https://biodosetools-team.github.io/biodosetools/" class="external-link uri">https://biodosetools-team.github.io/biodosetools/</a></p>
 </blockquote>
 <p>A BibTeX entry for LaTeX users is:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bib"><code class="sourceCode bibtex"><span id="cb2-1"><a href="#cb2-1"></a><span class="va">@Unpublished</span>{,</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="dt">note</span> = {Manuscript under construction},</span>
-<span id="cb2-3"><a href="#cb2-3"></a>  <span class="dt">author</span> = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pere Puig and Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ulrike Kulka and Lleonard Barrios and Joan Francesc Barquinero},</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="dt">title</span> = {Biodose Tools: An R Shiny Application for Biological Dosimetry},</span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">year</span> = {2022},</span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="dt">url</span> = {https://biodosetools-team.github.io/biodosetools/},</span>
-<span id="cb2-7"><a href="#cb2-7"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bib"><code class="sourceCode bibtex"><span id="cb4-1"><a href="#cb4-1"></a><span class="va">@Unpublished</span>{,</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="dt">note</span> = {Manuscript under construction},</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="dt">author</span> = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pere Puig and Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ulrike Kulka and Lleonard Barrios and Joan Francesc Barquinero},</span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="dt">title</span> = {Biodose Tools: An R Shiny Application for Biological Dosimetry},</span>
+<span id="cb4-5"><a href="#cb4-5"></a>  <span class="dt">year</span> = {2022},</span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="dt">url</span> = {https://biodosetools-team.github.io/biodosetools/},</span>
+<span id="cb4-7"><a href="#cb4-7"></a>}</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=biodosetools" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/biodosetools-team/biodosetools/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/biodosetools-team/biodosetools/issues/" class="external-link">Report a bug</a></li>
 <li><a href="https://biodosetools-team.github.io/documentation/" class="external-link">Read documentation</a></li>

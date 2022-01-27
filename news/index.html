@@ -57,7 +57,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="3.5.0.9000" id="biodosetools-3509000">biodosetools 3.5.0.9000<a class="anchor" aria-label="anchor" href="#biodosetools-3509000"></a></h2>
+<h2 class="pkg-version" data-toc-text="3.6.0" id="biodosetools-360">biodosetools 3.6.0<a class="anchor" aria-label="anchor" href="#biodosetools-360"></a></h2><p class="text-muted">CRAN release: 2022-01-27</p>
 <ul><li>Major rewrite of <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function.</li>
 <li>Delta method calculations are now all done via <code><a href="https://rdrr.io/pkg/msm/man/deltamethod.html" class="external-link">msm::deltamethod()</a></code>.</li>
 <li>Added progress and alert notifications to UI.</li>
@@ -68,14 +68,14 @@
 <li>Added R-CMD check GitHub Action.</li>
 <li>Added vignettes.</li>
 </ul><div class="section level3">
-<h3 id="new-features-3-5-0-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-3-5-0-9000"></a></h3>
+<h3 id="new-features-3-6-0">New features<a class="anchor" aria-label="anchor" href="#new-features-3-6-0"></a></h3>
 <ul><li>Return <code>conf_int</code> in <code>estimate_*()</code> family of functions.</li>
 <li>Parse <code>est_full_doses$type</code> in <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function so unused assessments are not shown in legend.</li>
 <li>Added <code>match_names()</code> function to match est_doses list names when calling <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code>.</li>
 <li>Updated <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> to automatically build <code>est_full_doses</code> object from list of dose estimation results, added <code>parse_conf_int_text()</code> auxiliary function.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-3-5-0-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-5-0-9000"></a></h3>
+<h3 id="bug-fixes-3-6-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-6-0"></a></h3>
 <ul><li>Correct dispersion index value on <code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code> when there’s no aberrations.</li>
 <li>Fixed issue in missing count data in DOCX fitting report.</li>
 <li>Removed double calculation of <code>cov_est</code> in <code>estimate_partial_dolphin()</code>.</li>
@@ -85,12 +85,12 @@
 <li>Wrap unicode characters (<code>\uxxxx</code>) in <code><a href="https://rlang.r-lib.org/reference/as_utf8_character.html" class="external-link">rlang::as_utf8_character()</a></code> to avoid “unable to translate to native encoding” warning on Windows.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-functions-3-5-0-9000">New functions<a class="anchor" aria-label="anchor" href="#new-functions-3-5-0-9000"></a></h3>
+<h3 id="new-functions-3-6-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-3-6-0"></a></h3>
 <ul><li>
 <code><a href="../reference/get_deltamethod_std_err.html">get_deltamethod_std_err()</a></code>: auxiliary function to wrap all <code><a href="https://rdrr.io/pkg/msm/man/deltamethod.html" class="external-link">msm::deltamethod()</a></code> calls.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-3-5-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-5-0-9000"></a></h3>
+<h3 id="improvements-3-6-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-6-0"></a></h3>
 <ul><li>Fixed order of output case data columns in <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> so they match the final output in Shiny.</li>
 <li>Renamed <code>count-data-IAEA.csv</code> to <code>count-data-barquinero-1995.csv</code> from Barquinero et al. (1995) <a href="https://doi.org/10.1016/0027-5107(94)00150-4" class="external-link uri">https://doi.org/10.1016/0027-5107(94)00150-4</a>.</li>
 <li>Added <code>count-data-rodriguez-2004.csv</code> for total translocations from Rodriguez et al. (2004) <a href="https://doi.org/10.1667/RR3198" class="external-link uri">https://doi.org/10.1667/RR3198</a>.</li>
@@ -103,7 +103,7 @@
 <li>Use <code>*-fitting-results-*.rds</code> instead of <code>*-fitting-data-*.rds</code> when exporting RDS objects in <code>mod_fitting_results_server()</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="ui-improvements-3-5-0-9000">UI Improvements<a class="anchor" aria-label="anchor" href="#ui-improvements-3-5-0-9000"></a></h3>
+<h3 id="ui-improvements-3-6-0">UI Improvements<a class="anchor" aria-label="anchor" href="#ui-improvements-3-6-0"></a></h3>
 <ul><li>Added new <code>side-widget-*</code> CSS classes to better style file download/format buttons.</li>
 <li>Added <code>widget_sep_vert()</code> function.</li>
 <li>Use new <code>sep-widget_*</code> CSS classes in fitting UI modules.</li>
