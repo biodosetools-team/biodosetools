@@ -37,7 +37,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,8 +132,10 @@
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">mean</span>, y_err <span class="op">=</span> <span class="va">std_err</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">case_data</span>
-<span class="co">#&gt;     N   X  C0 C1 C2 C3 C4 C5         y      y_err       DI        u</span>
-<span class="co">#&gt; 1 361 100 302 28 22  8  1  0 0.2770083 0.03683157 1.767889 10.35421</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span>
+<span class="co">#&gt;       N     X    C0    C1    C2    C3    C4    C5     y  y_err    DI     u</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   361   100   302    28    22     8     1     0 0.277 0.036<span style="text-decoration: underline;">8</span>  1.77  10.4</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="perform-dose-estimation">Perform dose estimation<a class="anchor" aria-label="anchor" href="#perform-dose-estimation"></a>
