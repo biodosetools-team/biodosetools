@@ -174,6 +174,7 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
       dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
   } else if (type == "case") {
     data <- data %>%
+      dplyr::as_tibble() %>%
       dplyr::mutate(
         N = as.integer(rowSums(.[grep("C", names(.))])),
         X = calculate_aberr_power(., power = 1),
