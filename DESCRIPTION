@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: An R Shiny Application for Biological Dosimetry
-Version: 3.6.0
+Version: 3.6.0.9000
 Authors@R: 
     c(person(given = "Alfredo",
            family = "Hernández",
