@@ -306,7 +306,7 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
 
     # Solve system
-    cov_est <- base::solve(info_mat)
+    cov_est <- solve(info_mat)
 
     return(cov_est)
   }
