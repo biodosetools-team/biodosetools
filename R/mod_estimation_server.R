@@ -834,7 +834,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
 
     # Return list ----
 
-    cli::cli_alert_info("Processing results")
+    cli::cli_alert_info("Processing results...")
     progress$set(detail = "Processing results", value = 5 / 6)
 
     # Make basic list of results to return
