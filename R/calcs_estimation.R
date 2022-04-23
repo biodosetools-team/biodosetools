@@ -299,11 +299,12 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
     # For the parameters of a ZIP distribution (lambda and pi) where 1-p is the fraction of extra zeros
+    aux_denominator <- pi + (1 - pi) * exp(lambda)
     info_mat <- matrix(NA, nrow = 2, ncol = 2)
-    info_mat[1, 1] <- cells * pi * ((pi - 1) * exp(-lambda) / (1 - pi + pi * exp(-lambda)) + 1 / lambda)
-    info_mat[1, 2] <- cells * exp(-lambda) / (1 - pi + pi * exp(-lambda))
+    info_mat[1, 1] <- cells * pi * ((pi - 1) / aux_denominator + 1 / lambda)
+    info_mat[1, 2] <- cells / aux_denominator
     info_mat[2, 1] <- info_mat[1, 2]
-    info_mat[2, 2] <- cells * (1 - exp(-lambda)) / (pi * (1 - pi + pi * exp(-lambda)))
+    info_mat[2, 2] <- cells * (exp(lambda) - 1) / (pi * aux_denominator)
 
     # Solve system
     cov_est <- solve(info_mat)
