@@ -112,7 +112,7 @@ calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
 #' @export
 calculate_trans_rate_manual <- function(cells, genome_factor, expected_aberr_value) {
   # Expected aberrations
-  expected_aberr <-cells * genome_factor * expected_aberr_value
+  expected_aberr <- cells * genome_factor * expected_aberr_value
 
   return(expected_aberr)
 }
