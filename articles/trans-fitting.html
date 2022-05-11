@@ -99,11 +99,11 @@
 <div class="section level2">
 <h2 id="calculate-genomic-conversion-factor">Calculate genomic conversion factor<a class="anchor" aria-label="anchor" href="#calculate-genomic-conversion-factor"></a>
 </h2>
-<p>To be able to perform fit the equivalent full genome dose-effect curve, we need to calculate the genomic conversion factor.</p>
+<p>To be able to fit the equivalent full genome dose-effect curve, we need to calculate the genomic conversion factor.</p>
 <p>To do this, in the “Stain color options” box we select the sex of the individual, and the list of chromosomes and stains used for the translocation assay. Clicking on “Generate table” will show a table in the “Chromosome data” box in which we select the chromosome-stain pairs. Clicking on the “Calculate fraction” will calculate the genomic conversion factor.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-01.png" alt="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose-effect fitting module" width="100%"><p class="caption">
-‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion factor’ boxes in the dose-effect fitting module
+<img src="figures/screenshot-translocations-fit-01.png" alt="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose-effect fitting module." width="100%"><p class="caption">
+‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion factor’ boxes in the dose-effect fitting module.
 </p>
 </div>
 <p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
@@ -121,57 +121,57 @@
 <div class="section level2">
 <h2 id="input-count-data">Input count data<a class="anchor" aria-label="anchor" href="#input-count-data"></a>
 </h2>
-<p>Once the genomic conversion factor has been calculated, we can input the count data. On the  app, we can select to either load the count data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the number of cells (<span class="math inline">\(N\)</span>), number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), variance (<span class="math inline">\(\hat{\sigma}^{2}\)</span>), dispersion index (<span class="math inline">\(\hat{\sigma}^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
+<p>Once the genomic conversion factor has been calculated, we can input the count data. On the {shiny} app, we can select to either load the count data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the total number of cells (<span class="math inline">\(N\)</span>), total number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), variance (<span class="math inline">\(\sigma^{2}\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-02.png" alt="'Data input options' and 'Fitting options' boxes in the dose-effect fitting module" width="100%"><p class="caption">
-‘Data input options’ and ‘Fitting options’ boxes in the dose-effect fitting module
+<img src="figures/screenshot-translocations-fit-02.png" alt="'Data input options' and 'Fitting options' boxes in the dose-effect fitting module." width="100%"><p class="caption">
+‘Data input options’ and ‘Fitting options’ boxes in the dose-effect fitting module.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-03.png" alt="'Data input' box in the dose-effect fitting module" width="75%"><p class="caption">
-‘Data input’ box in the dose-effect fitting module
+<img src="figures/screenshot-translocations-fit-03.png" alt="'Data input' box in the dose-effect fitting module." width="75%"><p class="caption">
+‘Data input’ box in the dose-effect fitting module.
 </p>
 </div>
 <p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"count-data-rodriguez-2004.csv"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">count_data</span>
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 11 × 13</span></span>
 <span class="co">#&gt;        D     N     X    C0    C1    C2    C3    C4    C5    mean     var    DI</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  0     <span style="text-decoration: underline;">4</span>356     6  <span style="text-decoration: underline;">4</span>350     6     0     0     0     0 0.001<span style="text-decoration: underline;">38</span> 0.001<span style="text-decoration: underline;">38</span> 0.999</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  0.1   <span style="text-decoration: underline;">3</span>324    15  <span style="text-decoration: underline;">3</span>309    15     0     0     0     0 0.004<span style="text-decoration: underline;">51</span> 0.004<span style="text-decoration: underline;">49</span> 0.996</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  0.25  <span style="text-decoration: underline;">3</span>069    18  <span style="text-decoration: underline;">3</span>051    18     0     0     0     0 0.005<span style="text-decoration: underline;">87</span> 0.005<span style="text-decoration: underline;">83</span> 0.994</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  0.5   <span style="text-decoration: underline;">3</span>072    33  <span style="text-decoration: underline;">3</span>039    33     0     0     0     0 0.010<span style="text-decoration: underline;">7</span>  0.010<span style="text-decoration: underline;">6</span>  0.990</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  0.75  <span style="text-decoration: underline;">2</span>111    40  <span style="text-decoration: underline;">2</span>072    38     1     0     0     0 0.018<span style="text-decoration: underline;">9</span>  0.019<span style="text-decoration: underline;">5</span>  1.03 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  1     <span style="text-decoration: underline;">2</span>124    50  <span style="text-decoration: underline;">2</span>075    48     1     0     0     0 0.023<span style="text-decoration: underline;">5</span>  0.023<span style="text-decoration: underline;">9</span>  1.02 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  1.5   <span style="text-decoration: underline;">1</span>043    56   990    50     3     0     0     0 0.053<span style="text-decoration: underline;">7</span>  0.056<span style="text-decoration: underline;">6</span>  1.05 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  2      718    71   650    65     3     0     0     0 0.098<span style="text-decoration: underline;">9</span>  0.097<span style="text-decoration: underline;">6</span>  0.987</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  3      781   157   649   108    23     1     0     0 0.201   0.227   1.13 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  4      397   147   265   117    15     0     0     0 0.370   0.310   0.836</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span>  5      395   180   246   122    23     4     0     0 0.456   0.426   0.936</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  0    <span style="text-decoration: underline;">1</span>371.     6  <span style="text-decoration: underline;">4</span>350     6     0     0     0     0 0.001<span style="text-decoration: underline;">38</span> 0.001<span style="text-decoration: underline;">38</span> 0.999</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  0.1  <span style="text-decoration: underline;">1</span>046.    15  <span style="text-decoration: underline;">3</span>309    15     0     0     0     0 0.004<span style="text-decoration: underline;">51</span> 0.004<span style="text-decoration: underline;">49</span> 0.996</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  0.25  966.    18  <span style="text-decoration: underline;">3</span>051    18     0     0     0     0 0.005<span style="text-decoration: underline;">87</span> 0.005<span style="text-decoration: underline;">83</span> 0.994</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  0.5   967.    33  <span style="text-decoration: underline;">3</span>039    33     0     0     0     0 0.010<span style="text-decoration: underline;">7</span>  0.010<span style="text-decoration: underline;">6</span>  0.990</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  0.75  664.    40  <span style="text-decoration: underline;">2</span>072    38     1     0     0     0 0.018<span style="text-decoration: underline;">9</span>  0.019<span style="text-decoration: underline;">5</span>  1.03 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  1     669.    50  <span style="text-decoration: underline;">2</span>075    48     1     0     0     0 0.023<span style="text-decoration: underline;">5</span>  0.023<span style="text-decoration: underline;">9</span>  1.02 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  1.5   328.    56   990    50     3     0     0     0 0.053<span style="text-decoration: underline;">7</span>  0.056<span style="text-decoration: underline;">6</span>  1.05 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  2     226.    71   650    65     3     0     0     0 0.098<span style="text-decoration: underline;">9</span>  0.097<span style="text-decoration: underline;">6</span>  0.987</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  3     246.   157   649   108    23     1     0     0 0.201   0.227   1.13 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  4     125.   147   265   117    15     0     0     0 0.370   0.310   0.836</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">11</span>  5     124.   180   246   122    23     4     0     0 0.456   0.426   0.936</span>
 <span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: u &lt;dbl&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="perform-fitting">Perform fitting<a class="anchor" aria-label="anchor" href="#perform-fitting"></a>
 </h2>
-<p>To perform the fitting the user needs select the appropriate fitting options to click the “Calculate fitting” button on the “Data input” box. The fit can be done either using the full genome translocations, or those measured by FISH. This will not impact any future dose estimation, as the results internally use the full genome translocations.</p>
+<p>To perform the fitting the user needs to select the appropriate fitting options to click the “Calculate fitting” button on the “Data input” box. The fit can be done either using the full genome translocations, or those measured by FISH. This will not impact any future dose estimation, as the results internally use the full genome translocations.</p>
 <p>The fitting results and summary statistics are shown in the “Results” tabbed box, and the dose-effect curve is displayed in the “Curve plot” box.</p>
 <p>The “Export results” box shows two buttons: (a) “Save fitting data”, and (b) “Download report”. The “Save fitting data” will generate an <code>.rds</code> file that contains all information about the count data, irradiation conditions, and options selected when performing the fitting. This file can be then loaded in the dose estimation module to load the dose-effect curve coefficients.</p>
 <p>Similarly, the “Download report” will generate a <code>.pdf</code> or a <code>.docx</code> report containing all inputs and fitting results.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Export results' boxes in the dose-effect fitting module" width="100%"><p class="caption">
-‘Results’ tabbed box, ‘Curve plot’ and ‘Export results’ boxes in the dose-effect fitting module
+<img src="figures/screenshot-translocations-fit-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Export results' boxes in the dose-effect fitting module." width="100%"><p class="caption">
+‘Results’ tabbed box, ‘Curve plot’ and ‘Export results’ boxes in the dose-effect fitting module.
 </p>
 </div>
 <p>To perform the fitting in R we call the <code><a href="../reference/fit.html">fit()</a></code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span>
-  count_data <span class="op">=</span> <span class="va">count_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span>,
+  count_data <span class="op">=</span> <span class="va">count_data</span>,
   model_formula <span class="op">=</span> <span class="st">"lin-quad"</span>,
   model_family <span class="op">=</span> <span class="st">"automatic"</span>,
   fit_link <span class="op">=</span> <span class="st">"identity"</span>,
@@ -197,7 +197,11 @@
   <span class="va">fit_results</span>,
   aberr_name <span class="op">=</span> <span class="st">"Translocations"</span>
 <span class="op">)</span></code></pre></div>
-<p><img src="trans-fitting_files/figure-html/trans-fit-dose-curve-1.png" width="576" style="display: block; margin: auto;"></p>
+<div class="figure" style="text-align: center">
+<img src="trans-fitting_files/figure-html/trans-fit-dose-curve-1.png" alt="Plot of dose-effect curve generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
+Plot of dose-effect curve generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
+</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

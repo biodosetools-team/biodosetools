@@ -57,6 +57,23 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.6.0.9000" id="biodosetools-3609000">biodosetools 3.6.0.9000<a class="anchor" aria-label="anchor" href="#biodosetools-3609000"></a></h2>
+<div class="section level3">
+<h3 id="improvements-3-6-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-6-0-9000"></a></h3>
+<ul><li>Removed unnecessary {base} namespace in <code><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve()</a></code> call.</li>
+<li>Removed legacy <code>gardner_confidence_table</code> data (deprecated in 585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28).</li>
+<li>Removed unused files in <code>data-raw</code>.</li>
+<li>Updated <code>get_cov_ZIP_ML()</code> to match expressions on manuscript, introducing minor calculation optimisation.</li>
+<li>Updated CITATION file.</li>
+<li>Updated vignettes.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-3-6-0-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-6-0-9000"></a></h3>
+<ul><li>Return case data <code>as_tibble()</code> in <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> for consistency with count data.</li>
+<li>Minor formatting fix in <code><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli::cli_alert_info()</a></code> call.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.6.0" id="biodosetools-360">biodosetools 3.6.0<a class="anchor" aria-label="anchor" href="#biodosetools-360"></a></h2><p class="text-muted">CRAN release: 2022-01-27</p>
 <ul><li>Major rewrite of <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function.</li>
 <li>Delta method calculations are now all done via <code><a href="https://rdrr.io/pkg/msm/man/deltamethod.html" class="external-link">msm::deltamethod()</a></code>.</li>
