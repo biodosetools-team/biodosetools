@@ -1,12 +1,18 @@
 # biodosetools 3.6.0.9000
 
-* Return case data `as_tibble()` in `calculate_aberr_table()` for consistency with count data.
+## Improvements
+
 * Removed unnecessary {base} namespace in `solve()` call.
-* Updated CITATION file.
 * Removed legacy `gardner_confidence_table` data (deprecated in 585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28).
 * Removed unused files in `data-raw`.
-* Minor formatting fix in `cli::cli_alert_info()` call.
 * Updated `get_cov_ZIP_ML()` to match expressions on manuscript, introducing minor calculation optimisation.
+* Updated CITATION file.
+* Updated vignettes.
+
+## Bug fixes
+
+* Return case data `as_tibble()` in `calculate_aberr_table()` for consistency with count data.
+* Minor formatting fix in `cli::cli_alert_info()` call.
 
 # biodosetools 3.6.0
 
