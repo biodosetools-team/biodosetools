@@ -2,8 +2,9 @@
 
 ## Improvements
 
+* Updated LQ and L formulas to use lambda instead of Y for yield in `parse_model_formula()`, `list_fitting_formulas()`, and help dialogues.
 * Removed unnecessary {base} namespace in `solve()` call.
-* Removed legacy `gardner_confidence_table` data (deprecated in 585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28).
+* Removed legacy `gardner_confidence_table` data (deprecated in [585e7b4](https://github.com/biodosetools-team/biodosetools/commit/585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28)).
 * Removed unused files in `data-raw`.
 * Updated `get_cov_ZIP_ML()` to match expressions on manuscript, introducing minor calculation optimisation.
 * Updated CITATION file.
