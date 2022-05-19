@@ -16,16 +16,16 @@ parse_model_formula <- function(model_formula = c("lin-quad", "lin", "lin-quad-n
   # Parse formula
   if (model_formula == "lin-quad") {
     fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = C + \\alpha D + \\beta D^{2}"
+    fit_formula_tex <- "\\lambda = C + \\alpha D + \\beta D^{2}"
   } else if (model_formula == "lin") {
     fit_formula_raw <- "aberr ~ -1 + coeff_C + coeff_alpha"
-    fit_formula_tex <- "Y = C + \\alpha D"
+    fit_formula_tex <- "\\lambda = C + \\alpha D"
   } else if (model_formula == "lin-quad-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha + coeff_beta"
-    fit_formula_tex <- "Y = \\alpha D + \\beta D^{2}"
+    fit_formula_tex <- "\\lambda = \\alpha D + \\beta D^{2}"
   } else if (model_formula == "lin-no-int") {
     fit_formula_raw <- "aberr ~ -1 + coeff_alpha"
-    fit_formula_tex <- "Y = \\alpha D"
+    fit_formula_tex <- "\\lambda = \\alpha D"
   }
 
   formula_list <- list(
@@ -191,16 +191,16 @@ list_fitting_formulas <- function() {
       # "lin-quad-no-int"
     ) %>%
       `names<-`(c(
-        rlang::as_utf8_character("Y = C + \u03B1D + \u03B2D\u00B2")
-        # rlang::as_utf8_character("Y = \u03B1D + \u03B2D\u00B2")
+        rlang::as_utf8_character("\u03BB = C + \u03B1D + \u03B2D\u00B2")
+        # rlang::as_utf8_character("\u03BB = \u03B1D + \u03B2D\u00B2")
       )),
     "Linear" = c(
       "lin"
       # "lin-quad-no-int"
     ) %>%
       `names<-`(c(
-        rlang::as_utf8_character("Y = C + \u03B1D")
-        # rlang::as_utf8_character("Y = \u03B1D")
+        rlang::as_utf8_character("\u03BB = C + \u03B1D")
+        # rlang::as_utf8_character("\u03BB = \u03B1D")
       ))
   )
 
