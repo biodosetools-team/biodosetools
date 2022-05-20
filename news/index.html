@@ -60,8 +60,9 @@
 <h2 class="pkg-version" data-toc-text="3.6.0.9000" id="biodosetools-3609000">biodosetools 3.6.0.9000<a class="anchor" aria-label="anchor" href="#biodosetools-3609000"></a></h2>
 <div class="section level3">
 <h3 id="improvements-3-6-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-6-0-9000"></a></h3>
-<ul><li>Removed unnecessary {base} namespace in <code><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve()</a></code> call.</li>
-<li>Removed legacy <code>gardner_confidence_table</code> data (deprecated in 585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28).</li>
+<ul><li>Updated LQ and L formulas to use lambda instead of Y for yield in <code>parse_model_formula()</code>, <code>list_fitting_formulas()</code>, and help dialogues.</li>
+<li>Removed unnecessary {base} namespace in <code><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve()</a></code> call.</li>
+<li>Removed legacy <code>gardner_confidence_table</code> data (deprecated in <a href="https://github.com/biodosetools-team/biodosetools/commit/585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28" class="external-link">585e7b4</a>).</li>
 <li>Removed unused files in <code>data-raw</code>.</li>
 <li>Updated <code>get_cov_ZIP_ML()</code> to match expressions on manuscript, introducing minor calculation optimisation.</li>
 <li>Updated CITATION file.</li>
