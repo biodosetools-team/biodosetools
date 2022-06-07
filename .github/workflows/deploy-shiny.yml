@@ -1,0 +1,20 @@
+# Workflow derived from https://community.rstudio.com/t/deploying-shiny-app-with-github-actions/78436
+on:
+  push:
+    branches: [main, master]
+
+name: deploy-shiny
+
+jobs:
+  deploy-shiny:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: pkgload
+      - name: Push to shinyapps.io
+        run: |
+          Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = ${{secrets.SHINYAPPS_TOKEN}}, secret = ${{secrets.SHINYAPPS_SECRET}})"
+          Rscript -e "rsconnect::deployApp(appName = 'biodosetools-dev', appDir = '', appFileManifest = 'dev/app_file_manifest.txt')"
