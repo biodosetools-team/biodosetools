@@ -8,6 +8,9 @@ name: deploy-shiny
 jobs:
   deploy-shiny:
     runs-on: ubuntu-latest
+    env:
+      SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+      SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
 
     steps:
       - uses: actions/checkout@v2
@@ -24,5 +27,5 @@ jobs:
 
       - name: Push to shinyapps.io
         run: |
-          Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = ${{secrets.SHINYAPPS_TOKEN}}, secret = ${{secrets.SHINYAPPS_SECRET}})"
+          Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = Sys.getenv('SHINYAPPS_TOKEN'), secret = Sys.getenv('SHINYAPPS_SECRET'))"
           Rscript -e "rsconnect::deployApp(appName = 'biodosetools-dev', appDir = '', appFileManifest = 'dev/app_file_manifest.txt', forceUpdate = TRUE)"
