@@ -16,5 +16,6 @@ jobs:
           extra-packages: pkgload
       - name: Push to shinyapps.io
         run: |
+          Rscript -e "install.packages('rsconnect')"
           Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = ${{secrets.SHINYAPPS_TOKEN}}, secret = ${{secrets.SHINYAPPS_SECRET}})"
-          Rscript -e "rsconnect::deployApp(appName = 'biodosetools-dev', appDir = '', appFileManifest = 'dev/app_file_manifest.txt')"
+          Rscript -e "rsconnect::deployApp(appName = 'biodosetools-dev', appDir = '', appFileManifest = 'dev/app_file_manifest.txt', forceUpdate = TRUE)"
