@@ -43,7 +43,6 @@ Imports:
     config,
     golem,
     htmltools,
-    pkgload,
     cli
 Encoding: UTF-8
 LazyData: true
