@@ -364,6 +364,11 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     cov_est <- get_cov_ZIP_ML(lambda_est, pi_est, cells)
     lambda_est_sd <- sqrt(cov_est[1, 1])
 
+    est_metaphases_frac <- data.frame(
+      pi_estimate = 1 - pi_est,
+      pi_std_err = sqrt(cov_est[2, 2])
+    )
+
     # Get confidence interval of lambda estimates
     lambda_low <- lambda_est - stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
     lambda_upp <- lambda_est + stats::qnorm(conf_int + (1 - conf_int) / 2) * lambda_est_sd
@@ -451,6 +456,7 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
   results_list <- list(
     est_doses = est_doses,
     est_frac = est_frac,
+    est_metaphases_frac = est_metaphases_frac,
     AIC = AIC,
     conf_int = conf_int
   )

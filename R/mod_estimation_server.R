@@ -755,6 +755,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Parse results
       est_doses_partial <- results_partial[["est_doses"]]
       est_frac_partial <- results_partial[["est_frac"]]
+      est_metaphases_frac_partial <- results_partial[["est_metaphases_frac"]]
       AIC_partial <- results_partial[["AIC"]]
     } else if (assessment == "hetero") {
       # Input of the parameter gamma and its variance
@@ -846,6 +847,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Partial
       est_doses_partial = NA,
       est_frac_partial = NA,
+      est_metaphases_frac_partial = NA,
       # Heterogeneous
       est_mixing_prop_hetero = NA,
       est_yields_hetero = NA,
@@ -870,6 +872,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Partial
       est_results_list[["est_doses_partial"]] <- est_doses_partial
       est_results_list[["est_frac_partial"]] <- est_frac_partial
+      est_results_list[["est_metaphases_frac_partial"]] <- est_metaphases_frac_partial
       # Reset Heterogeneous
       est_results_list[["est_mixing_prop_hetero"]] <- NA
       est_results_list[["est_yields_hetero"]] <- NA
@@ -887,6 +890,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       # Reset Partial
       est_results_list[["est_doses_partial"]] <- NA
       est_results_list[["est_frac_partial"]] <- NA
+      est_results_list[["est_metaphases_frac_partial"]] <- NA
       # AICs
       est_results_list[["AIC_partial"]] <- NA
       est_results_list[["AIC_hetero"]] <- AIC_hetero
@@ -1019,6 +1023,12 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
             rHandsontableOutput(session$ns("est_doses_partial"))
           ),
           br(),
+          h5("Observed fraction of cells scored which were irradiated"),
+          div(
+            class = "hot-improved",
+            rHandsontableOutput(session$ns("est_metaphases_frac_partial"))
+          ),
+          br(),
           h5("Initial fraction of irradiated cells"),
           div(
             class = "hot-improved",
@@ -1104,7 +1114,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     return(tagList(return_tabbox, hetero_modal))
   })
 
-  # Estimated recieved doses (whole-body)
+  # Estimated yield (whole-body)
   output$est_yields_whole <- renderRHandsontable({
     if (input$button_estimate <= 0) {
       return(NULL)
@@ -1123,7 +1133,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated recieved doses (whole-body)
+  # Estimated recieved dose (whole-body)
   output$est_doses_whole <- renderRHandsontable({
     if (input$button_estimate <= 0) {
       return(NULL)
@@ -1143,7 +1153,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated recieved doses (partial-body)
+  # Estimated yield (partial-body)
   output$est_yields_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
       return(NULL)
@@ -1154,6 +1164,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       as.data.frame() %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("yield") %>%
       # Convert to hot and format table
@@ -1166,7 +1177,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated recieved doses (partial-body)
+  # Estimated recieved dose (partial-body)
   output$est_doses_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
       return(NULL)
@@ -1177,6 +1188,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       as.data.frame() %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("dose (Gy)") %>%
       # Convert to hot and format table
@@ -1189,7 +1201,28 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated fraction of irradiated blood for dose dose1 (partial-body)
+  # Estimated fraction of cells scored which were irradiated (partial-body)
+  output$est_metaphases_frac_partial <- renderRHandsontable({
+    if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
+      return(NULL)
+    }
+    data()[["est_metaphases_frac_partial"]] %>%
+      # Fix possible NA values
+      dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
+      `colnames<-`(c("estimate", "std.err")) %>%
+      `row.names<-`(c("fraction")) %>%
+      # Convert to hot and format table
+      rhandsontable(
+        width = 320,
+        height = "100%",
+        rowHeaderWidth = 80
+      ) %>%
+      hot_cols(colWidths = 80) %>%
+      hot_cols(format = "0.000")
+  })
+
+  # Estimated fraction of irradiated blood (partial-body)
   output$est_frac_partial <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
       return(NULL)
@@ -1199,6 +1232,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       as.data.frame() %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`("fraction") %>%
       # Convert to hot and format table
@@ -1211,7 +1245,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated yields (heterogeneous)
+  # Estimated fractions of irradiated cells (heterogeneous)
   output$est_mixing_prop_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
       return(NULL)
@@ -1219,7 +1253,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     data()[["est_mixing_prop_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
-      # `colnames<-`(c("y_estimate", "y_std_err", "f_estimate", "f_std_err")) %>%
+      # Rename columns and rows
       `colnames<-`(c("yield", "yield.err", "frac", "frac.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
@@ -1232,7 +1266,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated recieved doses (heterogeneous)
+  # Estimated yields (heterogeneous)
   output$est_yields_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
       return(NULL)
@@ -1242,6 +1276,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       as.data.frame() %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("yield1", "yield2")) %>%
       # Convert to hot and format table
@@ -1264,6 +1299,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       as.data.frame() %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("lower", "estimate", "upper")) %>%
       `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
       # Convert to hot and format table
@@ -1276,7 +1312,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       hot_cols(format = "0.000")
   })
 
-  # Estimated fraction of irradiated blood for dose dose1 (heterogeneous)
+  # Estimated fractions of irradiated blood (heterogeneous)
   output$est_frac_hetero <- renderRHandsontable({
     if (input$button_estimate <= 0 | data()[["assessment"]] != "hetero") {
       return(NULL)
@@ -1284,6 +1320,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
     data()[["est_frac_hetero"]] %>%
       # Fix possible NA values
       dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+      # Rename columns and rows
       `colnames<-`(c("estimate", "std.err")) %>%
       `row.names<-`(c("dose1", "dose2")) %>%
       # Convert to hot and format table
