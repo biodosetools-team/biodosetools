@@ -3,7 +3,7 @@ citHeader("To cite Biodose Tools in publications, please use:")
 citEntry(
   entry = "unpublished",
   note = "Manuscript under construction",
-  author = "Alfredo Hern{\'{a}}ndez, David Endesfelder, Jochen Einbeck, Pere Puig, Mohamed Amine Benadjaoud, Manuel Higueras, Elizabeth Ainsbury, Ga{\"{e}}tan Gruel, Ursula Oestreicher, Lleonard Barrios, Joan Francesc Barquinero",
+  author = "Alfredo Hern{\'{a}}ndez, David Endesfelder, Jochen Einbeck, Pere Puig, Mohamed Amine Benadjaoud, Manuel Higueras, Elizabeth Ainsbury, Ga{\"{e}}tan Gruel, Ursula Oestreicher, Leonardo Barrios, Joan Francesc Barquinero",
   title = "Biodose Tools: An R Shiny Application for Biological Dosimetry",
   year = "2022",
   url = "https://biodosetools-team.github.io/biodosetools/",

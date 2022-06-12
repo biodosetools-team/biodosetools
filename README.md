@@ -79,7 +79,7 @@ A BibTeX entry for LaTeX users is:
 ``` bib
 @Unpublished{,
   note = {Manuscript under construction},
-  author = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pedro Puig and Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ursula Oestreicher and Lleonard Barrios and Joan Francesc Barquinero},
+  author = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pedro Puig and Mohamed Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ursula Oestreicher and Leonardo Barrios and Joan Francesc Barquinero},
   title = {Biodose Tools: An R Shiny Application for Biological Dosimetry},
   year = {2022},
   url = {https://biodosetools-team.github.io/biodosetools/},
