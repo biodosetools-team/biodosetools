@@ -365,7 +365,7 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
     lambda_est_sd <- sqrt(cov_est[1, 1])
 
     est_metaphases_frac <- data.frame(
-      pi_estimate = 1 - pi_est,
+      pi_estimate = pi_est,
       pi_std_err = sqrt(cov_est[2, 2])
     )
 
