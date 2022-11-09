@@ -18,3 +18,4 @@ $run_dev.*
 ^app\.R$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^\.lintr$
