@@ -32,7 +32,7 @@ calculate_aberr_power <- function(data, aberr_prefix = "C", power = 1) {
   # Calculate aberration powers
   aberr <- numeric(length = ncol(aberr_data))
 
-  for (i in 1:ncol(aberr_data)) {
+  for (i in seq_len(ncol(aberr_data))) {
     aberr[i] <- sum(aberr_data[, i] * powers)
   }
 

@@ -145,7 +145,7 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
         rep(nrow(count_data)) %>%
         as.numeric(),
       count_data %>%
-        .[, grep("C", names(.), value = T)] %>%
+        .[, grep("C", names(.), value = TRUE)] %>%
         as.matrix() %>%
         t() %>%
         as.numeric()
