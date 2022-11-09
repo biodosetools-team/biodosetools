@@ -94,7 +94,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
         )
       )
   } else if (type == "case") {
-    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+    if (aberr_module %in% c("dicentrics", "micronuclei")) {
       data <- data %>%
         dplyr::mutate(
           N = 0,

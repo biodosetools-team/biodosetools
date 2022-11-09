@@ -166,7 +166,7 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                       conf_int = 0.95, protracted_g_value = 1, aberr_module) {
   # Parse parameters and coefficients
-  if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+  if (aberr_module %in% c("dicentrics", "micronuclei")) {
     lambda_est <- case_data[["y"]]
   } else if (aberr_module == "translocations") {
     lambda_est <- case_data[["Fg"]]
@@ -182,7 +182,7 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 
   if (disp >= 1) {
     # Use empirical error sqrt(var / N) if disp >= 1
-    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+    if (aberr_module %in% c("dicentrics", "micronuclei")) {
       lambda_est_sd <- case_data[["y_err"]]
     } else if (aberr_module == "translocations") {
       lambda_est_sd <- case_data[["Fg_err"]]

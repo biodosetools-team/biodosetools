@@ -457,7 +457,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
         )
 
         # Rename mean and std_err depending on aberration module
-        if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+        if (aberr_module %in% c("dicentrics", "micronuclei")) {
           mytable <- mytable %>%
             dplyr::mutate(
               y = .data$mean,
@@ -513,7 +513,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
       hot_cols(colWidths = 50)
     # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
-    if (aberr_module == "dicentrics" | aberr_module == "micronuclei") {
+    if (aberr_module %in% c("dicentrics", "micronuclei")) {
       hot <- hot %>%
         hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
         hot_col(num_cols, renderer = "
