@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Nunito%20Sans-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Fira%20Code-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Nunito-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Nunito-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -112,14 +112,14 @@
 </div>
 <p>This step is accomplished in R by either using the results from <code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"translocations-fitting-results.rds"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"translocations-fitting-results.rds"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_results</span><span class="op">$</span><span class="va">fit_coeffs</span>
-<span class="co">#&gt;                estimate   std.error statistic      p.value</span>
-<span class="co">#&gt; coeff_C     0.006560406 0.002052834  3.195780 2.538519e-02</span>
-<span class="co">#&gt; coeff_alpha 0.027197296 0.009922177  2.741061 5.081502e-02</span>
-<span class="co">#&gt; coeff_beta  0.057982322 0.004630926 12.520675 3.100113e-06</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_results</span><span class="op">$</span><span class="va">fit_coeffs</span></span>
+<span><span class="co">#&gt;                estimate   std.error statistic      p.value</span></span>
+<span><span class="co">#&gt; coeff_C     0.006560406 0.002052834  3.195780 2.538519e-02</span></span>
+<span><span class="co">#&gt; coeff_alpha 0.027197296 0.009922177  2.741061 5.081502e-02</span></span>
+<span><span class="co">#&gt; coeff_beta  0.057982322 0.004630926 12.520675 3.100113e-06</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="calculate-genomic-conversion-factor">Calculate genomic conversion factor<a class="anchor" aria-label="anchor" href="#calculate-genomic-conversion-factor"></a>
@@ -133,15 +133,15 @@
 </div>
 <p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span>
-  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,
-  chromosome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,
-  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Red"</span>, <span class="st">"Red"</span>, <span class="st">"Green"</span>, <span class="st">"Red"</span>, <span class="st">"Green"</span>, <span class="st">"Green"</span><span class="op">)</span>,
-  sex <span class="op">=</span> <span class="st">"male"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span></span>
+<span>  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,</span>
+<span>  chromosome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Red"</span>, <span class="st">"Red"</span>, <span class="st">"Green"</span>, <span class="st">"Red"</span>, <span class="st">"Green"</span>, <span class="st">"Green"</span><span class="op">)</span>,</span>
+<span>  sex <span class="op">=</span> <span class="st">"male"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genome_factor</span>
-<span class="co">#&gt; [1] 0.5847343</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genome_factor</span></span>
+<span><span class="co">#&gt; [1] 0.5847343</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="input-case-data">Input case data<a class="anchor" aria-label="anchor" href="#input-case-data"></a>
@@ -154,31 +154,31 @@
 </div>
 <p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
-  C0 <span class="op">=</span> <span class="fl">288</span>, C1 <span class="op">=</span> <span class="fl">52</span>, C2 <span class="op">=</span> <span class="fl">9</span>, C3 <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span>
-    type <span class="op">=</span> <span class="st">"case"</span>,
-    assessment_u <span class="op">=</span> <span class="fl">1</span>
-  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Fp <span class="op">=</span> <span class="va">mean</span>, Fp_err <span class="op">=</span> <span class="va">std_err</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-    Xc <span class="op">=</span> <span class="fu"><a href="../reference/calculate_trans_rate_sigurdson.html">calculate_trans_rate_sigurdson</a></span><span class="op">(</span>
-      cells <span class="op">=</span> <span class="va">N</span>,
-      genome_factor <span class="op">=</span> <span class="va">genome_factor</span>,
-      age_value <span class="op">=</span> <span class="fl">30</span>,
-      smoker_bool <span class="op">=</span> <span class="cn">TRUE</span>
-    <span class="op">)</span>,
-    Fg <span class="op">=</span> <span class="op">(</span><span class="va">X</span> <span class="op">-</span> <span class="va">Xc</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span>,
-    Fg_err <span class="op">=</span> <span class="va">Fp_err</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">genome_factor</span><span class="op">)</span>
-  <span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  C0 <span class="op">=</span> <span class="fl">288</span>, C1 <span class="op">=</span> <span class="fl">52</span>, C2 <span class="op">=</span> <span class="fl">9</span>, C3 <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="st">"case"</span>,</span>
+<span>    assessment_u <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Fp <span class="op">=</span> <span class="va">mean</span>, Fp_err <span class="op">=</span> <span class="va">std_err</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    Xc <span class="op">=</span> <span class="fu"><a href="../reference/calculate_trans_rate_sigurdson.html">calculate_trans_rate_sigurdson</a></span><span class="op">(</span></span>
+<span>      cells <span class="op">=</span> <span class="va">N</span>,</span>
+<span>      genome_factor <span class="op">=</span> <span class="va">genome_factor</span>,</span>
+<span>      age_value <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>      smoker_bool <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    Fg <span class="op">=</span> <span class="op">(</span><span class="va">X</span> <span class="op">-</span> <span class="va">Xc</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span>,</span>
+<span>    Fg_err <span class="op">=</span> <span class="va">Fp_err</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">genome_factor</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">case_data</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 13</span></span>
-<span class="co">#&gt;       N     X    C0    C1    C2    C3    Fp Fp_err    DI     u    Xc    Fg</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   350    73   288    52     9     1 0.209 0.025<span style="text-decoration: underline;">9</span>  1.12  1.64  1.02 0.352</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: Fg_err &lt;dbl&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">case_data</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 13</span></span></span>
+<span><span class="co">#&gt;       N     X    C0    C1    C2    C3    Fp Fp_err    DI     u    Xc    Fg</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   350    73   288    52     9     1 0.209 0.025<span style="text-decoration: underline;">9</span>  1.12  1.64  1.02 0.352</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: Fg_err &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="perform-dose-estimation">Perform dose estimation<a class="anchor" aria-label="anchor" href="#perform-dose-estimation"></a>
@@ -196,36 +196,36 @@
 </div>
 <p>To perform the dose estimation in R we can call the adequate <code>estimate_*()</code> functions. In this example, we will use <code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code>. First of all, however, we will need to load the fit coefficients and variance-covariance matrix:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_coeffs</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_coeffs"</span><span class="op">]</span><span class="op">]</span>
-<span class="va">fit_var_cov_mat</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_var_cov_mat"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_coeffs</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_coeffs"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">fit_var_cov_mat</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_var_cov_mat"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>Since we have a protracted exposure, we need to calculate the value of <span class="math inline">\(G(x)\)</span>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">protracted_g_value</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/protracted_g_function.html">protracted_g_function</a></span><span class="op">(</span>
-  time <span class="op">=</span> <span class="fl">0.5</span>,
-  time_0 <span class="op">=</span> <span class="fl">2</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">protracted_g_value</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/protracted_g_function.html">protracted_g_function</a></span><span class="op">(</span></span>
+<span>  time <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  time_0 <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">protracted_g_value</span>
-<span class="co">#&gt; [1] 0.9216251</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">protracted_g_value</span></span>
+<span><span class="co">#&gt; [1] 0.9216251</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">results_whole_delta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta</a></span><span class="op">(</span>
-  <span class="va">case_data</span>,
-  <span class="va">fit_coeffs</span>,
-  <span class="va">fit_var_cov_mat</span>,
-  conf_int <span class="op">=</span> <span class="fl">0.95</span>,
-  <span class="va">protracted_g_value</span>,
-  aberr_module <span class="op">=</span> <span class="st">"translocations"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">results_whole_delta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta</a></span><span class="op">(</span></span>
+<span>  <span class="va">case_data</span>,</span>
+<span>  <span class="va">fit_coeffs</span>,</span>
+<span>  <span class="va">fit_var_cov_mat</span>,</span>
+<span>  conf_int <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  <span class="va">protracted_g_value</span>,</span>
+<span>  aberr_module <span class="op">=</span> <span class="st">"translocations"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To visualise the estimated doses, we call the <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve</a></span><span class="op">(</span>
-  est_doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>whole <span class="op">=</span> <span class="va">results_whole_delta</span><span class="op">)</span>,
-  <span class="va">fit_coeffs</span>,
-  <span class="va">fit_var_cov_mat</span>,
-  <span class="va">protracted_g_value</span>,
-  conf_int_curve <span class="op">=</span> <span class="fl">0.95</span>,
-  aberr_name <span class="op">=</span> <span class="st">"Translocations"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve</a></span><span class="op">(</span></span>
+<span>  est_doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>whole <span class="op">=</span> <span class="va">results_whole_delta</span><span class="op">)</span>,</span>
+<span>  <span class="va">fit_coeffs</span>,</span>
+<span>  <span class="va">fit_var_cov_mat</span>,</span>
+<span>  <span class="va">protracted_g_value</span>,</span>
+<span>  conf_int_curve <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  aberr_name <span class="op">=</span> <span class="st">"Translocations"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="trans-estimation_files/figure-html/trans-estimated-dose-curve-1.png" alt="Plot of estimated doses generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
 Plot of estimated doses generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
@@ -245,7 +245,7 @@ Plot of estimated doses generated by {biodosetools}. The grey shading indicates 
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>

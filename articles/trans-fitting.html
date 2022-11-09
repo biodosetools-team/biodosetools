@@ -14,10 +14,10 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Nunito%20Sans-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Fira%20Code-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Nunito-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Nunito-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -108,15 +108,15 @@
 </div>
 <p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span>
-  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,
-  chromosome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">11</span><span class="op">)</span>,
-  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Red"</span>, <span class="fl">3</span><span class="op">)</span>,
-  sex <span class="op">=</span> <span class="st">"female"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span></span>
+<span>  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,</span>
+<span>  chromosome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">11</span><span class="op">)</span>,</span>
+<span>  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Red"</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  sex <span class="op">=</span> <span class="st">"female"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genome_factor</span>
-<span class="co">#&gt; [1] 0.3147797</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genome_factor</span></span>
+<span><span class="co">#&gt; [1] 0.3147797</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="input-count-data">Input count data<a class="anchor" aria-label="anchor" href="#input-count-data"></a>
@@ -134,27 +134,27 @@
 </div>
 <p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"count-data-rodriguez-2004.csv"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"count-data-rodriguez-2004.csv"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span> <span class="op">*</span> <span class="va">genome_factor</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">count_data</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 11 × 13</span></span>
-<span class="co">#&gt;        D     N     X    C0    C1    C2    C3    C4    C5    mean     var    DI</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  0    <span style="text-decoration: underline;">1</span>371.     6  <span style="text-decoration: underline;">4</span>350     6     0     0     0     0 0.001<span style="text-decoration: underline;">38</span> 0.001<span style="text-decoration: underline;">38</span> 0.999</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  0.1  <span style="text-decoration: underline;">1</span>046.    15  <span style="text-decoration: underline;">3</span>309    15     0     0     0     0 0.004<span style="text-decoration: underline;">51</span> 0.004<span style="text-decoration: underline;">49</span> 0.996</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  0.25  966.    18  <span style="text-decoration: underline;">3</span>051    18     0     0     0     0 0.005<span style="text-decoration: underline;">87</span> 0.005<span style="text-decoration: underline;">83</span> 0.994</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  0.5   967.    33  <span style="text-decoration: underline;">3</span>039    33     0     0     0     0 0.010<span style="text-decoration: underline;">7</span>  0.010<span style="text-decoration: underline;">6</span>  0.990</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  0.75  664.    40  <span style="text-decoration: underline;">2</span>072    38     1     0     0     0 0.018<span style="text-decoration: underline;">9</span>  0.019<span style="text-decoration: underline;">5</span>  1.03 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  1     669.    50  <span style="text-decoration: underline;">2</span>075    48     1     0     0     0 0.023<span style="text-decoration: underline;">5</span>  0.023<span style="text-decoration: underline;">9</span>  1.02 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  1.5   328.    56   990    50     3     0     0     0 0.053<span style="text-decoration: underline;">7</span>  0.056<span style="text-decoration: underline;">6</span>  1.05 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  2     226.    71   650    65     3     0     0     0 0.098<span style="text-decoration: underline;">9</span>  0.097<span style="text-decoration: underline;">6</span>  0.987</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  3     246.   157   649   108    23     1     0     0 0.201   0.227   1.13 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  4     125.   147   265   117    15     0     0     0 0.370   0.310   0.836</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span>  5     124.   180   246   122    23     4     0     0 0.456   0.426   0.936</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: u &lt;dbl&gt;</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">count_data</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 11 × 13</span></span></span>
+<span><span class="co">#&gt;        D     N     X    C0    C1    C2    C3    C4    C5    mean     var    DI</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  0    <span style="text-decoration: underline;">1</span>371.     6  <span style="text-decoration: underline;">4</span>350     6     0     0     0     0 0.001<span style="text-decoration: underline;">38</span> 0.001<span style="text-decoration: underline;">38</span> 0.999</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  0.1  <span style="text-decoration: underline;">1</span>046.    15  <span style="text-decoration: underline;">3</span>309    15     0     0     0     0 0.004<span style="text-decoration: underline;">51</span> 0.004<span style="text-decoration: underline;">49</span> 0.996</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  0.25  966.    18  <span style="text-decoration: underline;">3</span>051    18     0     0     0     0 0.005<span style="text-decoration: underline;">87</span> 0.005<span style="text-decoration: underline;">83</span> 0.994</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  0.5   967.    33  <span style="text-decoration: underline;">3</span>039    33     0     0     0     0 0.010<span style="text-decoration: underline;">7</span>  0.010<span style="text-decoration: underline;">6</span>  0.990</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  0.75  664.    40  <span style="text-decoration: underline;">2</span>072    38     1     0     0     0 0.018<span style="text-decoration: underline;">9</span>  0.019<span style="text-decoration: underline;">5</span>  1.03 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  1     669.    50  <span style="text-decoration: underline;">2</span>075    48     1     0     0     0 0.023<span style="text-decoration: underline;">5</span>  0.023<span style="text-decoration: underline;">9</span>  1.02 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  1.5   328.    56   990    50     3     0     0     0 0.053<span style="text-decoration: underline;">7</span>  0.056<span style="text-decoration: underline;">6</span>  1.05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  2     226.    71   650    65     3     0     0     0 0.098<span style="text-decoration: underline;">9</span>  0.097<span style="text-decoration: underline;">6</span>  0.987</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  3     246.   157   649   108    23     1     0     0 0.201   0.227   1.13 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  4     125.   147   265   117    15     0     0     0 0.370   0.310   0.836</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>  5     124.   180   246   122    23     4     0     0 0.456   0.426   0.936</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: u &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="perform-fitting">Perform fitting<a class="anchor" aria-label="anchor" href="#perform-fitting"></a>
@@ -170,33 +170,33 @@
 </div>
 <p>To perform the fitting in R we call the <code><a href="../reference/fit.html">fit()</a></code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span>
-  count_data <span class="op">=</span> <span class="va">count_data</span>,
-  model_formula <span class="op">=</span> <span class="st">"lin-quad"</span>,
-  model_family <span class="op">=</span> <span class="st">"automatic"</span>,
-  fit_link <span class="op">=</span> <span class="st">"identity"</span>,
-  aberr_module <span class="op">=</span> <span class="st">"translocations"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>  count_data <span class="op">=</span> <span class="va">count_data</span>,</span>
+<span>  model_formula <span class="op">=</span> <span class="st">"lin-quad"</span>,</span>
+<span>  model_family <span class="op">=</span> <span class="st">"automatic"</span>,</span>
+<span>  fit_link <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>  aberr_module <span class="op">=</span> <span class="st">"translocations"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The <code>fit_results</code> object is a list that contains all necessary information about the count data as well as options selected when performing the fitting. This is a vital step to ensure traceability and reproducibility. Below we can see its elements:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fit_results</span><span class="op">)</span>
-<span class="co">#&gt;  [1] "fit_raw_data"         "fit_formula_raw"      "fit_formula_tex"     </span>
-<span class="co">#&gt;  [4] "fit_coeffs"           "fit_cor_mat"          "fit_var_cov_mat"     </span>
-<span class="co">#&gt;  [7] "fit_dispersion"       "fit_model_statistics" "fit_algorithm"       </span>
-<span class="co">#&gt; [10] "fit_model_summary"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fit_results</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "fit_raw_data"         "fit_formula_raw"      "fit_formula_tex"     </span></span>
+<span><span class="co">#&gt;  [4] "fit_coeffs"           "fit_cor_mat"          "fit_var_cov_mat"     </span></span>
+<span><span class="co">#&gt;  [7] "fit_dispersion"       "fit_model_statistics" "fit_algorithm"       </span></span>
+<span><span class="co">#&gt; [10] "fit_model_summary"</span></span></code></pre></div>
 <p>In particular, we can see how <code>fit_coeffs</code> matches the results obtained in the UI:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_results</span><span class="op">$</span><span class="va">fit_coeffs</span>
-<span class="co">#&gt;                estimate   std.error statistic      p.value</span>
-<span class="co">#&gt; coeff_C     0.006560406 0.002052834  3.195780 2.538519e-02</span>
-<span class="co">#&gt; coeff_alpha 0.027197296 0.009922177  2.741061 5.081502e-02</span>
-<span class="co">#&gt; coeff_beta  0.057982322 0.004630926 12.520675 3.100113e-06</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_results</span><span class="op">$</span><span class="va">fit_coeffs</span></span>
+<span><span class="co">#&gt;                estimate   std.error statistic      p.value</span></span>
+<span><span class="co">#&gt; coeff_C     0.006560406 0.002052834  3.195780 2.538519e-02</span></span>
+<span><span class="co">#&gt; coeff_alpha 0.027197296 0.009922177  2.741061 5.081502e-02</span></span>
+<span><span class="co">#&gt; coeff_beta  0.057982322 0.004630926 12.520675 3.100113e-06</span></span></code></pre></div>
 <p>To visualise the dose-effect curve, we call the <code><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve</a></span><span class="op">(</span>
-  <span class="va">fit_results</span>,
-  aberr_name <span class="op">=</span> <span class="st">"Translocations"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve</a></span><span class="op">(</span></span>
+<span>  <span class="va">fit_results</span>,</span>
+<span>  aberr_name <span class="op">=</span> <span class="st">"Translocations"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="trans-fitting_files/figure-html/trans-fit-dose-curve-1.png" alt="Plot of dose-effect curve generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
 Plot of dose-effect curve generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
@@ -216,7 +216,7 @@ Plot of dose-effect curve generated by {biodosetools}. The grey shading indicate
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>
