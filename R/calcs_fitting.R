@@ -642,7 +642,7 @@ fit <- function(count_data, model_formula, model_family, fit_link = "identity", 
       return(fit_results_list)
     },
     error = function(error_message) {
-      message("Warning: Problem with glm -> constraint ML optimization will be used instead")
+      cli::cli_alert_warning("Problem with {.fn glm} -> constraint ML optimization will be used instead")
 
       # Perform fitting via maxlik method
       prepared_data <- prepare_maxlik_count_data(count_data, model_formula, aberr_module)
