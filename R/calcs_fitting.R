@@ -415,7 +415,7 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
     mustart[1] <- 0.001
   }
 
-  # Black magic
+  # Extract the model frame from fitting formula
   mf <- match.call()
   m <- match(c("formula", "data"), names(mf), 0)
   mf <- mf[c(1, m)]
@@ -442,11 +442,10 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
 
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  mt <- attr(mf, "terms")
   mtX <- stats::terms(ffc, data = data)
-  X <- stats::model.matrix(mtX, mf)
   mtZ <- stats::terms(ffz, data = data)
   mtZ <- stats::terms(stats::update(mtZ, ~.), data = data)
+  X <- stats::model.matrix(mtX, mf)
   Z <- stats::model.matrix(mtZ, mf)
   Y <- stats::model.response(mf, "numeric")
 
@@ -456,16 +455,11 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
     intercept <- FALSE
   }
 
-  # Summarise black magic
-  ndic <- max(Y)
+  # Summarise model frame
+  # ndic <- max(Y)
   n <- length(Y)
-  linkstr <- "logit"
-  linkobj <- stats::make.link(linkstr)
-  linkinv <- linkobj$linkinv
+  npar <- NCOL(X)
   grad <- NULL
-  kx <- NCOL(X)
-  Y0 <- Y <= 0
-  Y1 <- Y > 0
 
   # Find starting values for the mean
   if (fit_link == "log") {
@@ -478,14 +472,19 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
     }
   }
 
-  # Model constraints
-  npar <- kx
+  # Model constraints (A theta + B > 0)
   if (intercept) {
-    A <- rbind(X, c(1, rep(0, npar - 1)))
-    B <- rep(0, n + 1)
+    A_constraint <- rbind(X, c(1, rep(0, npar - 1)))
+    B_constraint <- rep(0, n + 1)
   } else {
-    A <- X
-    B <- rep(0, n)
+    A_constraint <- X
+    B_constraint <- rep(0, n)
+  }
+
+  if (fit_link == "log") {
+    constraints <- NULL
+  } else {
+    constraints <- list(ineqA = A_constraint, ineqB = B_constraint)
   }
 
   # Loglikelihood function
@@ -501,12 +500,13 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
   }
 
   # Perform fitting
-  if (fit_link == "log") {
-    constraints <- NULL
-    fit_results <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = constraints, iterlim = 1000)
-  } else {
-    fit_results <- maxLik::maxLik(logLik = loglik, grad = grad, start = mustart, constraints = list(ineqA = A, ineqB = B), iterlim = 1000)
-  }
+  fit_results <- maxLik::maxLik(
+    logLik = loglik,
+    grad = grad,
+    start = mustart,
+    constraints = constraints,
+    iterlim = 1000
+  )
   hess <- maxLik::hessian(fit_results)
 
   if (fit_link == "log") {
@@ -516,7 +516,6 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
   }
 
   # Summarise fit
-  fit_summary <- summary(fit_results)
   fit_var_cov_mat <- base::solve(-hess)
   fit_coeffs_vec <- fit_results$estimate
   fit_dispersion <- sum(((Y - mu)^2) / (mu * (n - npar)))
