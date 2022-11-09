@@ -175,12 +175,6 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
       dplyr::select(.data$aberr, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
   }
 
-  # Delete coeff_C column for models with no intercept
-  if (any(grep("no-int", model_formula))) {
-    parsed_data <- parsed_data %>%
-      dplyr::select(-.data$coeff_C)
-  }
-
   # Return data frame
   return(parsed_data)
 }
@@ -403,11 +397,6 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
   fit_formula_raw <- parsed_model_formula$fit_formula_raw
   fit_formula_tex <- parsed_model_formula$fit_formula_tex
   fit_formula <- stats::as.formula(fit_formula_raw)
-
-  if (any(grep("no-int", model_formula))) {
-    data_aggr <- data_aggr %>%
-      dplyr::select(-.data$coeff_C)
-  }
 
   # Find starting values for the mean
   mustart <- stats::lm(fit_formula, data = data_aggr)$coefficients

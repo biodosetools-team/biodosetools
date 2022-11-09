@@ -28,12 +28,8 @@ mod_estimation_fit_curve_hot_server <- function(input, output, session, stringsA
 
     if (formula_select == "lin-quad") {
       fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
-    } else if (formula_select == "lin-quad-no-int") {
-      fit_coeffs_names <- c("coeff_alpha", "coeff_beta")
     } else if (formula_select == "lin") {
       fit_coeffs_names <- c("coeff_C", "coeff_alpha")
-    } else if (formula_select == "lin-no-int") {
-      fit_coeffs_names <- c("coeff_alpha")
     }
 
     full_data <- data.frame(
