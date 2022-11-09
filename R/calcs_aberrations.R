@@ -83,13 +83,13 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
         DI = 0,
         u = 0
       ) %>%
-      dplyr::select(.data$D, .data$N, .data$X, dplyr::everything()) %>%
+      dplyr::select("D", "N", "X", dplyr::everything()) %>%
       dplyr::mutate(
         D = as.numeric(.data$D)
       ) %>%
       dplyr::mutate(
         dplyr::across(
-          .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
+          .cols = c("N", "X", grep("C", names(.), value = TRUE)),
           .fns = as.integer
         )
       )
@@ -104,10 +104,10 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
           DI = 0,
           u = 0
         ) %>%
-        dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
+        dplyr::select("N", "X", dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
-            .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
+            .cols = c("N", "X", grep("C", names(.), value = TRUE)),
             .fns = as.integer
           )
         )
@@ -124,10 +124,10 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
           Fg = 0,
           Fg_err = 0
         ) %>%
-        dplyr::select(.data$N, .data$X, dplyr::everything()) %>%
+        dplyr::select("N", "X", dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
-            .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
+            .cols = c("N", "X", grep("C", names(.), value = TRUE)),
             .fns = as.integer
           )
         )
@@ -170,8 +170,8 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
           .fns = as.integer
         )
       ) %>%
-      dplyr::select(-.data$X2) %>%
-      dplyr::select(.data$D, .data$N, .data$X, dplyr::everything())
+      dplyr::select(-"X2") %>%
+      dplyr::select("D", "N", "X", dplyr::everything())
   } else if (type == "case") {
     data <- data %>%
       dplyr::as_tibble() %>%
@@ -187,12 +187,12 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
       ) %>%
       dplyr::mutate(
         dplyr::across(
-          .cols = c(.data$N, .data$X, grep("C", names(.), value = TRUE)),
+          .cols = c("N", "X", grep("C", names(.), value = TRUE)),
           .fns = as.integer
         )
       ) %>%
-      dplyr::select(-.data$X2, -.data$var) %>%
-      dplyr::select(.data$N, .data$X, dplyr::everything())
+      dplyr::select(-"X2", -"var") %>%
+      dplyr::select("N", "X", dplyr::everything())
   }
 
   return(data)

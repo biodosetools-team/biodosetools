@@ -105,10 +105,11 @@ test_that("fix_count_data_names for case data works", {
   # Specific to translocations
   genome_factor <- 0.585
 
+
   case_data <- case_data %>%
     dplyr::rename(
-      Fp = .data$mean,
-      Fp_err = .data$std_err
+      Fp = "mean",
+      Fp_err = "std_err"
     ) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(

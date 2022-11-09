@@ -160,19 +160,19 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
         coeff_alpha = .data$dose * .data$coeff_C,
         coeff_beta = .data$dose^2 * .data$coeff_C
       ) %>%
-      dplyr::select(.data$aberr, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta, .data$dose)
+      dplyr::select("aberr", "coeff_C", "coeff_alpha", "coeff_beta", "dose")
   } else {
     # Aggregated data only or if using translocations
     parsed_data <- count_data %>%
       dplyr::rename(
-        aberr = .data$X,
-        coeff_C = .data$N
+        aberr = "X",
+        coeff_C = "N"
       ) %>%
       dplyr::mutate(
         coeff_alpha = .data$D * .data$coeff_C,
         coeff_beta = .data$D^2 * .data$coeff_C
       ) %>%
-      dplyr::select(.data$aberr, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
+      dplyr::select("aberr", "coeff_C", "coeff_alpha", "coeff_beta")
   }
 
   # Return data frame
@@ -386,8 +386,8 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
         coeff_alpha = .data$dose * .data$coeff_C,
         coeff_beta = .data$dose^2 * .data$coeff_C
       ) %>%
-      dplyr::rename(aberr = .data$X) %>%
-      dplyr::select(.data$aberr, .data$dose, .data$coeff_C, .data$coeff_alpha, .data$coeff_beta)
+      dplyr::rename(aberr = "X") %>%
+      dplyr::select("aberr", "dose", "coeff_C", "coeff_alpha", "coeff_beta")
   } else {
     data_aggr <- data
   }

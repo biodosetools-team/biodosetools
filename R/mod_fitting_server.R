@@ -84,7 +84,7 @@ mod_fitting_counts_hot_server <- function(input, output, session, stringsAsFacto
           `colnames<-`(c("D", "N", "X")) %>%
           dplyr::mutate(
             dplyr::across(
-              .cols = c(.data$N, .data$X),
+              .cols = c("N", "X"),
               .fns = as.integer
             )
           )

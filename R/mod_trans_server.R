@@ -94,7 +94,7 @@ mod_trans_fraction_to_full_genome_server <- function(input, output, session, str
     } else {
       chromosome_table_melt <- chromosome_table %>%
         tidyr::pivot_longer(
-          cols = -.data$Chromosome,
+          cols = -"Chromosome",
           names_to = "Stain",
           values_to = "Bool"
         )

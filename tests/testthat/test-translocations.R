@@ -192,8 +192,8 @@ test_that("processing case data works", {
 
   case_data <- case_data %>%
     dplyr::rename(
-      Fp = .data$mean,
-      Fp_err = .data$std_err
+      Fp = "mean",
+      Fp_err = "std_err"
     ) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(

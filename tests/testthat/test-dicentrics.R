@@ -154,8 +154,8 @@ test_that("processing case data works", {
   # Specific to dicentrics/micronuclei
   case_data <- case_data %>%
     dplyr::rename(
-      y = .data$mean,
-      y_err = .data$std_err
+      y = "mean",
+      y_err = "std_err"
     )
 
   # Colnames validation

@@ -44,7 +44,7 @@ plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
       yield = .data$X / .data$N,
       dose = .data$D
     ) %>%
-    dplyr::select(.data$dose, .data$yield)
+    dplyr::select("dose", "yield")
 
   curves_data <- data.frame(dose = seq(0, max(plot_data[["dose"]]), length.out = 100)) %>%
     dplyr::mutate(

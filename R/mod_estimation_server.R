@@ -463,7 +463,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
               y = .data$mean,
               y_err = .data$std_err
             ) %>%
-            dplyr::select(-.data$mean, -.data$std_err)
+            dplyr::select(-"mean", -"std_err")
         } else if (aberr_module == "translocations") {
           genome_factor <- genome_factor$genome_factor()
 
@@ -472,7 +472,7 @@ mod_estimation_case_hot_server <- function(input, output, session, stringsAsFact
               Fp = .data$mean,
               Fp_err = .data$std_err
             ) %>%
-            dplyr::select(-.data$mean, -.data$std_err) %>%
+            dplyr::select(-"mean", -"std_err") %>%
             dplyr::mutate(
               Xc = dplyr::case_when(
                 input$trans_confounders & input$trans_confounders_type == "sigurdson" ~
@@ -1116,7 +1116,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       return(NULL)
     }
     data()[["est_doses_whole"]] %>%
-      dplyr::select(.data$yield) %>%
+      dplyr::select("yield") %>%
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
@@ -1135,7 +1135,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       return(NULL)
     }
     data()[["est_doses_whole"]] %>%
-      dplyr::select(.data$dose) %>%
+      dplyr::select("dose") %>%
       t() %>%
       as.data.frame() %>%
       # Convert to hot and format table
@@ -1155,7 +1155,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       return(NULL)
     }
     data()[["est_doses_partial"]] %>%
-      dplyr::select(.data$yield) %>%
+      dplyr::select("yield") %>%
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values
@@ -1179,7 +1179,7 @@ mod_estimation_results_server <- function(input, output, session, stringsAsFacto
       return(NULL)
     }
     data()[["est_doses_partial"]] %>%
-      dplyr::select(.data$dose) %>%
+      dplyr::select("dose") %>%
       t() %>%
       as.data.frame() %>%
       # Fix possible NA values

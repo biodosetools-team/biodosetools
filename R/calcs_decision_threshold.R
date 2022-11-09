@@ -154,7 +154,7 @@ calculate_decision_threshold_table <- function(fit_results_list, decision_thresh
     ) %>%
     dplyr::mutate(
       dplyr::across(
-        .cols = c(.data$N, grep("X", names(.), value = TRUE)),
+        .cols = c("N", grep("X", names(.), value = TRUE)),
         .fns = as.integer
       )
     )
