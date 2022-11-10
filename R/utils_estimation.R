@@ -308,8 +308,8 @@ plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
                                       protracted_g_value = 1, conf_int_curve,
                                       aberr_name) {
   # Validate est_doses names
-  assessments <- names(est_doses)
-  match_names(assessments, c("whole", "partial", "hetero"))
+  assessments <- names(est_doses) %>%
+    match_names(c("whole", "partial", "hetero"))
 
   # Parse dose estimation list
   est_full_doses <- data.frame(

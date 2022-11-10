@@ -236,5 +236,7 @@ match_names <- function(x, lookup) {
   unmatched <- setdiff(x, lookup)
   if (length(unmatched) > 0) {
     stop("Valid names are ", paste(lookup, collapse = ", "))
+  } else {
+    return(x)
   }
 }
