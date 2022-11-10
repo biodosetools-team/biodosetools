@@ -55,6 +55,16 @@ test_that("parse_model_formula works", {
 })
 
 
+# Markdown utils ----
+
+test_that("load_rmd_report works", {
+  report_names <- c("estimation-report-docx.Rmd", "estimation-report-pdf.Rmd", "fitting-report-docx.Rmd", "fitting-report-pdf.Rmd")
+
+  # Expected ouputs
+  expect_true(all(file.exists(sapply(report_names, load_rmd_report))))
+}
+)
+
 # Formatting fixes ----
 
 fit_results <- app_sys("extdata", "dicentrics-fitting-results.rds") %>%
