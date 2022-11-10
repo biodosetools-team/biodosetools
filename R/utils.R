@@ -233,7 +233,7 @@ parse_conf_int_text <- function(conf_int) {
 #' Validate names
 #' @noRd
 match_names <- function(x, lookup) {
-  unmatched <- x[-grep(paste(lookup, collapse = "|"), x)]
+  unmatched <- setdiff(x, lookup)
   if (length(unmatched) > 0) {
     stop("Valid names are ", paste(lookup, collapse = ", "))
   }

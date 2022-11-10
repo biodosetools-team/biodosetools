@@ -7,6 +7,24 @@ test_that("to_title works", {
   )
 })
 
+test_that("match_names works", {
+  # Correct name matching
+  expect_no_error(
+    match_names(
+      c("whole", "hetero"),
+      c("whole", "partial", "hetero")
+    )
+  )
+
+  # Incorrect name matching
+  expect_error(
+    match_names(
+      c("whole-body"),
+      c("whole", "partial", "hetero")
+    )
+  )
+})
+
 test_that("names_from_model_formula works", {
   # Correct argument matching
   expect_error(names_from_model_formula("lon-quod"))
