@@ -142,13 +142,14 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
 #' @param data Count or case data.
 #' @param type Type of input data. Either "count" and "case".
 #' @param assessment_u Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.
+#' @param aberr_module Aberration module.
 #'
 #' @return Data frame containing cell count (\eqn{N}), aberrations (\eqn{X}),
 #' and other coefficients (dispersion index, \eqn{u}-value, ...), as well as
 #' raw count or case \code{data}.
 #' @export
 #' @importFrom rlang .data
-calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u = 1) {
+calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("dicentrics", "translocations", "micronuclei"), assessment_u = 1) {
   # Validate parameters
   type <- match.arg(type)
 
@@ -193,6 +194,25 @@ calculate_aberr_table <- function(data, type = c("count", "case"), assessment_u 
       ) %>%
       dplyr::select(-"X2", -"var") %>%
       dplyr::select("N", "X", dplyr::everything())
+
+      # Rename mean and std_err columns
+      if (aberr_module %in% c("dicentrics", "micronuclei")) {
+        data <- data %>%
+          dplyr::select(
+            "N", "X",
+            "C0", "C1", "C2", "C3", "C4", "C5",
+            "y" = "mean", "y_err" = "std_err",
+            "DI", "u"
+          )
+      } else if (aberr_module == "translocations") {
+        data <- data %>%
+          dplyr::select(
+            "N", "X",
+            "C0", "C1", "C2", "C3", "C4", "C5",
+            "Fp" = "mean", "Fp_err" = "std_err",
+            "DI", "u"
+          )
+      }
   }
 
   return(data)

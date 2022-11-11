@@ -448,26 +448,15 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
           mytable <- calculate_aberr_table(
             data = mytable,
             type = "case",
-            assessment_u = 1
+            assessment_u = 1,
+            aberr_module = aberr_module
           )
 
           # Rename mean and std_err depending on aberration module
-          if (aberr_module %in% c("dicentrics", "micronuclei")) {
-            mytable <- mytable %>%
-              dplyr::mutate(
-                y = .data$mean,
-                y_err = .data$std_err
-              ) %>%
-              dplyr::select(-"mean", -"std_err")
-          } else if (aberr_module == "translocations") {
+          if (aberr_module == "translocations") {
             genome_factor <- genome_factor$genome_factor()
 
             mytable <- mytable %>%
-              dplyr::mutate(
-                Fp = .data$mean,
-                Fp_err = .data$std_err
-              ) %>%
-              dplyr::select(-"mean", -"std_err") %>%
               dplyr::mutate(
                 Xc = dplyr::case_when(
                   input$trans_confounders & input$trans_confounders_type == "sigurdson" ~

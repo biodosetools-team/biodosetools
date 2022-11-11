@@ -184,17 +184,14 @@ test_that("processing case data works", {
   case_data <- calculate_aberr_table(
     data = case_data,
     type = "case",
-    assessment_u = 1
+    assessment_u = 1,
+    aberr_module = "translocations"
   )
 
   # Specific to translocations
   genome_factor <- 0.585
 
   case_data <- case_data %>%
-    dplyr::rename(
-      Fp = "mean",
-      Fp_err = "std_err"
-    ) %>%
     dplyr::mutate(
       Xc = dplyr::case_when(
         # "sigurdson" ~ calculate_trans_rate_sigurdson(...),

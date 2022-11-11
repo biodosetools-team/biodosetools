@@ -148,15 +148,9 @@ test_that("processing case data works", {
   case_data <- calculate_aberr_table(
     data = case_data,
     type = "case",
-    assessment_u = 1
+    assessment_u = 1,
+    aberr_module = "dicentrics"
   )
-
-  # Specific to dicentrics/micronuclei
-  case_data <- case_data %>%
-    dplyr::rename(
-      y = "mean",
-      y_err = "std_err"
-    )
 
   # Colnames validation
   case_data_cols <- colnames(case_data)
