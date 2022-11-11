@@ -213,7 +213,6 @@ mod_fitting_results_server <- function(id, aberr_module, genome_factor = NULL) {
 
         model_formula <- input$formula_select
         model_family <- input$family_select
-        # decision_threshold_cells <- input$decision_threshold_cells
       })
 
       if (aberr_module == "translocations") {
@@ -277,14 +276,6 @@ mod_fitting_results_server <- function(id, aberr_module, genome_factor = NULL) {
           results_list[["frequency_select"]] <- frequency_select
           results_list[["trans_sex"]] <- input$trans_sex
         }
-
-        # Calculate decision thresholds
-        # results_list[["decision_threshold"]] <- calculate_decision_threshold_table(
-        #   fit_results_list,
-        #   decision_threshold_cells,
-        #   aberr_module,
-        #   input
-        # )
 
         # Add irradiation conditions
         cli::cli_alert_info("Storing irradiation conditions...")
@@ -425,27 +416,6 @@ mod_fitting_results_server <- function(id, aberr_module, genome_factor = NULL) {
         hot_cols(colWidths = 100) %>%
         hot_cols(format = "0.000")
     })
-
-    # output$fit_decision_thresh <- renderRHandsontable({
-    #   # Decision thresholds
-    #   if (input$button_fit <= 0) return(NULL)
-    #
-    #   decision_thresh <- data()[["decision_thresh"]]
-    #
-    #   num_cols <- 5
-    #   col_headers <- c("N", "X95", "D (mGy)", "X83", "D (mGy)")
-    #
-    #   decision_thresh %>%
-    #     # Convert to hot and format table
-    #     rhandsontable(
-    #       width = (100 + num_cols * 50),
-    #       height = "100%",
-    #       colHeaders = col_headers
-    #     ) %>%
-    #     hot_col(c(1), readOnly = TRUE) %>%
-    #     hot_col(c(3,5), format = "0.00", colWidths = 75) %>%
-    #     hot_cols(colWidths = 50)
-    # })
 
     output$plot <- renderPlot(
       # Plot of the data and fitted curve

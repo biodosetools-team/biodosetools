@@ -144,8 +144,7 @@ mod_fitting_micro_ui <- function(id, label) {
               label = NULL,
               choices = c(
                 "Fitting formula"  = "formula",
-                "Fitting model"    = "model" # ,
-                # "Decision thresholds" = "decision_thresholds"
+                "Fitting model"    = "model"
               )
             ),
             # Contents
@@ -158,12 +157,7 @@ mod_fitting_micro_ui <- function(id, label) {
               condition = "input.help_fitting_options_option == 'model'",
               ns = ns,
               include_help("fitting/fitting_options_model.md")
-            ) # ,
-            # conditionalPanel(
-            #   condition = "input.help_fitting_options_option == 'decision_thresholds'",
-            #   ns = ns,
-            #   include_help("fitting/fitting_options_decision_thresholds.md")
-            # )
+            )
           )
         ),
         fluidRow(
@@ -186,13 +180,7 @@ mod_fitting_micro_ui <- function(id, label) {
                 "Negative binomial (NB2)" = "nb2"
               ),
               selected = "automatic"
-            ) # ,
-            # Decision thresholds
-            # textInput(
-            #   ns("decision_threshold_cells"),
-            #   label ="Cells for decision thresholds",
-            #   value = "150 500 1000"
-            # )
+            )
           )
         )
       )
@@ -343,15 +331,7 @@ mod_fitting_micro_ui <- function(id, label) {
               class = "hot-improved",
               rHandsontableOutput(ns("fit_var_cov_mat"))
             )
-          ) # ,
-          # tabPanel(
-          #   tabName = "Decision thresholds",
-          #   h5("Decision thresholds"),
-          #   div(
-          #     class = "hot-improved",
-          #     rHandsontableOutput(ns("fit_decision_thresh"))
-          #   )
-          # )
+          )
         ),
 
         # Box: Export data and results ----
