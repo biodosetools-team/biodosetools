@@ -277,9 +277,9 @@ mod_estimation_trans_ui <- function(id, label) {
                   "Cyan"
                 ),
                 options = list(
-                  placeholder = "Select observed colors" # ,
+                  placeholder = "Select observed colors"
+                  # TODO: use renderUI to force maxItems to be length(trans_color_select)
                   # maxItems = 5
-                  # TODO: use renderUI to force maxItems ot be length(trans_color_select)
                 ),
                 multiple = TRUE
               )

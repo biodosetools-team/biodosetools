@@ -86,8 +86,7 @@ mod_fitting_trans_ui <- function(id, label) {
                 ),
                 options = list(
                   placeholder = "Select observed colors"
-                  # TODO: use renderUI to force maxItems
-                  #       to be length(trans_color_select)
+                  # TODO: use renderUI to force maxItems to be length(trans_color_select)
                   # maxItems = 5
                 ),
                 multiple = TRUE
@@ -428,7 +427,6 @@ mod_fitting_trans_ui <- function(id, label) {
           # Translocation frequency
           selectInput(
             ns("frequency_select"),
-            # label = "Translocation frequency",
             label = NULL,
             width = "180px",
             choices = list(

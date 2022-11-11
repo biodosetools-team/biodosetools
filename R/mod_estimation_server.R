@@ -959,7 +959,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_whole"))
-            ) # ,
+            )
 
             # br(),
             # h5("Relative quality of the estimation"),
@@ -991,7 +991,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_whole"))
-            ) # ,
+            )
 
             # br(),
             # h5("Relative quality of the estimation"),
@@ -1023,7 +1023,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_frac_partial"))
-            ) # ,
+            )
 
             # br(),
             # h5("Relative quality of the estimation"),
@@ -1055,7 +1055,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_whole"))
-            ) # ,
+            )
 
             # br(),
             # h5("Relative quality of the estimation"),
@@ -1087,7 +1087,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_frac_hetero"))
-            ) # ,
+            )
 
             # br(),
             # h5("Relative quality of the estimation"),
