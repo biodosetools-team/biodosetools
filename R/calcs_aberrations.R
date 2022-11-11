@@ -201,16 +201,14 @@ calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module 
     if (aberr_module %in% c("dicentrics", "micronuclei")) {
       data <- data %>%
         dplyr::select(
-          "N", "X",
-          "C0", "C1", "C2", "C3", "C4", "C5",
+          "N", "X", dplyr::matches("^C[0-9]+$"),
           "y" = "mean", "y_err" = "std_err",
           "DI", "u"
         )
     } else if (aberr_module == "translocations") {
       data <- data %>%
         dplyr::select(
-          "N", "X",
-          "C0", "C1", "C2", "C3", "C4", "C5",
+          "N", "X", dplyr::matches("^C[0-9]+$"),
           "Fp" = "mean", "Fp_err" = "std_err",
           "DI", "u"
         )

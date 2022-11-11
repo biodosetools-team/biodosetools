@@ -54,9 +54,9 @@ case_data <- system.file("extdata", "cases-data-partial.csv", package = "biodose
   utils::read.csv(header = TRUE) %>%
   calculate_aberr_table(
     type = "case",
-    assessment_u = 1
-  ) %>%
-  dplyr::rename(y = mean, y_err = std_err)
+    assessment_u = 1,
+    aberr_module = "dicentrics"
+  )
 ```
 
 ```{r}
