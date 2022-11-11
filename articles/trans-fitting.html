@@ -85,7 +85,8 @@
 
 
 
-<script src="trans-fitting_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Translocations dose-effect fitting</h1>
             
@@ -99,14 +100,22 @@
 <div class="section level2">
 <h2 id="calculate-genomic-conversion-factor">Calculate genomic conversion factor<a class="anchor" aria-label="anchor" href="#calculate-genomic-conversion-factor"></a>
 </h2>
-<p>To be able to fit the equivalent full genome dose-effect curve, we need to calculate the genomic conversion factor.</p>
-<p>To do this, in the “Stain color options” box we select the sex of the individual, and the list of chromosomes and stains used for the translocation assay. Clicking on “Generate table” will show a table in the “Chromosome data” box in which we select the chromosome-stain pairs. Clicking on the “Calculate fraction” will calculate the genomic conversion factor.</p>
+<p>To be able to fit the equivalent full genome dose-effect curve, we
+need to calculate the genomic conversion factor.</p>
+<p>To do this, in the “Stain color options” box we select the sex of the
+individual, and the list of chromosomes and stains used for the
+translocation assay. Clicking on “Generate table” will show a table in
+the “Chromosome data” box in which we select the chromosome-stain pairs.
+Clicking on the “Calculate fraction” will calculate the genomic
+conversion factor.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-fit-01.png" alt="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose-effect fitting module." width="100%"><p class="caption">
-‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion factor’ boxes in the dose-effect fitting module.
+‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion
+factor’ boxes in the dose-effect fitting module.
 </p>
 </div>
-<p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
+<p>To calculate the genomic conversion factor in R we call the
+<code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span></span>
 <span>  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,</span>
@@ -121,10 +130,16 @@
 <div class="section level2">
 <h2 id="input-count-data">Input count data<a class="anchor" aria-label="anchor" href="#input-count-data"></a>
 </h2>
-<p>Once the genomic conversion factor has been calculated, we can input the count data. On the {shiny} app, we can select to either load the count data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the total number of cells (<span class="math inline">\(N\)</span>), total number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), variance (<span class="math inline">\(\sigma^{2}\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
+<p>Once the genomic conversion factor has been calculated, we can input
+the count data. On the {shiny} app, we can select to either load the
+count data from a file (supported formats are <code>.csv</code>,
+<code>.dat</code>, and <code>.txt</code>) or to input the data manually.
+Once the table is generated and filled, the “Calculate parameters”
+button will calculate the total number of cells (<span class="math inline">\(N\)</span>), total number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), variance (<span class="math inline">\(\sigma^{2}\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-fit-02.png" alt="'Data input options' and 'Fitting options' boxes in the dose-effect fitting module." width="100%"><p class="caption">
-‘Data input options’ and ‘Fitting options’ boxes in the dose-effect fitting module.
+‘Data input options’ and ‘Fitting options’ boxes in the dose-effect
+fitting module.
 </p>
 </div>
 <div class="figure" style="text-align: center">
@@ -132,7 +147,8 @@
 ‘Data input’ box in the dose-effect fitting module.
 </p>
 </div>
-<p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
+<p>This step is accomplished in R by calling the
+<code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"count-data-rodriguez-2004.csv"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -159,16 +175,32 @@
 <div class="section level2">
 <h2 id="perform-fitting">Perform fitting<a class="anchor" aria-label="anchor" href="#perform-fitting"></a>
 </h2>
-<p>To perform the fitting the user needs to select the appropriate fitting options to click the “Calculate fitting” button on the “Data input” box. The fit can be done either using the full genome translocations, or those measured by FISH. This will not impact any future dose estimation, as the results internally use the full genome translocations.</p>
-<p>The fitting results and summary statistics are shown in the “Results” tabbed box, and the dose-effect curve is displayed in the “Curve plot” box.</p>
-<p>The “Export results” box shows two buttons: (a) “Save fitting data”, and (b) “Download report”. The “Save fitting data” will generate an <code>.rds</code> file that contains all information about the count data, irradiation conditions, and options selected when performing the fitting. This file can be then loaded in the dose estimation module to load the dose-effect curve coefficients.</p>
-<p>Similarly, the “Download report” will generate a <code>.pdf</code> or a <code>.docx</code> report containing all inputs and fitting results.</p>
+<p>To perform the fitting the user needs to select the appropriate
+fitting options to click the “Calculate fitting” button on the “Data
+input” box. The fit can be done either using the full genome
+translocations, or those measured by FISH. This will not impact any
+future dose estimation, as the results internally use the full genome
+translocations.</p>
+<p>The fitting results and summary statistics are shown in the “Results”
+tabbed box, and the dose-effect curve is displayed in the “Curve plot”
+box.</p>
+<p>The “Export results” box shows two buttons: (a) “Save fitting data”,
+and (b) “Download report”. The “Save fitting data” will generate an
+<code>.rds</code> file that contains all information about the count
+data, irradiation conditions, and options selected when performing the
+fitting. This file can be then loaded in the dose estimation module to
+load the dose-effect curve coefficients.</p>
+<p>Similarly, the “Download report” will generate a <code>.pdf</code> or
+a <code>.docx</code> report containing all inputs and fitting
+results.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-fit-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Export results' boxes in the dose-effect fitting module." width="100%"><p class="caption">
-‘Results’ tabbed box, ‘Curve plot’ and ‘Export results’ boxes in the dose-effect fitting module.
+‘Results’ tabbed box, ‘Curve plot’ and ‘Export results’ boxes in the
+dose-effect fitting module.
 </p>
 </div>
-<p>To perform the fitting in R we call the <code><a href="../reference/fit.html">fit()</a></code> function:</p>
+<p>To perform the fitting in R we call the <code><a href="../reference/fit.html">fit()</a></code>
+function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span></span>
 <span>  count_data <span class="op">=</span> <span class="va">count_data</span>,</span>
@@ -177,21 +209,26 @@
 <span>  fit_link <span class="op">=</span> <span class="st">"identity"</span>,</span>
 <span>  aberr_module <span class="op">=</span> <span class="st">"translocations"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The <code>fit_results</code> object is a list that contains all necessary information about the count data as well as options selected when performing the fitting. This is a vital step to ensure traceability and reproducibility. Below we can see its elements:</p>
+<p>The <code>fit_results</code> object is a list that contains all
+necessary information about the count data as well as options selected
+when performing the fitting. This is a vital step to ensure traceability
+and reproducibility. Below we can see its elements:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fit_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "fit_raw_data"         "fit_formula_raw"      "fit_formula_tex"     </span></span>
 <span><span class="co">#&gt;  [4] "fit_coeffs"           "fit_cor_mat"          "fit_var_cov_mat"     </span></span>
 <span><span class="co">#&gt;  [7] "fit_dispersion"       "fit_model_statistics" "fit_algorithm"       </span></span>
 <span><span class="co">#&gt; [10] "fit_model_summary"</span></span></code></pre></div>
-<p>In particular, we can see how <code>fit_coeffs</code> matches the results obtained in the UI:</p>
+<p>In particular, we can see how <code>fit_coeffs</code> matches the
+results obtained in the UI:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_results</span><span class="op">$</span><span class="va">fit_coeffs</span></span>
 <span><span class="co">#&gt;                estimate   std.error statistic      p.value</span></span>
 <span><span class="co">#&gt; coeff_C     0.006560406 0.002052834  3.195780 2.538519e-02</span></span>
 <span><span class="co">#&gt; coeff_alpha 0.027197296 0.009922177  2.741061 5.081502e-02</span></span>
 <span><span class="co">#&gt; coeff_beta  0.057982322 0.004630926 12.520675 3.100113e-06</span></span></code></pre></div>
-<p>To visualise the dose-effect curve, we call the <code><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve()</a></code> function:</p>
+<p>To visualise the dose-effect curve, we call the
+<code><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_fit_dose_curve.html">plot_fit_dose_curve</a></span><span class="op">(</span></span>
 <span>  <span class="va">fit_results</span>,</span>
@@ -199,7 +236,8 @@
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="trans-fitting_files/figure-html/trans-fit-dose-curve-1.png" alt="Plot of dose-effect curve generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
-Plot of dose-effect curve generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
+Plot of dose-effect curve generated by {biodosetools}. The grey shading
+indicates the uncertainties associated with the calibration curve.
 </p>
 </div>
 </div>

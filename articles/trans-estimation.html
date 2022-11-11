@@ -85,7 +85,8 @@
 
 
 
-<script src="trans-estimation_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Translocations dose estimation</h1>
             
@@ -99,18 +100,29 @@
 <div class="section level2">
 <h2 id="load-pre-calculated-curve">Load pre-calculated curve<a class="anchor" aria-label="anchor" href="#load-pre-calculated-curve"></a>
 </h2>
-<p>The first step is to either load the pre-calculated curve in <code>.rds</code> format obtained in the dose-effect fitting module or input the curve coefficients manually. Clicking on “Preview data” will load the curve into the app and display it on the “Results” tabbed box.</p>
+<p>The first step is to either load the pre-calculated curve in
+<code>.rds</code> format obtained in the dose-effect fitting module or
+input the curve coefficients manually. Clicking on “Preview data” will
+load the curve into the app and display it on the “Results” tabbed
+box.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-estimate-01.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when loading curve from an `.rds` file." width="100%"><p class="caption">
-‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose estimation module when loading curve from an <code>.rds</code> file.
+‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
+estimation module when loading curve from an <code>.rds</code> file.
 </p>
 </div>
 <div class="figure">
 <img src="figures/screenshot-translocations-estimate-01b.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients' standard errors will be used in calculations." width="100%"><p class="caption">
-‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients’ standard errors will be used in calculations.
+‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
+estimation module when inputting curve coefficients manually. Note that
+if no variance-covariance matrix is provided, only the variances
+calculated from the coefficients’ standard errors will be used in
+calculations.
 </p>
 </div>
-<p>This step is accomplished in R by either using the results from <code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
+<p>This step is accomplished in R by either using the results from
+<code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object
+via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"translocations-fitting-results.rds"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -124,14 +136,22 @@
 <div class="section level2">
 <h2 id="calculate-genomic-conversion-factor">Calculate genomic conversion factor<a class="anchor" aria-label="anchor" href="#calculate-genomic-conversion-factor"></a>
 </h2>
-<p>To be able to fit the equivalent full genome case data, we need to calculate the genomic conversion factor.</p>
-<p>To do this, in the “Stain color options” box we select the sex of the individual, and the list of chromosomes and stains used for the translocation assay. Clicking on “Generate table” will show a table in the “Chromosome data” box in which we select the chromosome-stain pairs. Clicking on the “Calculate fraction” will calculate the genomic conversion factor.</p>
+<p>To be able to fit the equivalent full genome case data, we need to
+calculate the genomic conversion factor.</p>
+<p>To do this, in the “Stain color options” box we select the sex of the
+individual, and the list of chromosomes and stains used for the
+translocation assay. Clicking on “Generate table” will show a table in
+the “Chromosome data” box in which we select the chromosome-stain pairs.
+Clicking on the “Calculate fraction” will calculate the genomic
+conversion factor.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-estimate-02.png" alt="'Stains color options', 'Chromosome data' and 'Genomic conversion factor' boxes in the dose estimation module." width="100%"><p class="caption">
-‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion factor’ boxes in the dose estimation module.
+‘Stains color options’, ‘Chromosome data’ and ‘Genomic conversion
+factor’ boxes in the dose estimation module.
 </p>
 </div>
-<p>To calculate the genomic conversion factor in R we call the <code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
+<p>To calculate the genomic conversion factor in R we call the
+<code><a href="../reference/calculate_genome_factor.html">calculate_genome_factor()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genome_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_genome_factor.html">calculate_genome_factor</a></span><span class="op">(</span></span>
 <span>  dna_table <span class="op">=</span> <span class="va">dna_content_fractions_morton</span>,</span>
@@ -146,22 +166,36 @@
 <div class="section level2">
 <h2 id="input-case-data">Input case data<a class="anchor" aria-label="anchor" href="#input-case-data"></a>
 </h2>
-<p>Next we can choose to either load the case data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. If needed, the user can select to use confounders (either using Sigurdson’s method, or by inputting the translocation frequency per cell). Once the table is generated and filled, the “Calculate parameters” button will calculate the total number of cells (<span class="math inline">\(N\)</span>), total number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{F}_{p}\)</span>), standard error (<span class="math inline">\(\sigma_{p}\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), <span class="math inline">\(u\)</span>-value, expected translocation rate (<span class="math inline">\(X_{c}\)</span>), full genome mean (<span class="math inline">\(\bar{F}_{g}\)</span>), and full genome error (<span class="math inline">\(\sigma_{g}\)</span>).</p>
+<p>Next we can choose to either load the case data from a file
+(supported formats are <code>.csv</code>, <code>.dat</code>, and
+<code>.txt</code>) or to input the data manually. If needed, the user
+can select to use confounders (either using Sigurdson’s method, or by
+inputting the translocation frequency per cell). Once the table is
+generated and filled, the “Calculate parameters” button will calculate
+the total number of cells (<span class="math inline">\(N\)</span>),
+total number of aberrations (<span class="math inline">\(X\)</span>), as
+well as mean (<span class="math inline">\(\bar{F}_{p}\)</span>),
+standard error (<span class="math inline">\(\sigma_{p}\)</span>),
+dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), <span class="math inline">\(u\)</span>-value, expected translocation rate
+(<span class="math inline">\(X_{c}\)</span>), full genome mean (<span class="math inline">\(\bar{F}_{g}\)</span>), and full genome error
+(<span class="math inline">\(\sigma_{g}\)</span>).</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-estimate-03.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module." width="100%"><p class="caption">
-‘Data input options’ and ‘Data input’ boxes in the dose estimation module.
+‘Data input options’ and ‘Data input’ boxes in the dose estimation
+module.
 </p>
 </div>
-<p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
+<p>This step is accomplished in R by calling the
+<code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  C0 <span class="op">=</span> <span class="fl">288</span>, C1 <span class="op">=</span> <span class="fl">52</span>, C2 <span class="op">=</span> <span class="fl">9</span>, C3 <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span></span>
 <span>    type <span class="op">=</span> <span class="st">"case"</span>,</span>
-<span>    assessment_u <span class="op">=</span> <span class="fl">1</span></span>
+<span>    assessment_u <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    aberr_module <span class="op">=</span> <span class="st">"translocations"</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Fp <span class="op">=</span> <span class="va">mean</span>, Fp_err <span class="op">=</span> <span class="va">std_err</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    Xc <span class="op">=</span> <span class="fu"><a href="../reference/calculate_trans_rate_sigurdson.html">calculate_trans_rate_sigurdson</a></span><span class="op">(</span></span>
 <span>      cells <span class="op">=</span> <span class="va">N</span>,</span>
@@ -183,7 +217,10 @@
 <div class="section level2">
 <h2 id="perform-dose-estimation">Perform dose estimation<a class="anchor" aria-label="anchor" href="#perform-dose-estimation"></a>
 </h2>
-<p>The final step is to select the dose estimation options. In the “Dose estimation options” box we can select type of exposure (acute or protracted), type of assessment (whole-body or partial-body), and error methods for each type of assessment.</p>
+<p>The final step is to select the dose estimation options. In the “Dose
+estimation options” box we can select type of exposure (acute or
+protracted), type of assessment (whole-body or partial-body), and error
+methods for each type of assessment.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-estimate-04.png" alt="'Dose estimation options' box in the dose estimation module." width="60%"><p class="caption">
 ‘Dose estimation options’ box in the dose estimation module.
@@ -191,14 +228,19 @@
 </div>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-translocations-estimate-05.png" alt="'Results' tabbed box, 'Curve plot' and 'Save results' boxes in the dose estimation module." width="100%"><p class="caption">
-‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose estimation module.
+‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose
+estimation module.
 </p>
 </div>
-<p>To perform the dose estimation in R we can call the adequate <code>estimate_*()</code> functions. In this example, we will use <code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code>. First of all, however, we will need to load the fit coefficients and variance-covariance matrix:</p>
+<p>To perform the dose estimation in R we can call the adequate
+<code>estimate_*()</code> functions. In this example, we will use
+<code><a href="../reference/estimate_whole_body_delta.html">estimate_whole_body_delta()</a></code>. First of all, however, we will
+need to load the fit coefficients and variance-covariance matrix:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_coeffs</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_coeffs"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">fit_var_cov_mat</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_var_cov_mat"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p>Since we have a protracted exposure, we need to calculate the value of <span class="math inline">\(G(x)\)</span>:</p>
+<p>Since we have a protracted exposure, we need to calculate the value
+of <span class="math inline">\(G(x)\)</span>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protracted_g_value</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/protracted_g_function.html">protracted_g_function</a></span><span class="op">(</span></span>
 <span>  time <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -216,7 +258,8 @@
 <span>  <span class="va">protracted_g_value</span>,</span>
 <span>  aberr_module <span class="op">=</span> <span class="st">"translocations"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>To visualise the estimated doses, we call the <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
+<p>To visualise the estimated doses, we call the
+<code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve</a></span><span class="op">(</span></span>
 <span>  est_doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>whole <span class="op">=</span> <span class="va">results_whole_delta</span><span class="op">)</span>,</span>
@@ -228,7 +271,8 @@
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="trans-estimation_files/figure-html/trans-estimated-dose-curve-1.png" alt="Plot of estimated doses generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
-Plot of estimated doses generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
+Plot of estimated doses generated by {biodosetools}. The grey shading
+indicates the uncertainties associated with the calibration curve.
 </p>
 </div>
 </div>

@@ -85,7 +85,8 @@
 
 
 
-<script src="dicent-estimation_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Dicentrics dose estimation</h1>
             
@@ -99,18 +100,30 @@
 <div class="section level2">
 <h2 id="load-pre-calculated-curve">Load pre-calculated curve<a class="anchor" aria-label="anchor" href="#load-pre-calculated-curve"></a>
 </h2>
-<p>The first step is to either load the pre-calculated curve in <code>.rds</code> format obtained in the dose-effect fitting module or input the curve coefficients manually in case the user wants to use a pre-existing curve calculated outside of Biodose Tools. Clicking on “Preview data” will load the curve into the app and display it on the “Results” tabbed box.</p>
+<p>The first step is to either load the pre-calculated curve in
+<code>.rds</code> format obtained in the dose-effect fitting module or
+input the curve coefficients manually in case the user wants to use a
+pre-existing curve calculated outside of Biodose Tools. Clicking on
+“Preview data” will load the curve into the app and display it on the
+“Results” tabbed box.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-dicentrics-estimate-01.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when loading curve from an `.rds` file." width="100%"><p class="caption">
-‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose estimation module when loading curve from an <code>.rds</code> file.
+‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
+estimation module when loading curve from an <code>.rds</code> file.
 </p>
 </div>
 <div class="figure">
 <img src="figures/screenshot-dicentrics-estimate-01b.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients' standard errors will be used in calculations." width="100%"><p class="caption">
-‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients’ standard errors will be used in calculations.
+‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
+estimation module when inputting curve coefficients manually. Note that
+if no variance-covariance matrix is provided, only the variances
+calculated from the coefficients’ standard errors will be used in
+calculations.
 </p>
 </div>
-<p>This step is accomplished in R by either using the results from <code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
+<p>This step is accomplished in R by either using the results from
+<code><a href="../reference/fit.html">fit()</a></code> or by loading an existing <code>.rds</code> object
+via <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"dicentrics-fitting-results.rds"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -124,21 +137,31 @@
 <div class="section level2">
 <h2 id="input-case-data">Input case data<a class="anchor" aria-label="anchor" href="#input-case-data"></a>
 </h2>
-<p>Next we can choose to either load the case data from a file (supported formats are <code>.csv</code>, <code>.dat</code>, and <code>.txt</code>) or to input the data manually. Once the table is generated and filled, the “Calculate parameters” button will calculate the total number of cells (<span class="math inline">\(N\)</span>), total number of aberrations (<span class="math inline">\(X\)</span>), as well as mean (<span class="math inline">\(\bar{y}\)</span>), standard error (<span class="math inline">\(\sigma\)</span>), dispersion index (<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
+<p>Next we can choose to either load the case data from a file
+(supported formats are <code>.csv</code>, <code>.dat</code>, and
+<code>.txt</code>) or to input the data manually. Once the table is
+generated and filled, the “Calculate parameters” button will calculate
+the total number of cells (<span class="math inline">\(N\)</span>),
+total number of aberrations (<span class="math inline">\(X\)</span>), as
+well as mean (<span class="math inline">\(\bar{y}\)</span>), standard
+error (<span class="math inline">\(\sigma\)</span>), dispersion index
+(<span class="math inline">\(\sigma^{2}/\bar{y}\)</span>), and <span class="math inline">\(u\)</span>-value.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-dicentrics-estimate-02.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module." width="100%"><p class="caption">
-‘Data input options’ and ‘Data input’ boxes in the dose estimation module.
+‘Data input options’ and ‘Data input’ boxes in the dose estimation
+module.
 </p>
 </div>
-<p>This step is accomplished in R by calling the <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
+<p>This step is accomplished in R by calling the
+<code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"cases-data-partial.csv"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/calculate_aberr_table.html">calculate_aberr_table</a></span><span class="op">(</span></span>
 <span>    type <span class="op">=</span> <span class="st">"case"</span>,</span>
-<span>    assessment_u <span class="op">=</span> <span class="fl">1</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">mean</span>, y_err <span class="op">=</span> <span class="va">std_err</span><span class="op">)</span></span></code></pre></div>
+<span>    assessment_u <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_data</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
@@ -149,7 +172,11 @@
 <div class="section level2">
 <h2 id="perform-dose-estimation">Perform dose estimation<a class="anchor" aria-label="anchor" href="#perform-dose-estimation"></a>
 </h2>
-<p>The final step is to select the dose estimation options. In the “Dose estimation options” box we can select type of exposure (acute, protracted, and highly protracted), type of assessment (whole-body, partial-body, or heterogeneous), and error methods for each type of assessment.</p>
+<p>The final step is to select the dose estimation options. In the “Dose
+estimation options” box we can select type of exposure (acute,
+protracted, and highly protracted), type of assessment (whole-body,
+partial-body, or heterogeneous), and error methods for each type of
+assessment.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-dicentrics-estimate-03.png" alt="'Dose estimation options' box in the dose estimation module." width="60%"><p class="caption">
 ‘Dose estimation options’ box in the dose estimation module.
@@ -157,14 +184,22 @@
 </div>
 <div class="figure" style="text-align: center">
 <img src="figures/screenshot-dicentrics-estimate-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Save results' boxes in the dose estimation module." width="100%"><p class="caption">
-‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose estimation module.
+‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose
+estimation module.
 </p>
 </div>
-<p>To perform the dose estimation in R we can call the adequate <code>estimate_*()</code> functions. In this example, we will use <code><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle()</a></code> and <code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>. First of all, however, we will need to load the fit coefficients and variance-covariance matrix:</p>
+<p>To perform the dose estimation in R we can call the adequate
+<code>estimate_*()</code> functions. In this example, we will use
+<code><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle()</a></code> and
+<code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>. First of all, however, we
+will need to load the fit coefficients and variance-covariance
+matrix:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_coeffs</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_coeffs"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">fit_var_cov_mat</span> <span class="op">&lt;-</span> <span class="va">fit_results</span><span class="op">[[</span><span class="st">"fit_var_cov_mat"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p>After that is done, we can simply call <code><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle()</a></code> and <code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>:</p>
+<p>After that is done, we can simply call
+<code><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle()</a></code> and
+<code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_whole_merkle</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle</a></span><span class="op">(</span></span>
 <span>  <span class="va">case_data</span>,</span>
@@ -184,7 +219,8 @@
 <span>  gamma <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">2.7</span>,</span>
 <span>  aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>To visualise the estimated doses, we call the <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
+<p>To visualise the estimated doses, we call the
+<code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve</a></span><span class="op">(</span></span>
 <span>  est_doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -199,7 +235,8 @@
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="dicent-estimation_files/figure-html/dic-estimated-dose-curve-1.png" alt="Plot of estimated doses generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
-Plot of estimated doses generated by {biodosetools}. The grey shading indicates the uncertainties associated with the calibration curve.
+Plot of estimated doses generated by {biodosetools}. The grey shading
+indicates the uncertainties associated with the calibration curve.
 </p>
 </div>
 </div>
