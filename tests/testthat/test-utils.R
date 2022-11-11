@@ -61,8 +61,9 @@ test_that("load_rmd_report works", {
   report_names <- c("estimation-report-docx.Rmd", "estimation-report-pdf.Rmd", "fitting-report-docx.Rmd", "fitting-report-pdf.Rmd")
 
   # Expected ouputs
-  expect_true(all(file.exists(sapply(report_names, load_rmd_report))))
-}
+  for (report in report_names) {
+    expect_true(file.exists(load_rmd_report(report)))
+  }
 })
 
 # Formatting fixes ----
