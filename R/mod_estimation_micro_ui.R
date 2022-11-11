@@ -366,8 +366,7 @@ mod_estimation_micro_ui <- function(id, label) {
               label = "Assessment",
               width = "175px",
               choices = list(
-                "Whole-body"    = "whole-body"
-                # "Partial-body"  = "partial-body",
+                "Whole-body" = "whole-body"
               ),
               selected = "whole-body"
             )
@@ -383,11 +382,9 @@ mod_estimation_micro_ui <- function(id, label) {
               label = "Whole-body error method",
               width = "250px",
               choices = list(
-                # "Merkle's method (83%-83%)" = "merkle-83",
-                # "Merkle's method (95%-95%)" = "merkle-95",
-                "Delta method (95%)"        = "delta"
+                "Delta method (95%)" = "delta"
               ),
-              selected = "merkle-83"
+              selected = "delta"
             )
           ),
           widget_sep(),
