@@ -55,7 +55,6 @@ reference:
   - R_factor
   - biodosetools
   - calculate_aberr
-  - calculate_decision_threshold
   - calculate_model_stats
   - calculate_yield
   - calculate_yield_infimum
