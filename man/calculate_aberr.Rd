@@ -20,7 +20,11 @@ calculate_aberr_disp_index(mean, var)
 
 calculate_aberr_u_value(X, N, mean, var, assessment_u = 1)
 
-init_aberr_table(data, type = c("count", "case"), aberr_module)
+init_aberr_table(
+  data,
+  type = c("count", "case"),
+  aberr_module = c("dicentrics", "translocations", "micronuclei")
+)
 }
 \arguments{
 \item{data}{Count or case data.}

@@ -12,7 +12,7 @@ estimate_whole_body_merkle(
   conf_int_curve = 0.83,
   protracted_g_value = 1,
   genome_factor = 1,
-  aberr_module
+  aberr_module = c("dicentrics", "translocations", "micronuclei")
 )
 }
 \arguments{

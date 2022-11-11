@@ -9,7 +9,7 @@ fit(
   model_formula,
   model_family,
   fit_link = "identity",
-  aberr_module,
+  aberr_module = c("dicentrics", "translocations", "micronuclei"),
   algorithm = c("glm", "maxlik")
 )
 }

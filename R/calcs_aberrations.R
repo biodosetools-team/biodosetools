@@ -69,9 +69,10 @@ calculate_aberr_u_value <- function(X, N, mean, var, assessment_u = 1) {
 
 #' @rdname calculate_aberr
 #' @importFrom rlang .data
-init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
+init_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("dicentrics", "translocations", "micronuclei")) {
   # Validate parameters
   type <- match.arg(type)
+  aberr_module <- match.arg(aberr_module)
 
   if (type == "count") {
     data <- data %>%
@@ -152,6 +153,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module) {
 calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("dicentrics", "translocations", "micronuclei"), assessment_u = 1) {
   # Validate parameters
   type <- match.arg(type)
+  aberr_module <- match.arg(aberr_module)
 
   if (type == "count") {
     data <- data %>%
@@ -195,24 +197,24 @@ calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module 
       dplyr::select(-"X2", -"var") %>%
       dplyr::select("N", "X", dplyr::everything())
 
-      # Rename mean and std_err columns
-      if (aberr_module %in% c("dicentrics", "micronuclei")) {
-        data <- data %>%
-          dplyr::select(
-            "N", "X",
-            "C0", "C1", "C2", "C3", "C4", "C5",
-            "y" = "mean", "y_err" = "std_err",
-            "DI", "u"
-          )
-      } else if (aberr_module == "translocations") {
-        data <- data %>%
-          dplyr::select(
-            "N", "X",
-            "C0", "C1", "C2", "C3", "C4", "C5",
-            "Fp" = "mean", "Fp_err" = "std_err",
-            "DI", "u"
-          )
-      }
+    # Rename mean and std_err columns
+    if (aberr_module %in% c("dicentrics", "micronuclei")) {
+      data <- data %>%
+        dplyr::select(
+          "N", "X",
+          "C0", "C1", "C2", "C3", "C4", "C5",
+          "y" = "mean", "y_err" = "std_err",
+          "DI", "u"
+        )
+    } else if (aberr_module == "translocations") {
+      data <- data %>%
+        dplyr::select(
+          "N", "X",
+          "C0", "C1", "C2", "C3", "C4", "C5",
+          "Fp" = "mean", "Fp_err" = "std_err",
+          "DI", "u"
+        )
+    }
   }
 
   return(data)

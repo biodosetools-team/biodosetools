@@ -4,12 +4,19 @@
 \alias{calculate_aberr_table}
 \title{Calculate aberrations table}
 \usage{
-calculate_aberr_table(data, type = c("count", "case"), assessment_u = 1)
+calculate_aberr_table(
+  data,
+  type = c("count", "case"),
+  aberr_module = c("dicentrics", "translocations", "micronuclei"),
+  assessment_u = 1
+)
 }
 \arguments{
 \item{data}{Count or case data.}
 
 \item{type}{Type of input data. Either "count" and "case".}
+
+\item{aberr_module}{Aberration module.}
 
 \item{assessment_u}{Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.}
 }

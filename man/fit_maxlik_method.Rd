@@ -9,7 +9,7 @@ fit_maxlik_method(
   model_formula,
   model_family = c("automatic", "poisson", "quasipoisson", "nb2"),
   fit_link,
-  aberr_module
+  aberr_module = c("dicentrics", "translocations", "micronuclei")
 )
 }
 \arguments{

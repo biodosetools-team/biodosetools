@@ -10,7 +10,7 @@ estimate_whole_body_delta(
   fit_var_cov_mat,
   conf_int = 0.95,
   protracted_g_value = 1,
-  aberr_module
+  aberr_module = c("dicentrics", "translocations", "micronuclei")
 )
 }
 \arguments{

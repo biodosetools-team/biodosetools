@@ -124,7 +124,10 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
 #'
 #' @return Data frame of parsed count data.
 #' @importFrom rlang .data
-prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
+prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module = c("dicentrics", "translocations", "micronuclei")) {
+  # Validate parameters
+  aberr_module <- match.arg(aberr_module)
+
   if (ncol(count_data) > 3 & aberr_module != "translocations") {
     # Full distribution data
     dose_vec <- rep(
@@ -192,9 +195,12 @@ prepare_maxlik_count_data <- function(count_data, model_formula, aberr_module) {
 #' @param aberr_module Aberration module.
 #'
 #' @return List object containing GLM fit results.
-fit_glm_method <- function(count_data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity", aberr_module) {
+fit_glm_method <- function(count_data, model_formula,
+                           model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link = "identity",
+                           aberr_module = c("dicentrics", "translocations", "micronuclei")) {
   # Validate parameters
   model_family <- match.arg(model_family)
+  aberr_module <- match.arg(aberr_module)
 
   # Store fit algorithm as a string
   fit_algorithm <- "glm"
@@ -365,9 +371,12 @@ fit_glm_method <- function(count_data, model_formula, model_family = c("automati
 #' @param aberr_module Aberration module.
 #'
 #' @return List object containing maxLik fit results.
-fit_maxlik_method <- function(data, model_formula, model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link, aberr_module) {
+fit_maxlik_method <- function(data, model_formula,
+                              model_family = c("automatic", "poisson", "quasipoisson", "nb2"), fit_link,
+                              aberr_module = c("dicentrics", "translocations", "micronuclei")) {
   # Validate parameters
   model_family <- match.arg(model_family)
+  aberr_module <- match.arg(aberr_module)
 
   # Store fit algorithm as a string
   fit_algorithm <- "constraint-maxlik-optimization"
@@ -620,9 +629,13 @@ fit_maxlik_method <- function(data, model_formula, model_family = c("automatic",
 #'
 #' @return List object containing fit results either using GLM or maxLik optimization.
 #' @export
-fit <- function(count_data, model_formula, model_family, fit_link = "identity", aberr_module, algorithm = c("glm", "maxlik")) {
+fit <- function(count_data, model_formula,
+                model_family, fit_link = "identity",
+                aberr_module = c("dicentrics", "translocations", "micronuclei"),
+                algorithm = c("glm", "maxlik")) {
   # Validate parameters
   algorithm <- match.arg(algorithm)
+  aberr_module <- match.arg(aberr_module)
 
   if (algorithm == "maxlik") {
     # Perform fitting via maxlik method

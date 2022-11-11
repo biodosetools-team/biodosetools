@@ -53,7 +53,11 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @export
 estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                        conf_int_yield = 0.83, conf_int_curve = 0.83,
-                                       protracted_g_value = 1, genome_factor = 1, aberr_module) {
+                                       protracted_g_value = 1, genome_factor = 1,
+                                       aberr_module = c("dicentrics", "translocations", "micronuclei")) {
+  # Validate parameters
+  aberr_module <- match.arg(aberr_module)
+
   # Parse aberrations and cells
   aberr <- case_data[["X"]]
   cells <- case_data[["N"]]
@@ -163,7 +167,11 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @return List containing estimated doses data frame and AIC.
 #' @export
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
-                                      conf_int = 0.95, protracted_g_value = 1, aberr_module) {
+                                      conf_int = 0.95, protracted_g_value = 1,
+                                      aberr_module = c("dicentrics", "translocations", "micronuclei")) {
+  # Validate parameters
+  aberr_module <- match.arg(aberr_module)
+
   # Parse parameters and coefficients
   if (aberr_module %in% c("dicentrics", "micronuclei")) {
     lambda_est <- case_data[["y"]]
@@ -293,7 +301,11 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @export
 estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,
-                                          genome_factor = 1, gamma, aberr_module) {
+                                          genome_factor = 1, gamma,
+                                          aberr_module = c("dicentrics", "translocations", "micronuclei")) {
+  # Validate parameters
+  aberr_module <- match.arg(aberr_module)
+
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
     # For the parameters of a ZIP distribution (lambda and pi) where 1-p is the fraction of extra zeros

@@ -12,7 +12,7 @@ estimate_partial_body_dolphin(
   protracted_g_value = 1,
   genome_factor = 1,
   gamma,
-  aberr_module
+  aberr_module = c("dicentrics", "translocations", "micronuclei")
 )
 }
 \arguments{
