@@ -5,7 +5,7 @@
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
 [![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable-1)
-[![R-CMD-check](https://github.com/biodosetools-team/biodosetools/workflows/R-CMD-check/badge.svg)](https://github.com/biodosetools-team/biodosetools/actions)
+[![R-CMD-check](https://github.com/biodosetools-team/biodosetools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/biodosetools-team/biodosetools/actions/workflows/R-CMD-check.yaml)
 [![pkgdown Workflow
 Status](https://github.com/biodosetools-team/biodosetools/workflows/pkgdown/badge.svg)](https://biodosetools-team.github.io/biodosetools/)
 [![Codecov test
