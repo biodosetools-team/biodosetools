@@ -512,9 +512,9 @@ mod_estimation_trans_ui <- function(id, label) {
                 width = "150px",
                 choices = list(
                   "Ethnicities" = c(
-                    "White"  = "white",
-                    "Asian"  = "asian",
-                    "Black"  = "black",
+                    "White" = "white",
+                    "Asian" = "asian",
+                    "Black" = "black",
                     "Other" = "other"
                   ),
                   "None" = c(

@@ -63,7 +63,7 @@ test_that("load_rmd_report works", {
   # Expected ouputs
   expect_true(all(file.exists(sapply(report_names, load_rmd_report))))
 }
-)
+})
 
 # Formatting fixes ----
 

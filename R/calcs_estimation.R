@@ -10,7 +10,6 @@
 #'
 #' @return Numeric value of AIC.
 AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var = "yield", fit_link = "identity") {
-
   # Manual log-likelihood function
   loglik_from_data <- function(data, fit_link) {
     if (fit_link == "identity") {
@@ -295,7 +294,6 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,
                                           genome_factor = 1, gamma, aberr_module) {
-
   # Function to get the fisher information matrix
   get_cov_ZIP_ML <- function(lambda, pi, cells) {
     # For the parameters of a ZIP distribution (lambda and pi) where 1-p is the fraction of extra zeros

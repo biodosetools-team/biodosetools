@@ -351,7 +351,7 @@ mod_estimation_dicent_ui <- function(id, label) {
               label = "Exposure",
               width = "175px",
               choices = list(
-                "Acute"      = "acute",
+                "Acute" = "acute",
                 "Protracted" = "protracted",
                 "Highly protracted" = "protracted_high"
               ),

@@ -349,7 +349,7 @@ mod_estimation_micro_ui <- function(id, label) {
               label = "Exposure",
               width = "175px",
               choices = list(
-                "Acute"      = "acute",
+                "Acute" = "acute",
                 "Protracted" = "protracted",
                 "Highly protracted" = "protracted_high"
               ),
