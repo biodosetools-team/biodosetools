@@ -1,19 +1,49 @@
-# biodosetools 3.6.0.9000
+# biodosetools 3.6.1
+
+* Removed {pkgload} and {htmltools} as package dependencies.
+* Server modules now use `moduleServer()`, as recommended in {shiny} >= 1.5.0 (see https://shiny.rstudio.com/articles/modules.html).
+* Updated `golem_utils_ui.R` and related unit tests to match {golem} 0.3.x (see https://github.com/ThinkR-open/golem/commit/61b9063f65006bc9b15dd2f1e535466c45d25424).
+* Updated CITATION file.
+* Updated vignettes.
 
 ## Improvements
 
 * Updated LQ and L formulas to use lambda instead of Y for yield in `parse_model_formula()`, `list_fitting_formulas()`, and help dialogues.
 * Removed unnecessary {base} namespace in `solve()` call.
 * Removed legacy `gardner_confidence_table` data (deprecated in [585e7b4](https://github.com/biodosetools-team/biodosetools/commit/585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28)).
-* Removed unused files in `data-raw`.
 * Updated `get_cov_ZIP_ML()` to match expressions on manuscript, introducing minor calculation optimisation.
-* Updated CITATION file.
-* Updated vignettes.
+* Improved `fit_maxlik_method()` by removing unused local variables and redundant calls.
+* Switched `message()` to `cli::cli_alert_warning()` in `fit()` function when switching from `glm()` to ML optimization.
+* Updated `match_names()` to return input `x`, akin to `match.arg()` from {base}.
+* Updated default values for assessment and whole-body error method selection in `mod_estimation_micro_ui()`.
+* Added `mean` and `std_err` column renaming to `calculate_aberr_table()` when `type = "case"` depending on new `aberr_module` parameter.
+* Added `aberr_module` validation using `match.arg()` in `*_aberr_table()`, `estimate_*()`, `prepare_maxlik_count_data()`, `fit*()` functions.
+* Updated unit tests for `names_from_model_formula()` and `parse_model_formula()`.
+* Updated `app_config.R` and `test-golem-recommended.R` unit tests.
+* Added unit test for `load_rmd_report()`.
+* Added basic `testServer()` unit tests for all `mod_*_server()` modules.
+
+## UI Improvements
+
+* Updated "Irradiation conditions" boxes so they are no longer collapsed by default in `mod_fitting_*_ui.R` modules.
 
 ## Bug fixes
 
 * Return case data `as_tibble()` in `calculate_aberr_table()` for consistency with count data.
 * Minor formatting fix in `cli::cli_alert_info()` call.
+* Fixed `pi_estimate` value in `est_metaphases_frac` data frame in `estimate_partial_body_dolphin()`, as pointed out by Gaëtan.
+* Fixed issue with `match_names()` not correctly stopping, and added unit tests for it.
+* Fixed misconstructed column selection in `calculate_aberr_table()` when `type = "case"`.
+* Added `est_metaphases_frac` data frame to explicitly return `f (1 - pi_est)` in `estimate_partial_body_dolphin()` (closes #29).
+* Updated deprecated `.data` calls inside {tidyselect} selections (see https://www.tidyverse.org/blog/2022/10/tidyselect-1-2-0/).
+
+## Deprecations
+
+* Removed unused files in `data-raw`.
+* Deprecated `model_formula` with no intercept in `parse_model_formula()`, `names_from_model_formula()`, `prepare_maxlik_count_data()`, `fit_maxlik_method()`, and `mod_estimation_fit_curve_hot_server()`.
+* Removed `golem_utils_server.R`.
+* Purged `calculate_decision_threshold*()` functions and mentions in UI and server modules, as this will be rewritten from scratch.
+* Removed `calculate_decision_threshold` from `_pkgdown.yml`.
 
 # biodosetools 3.6.0
 
