@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,21 +57,50 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="3.6.0.9000" id="biodosetools-3609000">biodosetools 3.6.0.9000<a class="anchor" aria-label="anchor" href="#biodosetools-3609000"></a></h2>
-<div class="section level3">
-<h3 id="improvements-3-6-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-6-0-9000"></a></h3>
+<h2 class="pkg-version" data-toc-text="3.6.1" id="biodosetools-361">biodosetools 3.6.1<a class="anchor" aria-label="anchor" href="#biodosetools-361"></a></h2>
+<ul><li>Removed {pkgload} and {htmltools} as package dependencies.</li>
+<li>Server modules now use <code>moduleServer()</code>, as recommended in {shiny} &gt;= 1.5.0 (see <a href="https://shiny.rstudio.com/articles/modules.html" class="external-link uri">https://shiny.rstudio.com/articles/modules.html</a>).</li>
+<li>Updated <code>golem_utils_ui.R</code> and related unit tests to match {golem} 0.3.x (see <a href="https://github.com/ThinkR-open/golem/commit/61b9063f65006bc9b15dd2f1e535466c45d25424" class="external-link uri">https://github.com/ThinkR-open/golem/commit/61b9063f65006bc9b15dd2f1e535466c45d25424</a>).</li>
+<li>Updated CITATION file.</li>
+<li>Updated vignettes.</li>
+</ul><div class="section level3">
+<h3 id="improvements-3-6-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-3-6-1"></a></h3>
 <ul><li>Updated LQ and L formulas to use lambda instead of Y for yield in <code>parse_model_formula()</code>, <code>list_fitting_formulas()</code>, and help dialogues.</li>
 <li>Removed unnecessary {base} namespace in <code><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve()</a></code> call.</li>
 <li>Removed legacy <code>gardner_confidence_table</code> data (deprecated in <a href="https://github.com/biodosetools-team/biodosetools/commit/585e7b4b6f42e66965e3b0f6a271dbaea7b7cf28" class="external-link">585e7b4</a>).</li>
-<li>Removed unused files in <code>data-raw</code>.</li>
 <li>Updated <code>get_cov_ZIP_ML()</code> to match expressions on manuscript, introducing minor calculation optimisation.</li>
-<li>Updated CITATION file.</li>
-<li>Updated vignettes.</li>
+<li>Improved <code><a href="../reference/fit_maxlik_method.html">fit_maxlik_method()</a></code> by removing unused local variables and redundant calls.</li>
+<li>Switched <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> to <code><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli::cli_alert_warning()</a></code> in <code><a href="../reference/fit.html">fit()</a></code> function when switching from <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> to ML optimization.</li>
+<li>Updated <code>match_names()</code> to return input <code>x</code>, akin to <code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg()</a></code> from {base}.</li>
+<li>Updated default values for assessment and whole-body error method selection in <code>mod_estimation_micro_ui()</code>.</li>
+<li>Added <code>mean</code> and <code>std_err</code> column renaming to <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> when <code>type = "case"</code> depending on new <code>aberr_module</code> parameter.</li>
+<li>Added <code>aberr_module</code> validation using <code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg()</a></code> in <code>*_aberr_table()</code>, <code>estimate_*()</code>, <code><a href="../reference/prepare_maxlik_count_data.html">prepare_maxlik_count_data()</a></code>, <code>fit*()</code> functions.</li>
+<li>Updated unit tests for <code>names_from_model_formula()</code> and <code>parse_model_formula()</code>.</li>
+<li>Updated <code>app_config.R</code> and <code>test-golem-recommended.R</code> unit tests.</li>
+<li>Added unit test for <code><a href="../reference/load_rmd_report.html">load_rmd_report()</a></code>.</li>
+<li>Added basic <code>testServer()</code> unit tests for all <code>mod_*_server()</code> modules.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-3-6-0-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-6-0-9000"></a></h3>
+<h3 id="ui-improvements-3-6-1">UI Improvements<a class="anchor" aria-label="anchor" href="#ui-improvements-3-6-1"></a></h3>
+<ul><li>Updated “Irradiation conditions” boxes so they are no longer collapsed by default in <code>mod_fitting_*_ui.R</code> modules.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-3-6-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-6-1"></a></h3>
 <ul><li>Return case data <code>as_tibble()</code> in <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> for consistency with count data.</li>
 <li>Minor formatting fix in <code><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli::cli_alert_info()</a></code> call.</li>
+<li>Fixed <code>pi_estimate</code> value in <code>est_metaphases_frac</code> data frame in <code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>, as pointed out by Gaëtan.</li>
+<li>Fixed issue with <code>match_names()</code> not correctly stopping, and added unit tests for it.</li>
+<li>Fixed misconstructed column selection in <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> when <code>type = "case"</code>.</li>
+<li>Added <code>est_metaphases_frac</code> data frame to explicitly return <code>f (1 - pi_est)</code> in <code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code> (closes <a href="https://github.com/biodosetools-team/biodosetools/issues/29" class="external-link">#29</a>).</li>
+<li>Updated deprecated <code>.data</code> calls inside {tidyselect} selections (see <a href="https://www.tidyverse.org/blog/2022/10/tidyselect-1-2-0/" class="external-link uri">https://www.tidyverse.org/blog/2022/10/tidyselect-1-2-0/</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="deprecations-3-6-1">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-3-6-1"></a></h3>
+<ul><li>Removed unused files in <code>data-raw</code>.</li>
+<li>Deprecated <code>model_formula</code> with no intercept in <code>parse_model_formula()</code>, <code>names_from_model_formula()</code>, <code><a href="../reference/prepare_maxlik_count_data.html">prepare_maxlik_count_data()</a></code>, <code><a href="../reference/fit_maxlik_method.html">fit_maxlik_method()</a></code>, and <code>mod_estimation_fit_curve_hot_server()</code>.</li>
+<li>Removed <code>golem_utils_server.R</code>.</li>
+<li>Purged <code>calculate_decision_threshold*()</code> functions and mentions in UI and server modules, as this will be rewritten from scratch.</li>
+<li>Removed <code>calculate_decision_threshold</code> from <code>_pkgdown.yml</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">
