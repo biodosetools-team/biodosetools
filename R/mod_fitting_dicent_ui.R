@@ -193,7 +193,6 @@ mod_fitting_dicent_ui <- function(id, label) {
         title = "Irradiation conditions",
         status = "primary",
         collapsible = TRUE,
-        collapsed = TRUE,
         col_6(
           class = "col-inner-textinput-left",
           textInput(
