@@ -16,7 +16,7 @@ calculate_aberr_table(
 
 \item{type}{Type of input data. Either "count" and "case".}
 
-\item{aberr_module}{Aberration module.}
+\item{aberr_module}{Aberration module, required for \code{type = "case"}.}
 
 \item{assessment_u}{Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.}
 }

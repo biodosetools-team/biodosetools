@@ -27,7 +27,7 @@ estimate_whole_body_delta(
 \item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame and AIC.
+List containing estimated doses data frame, AIC, and \code{conf_int} used.
 }
 \description{
 Method based on 2001 manual by the International Atomic Energy Agency (IAEA).

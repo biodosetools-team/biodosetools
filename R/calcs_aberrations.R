@@ -143,7 +143,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("
 #' @param data Count or case data.
 #' @param type Type of input data. Either "count" and "case".
 #' @param assessment_u Expected \eqn{u}-value of the assessment. For a Poisson distribution this should be unity.
-#' @param aberr_module Aberration module.
+#' @param aberr_module Aberration module, required for \code{type = "case"}.
 #'
 #' @return Data frame containing cell count (\eqn{N}), aberrations (\eqn{X}),
 #' and other coefficients (dispersion index, \eqn{u}-value, ...), as well as

@@ -33,7 +33,7 @@ estimate_whole_body_merkle(
 \item{aberr_module}{Aberration module.}
 }
 \value{
-List containing estimated doses data frame and AIC.
+List containing estimated doses data frame, AIC, and \code{conf_int_*} used.
 }
 \description{
 Method based on the paper by Merkle, W. (1983). Statistical methods in

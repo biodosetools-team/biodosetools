@@ -30,9 +30,9 @@ estimate_hetero_mixed_poisson(
 \item{gamma_error}{Error of the survival coefficient of irradiated cells.}
 }
 \value{
-List containing estimated mixing proportions data frame, estimated
-yields data frame, estimated doses data frame, estimated fraction of
-irradiated blood data frame, and AIC.
+List containing estimated mixing proportions data frame, estimated yields data
+frame, estimated doses data frame, estimated fraction of irradiated blood data frame,
+AIC, and \code{conf_int_*} used.
 }
 \description{
 Method based on the paper by Pujol, M. et al. (2016). A New Model for

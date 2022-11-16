@@ -49,7 +49,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param genome_factor Genomic conversion factor used in translocations, else 1.
 #' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame and AIC.
+#' @return List containing estimated doses data frame, AIC, and \code{conf_int_*} used.
 #' @export
 estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                        conf_int_yield = 0.83, conf_int_curve = 0.83,
@@ -164,7 +164,7 @@ estimate_whole_body_merkle <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param protracted_g_value Protracted \eqn{G(x)} value.
 #' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame and AIC.
+#' @return List containing estimated doses data frame, AIC, and \code{conf_int} used.
 #' @export
 estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                       conf_int = 0.95, protracted_g_value = 1,
@@ -296,8 +296,9 @@ estimate_whole_body_delta <- function(case_data, fit_coeffs, fit_var_cov_mat,
 #' @param gamma Survival coefficient of irradiated cells.
 #' @param aberr_module Aberration module.
 #'
-#' @return List containing estimated doses data frame, estimated fraction of
-#' irradiated blood data frame, and AIC.
+#' @return List containing estimated doses data frame, observed fraction of cells scored
+#' which were irradiated, estimated fraction of irradiated blood data frame, AIC, and
+#' \code{conf_int_*} used.
 #' @export
 estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,
@@ -488,9 +489,9 @@ estimate_partial_body_dolphin <- function(case_data, fit_coeffs, fit_var_cov_mat
 #' @param gamma Survival coefficient of irradiated cells.
 #' @param gamma_error Error of the survival coefficient of irradiated cells.
 #'
-#' @return List containing estimated mixing proportions data frame, estimated
-#' yields data frame, estimated doses data frame, estimated fraction of
-#' irradiated blood data frame, and AIC.
+#' @return List containing estimated mixing proportions data frame, estimated yields data
+#' frame, estimated doses data frame, estimated fraction of irradiated blood data frame,
+#' AIC, and \code{conf_int_*} used.
 #' @export
 estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,
