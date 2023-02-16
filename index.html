@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="A tool to perform all different statistical tests and calculations
-    needed by Biological Dosimetry Laboratories.">
+    needed by Biological Dosimetry Laboratories. Detailed documentation is
+    available in &lt;https://biodosetools-team.github.io/documentation/&gt; and the
+    paper by Hernández et al. (2023) &lt;doi:10.1080/09553002.2023.2176564&gt;.">
 <title>Biodose Tools • biodosetools</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -15,16 +17,18 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="deps/Nunito_Sans-0.4.2/font.css" rel="stylesheet">
-<link href="deps/Fira_Code-0.4.2/font.css" rel="stylesheet">
-<link href="deps/Nunito-0.4.2/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="deps/Nunito_Sans-0.4.5/font.css" rel="stylesheet">
+<link href="deps/Fira_Code-0.4.5/font.css" rel="stylesheet">
+<link href="deps/Nunito-0.4.5/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Biodose Tools">
 <meta property="og:description" content="A tool to perform all different statistical tests and calculations
-    needed by Biological Dosimetry Laboratories.">
+    needed by Biological Dosimetry Laboratories. Detailed documentation is
+    available in &lt;https://biodosetools-team.github.io/documentation/&gt; and the
+    paper by Hernández et al. (2023) &lt;doi:10.1080/09553002.2023.2176564&gt;.">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -39,7 +43,7 @@
     
     <a class="navbar-brand me-2" href="index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +99,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Biodose Tools is an open source project that aims to be a tool to perform all different tests and calculations needed by biological dosimetry laboratories. The app is developed using the <a href="https://www.r-project.org/about.html" class="external-link">R</a> programming language and <a href="https://shiny.rstudio.com/" class="external-link">Shiny</a> as a framework to offer an online, easy-to-use solution. Although the intention is to provide the application as a website, all R routines are available as an R package, which can be downloaded for improvement or personal use.</p>
+<p>Biodose Tools (<a href="https://doi.org/10.1080/09553002.2023.2176564" class="external-link">Hernández et al. 2023</a>) is an open source project that aims to be a tool to perform all different tests and calculations needed by biological dosimetry laboratories. The app is developed using the <a href="https://www.r-project.org/about.html" class="external-link">R</a> programming language and <a href="https://shiny.rstudio.com/" class="external-link">Shiny</a> as a framework to offer an online, easy-to-use solution. Although the intention is to provide the application as a website, all R routines are available as an R package, which can be downloaded for improvement or personal use.</p>
 <p>We also aim to clarify and explain the tests used and to propose those considered most appropriate. Each laboratory in its routine work should choose the most suitable method, but the project aims to reach a consensus that will help us in case of mutual assistance or intercomparisons.</p>
 <p>The project is initially developed by <a href="https://www.reneb.net/" class="external-link">RENEB</a> association, but contributions are always welcome.</p>
 </div>
@@ -116,23 +120,28 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://biodosetools-team.github.io/biodosetools/" class="external-link">biodosetools</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Detailed examples using {biodosetools}’s Shiny user interface as well as its R API to perform dose-effect fitting and dose estimation for the dicentric and translocation assays are available on <a href="https://biodosetools-team.github.io/biodosetools/" class="external-link uri">https://biodosetools-team.github.io/biodosetools/</a> under the Articles section.</p>
+<p>Detailed examples using {biodosetools}’s Shiny user interface as well as its R API to perform dose-effect fitting and dose estimation for the dicentric and translocation assays are available on <a href="https://biodosetools-team.github.io/documentation/" class="external-link uri">https://biodosetools-team.github.io/documentation/</a> in the “Using Biodose Tools” chapters.</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <p>If you use data, results or conclusion from this work, please cite:</p>
 <blockquote>
-<p>A. Hernández, D. Endesfelder, J. Einbeck, P. Puig, A. Benadjaoud, M. Higueras, E. Ainsbury, G. Gruel, U. Oestreicher, L. Barrios &amp; J. F. Barquinero (2022). Biodose Tools: An R Shiny Application for Biological Dosimetry. URL <a href="https://biodosetools-team.github.io/biodosetools/" class="external-link uri">https://biodosetools-team.github.io/biodosetools/</a></p>
+<p>Hernández, A., Endesfelder, D., Einbeck, J., Puig, P., Benadjaoud, M. A., Higueras, M., Ainsbury, E., Gruel, G., Oestreicher, U., Barrios, L., &amp; Barquinero, J. F. (2023). Biodose Tools: an R shiny application for biological dosimetry. International Journal of Radiation Biology, 1-13. <a href="https://doi.org/10.1080/09553002.2023.2176564" class="external-link uri">https://doi.org/10.1080/09553002.2023.2176564</a></p>
 </blockquote>
 <p>A BibTeX entry for LaTeX users is:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bib"><code class="sourceCode bibtex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">@Unpublished</span>{,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Manuscript under construction},</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pedro Puig and Mohamed Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ursula Oestreicher and Leonardo Barrios and Joan Francesc Barquinero},</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Biodose Tools: An R Shiny Application for Biological Dosimetry},</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2022},</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://biodosetools-team.github.io/biodosetools/},</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bib"><code class="sourceCode bibtex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">BiodoseTools2023</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>        = {Alfredo Hern{'{a}}ndez and David Endesfelder and Jochen Einbeck and Pedro Puig and Mohamed Amine Benadjaoud and Manuel Higueras and Elizabeth Ainsbury and Ga{"{e}}tan Gruel and Ursula Oestreicher and Leonardo Barrios and Joan Francesc Barquinero},</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>         = {{Biodose Tools: an R shiny application for biological dosimetry}},</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span>       = {International Journal of Radiation Biology},</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pages</span>         = {1-13},</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>          = {2023},</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span>     = {Taylor &amp; Francis},</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span>           = {10.1080/09553002.2023.2176564},</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span>          = {PMID: 36731491},</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">URL</span>           = {https://doi.org/10.1080/09553002.2023.2176564},</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">eprint</span>        = {https://doi.org/10.1080/09553002.2023.2176564}</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -179,6 +188,7 @@
 <li><a href="https://github.com/biodosetools-team/biodosetools/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/biodosetools-team/biodosetools/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://biodosetools-team.github.io/biodosetools/" class="external-link"><img src="https://github.com/biodosetools-team/biodosetools/workflows/pkgdown/badge.svg" alt="pkgdown Workflow Status"></a></li>
 <li><a href="https://app.codecov.io/gh/biodosetools-team/biodosetools?branch=master" class="external-link"><img src="https://codecov.io/gh/biodosetools-team/biodosetools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://doi.org/10.1080/09553002.2023.2176564" class="external-link"><img src="https://img.shields.io/badge/DOI-10.1080%2F09553002.2023.2176564-blue" alt="doi"></a></li>
 </ul>
 </div>
 
@@ -193,7 +203,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
