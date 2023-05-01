@@ -2,7 +2,7 @@ R
 data
 inst
 man
-app.R
+dev/shiny-dev/app.R
 CONTRIBUTORS.md
 LICENSE.md
 NEWS.md
