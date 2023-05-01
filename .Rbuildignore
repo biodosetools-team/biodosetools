@@ -3,7 +3,6 @@
 ^\.github$
 ^.*\.Rproj$
 ^data-raw$
-dev_history.R
 ^dev$
 $run_dev.*
 ^LICENSE\.md$
@@ -13,9 +12,6 @@ $run_dev.*
 ^docs$
 ^pkgdown$
 ^rsconnect$
-
-^git-history\.txt$
-^app\.R$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^\.lintr$
