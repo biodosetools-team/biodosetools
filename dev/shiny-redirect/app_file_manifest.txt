@@ -1,4 +1,5 @@
 dev/shiny-redirect/app.R
 dev/shiny-redirect/www/include.html
+dev/shiny-redirect/www/favicon.png
 CONTRIBUTORS.md
 LICENSE.md
