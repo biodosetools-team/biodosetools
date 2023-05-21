@@ -6,6 +6,7 @@ addResourcePath("www", here::here("dev/shiny-redirect/www"))
 ui <- fluidPage(
   # Favicon
   tags$head(tags$link(rel = "shortcut icon", href = "www/favicon.png")),
+  tags$link(rel = "stylesheet", type="text/css", href="www/style.css"),
 
   # Page title
   title = "Biodose Tools",
