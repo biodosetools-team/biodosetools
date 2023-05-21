@@ -5,14 +5,12 @@ addResourcePath("www", here::here("dev/shiny-redirect/www"))
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   # Favicon
+  tags$head(tags$meta(`http-equiv`="refresh", content="10;URL=https://biodosetools.reneb.bfs.de/")),
   tags$head(tags$link(rel = "shortcut icon", href = "www/favicon.png")),
   tags$link(rel = "stylesheet", type="text/css", href="www/style.css"),
 
   # Page title
   title = "Biodose Tools",
-
-  # Application title
-  # titlePanel("Biodose Tools"),
 
   # Contents
   fluidRow(
