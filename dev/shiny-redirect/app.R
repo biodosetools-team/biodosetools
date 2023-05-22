@@ -5,7 +5,7 @@ addResourcePath("www", here::here("dev/shiny-redirect/www"))
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   # Favicon
-  tags$head(tags$meta(`http-equiv`="refresh", content="10;URL=https://biodosetools.reneb.bfs.de/")),
+  tags$head(tags$meta(`http-equiv` = "refresh", content = "60;URL=https://biodosetools.reneb.bfs.de/")),
   tags$head(tags$link(rel = "shortcut icon", href = "www/favicon.png")),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "www/style.css")),
 
@@ -14,7 +14,33 @@ ui <- fluidPage(
 
   # Contents
   fluidRow(
-    column(12, includeHTML(here::here("dev/shiny-redirect/www/include.html")))
+    column(
+      12,
+      div(
+        class = "container",
+        # Logo
+        div(
+          class = "header",
+          img(src = "www/biodosetools_logo.svg", alt = "Biodose Tools Logo"),
+          h1("Biodose Tools")
+        ),
+        # Test
+        br(),
+        div(
+          class = "content",
+          p(
+            "Biodose Tools is now hosted by RENEB member",
+            a(href = "https://www.bfs.de/EN/home/home_node.html", "Bundesamt für Strahlenschutz"),
+            "."
+          ),
+          p(
+            "You will be redirected in 10 seconds, if nothing happens, please follow this link",
+            a(href = "https://biodosetools.reneb.bfs.de", "https://biodosetools.reneb.bfs.de"),
+            "."
+          )
+        )
+      )
+    )
   )
 )
 

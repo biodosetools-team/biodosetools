@@ -1,5 +1,6 @@
 dev/shiny-redirect/app.R
-dev/shiny-redirect/www/include.html
 dev/shiny-redirect/www/favicon.png
+dev/shiny-redirect/www/biodosetools_logo.svg
+dev/shiny-redirect/www/style.css
 CONTRIBUTORS.md
 LICENSE.md
