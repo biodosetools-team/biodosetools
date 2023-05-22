@@ -9,6 +9,18 @@ h1 {
   font-family: 'Roboto Condensed', sans-serif;
 }
 
+.container {
+  width: 50%;
+  height: 100px;
+  margin-left: 25%;
+  margin-top: 50px;
+}
+
+.header {
+  display: flex;
+  align-items:center;
+}
+
 .header img {
   float: left;
   width: 64px;
@@ -17,11 +29,11 @@ h1 {
 
 .header h1 {
   position: relative;
-  top: 18px;
-  left: 10px;
+  vertical-align: middle;
+  margin: 0;
+  left: 15px;
 }
 
 .content {
-  flat: left;
-  margin-top: 15px;
+  float: left;
 }
