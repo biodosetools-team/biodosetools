@@ -1,3 +1,9 @@
+# biodosetools (development version)
+
+* Updated citation details for {biodosetools} after publication in Int J Radiat Biol (doi:10.1080/09553002.2023.2176564).
+* Improvements in `deploy-shiny.yml` CI workflow.
+* Added `dev/shiny-redirect` shiny app to redirect `biodosetools-v3` at shinyapps.io to version hosted by Bundesamt für Strahlenschutz.
+
 # biodosetools 3.6.1
 
 * Removed {pkgload} and {htmltools} as package dependencies.
