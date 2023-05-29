@@ -2,6 +2,7 @@
 
 export("%>%")
 export(calculate_aberr_table)
+export(calculate_characteristic_limits)
 export(calculate_genome_factor)
 export(calculate_trans_rate_manual)
 export(calculate_trans_rate_sigurdson)
