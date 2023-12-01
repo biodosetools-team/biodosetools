@@ -15,11 +15,11 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
     if (fit_link == "identity") {
       loglik <- -yield_fun(data[[dose_var]], general_fit_coeffs, 1) +
         log(yield_fun(data[[dose_var]], general_fit_coeffs, 1)) * data[[yield_var]] -
-        log(factorial(data[[yield_var]]))
+        lfactorial(data[[yield_var]])
     } else if (fit_link == "log") {
       loglik <- -exp(yield_fun(data[[dose_var]], general_fit_coeffs, 1)) +
         yield_fun(data[[dose_var]], general_fit_coeffs, 1) * data[[yield_var]] -
-        log(factorial(data[[yield_var]]))
+        lfactorial(data[[yield_var]])
     }
     return(sum(loglik))
   }

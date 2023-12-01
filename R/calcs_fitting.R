@@ -85,10 +85,8 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
       logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
     }
 
-    # Calculate model-specific statistics
     fit_model_statistics <- cbind(
       logLik = logLik,
-      deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
       df = num_data - num_params,
       AIC = 2 * num_params - 2 * logLik,
       BIC = log(num_data) * num_params - 2 * logLik
