@@ -97,7 +97,7 @@ test_that("fit with full count data works", {
   expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0031, 0.0015)))
   expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(4.2e-07, 9.75e-06, 2.12e-06)))
 
-  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -2.52)
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -36.09)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
 
   # Fitting (maxlik)
@@ -156,7 +156,7 @@ test_that("fit with aggregated count data works", {
   expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0031, 0.0015)))
   expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(4.2e-07, 9.75e-06, 2.12e-06)))
 
-  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -2.52)
+  expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -36.09)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
 
   # Fitting (maxlik)

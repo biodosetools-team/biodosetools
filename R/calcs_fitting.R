@@ -65,9 +65,9 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
   # Calculate from theory or use statistics calculated by glm
   if (type == "theory") {
     # Renormalise data if necessary
-    if (response == "yield") {
-      model_data <- renormalise_model_data(model_data, genome_factor, calc_type)
-    }
+    # if (response == "yield") {
+    #   model_data <- renormalise_model_data(model_data, genome_factor, calc_type)
+    # }
 
     # Generalised fit coefficients
     general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs_vec)
@@ -633,6 +633,7 @@ fit <- function(count_data, model_formula,
                 model_family, fit_link = "identity",
                 aberr_module = c("dicentrics", "translocations", "micronuclei"),
                 algorithm = c("glm", "maxlik")) {
+
   # Validate parameters
   algorithm <- match.arg(algorithm)
   aberr_module <- match.arg(aberr_module)
