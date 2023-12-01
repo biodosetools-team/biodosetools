@@ -80,13 +80,15 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
 
     # Calculate logLik depending on fitting link
     if (link == "identity") {
-      logLik <- sum(log(eta) * eta_sat - eta - log(factorial(eta_sat)))
+      logLik <- sum(log(eta) * eta_sat - eta - lfactorial(eta_sat))
     } else if (link == "log") {
-      logLik <- sum(eta * eta_sat - exp(eta) - log(factorial(eta_sat)))
+      logLik <- sum(eta * eta_sat - exp(eta) - lfactorial(eta_sat))
     }
 
+    # Calculate model-specific statistics
     fit_model_statistics <- cbind(
       logLik = logLik,
+      deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
       df = num_data - num_params,
       AIC = 2 * num_params - 2 * logLik,
       BIC = log(num_data) * num_params - 2 * logLik
