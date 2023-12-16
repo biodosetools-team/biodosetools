@@ -224,7 +224,7 @@ get_deltamethod_std_err <- function(fit_is_lq, variable = c("dose", "fraction_pa
       # Formula parameters: {x1, x2, x4, x5} = {C, alpha, lambda_est, pi_est}
       formula <- paste(
         "~", "x5 * exp((x4 - x1) / (x2 *", d0, "))", "/",
-        "1 - x5 + x5 * exp((x4 - x1) / (x2 *", d0, ")))",
+        "1 - x5 + x5 * exp((x4 - x1) / (x2 *", d0, "))",
         sep = ""
       )
     }
