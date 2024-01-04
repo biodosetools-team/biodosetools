@@ -10,10 +10,10 @@
 calculate_characteristic_limits <- function(mu0, n1, alpha = 0.05, beta = 0.1) {
   # Decision threshold
   y <- 1:100
-  y_d_const <- min(y[which(sapply(y, function(x) ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
+  y_d_const <- min(y[which(sapply(y, function(x) stats::ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
 
   # Detection limit
-  y_z_const <- qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
+  y_z_const <- stats::qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
 
   # Return objects
   results_list <- list(

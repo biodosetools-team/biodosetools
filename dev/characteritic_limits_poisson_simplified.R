@@ -15,10 +15,10 @@ n1 <- 1000
 # constant background rate mu0
 
 y <- 1:100
-y_d_const <- min(y[which(sapply(y, function(x) ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
+y_d_const <- min(y[which(sapply(y, function(x) stats::ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
 cat("decision threshold:", y_d_const)
 
-y_z_const <- qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
+y_z_const <- stats::qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
 cat("detection limit:", y_z_const)
 
 # Additionally we can project the y into dose using the curve

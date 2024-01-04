@@ -13,7 +13,7 @@ beta <- 0.1 # type 2 error rate
 # constant background rate mu0
 
 y <- 1:100
-y_d_const <- min(y[which(sapply(y, function(x) ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
+y_d_const <- min(y[which(sapply(y, function(x) stats::ppois(x, mu0 * n1, lower.tail = FALSE)) <= alpha / 2)])
 cat("decision threshold:", y_d_const)
 # a partir de 7 detecta radiació i per sota és background noise
 
@@ -44,7 +44,7 @@ cat(
   poisson.test(c(y_d_var + 1, mu0 * n0), c(n1, n0))$p.value
 )
 # calculation of the detection limit:
-y_z_const <- qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
+y_z_const <- stats::qchisq(1 - beta, 2 * (y_d_const + 1)) / 2
 cat("detection limit:", y_z_const)
-y_z_var <- qchisq(1 - beta, 2 * (y_d_var + 1)) / 2
+y_z_var <- stats::qchisq(1 - beta, 2 * (y_d_var + 1)) / 2
 cat("detection limit:", y_z_var)
