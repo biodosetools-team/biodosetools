@@ -633,7 +633,6 @@ fit <- function(count_data, model_formula,
                 model_family, fit_link = "identity",
                 aberr_module = c("dicentrics", "translocations", "micronuclei"),
                 algorithm = c("glm", "maxlik")) {
-
   # Validate parameters
   algorithm <- match.arg(algorithm)
   aberr_module <- match.arg(aberr_module)
