@@ -3,6 +3,7 @@
 \docType{package}
 \name{biodosetools}
 \alias{biodosetools}
+\alias{biodosetools-package}
 \title{\code{biodosetools} package}
 \description{
 Shiny App To Be Used By Biological Dosimetry Laboratories

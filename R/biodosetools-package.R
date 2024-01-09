@@ -7,6 +7,7 @@
 #'
 #' @docType package
 #' @name biodosetools
+#' @aliases biodosetools-package
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines
