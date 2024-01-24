@@ -25,7 +25,6 @@ jobs:
           extra-packages: |
             pkgload
             rsconnect
-            markdown
             here
             BH
             cpp11
