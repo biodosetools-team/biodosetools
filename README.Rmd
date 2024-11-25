@@ -11,6 +11,8 @@ knitr::opts_chunk$set(
 ```
 # Biodose Tools <img src="man/figures/logo.png" align="right" width="120"/>
 
+Bon dia!
+
 <!-- badges: start -->
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/biodosetools)](https://cran.r-project.org/package=biodosetools)
 [![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable-1)
