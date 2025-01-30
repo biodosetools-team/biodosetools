@@ -274,7 +274,13 @@ test_that("processing case data works", {
     aberr_name = to_title(aberr_module)
   )
 
+  if ("get_labs" %in% getNamespaceExports("ggplot2")) {
+    labs <- ggplot2::get_labs(gg_curve)
+  } else {
+    labs <- gg_curve$labels
+  }
+
   # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("colour", "shape", "x", "y", "ymin", "ymax"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"))
+  expect_in(c("colour", "shape", "x", "y", "ymin", "ymax"), names(labs))
+  expect_in(c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"), unname(unlist(labs)))
 })
