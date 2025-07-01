@@ -11,11 +11,25 @@ app_server <- function(input, output, session) {
   mod_fitting_counts_hot_server("fitting_dicent_ui", "dicentrics")
   mod_fitting_results_server("fitting_dicent_ui", "dicentrics")
 
+  ###################
+
+  mod_limits_fit_curve_hot_server("limits_dicent_ui")
+  mod_limits_fit_curve_server("limits_dicent_ui", "dicentrics")
+  mod_limits_results_server("limits_dicent_ui", "dicentrics")
+
+
   # Dose Estimation
+  mod_mixed_hot_server("mixed_ui", "dicentrics")
+  mod_mixed_case_table_hot_server("mixed_ui", "dicentrics")
   mod_estimation_case_hot_server("estimation_dicent_ui", "dicentrics")
   mod_estimation_fit_curve_hot_server("estimation_dicent_ui")
   mod_estimation_fit_curve_server("estimation_dicent_ui", "dicentrics")
   mod_estimation_results_server("estimation_dicent_ui", "dicentrics")
+
+  #Interlab comparison
+  mod_interlab_server("interlab_ui", "dicentrics")
+  #Comparison
+  #mod_compare_server("compare_ui")
 
   # Translocations Modules ----
 
@@ -39,7 +53,7 @@ app_server <- function(input, output, session) {
 
   # Micronuclei Modules ----
 
-  if (golem::app_dev()) {
+  #if (golem::app_dev()) {
     # Fitting
     mod_fitting_counts_hot_server("fitting_micro_ui", "micronuclei")
     mod_fitting_results_server("fitting_micro_ui", "micronuclei")
@@ -49,5 +63,5 @@ app_server <- function(input, output, session) {
     mod_estimation_fit_curve_hot_server("estimation_micro_ui")
     mod_estimation_fit_curve_server("estimation_micro_ui", "micronuclei")
     mod_estimation_results_server("estimation_micro_ui", "micronuclei")
-  }
+  #}
 }

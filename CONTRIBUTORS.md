@@ -8,6 +8,7 @@ The project is initially developed by [RENEB](https://www.reneb.net/) associatio
 |-----------------------------------------------------------------------------------------|:-----------:|----------------------------------------|
 | [Alfredo Hernández](https://aldomann.com)                                               | UAB         | Statistical programmer and main author |
 | [Joan Francesc Barquinero](https://orcid.org/0000-0003-0084-5268)                       | UAB         | Biologist                              |
+| [Anna Frances Abellan](https://orcid.org/0000-0003-4738-1712)                           | UAB         | Biologist        second programmer-updates  |                      |
 | [David Endesfelder](https://www.researchgate.net/profile/David-Endesfelder)             | BfS         | Mathematician                          |
 | [Pedro Puig](https://orcid.org/0000-0002-6607-9642)                                     | UAB         | Mathematician                          |
 | [Leonardo Barrios](https://orcid.org/0000-0002-6151-8503)                               | UAB         | Biologist                              |

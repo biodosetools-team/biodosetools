@@ -5,6 +5,7 @@
 \title{Whole-body dose estimation (delta method)}
 \usage{
 estimate_whole_body_delta(
+  num_cases,
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
@@ -14,6 +15,8 @@ estimate_whole_body_delta(
 )
 }
 \arguments{
+\item{num_cases}{number of cases.}
+
 \item{case_data}{Case data in data frame form.}
 
 \item{fit_coeffs}{Fitting coefficients matrix.}

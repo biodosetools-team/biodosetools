@@ -10,7 +10,8 @@ plot_estimated_dose_curve(
   fit_var_cov_mat,
   protracted_g_value = 1,
   conf_int_curve,
-  aberr_name
+  aberr_name,
+  place
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plot_estimated_dose_curve(
 \item{conf_int_curve}{Confidence interval of the curve.}
 
 \item{aberr_name}{Name of the aberration to use in the y-axis.}
+
+\item{place}{UI or save.}
 }
 \value{
 \code{ggplot2} object.

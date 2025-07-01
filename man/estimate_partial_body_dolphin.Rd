@@ -5,6 +5,7 @@
 \title{Partial-body dose estimation (Dolphin's method)}
 \usage{
 estimate_partial_body_dolphin(
+  num_cases,
   case_data,
   fit_coeffs,
   fit_var_cov_mat,
@@ -16,6 +17,8 @@ estimate_partial_body_dolphin(
 )
 }
 \arguments{
+\item{num_cases}{number of cases.}
+
 \item{case_data}{Case data in data frame form.}
 
 \item{fit_coeffs}{Fitting coefficients matrix.}

@@ -57,8 +57,9 @@ dashboard_sidebar <- function() {
     ),
 
     # Aberration assays section
-    p(class = "menu-title", "Aberration assays"),
+    p(class = "menu-title", "ABERRATION ASSAYS"),
     sidebarMenu(
+
       # Dicentrics
       menuItem(
         text = "Dicentrics",
@@ -67,6 +68,11 @@ dashboard_sidebar <- function() {
         startExpanded = FALSE,
         # Modules
         menuItem(
+          text = "Characteristic limits",
+          tabName = "tab-limits-dicent",
+          icon = icon("circle-radiation")
+        ),
+        menuItem(
           text = "Fitting",
           tabName = "tab-fitting-dicent",
           icon = icon("cog"),
@@ -74,10 +80,22 @@ dashboard_sidebar <- function() {
         ),
         menuItem(
           text = "Dose estimation",
-          tabName = "tab-estimation-dicent",
-          icon = icon("calculator")
+          icon = icon("calculator"),
+          # Sub-modules
+          menuItem(
+            text = "Standard",
+            tabName = "tab-estimation-dicent",
+            icon = icon("radiation")
+          ),
+          menuItem(
+            text = "Criticality accidents",
+            tabName = "tab-mixed-fields",
+            icon = icon("mix")
+          )
         )
       ),
+
+
       # Translocations
       menuItem(
         text = "Translocations",
@@ -96,32 +114,39 @@ dashboard_sidebar <- function() {
         )
       ),
       # Micronuclei
-      if (golem::app_dev()) {
+      #if (golem::app_dev()) {
+      menuItem(
+        text = "Micronuclei",
+        tabName = "menu-item-micro",
+        icon = icon("dot-circle"),
+        # Modules
         menuItem(
-          text = "Micronuclei",
-          tabName = "menu-item-micro",
-          icon = icon("dot-circle"),
-          # Modules
-          menuItem(
-            text = "Fitting",
-            tabName = "tab-fitting-micro",
-            icon = icon("cog"),
-            badgeLabel = "wip",
-            badgeColor = "green"
-          ),
-          menuItem(
-            text = "Dose estimation",
-            tabName = "tab-estimation-micro",
-            icon = icon("calculator"),
-            badgeLabel = "wip",
-            badgeColor = "green"
-          )
+          text = "Fitting",
+          tabName = "tab-fitting-micro",
+          icon = icon("cog")
+        ),
+        menuItem(
+          text = "Dose estimation",
+          tabName = "tab-estimation-micro",
+          icon = icon("calculator")
         )
-      }
-    ),
+      ),
 
-    # Other tools section
-    # p(class = "menu-title", "Other tools"),
+      # Other tools section
+   p(class = "menu-title", "OTHER TOOLS"),
+      menuItem(
+        text = "Interlab comparison",
+        tabName = "tab-interlab",
+        icon = icon("share")
+      )
+      # menuItem(
+      #   text = "Multiple donors",
+      #   tabName = "tab-compare",
+      #   icon = icon("person"),
+      #   badgeLabel = "wip",
+      #   badgeColor = "green"
+      # )
+    ),
 
     p(
       class = "sticky-footer",
@@ -199,8 +224,25 @@ dashboard_body <- function() {
       mod_fitting_trans_ui(id = "fitting_trans_ui", label = "tab-fitting-trans"),
       mod_estimation_trans_ui(id = "estimation_trans_ui", label = "tab-estimation-trans"),
       mod_fitting_micro_ui(id = "fitting_micro_ui", label = "tab-fitting-micro"),
-      mod_estimation_micro_ui(id = "estimation_micro_ui", label = "tab-estimation-micro")
-    )
+      mod_estimation_micro_ui(id = "estimation_micro_ui", label = "tab-estimation-micro"),
+
+      mod_mixed_ui(id = "mixed_ui", label = "tab-mixed-fields"),#new
+      mod_limits_dicent_ui(id = "limits_dicent_ui", label = "tab-limits-dicent"),#new
+      mod_interlab_ui(id = "interlab_ui", label = "tab-interlab")#new
+      #mod_compare_ui(id = "compare_ui", label = "tab-compare")#new
+
+    ),
+        tags$head(tags$style(HTML('
+             /* tabBox background */
+             .nav-tabs-custom>.nav-tabs {
+                 background-color: #DCDEE0;
+             }
+          .nav-tabs-custom > .nav-tabs > li.header {
+              font-size: 15px;
+              color: black;
+              font-weight:bold;
+          }
+                                  ')))
   )
 }
 

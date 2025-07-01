@@ -1,7 +1,4 @@
+*.html
 .Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-docs
-.DS_Store
-inst/doc
+/doc/
+/Meta/

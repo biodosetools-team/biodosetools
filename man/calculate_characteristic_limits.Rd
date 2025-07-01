@@ -2,22 +2,39 @@
 % Please edit documentation in R/calcs_characteristic_limits.R
 \name{calculate_characteristic_limits}
 \alias{calculate_characteristic_limits}
-\title{Calculate characteristic limits}
+\title{Characteristic limits function-----------------------------------------------}
 \usage{
-calculate_characteristic_limits(mu0, n1, alpha = 0.05, beta = 0.1)
+calculate_characteristic_limits(
+  mu0 = NULL,
+  n1 = NULL,
+  y0 = NULL,
+  n0 = NULL,
+  alpha = 0.05,
+  beta = 0.1,
+  ymax = 100,
+  type = "const"
+)
 }
 \arguments{
 \item{mu0}{Background rate}
 
 \item{n1}{Number of cells that will be analysed.}
 
+\item{y0}{Background number of dicentrics.}
+
+\item{n0}{Background number of cells analysed.}
+
 \item{alpha}{Type I error rate, 0.05 by default.}
 
 \item{beta}{Type II error rate, 0.1 by default.}
+
+\item{ymax}{Max dicentrics to evaluate.}
+
+\item{type}{Type.}
 }
 \value{
 List of characteristic limits (\code{decision_threshold}, \code{detection_limit}).
 }
 \description{
-Calculate characteristic limits
+Characteristic limits function-----------------------------------------------
 }

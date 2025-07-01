@@ -17,7 +17,8 @@ calculate_model_stats(
   n = NULL,
   npar = NULL,
   genome_factor = NULL,
-  calc_type = c("fitting", "estimation")
+  calc_type = c("fitting", "estimation"),
+  model_family
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ calculate_model_stats(
 \item{genome_factor}{Genomic conversion factor used in translocations.}
 
 \item{calc_type}{Calculation type, either "fitting" or "estimation".}
+
+\item{model_family}{Model family.}
 }
 \value{
 Data frame of model statistics.

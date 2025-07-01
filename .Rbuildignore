@@ -15,3 +15,6 @@ $run_dev.*
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^\.lintr$
+^app\.R$
+^doc$
+^Meta$
