@@ -614,7 +614,7 @@ yield_boxplot <- function(dat, place) {
     lab_colors <- setNames(rainbow(length(unique(yield$Lab))), unique(yield$Lab))
     yield$Color <- lab_colors[yield$Lab]
     par(las = 2)
-    boxplot(X ~ Sample, data = yield, ylab = ylab, xlab = NA, boxwex=.4, main = "Boxplot frequencies")
+    boxplot(X ~ Sample, data = yield, ylab = ylab, xlab = NA, boxwex=.4, main = "Frequencies plot")
 
     for (lab in unique(yield$Lab)) {
       lab_subset <- yield[yield$Lab == lab, ]  #Filter data for current lab
@@ -663,7 +663,7 @@ dose_boxplot <- function(dat, place) {
     lab_colors <- setNames(rainbow(length(unique(dose.est$Lab))), unique(dose.est$Lab))
     dose.est$Color <- lab_colors[dose.est$Lab]
     par(las = 2)
-    boxplot(dose.est$estimate ~ Sample, data = dose.est, ylab = "Dose estimates [Gy]", xlab = NA, boxwex=.4, main = "Boxplot doses")
+    boxplot(dose.est$estimate ~ Sample, data = dose.est, ylab = "Dose estimates [Gy]", xlab = NA, boxwex=.4, main = "Doses plot")
 
     for (lab in unique(dose.est$Lab)) {
       lab_subset <- dose.est[dose.est$Lab == lab, ]  #Filter data for current lab
