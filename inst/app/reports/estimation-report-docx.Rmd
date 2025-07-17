@@ -239,7 +239,9 @@ if (aberr_module == "translocations") {
 `r if (TRUE) {"## Whole-body exposure results"}`
 
 `r if (TRUE) {"### Whole-body exposure estimation {-}"}`
-`r if (TRUE) {"### Yield (dics/cells)"}`
+`r if (TRUE & aberr_module == "translocations") {"### Yield (translocations/cells)"}`
+`r if (TRUE & aberr_module == "micronuclei") {"### Yield (micronuclei/cells)"}`
+`r if (TRUE & aberr_module == "dicentrics") {"### Yield (dicentrics/cells)"}`
 
 ```{r whole-yield, echo=FALSE}
 if (TRUE) {
@@ -263,7 +265,10 @@ if (TRUE) {
 `r if (assessment == "partial-body") {"## Partial-body exposure results"}`
 
 `r if (assessment == "partial-body") {"### Partial-body exposure estimation {-}"}`
-`r if (assessment == "partial-body") {"### Yield (dics/cells)"}`
+`r if (assessment == "partial-body" & aberr_module == "translocations") {"### Yield (translocations/cells)"}`
+`r if (assessment == "partial-body" & aberr_module == "micronuclei") {"### Yield (micronuclei/cells)"}`
+`r if (assessment == "partial-body" & aberr_module == "dicentrics") {"### Yield (dicentrics/cells)"}`
+
 
 ```{r partial-yield, echo=FALSE}
 if (assessment == "partial-body") {

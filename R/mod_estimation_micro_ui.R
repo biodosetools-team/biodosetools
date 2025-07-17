@@ -431,11 +431,6 @@ mod_estimation_micro_ui <- function(id, label) {
               )
             )
           ),
-          conditionalPanel(
-            condition = "input.num_cases >=2",
-            ns = ns,
-            h6("Heterogeneous assessment for single case only."),
-          ),
 
           # Type of exposure selection
           div(

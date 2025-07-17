@@ -637,8 +637,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
 
       # Get fitting data ----
       fit_results_list <- NULL
-      cli::cli_alert_info("Parsing dose-effect curve...")
-      progress$set(detail = "Parsing dose-effect curve", value = 1 / 6)
+
       if (load_fit_data) {
 
         if(!is.null(fit_data)){
@@ -1130,13 +1129,6 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           }
         }
 
-
-        cli::cli_alert_success("Dose estimation performed successfully")
-        progress$set(detail = "Done", value = 1)
-        showNotification(
-          ui = "Dose estimation performed successfully"
-        )
-
         return(est_results_list)
     }
       })
@@ -1158,6 +1150,13 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           include_help("estimation/dose_mixed_yields.md")
         )
       )
+      if(aberr_module == "dicentrics"){
+        aberr_yield <- "dicentrics"
+      }else if(aberr_module == "micronuclei"){
+        aberr_yield <- "micronuclei"
+      }else{
+        aberr_yield <- "translocations"
+      }
 
       if (assessment == "whole-body") {
         # Whole-body
@@ -1180,7 +1179,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
               ),
               tabPanel(
                 title = "Whole-body",
-                h5("Whole-body exposure estimation: Yield (dics/cell)"),
+                h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
                 div(
                   class = "hot-improved",
                   rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1219,7 +1218,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
               ),
               tabPanel(
                 title = "Whole-body",
-                h5("Whole-body exposure estimation: Yield (dics/cell)"),
+                h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
                 div(
                   class = "hot-improved",
                   rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1245,7 +1244,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
              ),
              tabPanel(
                title = "Whole-body",
-               h5("Whole-body exposure estimation: Yield (dics/cell)"),
+               h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
                div(
                  class = "hot-improved",
                  rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1272,7 +1271,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
             ),
             tabPanel(
               title = "Whole-body",
-              h5("Whole-body exposure estimation: Yield (dics/cell)"),
+              h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
               div(
                 class = "hot-improved",
                 rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1300,7 +1299,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           ),
           tabPanel(
             title = "Whole-body",
-            h5("Whole-body exposure estimation: Yield (dics/cell)"),
+            h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_yields_whole"))
@@ -1321,7 +1320,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           ),
           tabPanel(
             title = "Partial-body",
-            h5("Partial-body exposure estimation: Yield (dics/cell)"),
+            h5(paste0("Partial-body exposure estimation: Yield (", aberr_yield, "/cells)")),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_yields_partial"))

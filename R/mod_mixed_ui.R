@@ -285,13 +285,13 @@ mod_mixed_ui <- function(id, label) {
            #title = "Dose estimation",
            tabPanel(
              "Gamma",
-             h5("Yield (dics/cell)"),
+             h5("Yield (dicentrics/cells)"),
              div(
                style = "display: flex; justify-content: center;",
                div(class = "hot-improved",
                    rHandsontableOutput(ns("value_g_y"))
                )),
-             h5("Dose estimation [Gy]"),
+             h5("Dose estimation (Gy)"),
              div(
                style = "display: flex; justify-content: center;",
                div(class = "hot-improved",

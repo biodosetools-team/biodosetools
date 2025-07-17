@@ -185,7 +185,7 @@ project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_
     yield_inf <- yield_inf[[1]]
   }
 
-  if (yield >= yield_inf) {
+  if (yield > yield_inf) {
     projected_dose <- tryCatch({
       stats::uniroot(function(dose) {
         calculate_yield(dose, type, general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int) - yield
