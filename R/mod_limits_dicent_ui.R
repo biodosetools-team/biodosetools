@@ -37,7 +37,7 @@ mod_limits_dicent_ui <- function(id, label) {
               inputId = ns("help_limits_option"),
               label = NULL,
               choices = c(
-                "Compare proband vs control"    = "poisson_test",
+                "Compare case vs control"    = "poisson_test",
                 "Characteristic limits"       = "limits")
             ),
             # Contents
@@ -58,7 +58,7 @@ mod_limits_dicent_ui <- function(id, label) {
             ns("limits_select"),
             label = "Choose method",
             choices = list(
-              "Compare proband vs control" = "p_poisson_test",
+              "Compare case vs control" = "p_poisson_test",
               "Characteristic limits" = "limits"
             ),
             selected = "p_poisson_test"
