@@ -165,17 +165,44 @@ correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_val
 #' @param protracted_g_value Protracted \eqn{G(x)} value.
 #' @param conf_int Curve confidence interval, 95\% by default.
 #'
+#' @export
 #' @return Numeric value of projected dose.
 project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value = 1, conf_int = 0.95) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
 
-  if (yield >= yield_inf) {
-    projected_dose <- stats::uniroot(function(dose) {
-      calculate_yield(dose, type, general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int) - yield
-    }, c(1e-16, 100))$root
-  } else {
+  if (!is.numeric(yield)) {
+    yield <- as.numeric(yield)
+  }
+  if (length(yield) > 1) {
+    yield <- yield[[1]]
+  }
+
+
+  if (!is.numeric(yield_inf)) {
+    yield_inf <- as.numeric(yield_inf)
+  }
+  if (length(yield_inf) > 1) {
+    yield_inf <- yield_inf[[1]]
+  }
+
+  if (yield > yield_inf) {
+    projected_dose <- tryCatch({
+      stats::uniroot(function(dose) {
+        calculate_yield(dose, type, general_fit_coeffs, general_fit_var_cov_mat, protracted_g_value, conf_int) - yield
+      }, c(1e-16, 100))$root
+    }, error = function(e) {
+      # showModal(modalDialog(
+      #   title = "Error",
+      #   "Execution halted due to uniroot() failure. The projected dose can not be found.",
+      #   easyClose = TRUE,
+      #   footer = modalButton("Close")
+      # ))
+      projected_dose <- NULL
+    })
+  }else{
     projected_dose <- 0
   }
+
 
   return(projected_dose)
 }
@@ -301,12 +328,14 @@ correct_boundary <- function(x) {
 #' @param protracted_g_value Protracted \eqn{G(x)} value.
 #' @param conf_int_curve Confidence interval of the curve.
 #' @param aberr_name Name of the aberration to use in the y-axis.
+#' @param place UI or save.
 #'
 #' @return \code{ggplot2} object.
 #' @export
 plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
                                       protracted_g_value = 1, conf_int_curve,
-                                      aberr_name) {
+                                      aberr_name, place) {
+
   # Validate est_doses names
   assessments <- names(est_doses) %>%
     match_names(c("whole", "partial", "hetero"))
@@ -314,29 +343,30 @@ plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
   # Parse dose estimation list
   est_full_doses <- data.frame(
     dose = c(
-      if ("whole" %in% assessments) est_doses$whole$est_doses[["dose"]],
-      if ("partial" %in% assessments) est_doses$partial$est_doses[["dose"]],
+      if ("whole" %in% assessments) t(est_doses$whole[[1]]$est_doses),
+      if ("partial" %in% assessments) t(est_doses$partial[[1]]$est_doses),
       if ("hetero" %in% assessments) est_doses$hetero$est_doses[["dose1"]],
       if ("hetero" %in% assessments) est_doses$hetero$est_doses[["dose2"]]
     ),
     yield = c(
-      if ("whole" %in% assessments) est_doses$whole$est_doses[["yield"]],
-      if ("partial" %in% assessments) est_doses$partial$est_doses[["yield"]],
+      if ("whole" %in% assessments) t(est_doses$whole[[1]]$est_yield),
+      if ("partial" %in% assessments) t(est_doses$partial[[1]]$est_yield),
       if ("hetero" %in% assessments) est_doses$hetero$est_yields[["yield1"]],
       if ("hetero" %in% assessments) est_doses$hetero$est_yields[["yield2"]]
     ),
     type = c(
-      if ("whole" %in% assessments) rep("Whole-body", 3),
-      if ("partial" %in% assessments) rep("Partial-body", 3),
+      if ("whole" %in% assessments) t(rep("Whole-body", 3)),
+      if ("partial" %in% assessments) t(rep("Partial-body", 3)),
       if ("hetero" %in% assessments) rep("Heterogeneous 1", 3),
       if ("hetero" %in% assessments) rep("Heterogeneous 2", 3)
     ),
     level = c("Lower", "Estimate", "Upper")
   )
 
+
   # Parse confidence intervals
-  conf_int_text_whole <- parse_conf_int_text(est_doses$whole$conf_int)
-  conf_int_text_partial <- parse_conf_int_text(est_doses$partial$conf_int)
+  conf_int_text_whole <- parse_conf_int_text(est_doses$whole[[1]]$conf_int)
+  conf_int_text_partial <- parse_conf_int_text(est_doses$partial[[1]]$conf_intt)
   conf_int_text_hetero <- parse_conf_int_text(est_doses$hetero$conf_int)
 
   # Rightmost limit of the plot
@@ -431,7 +461,110 @@ plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
       legend.text = ggplot2::element_text(size = 8),
       legend.spacing.y = ggplot2::unit(5, "points"),
       legend.key.height = ggplot2::unit(12, "points")
-    )
+    )+
+    if (place == "save") {
+      list(
+        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
+      )
+    } else {
+      NULL
+    }
 
   return(gg_curve)
 }
+
+
+#' Plot triage
+#'
+#' @param num_cases number of cases.
+#' @param est_doses_whole dose estimation list of cases.
+#' @param est_doses_partial dose estimation list of cases.
+#' @param assessment partial or whole.
+#' @param place UI or save.
+#'
+#' @import ggplot2
+#' @return \code{ggplot2} object.
+#' @export
+
+
+plot_triage <- function(num_cases, est_doses_whole, est_doses_partial, assessment, place) {
+
+  case_labels <- as.character(est_doses_whole[, 1])
+  case_index <- seq_along(case_labels)
+
+  if (assessment == "whole") {
+    data <- data.frame(
+      x = case_index,
+      case = case_labels,
+      doses = est_doses_whole[, 3],
+      lower = est_doses_whole[, 2],
+      upper = est_doses_whole[, 4],
+      type = "Whole"
+    )
+  }
+
+  if (assessment == "partial") {
+    data_whole <- data.frame(
+      x = case_index - 0.15,
+      case = case_labels,
+      doses = est_doses_whole[, 3],
+      lower = est_doses_whole[, 2],
+      upper = est_doses_whole[, 4],
+      type = "Whole"
+    )
+
+    data_partial <- data.frame(
+      x = case_index + 0.15,
+      case = case_labels,
+      doses = est_doses_partial[, 3],
+      lower = est_doses_partial[, 2],
+      upper = est_doses_partial[, 4],
+      type = "Partial"
+    )
+
+    data <- rbind(data_whole, data_partial)
+  }
+
+  background <- data.frame(
+    ymin = c(0, 1, 2),
+    ymax = c(1, 2, Inf),
+    fill = c("low exposure", "medium exposure", "high exposure")
+  )
+
+  gg_curve <- ggplot(data) +
+    geom_rect(data = background, aes(xmin = -Inf, xmax = Inf, ymin = .data$ymin, ymax = .data$ymax, fill = .data$fill), alpha = 0.2) +
+    geom_point(aes(x = .data$x, y = .data$doses, color = .data$type), size = 2) +
+    geom_errorbar(aes(x = .data$x, ymin = .data$lower, ymax = .data$upper, color = .data$type), width = 0.1) +
+    scale_x_continuous(
+      name = "Cases",
+      breaks = case_index,
+      labels = case_labels
+    ) +
+    scale_fill_manual(
+      name = "Dose Ranges",
+      values = c("low exposure" = "green", "medium exposure" = "orange", "high exposure" = "red")
+    ) +
+    scale_color_manual(
+      name = "Assessment Type",
+      values = c("Whole" = "blue", "Partial" = "red")
+    ) +
+    labs(
+      y = "Dose (Gy)"
+    ) +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 0, hjust = 0.5),
+      legend.text = element_text(size = 7),
+      legend.title = element_text(size = 8)
+    )
+
+  if (place == "save") {
+    gg_curve <- gg_curve +
+      labs(caption = "Created with Biodosetools version 3.6.2") +
+      theme(plot.caption = element_text(size = 8, colour = "black", hjust = 1))
+  }
+
+  return(gg_curve)
+}
+

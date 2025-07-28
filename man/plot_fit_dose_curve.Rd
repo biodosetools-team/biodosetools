@@ -4,12 +4,14 @@
 \alias{plot_fit_dose_curve}
 \title{Plot fit dose curve}
 \usage{
-plot_fit_dose_curve(fit_results_list, aberr_name)
+plot_fit_dose_curve(fit_results_list, aberr_name, place)
 }
 \arguments{
 \item{fit_results_list}{List of fit results.}
 
 \item{aberr_name}{Name of the aberration to use in the y-axis.}
+
+\item{place}{Where the plot will be displayed.}
 }
 \value{
 \code{ggplot2} object.

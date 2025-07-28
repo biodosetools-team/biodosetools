@@ -105,7 +105,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("
           DI = 0,
           u = 0
         ) %>%
-        dplyr::select("N", "X", dplyr::everything()) %>%
+        dplyr::select("ID","N", "X", dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
             .cols = c("N", "X", grep("C", names(.), value = TRUE)),
@@ -125,7 +125,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("
           Fg = 0,
           Fg_err = 0
         ) %>%
-        dplyr::select("N", "X", dplyr::everything()) %>%
+        dplyr::select("ID","N", "X", dplyr::everything()) %>%
         dplyr::mutate(
           dplyr::across(
             .cols = c("N", "X", grep("C", names(.), value = TRUE)),
@@ -195,20 +195,20 @@ calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module 
         )
       ) %>%
       dplyr::select(-"X2", -"var") %>%
-      dplyr::select("N", "X", dplyr::everything())
+      dplyr::select("ID","N", "X", dplyr::everything())
 
     # Rename mean and std_err columns
     if (aberr_module %in% c("dicentrics", "micronuclei")) {
       data <- data %>%
         dplyr::select(
-          "N", "X", dplyr::matches("^C[0-9]+$"),
+          "ID", "N", "X", dplyr::matches("^C[0-9]+$"),
           "y" = "mean", "y_err" = "std_err",
           "DI", "u"
         )
     } else if (aberr_module == "translocations") {
       data <- data %>%
         dplyr::select(
-          "N", "X", dplyr::matches("^C[0-9]+$"),
+          "ID","N", "X", dplyr::matches("^C[0-9]+$"),
           "Fp" = "mean", "Fp_err" = "std_err",
           "DI", "u"
         )

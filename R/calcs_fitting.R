@@ -13,12 +13,13 @@
 #' @param npar number of parameters (required in constraint-maxlik-optimization).
 #' @param genome_factor Genomic conversion factor used in translocations.
 #' @param calc_type Calculation type, either "fitting" or "estimation".
+#' @param model_family Model family.
 #'
 #' @return Data frame of model statistics.
 calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL, fit_algorithm = NULL,
                                   response = "yield", link = c("identity", "log"), type = c("theory", "raw"),
                                   Y = NULL, mu = NULL, n = NULL, npar = NULL,
-                                  genome_factor = NULL, calc_type = c("fitting", "estimation")) {
+                                  genome_factor = NULL, calc_type = c("fitting", "estimation"), model_family) {
   # Validate parameters
   link <- match.arg(link)
   type <- match.arg(type)
@@ -63,7 +64,7 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
   }
 
   # Calculate from theory or use statistics calculated by glm
-  if (type == "theory") {
+  if (fit_algorithm == "constraint-maxlik-optimization") {
     # Renormalise data if necessary
     # if (response == "yield") {
     #   model_data <- renormalise_model_data(model_data, genome_factor, calc_type)
@@ -86,14 +87,22 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
     }
 
     # Calculate model-specific statistics
-    fit_model_statistics <- cbind(
-      logLik = logLik,
-      deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
-      df = num_data - num_params,
-      AIC = 2 * num_params - 2 * logLik,
-      BIC = log(num_data) * num_params - 2 * logLik
-    )
-  } else if (type == "raw" & fit_algorithm == "glm") {
+    if(model_family == "quasipoisson"){
+      fit_model_statistics <- cbind(
+        logLik = NA,
+        deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
+        df = num_data - num_params,
+        AIC = NA,
+        BIC = NA)
+    }else{
+      fit_model_statistics <- cbind(
+        logLik = logLik,
+        deviance = sum(2 * (eta_sat * log(eta_sat / eta) - (eta_sat - eta))),
+        df = num_data - num_params,
+        AIC = 2 * num_params - 2 * logLik,
+        BIC = log(num_data) * num_params - 2 * logLik)
+    }
+  } else if (fit_algorithm == "glm") {
     # Get model-specific statistics
     fit_model_statistics <- cbind(
       logLik = as.numeric(stats::logLik(glm_results)),
@@ -102,16 +111,17 @@ calculate_model_stats <- function(model_data, fit_coeffs_vec, glm_results = NULL
       AIC = stats::AIC(glm_results),
       BIC = stats::BIC(glm_results)
     )
-  } else if (type == "raw" & fit_algorithm == "constraint-maxlik-optimization") {
-    # Get model-specific statistics
-    fit_model_statistics <- cbind(
-      logLik = stats::logLik(glm_results),
-      deviance = sum(stats::poisson(link = "identity")$dev.resids(Y, mu, 1)),
-      df = n - npar,
-      AIC = 2 * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results),
-      BIC = log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results)
-    )
   }
+    #else if (type == "raw" & fit_algorithm == "constraint-maxlik-optimization") {
+  #   # Get model-specific statistics
+  #   fit_model_statistics <- cbind(
+  #     logLik = stats::logLik(glm_results),
+  #     deviance = sum(stats::poisson(link = "identity")$dev.resids(Y, mu, 1)),
+  #     df = n - npar,
+  #     AIC = 2 * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results),
+  #     BIC = log(n) * length(fit_coeffs_vec) - 2 * stats::logLik(glm_results)
+  #   )
+  # }
 
   return(fit_model_statistics)
 }
@@ -201,7 +211,6 @@ fit_glm_method <- function(count_data, model_formula,
   # Validate parameters
   model_family <- match.arg(model_family)
   aberr_module <- match.arg(aberr_module)
-
   # Store fit algorithm as a string
   fit_algorithm <- "glm"
 
@@ -277,6 +286,7 @@ fit_glm_method <- function(count_data, model_formula,
   fit_var_cov_mat <- stats::vcov(fit_results)
   fit_coeffs_vec <- stats::coef(fit_results)
 
+
   # Model-specific statistics
   fit_model_statistics <- calculate_model_stats(
     model_data = model_data, fit_coeffs_vec = fit_coeffs_vec,
@@ -309,7 +319,7 @@ fit_glm_method <- function(count_data, model_formula,
       estimate = fit_coeffs_vec,
       std.error = sqrt(diag(fit_var_cov_mat)),
       statistic = t_value,
-      p.value = 2 * 2 * stats::pt(-abs(t_value), fit_results$df.residual)
+      p.value = 2 * stats::pt(-abs(t_value), fit_results$df.residual)
     ) %>%
       `row.names<-`(names(fit_coeffs_vec)) %>%
       `colnames<-`(c("estimate", "std.error", "statistic", "p.value"))
@@ -524,8 +534,9 @@ fit_maxlik_method <- function(data, model_formula,
     glm_results = fit_results, fit_algorithm = fit_algorithm,
     response = "yield", link = "identity", type = "theory",
     Y = Y, mu = mu, n = n, npar = npar,
-    genome_factor = NULL, calc_type = "fitting"
+    genome_factor = NULL, calc_type = "fitting", model_family
   )
+
 
   # Correct p-values depending on model dispersion
   if (model_family == "poisson" | (model_family == "automatic" & fit_dispersion <= 1)) {

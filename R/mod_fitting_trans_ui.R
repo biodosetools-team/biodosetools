@@ -18,7 +18,7 @@ mod_fitting_trans_ui <- function(id, label) {
       box(
         width = 5,
         title = span(
-          "Stains color options",
+          "1. Stains color options",
           help_modal_button(
             ns("help_colors_data"),
             ns("help_colors_modal")
@@ -105,7 +105,7 @@ mod_fitting_trans_ui <- function(id, label) {
         # Box: Chromosome-color table ----
         box(
           width = 12,
-          title = "Chromosome data",
+          title = "2. Chromosome data",
           status = "primary",
           collapsible = TRUE,
           fluidRow(
@@ -143,7 +143,7 @@ mod_fitting_trans_ui <- function(id, label) {
       box(
         width = 6,
         title = span(
-          "Data input options",
+          "3. Data input options",
           help_modal_button(
             ns("help_count_data"),
             ns("help_count_data_modal")
@@ -255,7 +255,7 @@ mod_fitting_trans_ui <- function(id, label) {
       box(
         width = 6,
         title = span(
-          "Fitting options",
+          "4. Fitting options",
           help_modal_button(
             ns("help_fitting_options"),
             ns("help_fitting_options_modal")
@@ -321,7 +321,7 @@ mod_fitting_trans_ui <- function(id, label) {
     fluidRow(
       box(
         width = 12,
-        title = "Irradiation conditions",
+        title = "5. Irradiation conditions",
         status = "primary",
         collapsible = TRUE,
         col_6(
@@ -334,17 +334,30 @@ mod_fitting_trans_ui <- function(id, label) {
           textAreaInput(
             inputId = ns("irr_cond_radiation_quality"),
             label = "Radiation quality",
-            placeholder = "X or gamma rays and energy"
+            placeholder = "e.g. Cs-137, Co-60, X-ray, etc."
           ),
-          textInput(
-            inputId = ns("irr_cond_dose_rate"),
+
+          numericInput(
+            ns("irr_cond_dose_rate"),
             label = "Dose rate (Gy/min)",
-            placeholder = NULL
+            step=0.1,
+            value = NA,
+            min=0
           ),
-          textInput(
-            inputId = ns("irr_cond_dose_quantity"),
+          selectInput(
+            ns("irr_cond_dose_quantity"),
             label = "Dose quantity",
-            placeholder = "In water or air kerma"
+            choices = c("Please choose"="", "air kerma", "dose to water", "dose to blood")
+          ),
+          selectInput(
+            ns("cal_air_water"),
+            label = "Calibration of the source",
+            choices = c("Please choose"="","air kerma", "water")
+          ),
+          selectInput(
+            ns("irrad_air_water"),
+            label = "Irradiation medium",
+            choices = c("Please choose"="","air", "water")
           )
         ),
         col_6(
@@ -354,20 +367,35 @@ mod_fitting_trans_ui <- function(id, label) {
             label = "Whole blood or isolated lymphocytes",
             placeholder = NULL
           ),
-          textInput(
-            inputId = ns("irr_cond_temperature"),
-            label = "Temperature",
-            placeholder = "Temperature during the irradiation"
+          numericInput(
+            ns("irr_cond_temperature"),
+            label = "Temperature (\u00B0C) during irradiation",
+            step=1,
+            value = NA,
+            min=0,
+            max = 40
           ),
-          textInput(
-            inputId = ns("irr_cond_time"),
-            label = "Time incubations",
-            placeholder = "Time incubations after sample irradiation"
+          numericInput(
+            ns("irr_cond_time"),
+            label = "Time of incubation (h) at 37(\u00B0C) after irradiation"  ,
+            step=1,
+            value = NA,
+            min=0
           ),
           textAreaInput(
             inputId = ns("irr_cond_beam_characteristics"),
             label = "Beam characteristics",
             placeholder = "Beam quality indicators, filtration (X-rays), energy (Gamma rays), ..."
+          ),
+          selectInput(
+            ns("scoring_method"),
+            label = "Scoring method",
+            choices = c("Please choose"="","manual", "auto")
+          ),
+          textInput(
+            inputId = ns("origin_curve"),
+            label = "Origin of the curve",
+            placeholder = "e.g. own, IAEA ..."
           )
         )
       )
@@ -377,7 +405,7 @@ mod_fitting_trans_ui <- function(id, label) {
     fluidRow(
       box(
         width = 12,
-        title = "Data input",
+        title = "6. Data input",
         status = "primary",
         collapsible = TRUE,
         div(
@@ -400,6 +428,13 @@ mod_fitting_trans_ui <- function(id, label) {
             widget_sep()
           )
         ),
+
+        actionButton(
+          ns("button_fit"),
+          class = "inputs-button",
+          label = "Calculate fitting"
+        ),
+        widget_sep(),
         downloadButton(
           ns("save_count_data"),
           class = "side-widget-download",
@@ -416,11 +451,6 @@ mod_fitting_trans_ui <- function(id, label) {
           )
         ),
         widget_sep_vert(),
-        actionButton(
-          ns("button_fit"),
-          class = "inputs-button",
-          label = "Calculate fitting"
-        ),
         div(
           class = "side-widget-tall",
           # Translocation frequency
@@ -434,7 +464,7 @@ mod_fitting_trans_ui <- function(id, label) {
             ),
             selected = "measured_freq"
           )
-        )
+        ),
       )
     ),
     fluidRow(
@@ -483,7 +513,7 @@ mod_fitting_trans_ui <- function(id, label) {
         box(
           width = 12,
           title = span(
-            "Export results",
+            "7. Export results",
             help_modal_button(
               ns("help_fit_data_save"),
               ns("help_fit_data_save_modal")
@@ -579,8 +609,8 @@ mod_fitting_trans_ui <- function(id, label) {
             ns("save_plot_format"),
             label = NULL,
             width = "75px",
-            choices = list(".png", ".pdf"),
-            selected = ".png"
+            choices = list(".jpg", ".png",".pdf"),
+            selected = ".jpg"
           )
         )
       )

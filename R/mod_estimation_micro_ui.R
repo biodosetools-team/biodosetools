@@ -18,7 +18,7 @@ mod_estimation_micro_ui <- function(id, label) {
       box(
         width = 5,
         title = span(
-          "Curve fitting data options",
+          "1. Curve fitting data options",
           help_modal_button(
             ns("help_fit_data"),
             ns("help_fit_data_modal")
@@ -81,12 +81,12 @@ mod_estimation_micro_ui <- function(id, label) {
                 )
               ),
               widget_sep(),
-              actionButton(
-                ns("button_gen_table"),
-                class = "options-button",
-                style = "margin-left: -10px; margin-bottom: 0px;",
-                label = "Generate tables"
-              ),
+              # actionButton(
+              #   ns("button_gen_table"),
+              #   class = "options-button",
+              #   style = "margin-left: -10px; margin-bottom: 0px;",
+              #   label = "Generate tables"
+              # ),
               br(),
               br(),
               widget_label("Coefficients"),
@@ -172,14 +172,104 @@ mod_estimation_micro_ui <- function(id, label) {
             rHandsontableOutput(ns("fit_var_cov_mat"))
           )
         )
-      )
+      ),
+      conditionalPanel(
+        condition = "!input.load_fit_data_check",
+        ns = ns,
+        box(
+          width = 7,
+          title = "Irradiation conditions",
+          status = "primary",
+          collapsible = TRUE,
+          col_6(
+            class = "col-inner-textinput-left",
+            textInput(
+              inputId = ns("irr_cond_irradiator_name"),
+              label = "Name of the irradiator used",
+              placeholder = NULL
+            ),
+            textAreaInput(
+              inputId = ns("irr_cond_radiation_quality"),
+              label = "Radiation quality",
+              placeholder = "e.g. Cs-137, Co-60, X-ray, etc."
+            ),
+            numericInput(
+              ns("irr_cond_dose_rate"),
+              label = "Dose rate (Gy/min)",
+              step=0.1,
+              value = NA,
+              min=0
+            ),
+            selectInput(
+              ns("irr_cond_dose_quantity"),
+              label = "Dose quantity",
+              choices = c("Please choose"="", "air kerma", "dose to water", "dose to blood")
+            ),
+            selectInput(
+              ns("cal_air_water"),
+              label = "Calibration of the source",
+              choices = c("Please choose"="", "air kerma", "water")
+            ),
+            selectInput(
+              ns("irrad_air_water"),
+              label = "Irradiation medium",
+              choices = c("Please choose"="", "air", "water")
+            ),
+            numericInput(
+              ns("max_dose_curve"),
+              label = "Maximum dose curve (Gy)",
+              step=0.1,
+              value = NA,
+              min=0
+            )
+          )
+          ,
+          col_6(
+            class = "col-inner-textinput-right",
+            textInput(
+              inputId = ns("irr_cond_whole_blood"),
+              label = "Whole blood or isolated lymphocytes",
+              placeholder = NULL
+            ),
+            numericInput(
+              ns("irr_cond_temperature"),
+              label = "Temperature (\u00B0C) during irradiation",
+              step=1,
+              value = NA,
+              min=0,
+              max = 40
+            ),
+            numericInput(
+              ns("irr_cond_time"),
+              label = "Time incubation (h) at 37(\u00B0C) after irradiation",
+              step=1,
+              value = NA,
+              min=0
+            ),
+            textAreaInput(
+              inputId = ns("irr_cond_beam_characteristics"),
+              label = "Beam characteristics",
+              placeholder = "Beam quality indicators, filtration (X-rays), energy (Gamma rays), ..."
+            ),
+            selectInput(
+              ns("scoring_method"),
+              label = "Scoring method",
+              choices = c("Please choose"="", "manual", "auto")
+            ),
+            textInput(
+              inputId = ns("origin_curve"),
+              label = "Origin of the curve",
+              placeholder = "e.g. own, IAEA ..."
+            )
+          )
+        ))
     ),
     fluidRow(
       # Box: Data input options ----
       box(
         width = 5,
         title = span(
-          "Data input options",
+          "2. Data input options",
           help_modal_button(
             ns("help_cases_data"),
             ns("help_cases_data_modal")
@@ -230,11 +320,11 @@ mod_estimation_micro_ui <- function(id, label) {
             conditionalPanel(
               condition = "!input.load_case_data_check",
               ns = ns,
-              # numericInput(
-              #   ns("num_cases"),
-              #   label = "Number of cases",
-              #   value = 1
-              # ),
+              numericInput(
+               ns("num_cases"),
+                label = "Number of cases",
+               value = 1
+              ),
               numericInput(
                 ns("num_aberrs"),
                 label = "Maximum number of micronuclei per cell",
@@ -269,8 +359,9 @@ mod_estimation_micro_ui <- function(id, label) {
       col_7_inner(
         box(
           width = 12,
-          title = "Data input",
-          status = "primary", collapsible = TRUE,
+          title = "3. Data input",
+          status = "primary",
+          collapsible = TRUE,
 
           # Cases table
           div(
@@ -290,7 +381,7 @@ mod_estimation_micro_ui <- function(id, label) {
         box(
           width = 12,
           title = span(
-            "Dose estimation options",
+            "4. Dose estimation options",
             help_modal_button(
               ns("help_estimation_options"),
               ns("help_estimation_options_modal")
@@ -517,19 +608,43 @@ mod_estimation_micro_ui <- function(id, label) {
             class = "options-button",
             label = "Estimate dose"
           )
+        ),
+        col_12(
+          # tabBox: Estimation results ----
+          uiOutput(ns("estimation_results_ui"))
         )
       )
     ),
     fluidRow(
-      col_6_inner(
-        # tabBox: Estimation results ----
-        uiOutput(ns("estimation_results_ui")),
 
+      # Box: Plot curves ----
+      box(
+        width = 12,
+        title = "Curve plot",
+        status = "success", collapsible = TRUE,
+        # Plot
+        plotOutput(ns("plot")),
+        downloadButton(
+          ns("save_plot"),
+          class = "results-button side-widget-download",
+          label = "Save plot"
+        ),
+        div(
+          class = "side-widget-format",
+          selectInput(
+            ns("save_plot_format"),
+            label = NULL,
+            width = "75px",
+            choices = list(".jpg", ".png",".pdf"),
+            selected = ".jpg"
+          )
+        )
+      ),
         # Box: Export data and results ----
         box(
-          width = 12,
+          width = 6,
           title = span(
-            "Save results",
+            "5. Save results",
             help_modal_button(
               ns("help_fit_data_save"),
               ns("help_fit_data_save_modal")
@@ -555,6 +670,21 @@ mod_estimation_micro_ui <- function(id, label) {
             label = "Comments",
             placeholder = "Comments to be included on report"
           ),
+          downloadButton(
+            ns("save_data"),
+            class = "export-button side-widget-download",
+            label = "Save data"
+          ),
+          div(
+            class = "side-widget-format",
+            selectInput(
+              ns("save_data_format"),
+              label = NULL,
+              width = "75px",
+              choices =  list(".rds", ".xlsx"),
+              selected = ".rds"
+            )
+          ),
 
           # Download report
           downloadButton(
@@ -573,30 +703,7 @@ mod_estimation_micro_ui <- function(id, label) {
             )
           )
         )
-      ),
-      # Box: Plot curves ----
-      box(
-        width = 6,
-        title = "Curve plot",
-        status = "success", collapsible = TRUE,
-        # Plot
-        plotOutput(ns("plot")),
-        downloadButton(
-          ns("save_plot"),
-          class = "results-button side-widget-download",
-          label = "Save plot"
-        ),
-        div(
-          class = "side-widget-format",
-          selectInput(
-            ns("save_plot_format"),
-            label = NULL,
-            width = "75px",
-            choices = list(".png", ".pdf"),
-            selected = ".png"
-          )
-        )
-      )
+
     )
   )
 }

@@ -110,20 +110,8 @@ test_that("fix_count_data_names for count data works", {
 test_that("fix_count_data_names for case data works", {
   # Prepare data
   case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
-    utils::read.csv(header = TRUE) %>%
-    dplyr::rename_with(
-      .fn = toupper,
-      .cols = dplyr::everything()
-    ) %>%
-    dplyr::mutate(
-      dplyr::across(
-        .cols = dplyr::starts_with("C"),
-        .fns = as.integer
-      )
-    ) %>%
-    dplyr::select(
-      dplyr::starts_with("C")
-    )
+    utils::read.csv(header = TRUE)
+
 
   case_data <- calculate_aberr_table(
     data = case_data,
@@ -148,12 +136,13 @@ test_that("fix_count_data_names for case data works", {
 
   case_data_cols <- fix_count_data_names(case_data, type = "case", output = "kable") %>%
     colnames()
+
   case_data_cols_len <- length(case_data_cols)
 
   # Expected outputs
   expect_equal(
-    case_data_cols[1:3],
-    c("$N$", "$X$", "$C_{0}$")
+    case_data_cols[2:9],
+    c("$N$", "$C_{0}$", "$C_{1}$","$C_{2}$","$C_{3}$","$C_{4}$","$C_{5}$","$X$")
   )
   expect_equal(
     case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)],

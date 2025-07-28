@@ -70,7 +70,7 @@ test_that("fit with full count data works", {
 
   # Fitting (glm)
   model_formula <- list_fitting_formulas()[[1]]
-  model_family <- "automatic"
+  model_family <- "poisson"
   aberr_module <- "translocations"
 
   fit_results_list <- fit(
@@ -83,7 +83,8 @@ test_that("fit with full count data works", {
 
   gg_curve <- plot_fit_dose_curve(
     fit_results_list,
-    aberr_name = to_title(aberr_module)
+    aberr_name = to_title(aberr_module),
+    place = "UI"
   )
 
   # Expected outputs
@@ -94,8 +95,8 @@ test_that("fit with full count data works", {
   expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
   expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
   expect_true(all(round(unname(fit_results_list$fit_coeffs[, "estimate"]), 4) == c(0.0021, 0.0086, 0.0183)))
-  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0031, 0.0015)))
-  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(4.2e-07, 9.75e-06, 2.12e-06)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0028, 0.0013)))
+  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(3.4e-07, 7.87e-06, 1.71e-06)))
 
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -36.09)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
@@ -130,7 +131,7 @@ test_that("fit with aggregated count data works", {
 
   # Fitting (glm)
   model_formula <- list_fitting_formulas()[[1]]
-  model_family <- "automatic"
+  model_family <- "poisson"
   aberr_module <- "translocations"
 
   fit_results_list <- fit(
@@ -143,7 +144,8 @@ test_that("fit with aggregated count data works", {
 
   gg_curve <- plot_fit_dose_curve(
     fit_results_list,
-    aberr_name = to_title(aberr_module)
+    aberr_name = to_title(aberr_module),
+    place = "UI"
   )
 
   # Expected outputs
@@ -153,8 +155,8 @@ test_that("fit with aggregated count data works", {
   expect_true(all(dim(fit_results_list$fit_cor_mat) == c(3, 3)))
   expect_true(all(dim(fit_results_list$fit_coeffs) == c(3, 4)))
   expect_true(all(round(unname(fit_results_list$fit_coeffs[, "estimate"]), 4) == c(0.0021, 0.0086, 0.0183)))
-  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0031, 0.0015)))
-  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(4.2e-07, 9.75e-06, 2.12e-06)))
+  expect_true(all(round(unname(fit_results_list$fit_coeffs[, "std.error"]), 4) == c(0.0006, 0.0028, 0.0013)))
+  expect_true(all(round(unname(diag(fit_results_list$fit_var_cov_mat)), 8) == c(3.4e-07, 7.87e-06, 1.71e-06)))
 
   expect_equal(round(unname(fit_results_list$fit_model_statistics[, "logLik"]), 2), -36.09)
   expect_equal(gg_curve$data$dose, trans_count_data$D)
@@ -178,7 +180,7 @@ test_that("fit with aggregated count data works", {
 # Translocations dose estimation ----
 
 test_that("processing case data works", {
-  case_data <- app_sys("extdata", "cases-data-hetero.csv") %>%
+  case_data <- app_sys("extdata", "cases-data-partial.csv") %>%
     utils::read.csv(header = TRUE)
 
   case_data <- calculate_aberr_table(
@@ -207,8 +209,8 @@ test_that("processing case data works", {
   case_data_cols_len <- length(case_data_cols)
 
   # Expected outcomes
-  expect_equal(case_data_cols[1:2], c("N", "X"))
-  expect_true(all(grepl("C", case_data_cols[seq(3, case_data_cols_len - 7, 1)])))
+  expect_equal(case_data_cols[2:3], c("N", "X"))
+  expect_true(all(grepl("C", case_data_cols[seq(4, case_data_cols_len - 7, 1)])))
   expect_equal(case_data_cols[seq(case_data_cols_len - 6, case_data_cols_len, 1)], c("Fp", "Fp_err", "DI", "u", "Xc", "Fg", "Fg_err"))
 
   # Dose estimation
@@ -228,8 +230,16 @@ test_that("processing case data works", {
   # Parse genome fraction
   parsed_genome_factor <- 0.585
 
+  # Number cases
+  num_cases <- nrow(case_data)
+
+  case_data <- as.data.frame(case_data)
+  expect_equal(case_data$ID, c("example1", "example2"))
+
+
   # Calculations
   results_whole_merkle <- estimate_whole_body_merkle(
+    num_cases,
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
@@ -241,6 +251,7 @@ test_that("processing case data works", {
   )
 
   results_whole_delta <- estimate_whole_body_delta(
+    num_cases,
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
@@ -250,6 +261,7 @@ test_that("processing case data works", {
   )
 
   results_partial <- estimate_partial_body_dolphin(
+    num_cases,
     case_data,
     fit_coeffs,
     fit_var_cov_mat,
@@ -261,30 +273,55 @@ test_that("processing case data works", {
   )
 
   # Expected outputs (whole-body)
-  expect_equal(colnames(results_whole_merkle$est_doses), c("yield", "dose"))
-  expect_equal(rownames(results_whole_merkle$est_doses), c("lower", "estimate", "upper"))
-  expect_equal(round(results_whole_merkle$AIC, 3), 8.223)
 
-  expect_equal(colnames(results_whole_delta$est_doses), c("yield", "dose"))
-  expect_equal(rownames(results_whole_delta$est_doses), c("lower", "estimate", "upper"))
-  expect_equal(round(results_whole_delta$AIC, 3), 8.223)
+  expect_equal(colnames(results_whole_merkle[[1]]$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_whole_merkle[[1]]$est_yield), c("lower", "estimate", "upper"))
 
-  expect_equal(results_whole_merkle$est_doses["estimate", "yield"], results_whole_delta$est_doses["estimate", "yield"])
-  expect_gt(results_whole_merkle$est_doses["lower", "yield"], results_whole_delta$est_doses["lower", "yield"])
-  expect_lt(results_whole_merkle$est_doses["upper", "yield"], results_whole_delta$est_doses["upper", "yield"])
+  expect_equal(colnames(results_whole_merkle[[2]]$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_whole_merkle[[2]]$est_yield), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_merkle[[2]]$AIC, 3), 8.223)
 
-  expect_true(all(round(results_whole_merkle$est_doses$yield, 3) == c(1.171, 1.295, 1.429)))
-  expect_true(all(round(results_whole_merkle$est_doses$dose, 3) == c(4.027, 4.485, 5.048)))
-  expect_true(all(round(results_whole_delta$est_doses$yield, 3) == c(1.106, 1.295, 1.484)))
-  expect_true(all(round(results_whole_delta$est_doses$dose, 3) == c(4.068, 4.485, 4.902)))
+  expect_equal(colnames(results_whole_delta[[1]]$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_whole_delta[[1]]$est_yield), c("lower", "estimate", "upper"))
+
+  expect_equal(colnames(results_whole_delta[[2]]$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_whole_delta[[2]]$est_yield), c("lower", "estimate", "upper"))
+  expect_equal(round(results_whole_delta[[2]]$AIC, 3), 8.223)
+
+  expect_equal(results_whole_merkle[[1]]$est_doses[, "estimate"], results_whole_delta[[1]]$est_doses[, "estimate"])
+  expect_equal(results_whole_merkle[[1]]$est_yield[, "estimate"], results_whole_delta[[1]]$est_yield[, "estimate"])
+
+  expect_equal(results_whole_merkle[[2]]$est_doses[, "estimate"], results_whole_delta[[2]]$est_doses[, "estimate"])
+  expect_equal(results_whole_merkle[[2]]$est_yield[, "estimate"], results_whole_delta[[2]]$est_yield[, "estimate"])
+
+
+  expect_true(all(round(results_whole_merkle[[1]]$est_yield, 3) == c(0.339, 0.474, 0.657)))
+  expect_true(all(round(results_whole_merkle[[1]]$est_doses, 3) == c(2.063, 2.613, 3.306)))
+
+  expect_true(all(round(results_whole_delta[[1]]$est_yield, 3) == c(0.379, 0.474, 0.568)))
+  expect_true(all(round(results_whole_delta[[1]]$est_doses, 3) == c(2.304, 2.613, 2.922)))
+
+  expect_true(all(round(results_whole_merkle[[2]]$est_yield, 3) == c(1.02, 1.295, 1.637)))
+  expect_true(all(round(results_whole_merkle[[2]]$est_doses, 3) == c(3.748, 4.485, 5.43)))
+
+  expect_true(all(round(results_whole_delta[[2]]$est_yield, 3) == c(1.106, 1.295, 1.484)))
+  expect_true(all(round(results_whole_delta[[2]]$est_doses, 3) == c(4.068, 4.485, 4.902)))
+
 
   # Expected outputs (partial-body)
-  expect_equal(colnames(results_partial$est_doses), c("yield", "dose"))
-  expect_equal(rownames(results_partial$est_doses), c("lower", "estimate", "upper"))
-  expect_equal(round(results_partial$AIC, 3), 8.838)
+  expect_equal(colnames(results_partial[[1]]$est_yield), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_partial[[1]]$est_doses), c("lower", "estimate", "upper"))
 
-  expect_true(all(round(results_partial$est_doses$yield, 3) == c(2.147, 2.546, 2.945)))
-  expect_true(all(round(results_partial$est_doses$dose, 3) == c(5.748, 6.388, 7.027)))
+  expect_equal(colnames(results_partial[[2]]$est_yield), c("lower", "estimate", "upper"))
+  expect_equal(colnames(results_partial[[2]]$est_doses), c("lower", "estimate", "upper"))
+  expect_equal(round(results_partial[[2]]$AIC, 3), 8.838)
+
+
+  expect_true(all(round(results_partial[[1]]$est_yield, 3) == c(1.524, 1.996, 2.468)))
+  expect_true(all(round(results_partial[[1]]$est_dose, 3) == c(4.864, 5.628, 6.391)))
+
+  expect_true(all(round(results_partial[[2]]$est_yield, 3) == c(2.147, 2.546, 2.945)))
+  expect_true(all(round(results_partial[[2]]$est_dose, 3) == c(5.748, 6.388, 7.027)))
 
   # Plot
   gg_curve <- plot_estimated_dose_curve(
@@ -296,7 +333,8 @@ test_that("processing case data works", {
     fit_var_cov_mat,
     protracted_g_value,
     conf_int_curve = 0.83,
-    aberr_name = to_title(aberr_module)
+    aberr_name = to_title(aberr_module),
+    place = "UI"
   )
 
   # Expected outcomes

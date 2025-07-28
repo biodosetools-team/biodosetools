@@ -2,22 +2,23 @@
 #'
 #' @param fit_results_list List of fit results.
 #' @param aberr_name Name of the aberration to use in the y-axis.
+#' @param place Where the plot will be displayed.
 #'
 #' @return \code{ggplot2} object.
 #' @export
-plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
+plot_fit_dose_curve <- function(fit_results_list, aberr_name, place) {
   # Read objects from fit results list
   count_data <- as.data.frame(fit_results_list[["fit_raw_data"]])
   fit_coeffs <- fit_results_list[["fit_coeffs"]]
   fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
 
-  # Generalised fit coefficients
+  # Generalized fit coefficients
   general_fit_coeffs <- generalise_fit_coeffs(fit_coeffs[, "estimate"])
 
-  # Generalised variance-covariance matrix
+  # Generalized variance-covariance matrix
   general_fit_var_cov_mat <- generalise_fit_var_cov_mat(fit_var_cov_mat)
 
-  # Generalised curves
+  # Generalized curves
   yield_fun <- function(d) {
     general_fit_coeffs[["coeff_C"]] +
       general_fit_coeffs[["coeff_alpha"]] * d +
@@ -76,7 +77,15 @@ plot_fit_dose_curve <- function(fit_results_list, aberr_name) {
       x = "Dose (Gy)",
       y = paste0(aberr_name, "/cells")
     ) +
-    ggplot2::theme_bw()
+    ggplot2::theme_bw() +
+    if (place == "save") {
+      list(
+        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
+      )
+    } else {
+      NULL
+    }
 
   # Return object
   return(gg_curve)

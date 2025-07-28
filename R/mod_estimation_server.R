@@ -10,7 +10,7 @@ mod_estimation_fit_curve_hot_server <- function(id) {
     table_reset <- reactiveValues(value = 0)
     table_var_reset <- reactiveValues(value = 0)
 
-    observeEvent(input$button_gen_table, {
+    observeEvent(input$formula_select, {
       table_reset$value <- 1
       table_var_reset$value <- 1
     })
@@ -18,11 +18,11 @@ mod_estimation_fit_curve_hot_server <- function(id) {
     # Initialise data frames ----
     previous_coeffs <- reactive({
       # Create button dependency for updating dimensions
-      input$button_gen_table
+      #input$button_gen_table
 
-      isolate({
+      #isolate({
         formula_select <- input$formula_select
-      })
+      #})
 
       if (formula_select == "lin-quad") {
         fit_coeffs_names <- c("coeff_C", "coeff_alpha", "coeff_beta")
@@ -45,11 +45,11 @@ mod_estimation_fit_curve_hot_server <- function(id) {
 
     previous_var <- reactive({
       # Create button dependency for updating dimensions
-      input$button_gen_table
+      #input$button_gen_table
 
-      isolate({
+      #isolate({
         model_formula <- input$formula_select
-      })
+      #})
 
       fit_coeffs_names <- names_from_model_formula(model_formula)
 
@@ -68,7 +68,7 @@ mod_estimation_fit_curve_hot_server <- function(id) {
     # Reactive data frames ----
     changed_coeffs_data <- reactive({
       # Create button dependency for updating dimensions
-      input$button_gen_table
+      #input$button_gen_table
 
       if (is.null(input$fit_coeffs_hot) | isolate(table_reset$value == 1)) {
         table_reset$value <- 0
@@ -86,7 +86,7 @@ mod_estimation_fit_curve_hot_server <- function(id) {
 
     changed_var_data <- reactive({
       # Create button dependency for updating dimensions
-      input$button_gen_table
+      #input$button_gen_table
 
       if (is.null(input$fit_var_cov_mat_hot) | isolate(table_var_reset$value == 1)) {
         table_var_reset$value <- 0
@@ -161,40 +161,45 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
       })
 
       input$button_view_fit_data
+      fit_results_list <- NULL
 
       isolate({
-        if (load_fit_data) {
-          fit_results_list <- readRDS(fit_data$datapath)
+          if (load_fit_data) {
 
-          # Additional info for translocations module
-          if (aberr_module == "translocations") {
-            fit_genome_factor <- fit_results_list[["genome_factor"]]
+          if(!is.null(fit_data)){
+            fit_results_list <- readRDS(fit_data$datapath)
 
-            # Message about used translocation frequency
-            if (fit_results_list[["frequency_select"]] == "measured_freq") {
-              trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(fit_genome_factor, 3), ".")
-            } else {
-              trans_frequency_message <- "The provided fitting curve is already full genome."
-            }
-            fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
+            # Additional info for translocations module
+            if (aberr_module == "translocations") {
+              fit_genome_factor <- fit_results_list[["genome_factor"]]
 
-            # Conversion of coefficients and statistics
-            if (fit_results_list[["frequency_select"]] == "measured_freq") {
-              # Update coefficients
-              fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
-              fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
+              # Message about used translocation frequency
+              if (fit_results_list[["frequency_select"]] == "measured_freq") {
+                trans_frequency_message <- paste0("The provided observed fitting curve has been converted to full genome, with a genomic conversion factor of ", round(fit_genome_factor, 3), ".")
+              } else {
+                trans_frequency_message <- "The provided fitting curve is already full genome."
+              }
+              fit_results_list[["fit_trans_frequency_message"]] <- trans_frequency_message
 
-              # Update variance-covariance matrix
-              fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
+              # Conversion of coefficients and statistics
+              if (fit_results_list[["frequency_select"]] == "measured_freq") {
+                # Update coefficients
+                fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
+                fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
 
-              # Update model-specific statistics
-              fit_results_list[["fit_model_statistics"]] <- calculate_model_stats(
-                model_data = fit_results_list[["fit_raw_data"]],
-                fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
-                response = "yield", link = "identity", type = "theory",
-                genome_factor = fit_genome_factor,
-                calc_type = "estimation"
-              )
+                # Update variance-covariance matrix
+                fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
+
+                # Update model-specific statistics
+          #      fit_results_list[["fit_model_statistics"]] <- calculate_model_stats(
+          #        model_data = fit_results_list[["fit_raw_data"]],
+          #        fit_coeffs_vec = fit_results_list[["fit_coeffs"]][, "estimate"],
+          #        fit_algorithm = fit_results_list[["fit_algorithm"]],
+          #        response = "yield", link = "identity", type = "theory",
+          #        genome_factor = fit_genome_factor,
+          #        calc_type = "estimation"
+          #      )
+              }
             }
           }
         } else {
@@ -276,7 +281,8 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
       if (input$button_view_fit_data <= 0) {
         return(NULL)
       }
-      withMathJax(paste0("$$", data()[["fit_formula_tex"]], "$$"))
+
+      withMathJax(HTML(paste0("$$", data()[["fit_formula_tex"]], "$$")))
     })
 
     output$fit_trans_frequency_message <- renderUI({
@@ -300,7 +306,7 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
           width = (num_cols * 70),
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 70)
+        hot_cols(colWidths = 70, halign = "htCenter")
     })
 
     output$fit_coeffs <- renderRHandsontable({
@@ -319,7 +325,7 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
           height = "100%"
         ) %>%
         hot_cols(colWidths = 100) %>%
-        hot_cols(halign = "htRight")
+        hot_cols(halign = "htCenter")
     })
 
     output$fit_var_cov_mat <- renderRHandsontable({
@@ -339,7 +345,7 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
           height = "100%"
         ) %>%
         hot_cols(colWidths = 100) %>%
-        hot_cols(halign = "htRight")
+        hot_cols(halign = "htCenter")
     })
 
     output$fit_cor_mat <- renderRHandsontable({
@@ -357,7 +363,7 @@ mod_estimation_fit_curve_server <- function(id, aberr_module) {
           width = (50 + num_cols * 100),
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 100) %>%
+        hot_cols(colWidths = 100, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
   })
@@ -377,6 +383,64 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
     # Reset table ----
     table_reset <- reactiveValues(value = 0)
 
+    observeEvent(input$button_upd_params, {
+      if (nrow(as.data.frame(hot_to_r(input$case_data_hot))) < 2) {
+        updateSelectInput(
+          session,
+          "error_method_whole_select",
+          choices = list(
+            "Merkle's method (83%-83%)" = "merkle-83",
+            "Merkle's method (95%-95%)" = "merkle-95",
+            "Delta method (95%)" = "delta"
+          ),
+          selected = "merkle-83"
+        )
+        updateSelectInput(
+          session,
+          "exposure_select",
+          choices = list(
+            "Acute" = "acute",
+            "Protracted" = "protracted",
+            "Highly protracted" = "protracted_high"
+          ),
+          selected = "acute"
+        )
+        if(aberr_module == "micronuclei"){
+          updateSelectInput(
+            session,
+            "assessment_select",
+            choices = list(
+              "Whole-body"    = "whole-body"
+            ),
+            selected = "whole-body"
+          )
+        }else{
+          updateSelectInput(
+            session,
+            "assessment_select",
+            choices = list(
+              "Whole-body"    = "whole-body",
+              "Partial-body"  = "partial-body",
+              "Heterogeneous" = "hetero"
+            ),
+            selected = "whole-body"
+          )
+        }
+      } else {
+
+        updateSelectInput(
+          session,
+          "assessment_select",
+          choices = list(
+            "Whole-body"    = "whole-body",
+            "Partial-body"  = "partial-body"
+          ),
+          selected = "whole-body"
+        )
+
+      }
+    })
+
     observeEvent(input$button_upd_table, {
       table_reset$value <- 1
     })
@@ -389,8 +453,8 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
       isolate({
         load_case_data <- input$load_case_data_check
         case_data <- input$load_case_data
-        # num_cases <- as.numeric(input$num_cases)
-        num_cases <- 1
+        num_cases <- as.numeric(input$num_cases)
+        #num_cases <- 1
         num_aberrs <- as.numeric(input$num_aberrs) + 1
       })
 
@@ -434,6 +498,7 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
         if (is.null(input$case_data_hot) | isolate(table_reset$value == 1)) {
           table_reset$value <- 0
           mytable <- previous()
+          mytable$ID <- ""
 
           # Initial rendering of the table
           mytable <- init_aberr_table(
@@ -491,16 +556,17 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
       # Convert to hot and format table
       hot <- changed_data() %>%
         rhandsontable(
-          width = (50 + num_cols * 50),
+          width = ((num_cols + 1) * 50) + 20,
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 50)
+        hot_cols(colWidths = 50, halign = "htCenter")%>%
+        hot_col("ID", colWidths = 70, halign = "htCenter")
       # hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
       if (aberr_module %in% c("dicentrics", "micronuclei")) {
         hot <- hot %>%
-          hot_col(c(1, 2, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
-          hot_col(num_cols, renderer = "
+          hot_col(c(2, 3, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE)%>%
+          hot_col(num_cols - 0, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
              if (value > 1.96) {
@@ -509,11 +575,11 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
            }")
       } else if (aberr_module == "translocations") {
         hot <- hot %>%
-          hot_col(c(1, 2, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
+          hot_col(c(2, 3, seq(num_cols - 6, num_cols, 1)), readOnly = TRUE) %>%
           hot_col(num_cols - 3, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
-             if (value > 1.96) {
+             if (value >1.96) {
               td.style.background = 'pink';
              }
            }")
@@ -536,6 +602,11 @@ mod_estimation_case_hot_server <- function(id, aberr_module, genome_factor = NUL
 #' @noRd
 mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL) {
   moduleServer(id, function(input, output, session) {
+    reactive_data_est <- reactiveValues(
+      fitting_rds = NULL,
+      fitting_manual = NULL
+    )
+
     data <- reactive({
       # Calcs: get variables ----
       input$button_estimate
@@ -552,7 +623,8 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         fit_data <- input$load_fit_data
         exposure <- input$exposure_select
         assessment <- input$assessment_select
-
+        badge_check <- input$badge_dose_check
+        badge_dose <- input$badge_dose
         # Cases data
         case_data <- hot_to_r(input$case_data_hot)
 
@@ -564,24 +636,29 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
       error_method <- input$error_method_whole_select
 
       # Get fitting data ----
+      fit_results_list <- NULL
 
-      cli::cli_alert_info("Parsing dose-effect curve...")
-      progress$set(detail = "Parsing dose-effect curve", value = 1 / 6)
       if (load_fit_data) {
-        fit_results_list <- readRDS(fit_data$datapath)
 
-        # Additional info for translocations module
-        if (aberr_module == "translocations") {
-          fit_genome_factor <- fit_results_list[["genome_factor"]]
+        if(!is.null(fit_data)){
 
-          # Conversion of coefficients and statistics
-          if (fit_results_list[["frequency_select"]] == "measured_freq") {
-            # Update coefficients
-            fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
-            fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
+          fit_results_list <- readRDS(fit_data$datapath)
 
-            # Update variance-covariance matrix
-            fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
+          reactive_data_est$fitting_rds <- fit_results_list
+          max_curve <- max(as.numeric(fit_results_list$fit_raw_data[, "D"]))
+          # Additional info for translocations module
+          if (aberr_module == "translocations") {
+            fit_genome_factor <- fit_results_list[["genome_factor"]]
+
+            # Conversion of coefficients and statistics
+            if (fit_results_list[["frequency_select"]] == "measured_freq") {
+              # Update coefficients
+              fit_results_list[["fit_coeffs"]][, "estimate"] <- fit_results_list[["fit_coeffs"]][, "estimate"] / fit_genome_factor
+              fit_results_list[["fit_coeffs"]][, "std.error"] <- fit_results_list[["fit_coeffs"]][, "std.error"] / fit_genome_factor
+
+              # Update variance-covariance matrix
+              fit_results_list[["fit_var_cov_mat"]] <- fit_results_list[["fit_var_cov_mat"]] / fit_genome_factor^2
+            }
           }
         }
       } else {
@@ -595,6 +672,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           as.matrix() %>%
           `rownames<-`(names_from_model_formula(model_formula))
 
+        max_curve <- input$max_dose_curve
         if (input$use_var_cov_matrix) {
           fit_var_cov_mat <- hot_to_r(input$fit_var_cov_mat_hot) %>%
             as.matrix() %>%
@@ -636,284 +714,431 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         )
       }
 
-      # Parse fitting data
-      fit_coeffs <- fit_results_list[["fit_coeffs"]]
-      fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
-      fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
+     if(!is.null(fit_results_list)){
 
-      # Protracted variables ----
-      if (exposure == "protracted") {
-        protracted_time <- input$protracted_time
-        protracted_life_time <- input$protracted_life_time
-        protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
-      } else if (exposure == "protracted_high") {
-        protracted_g_value <- 0
-        # Used in report (dummy values)
-        protracted_time <- NA
-        protracted_life_time <- NA
-      } else {
-        protracted_g_value <- 1
-        # Used in report (dummy values)
-        protracted_time <- NA
-        protracted_life_time <- NA
-      }
+        # Parse fitting data
+        fit_coeffs <- fit_results_list[["fit_coeffs"]]
+        fit_var_cov_mat <- fit_results_list[["fit_var_cov_mat"]]
+        fit_formula_tex <- fit_results_list[["fit_formula_tex"]]
 
-      # Confidence intervals ----
 
-      # Select CIs depending on selected method
-      if (grepl("merkle", error_method, fixed = TRUE)) {
-        conf_int_curve <- as.numeric(paste0("0.", gsub("\\D", "", error_method)))
-        conf_int_yield <- conf_int_curve
-      } else if (error_method == "delta") {
-        conf_int_curve <- 0.83
-        conf_int_delta <- 0.95
-      }
-
-      # Calculations ----
-
-      # Parse genome fraction
-      if (aberr_module == "translocations") {
-        parsed_genome_factor <- genome_factor$genome_factor()
-      } else {
-        parsed_genome_factor <- 1
-      }
-
-      # Calculate whole-body results
-      if (grepl("merkle", error_method, fixed = TRUE)) {
-        cli::cli_alert_info("Performing whole-body dose estimation (Merkle's method)...")
-        progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
-        results_whole <- estimate_whole_body_merkle(
-          case_data,
-          fit_coeffs,
-          fit_var_cov_mat,
-          conf_int_yield,
-          conf_int_curve,
-          protracted_g_value,
-          parsed_genome_factor,
-          aberr_module
-        )
-      } else if (error_method == "delta") {
-        cli::cli_alert_info("Performing whole-body dose estimation (delta method)...")
-        progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
-        results_whole <- estimate_whole_body_delta(
-          case_data,
-          fit_coeffs,
-          fit_var_cov_mat,
-          conf_int_delta,
-          protracted_g_value,
-          aberr_module
-        )
-      }
-
-      # Parse results
-      est_doses_whole <- results_whole[["est_doses"]]
-      AIC_whole <- results_whole[["AIC"]]
-
-      if (assessment == "partial-body") {
-        # Input of the parameter gamma
-        if (fraction_coeff == "gamma") {
-          gamma <- input$gamma_coeff
-        } else if (fraction_coeff == "d0") {
-          gamma <- 1 / input$d0_coeff
+        # Protracted variables ----
+        if (exposure == "protracted") {
+          protracted_time <- input$protracted_time
+          protracted_life_time <- input$protracted_life_time
+          protracted_g_value <- protracted_g_function(protracted_time, protracted_life_time)
+        } else if (exposure == "protracted_high") {
+          protracted_g_value <- 0
+          # Used in report (dummy values)
+          protracted_time <- NA
+          protracted_life_time <- NA
+        } else {
+          protracted_g_value <- 1
+          # Used in report (dummy values)
+          protracted_time <- NA
+          protracted_life_time <- NA
         }
 
-        # Calculate partial results
-        cli::cli_alert_info("Performing partial-body dose estimation (Dolphin's method)...")
-        progress$set(detail = "Performing partial-body dose estimation", value = 3 / 6)
-        results_partial <- estimate_partial_body_dolphin(
-          case_data,
-          fit_coeffs,
-          fit_var_cov_mat,
-          conf_int = 0.95,
-          protracted_g_value,
-          parsed_genome_factor,
-          gamma,
-          aberr_module
-        )
+        # Confidence intervals ----
+
+        # Select CIs depending on selected method
+        if (grepl("merkle", error_method, fixed = TRUE)) {
+          conf_int_curve <- as.numeric(paste0("0.", gsub("\\D", "", error_method)))
+          conf_int_yield <- conf_int_curve
+        } else if (error_method == "delta") {
+          conf_int_curve <- 0.83
+          conf_int_delta <- 0.95
+        }
+
+        # Calculations ----
+
+        # Parse genome fraction
+        if (aberr_module == "translocations") {
+          parsed_genome_factor <- genome_factor$genome_factor()
+        } else {
+          parsed_genome_factor <- 1
+        }
+
+        # Calculate whole-body results
+        if (grepl("merkle", error_method, fixed = TRUE)) {
+          cli::cli_alert_info("Performing whole-body dose estimation (Merkle's method)...")
+          progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
+
+          if (input$load_case_data_check == TRUE || input$num_cases == nrow(case_data)){
+            results_whole <- estimate_whole_body_merkle(
+            num_cases = nrow(case_data),
+            case_data,
+            fit_coeffs,
+            fit_var_cov_mat,
+            conf_int_yield,
+            conf_int_curve,
+            protracted_g_value,
+            parsed_genome_factor,
+            aberr_module
+          )
+          }else{
+            results_whole <-NULL
+          }
+
+        } else if (error_method == "delta") {
+          cli::cli_alert_info("Performing whole-body dose estimation (delta method)...")
+          progress$set(detail = "Performing whole-body dose estimation", value = 2 / 6)
+          if (input$load_case_data_check == TRUE || input$num_cases == nrow(case_data)){
+            results_whole <- estimate_whole_body_delta(
+              num_cases = nrow(case_data),
+              case_data,
+              fit_coeffs,
+              fit_var_cov_mat,
+              conf_int_delta,
+              protracted_g_value,
+              aberr_module
+            )
+          }else{
+            results_whole <-NULL
+          }
+
+        }
 
         # Parse results
-        est_doses_partial <- results_partial[["est_doses"]]
-        est_frac_partial <- results_partial[["est_frac"]]
-        est_metaphases_frac_partial <- results_partial[["est_metaphases_frac"]]
-        AIC_partial <- results_partial[["AIC"]]
-      } else if (assessment == "hetero") {
-        # Input of the parameter gamma and its variance
-        if (fraction_coeff == "gamma") {
-          gamma <- input$gamma_coeff
-          gamma_error <- input$gamma_error
-        } else if (fraction_coeff == "d0") {
-          gamma <- 1 / input$d0_coeff
-          gamma_error <- 0
-        }
+          est_doses_whole <- list()
 
-        # Calculate heterogeneous result
-        cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
-        progress$set(detail = "Performing heterogeneous dose estimation", value = 3 / 6)
+          for (i in seq_along(results_whole)) {
+            est_doses <- results_whole[[i]][["est_doses"]]
+            est_doses_whole[[i]] <- est_doses
+          }
 
-        # Wrap mixed Poisson model in try() to ensure convergence
-        for (i in 1:5) {
-          try({
-            results_hetero <- estimate_hetero_mixed_poisson(
+          est_doses_whole <- do.call(rbind, est_doses_whole)
+          est_doses_whole <- cbind(ID = case_data$ID, est_doses_whole)
+
+          est_yields_whole <- list()
+          AIC_whole <- list()
+
+          for (i in seq_along(results_whole)) {
+            est_yields <- results_whole[[i]][["est_yield"]]
+            est_yields_whole[[i]] <- est_yields
+            AIC_whole[[i]] <- results_whole[[i]][["AIC"]]
+          }
+
+          est_yields_whole <- do.call(rbind, est_yields_whole)
+          est_yields_whole <- cbind(ID = case_data$ID, est_yields_whole)
+
+          AIC_whole <- do.call(rbind, AIC_whole)
+
+
+        if (assessment == "partial-body") {
+          #Error message if there are no C2
+          if (any(case_data$C2 == "0")) {
+            showModal(modalDialog(
+              title = "Error",
+              "Partial body calculations can not be performed in one or more cases due to lack of C2 cells (two dicentrics/cell).",
+              footer = modalButton("Close")
+            ))
+          }
+
+          # Input of the parameter gamma
+          if (fraction_coeff == "gamma") {
+            gamma <- input$gamma_coeff
+          } else if (fraction_coeff == "d0") {
+            gamma <- 1 / input$d0_coeff
+          }
+
+          # Calculate partial results
+          cli::cli_alert_info("Performing partial-body dose estimation (Dolphin's method)...")
+          progress$set(detail = "Performing partial-body dose estimation", value = 3 / 6)
+          if (input$load_case_data_check == TRUE || input$num_cases == nrow(case_data)){
+            results_partial <- estimate_partial_body_dolphin(
+              num_cases = nrow(case_data),
               case_data,
               fit_coeffs,
               fit_var_cov_mat,
               conf_int = 0.95,
               protracted_g_value,
-              gamma = gamma,
-              gamma_error = gamma_error
+              parsed_genome_factor,
+              gamma,
+              aberr_module
             )
-            break # break/exit the for-loop
-          })
+          }else{
+            results_partial <-NULL
+          }
+          str(results_partial)
+
+          # Parse results
+
+            est_doses_partial <- list()
+            est_yields_partial <- list()
+            est_frac_partial <- list()
+            est_metaphases_frac_partial <- list()
+            AIC_partial <- list()
+
+            for (i in seq_along(results_partial)) {
+              est_doses_partial[[i]] <- results_partial[[i]][["est_doses"]]
+              est_yields_partial[[i]] <- results_partial[[i]][["est_yield"]]
+              est_frac_partial[[i]] <- results_partial[[i]][["est_frac"]]
+              est_metaphases_frac_partial[[i]] <- results_partial[[i]][["est_metaphases_frac"]]
+              AIC_partial[[i]] <- results_partial[[i]][["AIC"]]
+            }
+
+            est_doses_partial <- do.call(rbind, est_doses_partial)
+            est_doses_partial <- cbind(ID = case_data$ID, est_doses_partial)
+            est_yields_partial <- do.call(rbind, est_yields_partial)
+            est_yields_partial <- cbind(ID = case_data$ID, est_yields_partial)
+            est_frac_partial <- do.call(rbind, est_frac_partial)
+            est_frac_partial <- cbind(ID = case_data$ID, est_frac_partial)
+            est_metaphases_frac_partial <- do.call(rbind,  est_metaphases_frac_partial)
+            est_metaphases_frac_partial <- cbind(ID = case_data$ID, est_metaphases_frac_partial)
+            AIC_partial <- do.call(rbind, AIC_partial)
+            AIC_partial <- cbind(ID = case_data$ID,  AIC_partial)
+
+
+        } else if (assessment == "hetero") {
+          #Error message if there are no C2
+          if (case_data$C2 == "0") {
+            showModal(modalDialog(
+              title = "Error",
+              "Heterogeneous calculations can not be performed due to lack of C2 cells (two dicentrics/cell).",
+              footer = modalButton("Close")
+            ))
+          }
+          # Input of the parameter gamma and its variance
+          if (fraction_coeff == "gamma") {
+            gamma <- input$gamma_coeff
+            gamma_error <- input$gamma_error
+          } else if (fraction_coeff == "d0") {
+            gamma <- 1 / input$d0_coeff
+            gamma_error <- 0
+          }
+
+          # Calculate heterogeneous result
+          cli::cli_alert_info("Performing heterogeneous dose estimation (mixed Poisson model)...")
+          progress$set(detail = "Performing heterogeneous dose estimation", value = 3 / 6)
+
+          # Wrap mixed Poisson model in try() to ensure convergence
+          for (i in 1:5) {
+            try({
+              results_hetero <- estimate_hetero_mixed_poisson(
+                case_data,
+                fit_coeffs,
+                fit_var_cov_mat,
+                conf_int = 0.95,
+                protracted_g_value,
+                gamma = gamma,
+                gamma_error = gamma_error
+              )
+              break # break/exit the for-loop
+            })
+          }
+          if (!exists("results_hetero")) {
+            cli::cli_alert_danger("The algorithm did not converge!")
+            showNotification(
+              ui = "The algorithm did not converge!\nPlease try again.",
+              type = "error"
+            )
+          }
+
+          # Parse results
+          est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
+          est_yields_hetero <- results_hetero[["est_yields"]]
+          est_doses_hetero <- results_hetero[["est_doses"]]
+          est_frac_hetero <- results_hetero[["est_frac"]]
+          AIC_hetero <- results_hetero[["AIC"]]
         }
-        if (!exists("results_hetero")) {
-          cli::cli_alert_danger("The algorithm did not converge!")
-          showNotification(
-            ui = "The algorithm did not converge!\nPlease try again.",
-            type = "error"
-          )
+
+
+        # Make plot ----
+        cli::cli_alert_info("Plotting dose estimation results...")
+        progress$set(detail = "Plotting dose estimation results", value = 4 / 6)
+
+        # Data set for dose plotting
+        if (assessment == "whole-body") {
+          est_doses <- list(whole = results_whole)
+        } else if (assessment == "partial-body") {
+          est_doses <- list(whole = results_whole, partial = results_partial)
+        } else if (assessment == "hetero") {
+          est_doses <- list(whole = results_whole, hetero = results_hetero)
         }
 
-        # Parse results
-        est_mixing_prop_hetero <- results_hetero[["est_mixing_prop"]]
-        est_yields_hetero <- results_hetero[["est_yields"]]
-        est_doses_hetero <- results_hetero[["est_doses"]]
-        est_frac_hetero <- results_hetero[["est_frac"]]
-        AIC_hetero <- results_hetero[["AIC"]]
-      }
-
-      # Make plot ----
-      cli::cli_alert_info("Plotting dose estimation results...")
-      progress$set(detail = "Plotting dose estimation results", value = 4 / 6)
-
-      # Data set for dose plotting
-      if (assessment == "whole-body") {
-        est_doses <- list(whole = results_whole)
-      } else if (assessment == "partial-body") {
-        est_doses <- list(whole = results_whole, partial = results_partial)
-      } else if (assessment == "hetero") {
-        est_doses <- list(whole = results_whole, hetero = results_hetero)
-      }
-
-      # Name of the aberration to use in the y-axis
-      aberr_name <- to_title(aberr_module)
-      if (aberr_module == "translocations") {
-        if (nchar(input$trans_name) > 0) {
-          aberr_name <- input$trans_name
+        # Name of the aberration to use in the y-axis
+        aberr_name <- to_title(aberr_module)
+        if (aberr_module == "translocations") {
+          if (nchar(input$trans_name) > 0) {
+            aberr_name <- input$trans_name
+          }
         }
-      }
 
-      # Get dose estimation curve
-      gg_curve <- plot_estimated_dose_curve(
-        est_doses,
-        fit_coeffs,
-        fit_var_cov_mat,
-        protracted_g_value,
-        conf_int_curve = conf_int_curve,
-        aberr_name
-      )
+        if (input$load_case_data_check == TRUE || input$num_cases == nrow(case_data)){
 
-      # Return list ----
+            if (input$num_cases < 2){
+            # Get dose estimation curve
+            gg_curve <- plot_estimated_dose_curve(
+              est_doses,
+              fit_coeffs,
+              fit_var_cov_mat,
+              protracted_g_value,
+              conf_int_curve = conf_int_curve,
+              aberr_name,
+              "UI"
+            )
+            gg_curve_save <- plot_estimated_dose_curve(
+              est_doses,
+              fit_coeffs,
+              fit_var_cov_mat,
+              protracted_g_value,
+              conf_int_curve = conf_int_curve,
+              aberr_name,
+              "save"
+            )
+            }else{
+              if(assessment == "whole-body") {
+              gg_curve <- plot_triage(
+                num_cases = input$num_cases,
+                est_doses_whole,
+                est_doses_partial= NULL,
+                assessment="whole",
+                "UI")
 
-      cli::cli_alert_info("Processing results...")
-      progress$set(detail = "Processing results", value = 5 / 6)
+              gg_curve_save <- plot_triage(
+                num_cases = input$num_cases,
+                est_doses_whole,
+                est_doses_partial= NULL,
+                assessment="whole",
+                "save")
 
-      # Make basic list of results to return
-      est_results_list <- list(
-        # Used in app
-        assessment = assessment,
-        # Whole-body
-        est_doses_whole = est_doses_whole,
-        # Partial
-        est_doses_partial = NA,
-        est_frac_partial = NA,
-        est_metaphases_frac_partial = NA,
-        # Heterogeneous
-        est_mixing_prop_hetero = NA,
-        est_yields_hetero = NA,
-        est_doses_hetero = NA,
-        est_frac_hetero = NA,
-        # AICs
-        AIC_whole = AIC_whole,
-        AIC_partial = NA,
-        AIC_hetero = NA,
-        # Plot
-        gg_curve = gg_curve,
-        # Required for report
-        fit_coeffs = fit_coeffs,
-        protraction = c(0, 0, 0),
-        fit_formula_tex = fit_formula_tex,
-        case_data = case_data,
-        case_description = input$case_description,
-        results_comments = input$results_comments
-      )
+              }
+              if(assessment == "partial-body") {
+                gg_curve <- plot_triage(
+                  num_cases = input$num_cases,
+                  est_doses_whole,
+                  est_doses_partial,
+                  assessment="partial",
+                  "UI")
 
-      if (assessment == "partial-body") {
-        # Partial
-        est_results_list[["est_doses_partial"]] <- est_doses_partial
-        est_results_list[["est_frac_partial"]] <- est_frac_partial
-        est_results_list[["est_metaphases_frac_partial"]] <- est_metaphases_frac_partial
-        # Reset Heterogeneous
-        est_results_list[["est_mixing_prop_hetero"]] <- NA
-        est_results_list[["est_yields_hetero"]] <- NA
-        est_results_list[["est_doses_hetero"]] <- NA
-        est_results_list[["est_frac_hetero"]] <- NA
-        # AICs
-        est_results_list[["AIC_partial"]] <- AIC_partial
-        est_results_list[["AIC_hetero"]] <- NA
-      } else if (assessment == "hetero") {
-        # Heterogeneous
-        est_results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
-        est_results_list[["est_yields_hetero"]] <- est_yields_hetero
-        est_results_list[["est_doses_hetero"]] <- est_doses_hetero
-        est_results_list[["est_frac_hetero"]] <- est_frac_hetero
-        # Reset Partial
-        est_results_list[["est_doses_partial"]] <- NA
-        est_results_list[["est_frac_partial"]] <- NA
-        est_results_list[["est_metaphases_frac_partial"]] <- NA
-        # AICs
-        est_results_list[["AIC_partial"]] <- NA
-        est_results_list[["AIC_hetero"]] <- AIC_hetero
-      }
+                gg_curve_save <- plot_triage(
+                  num_cases = input$num_cases,
+                  est_doses_whole,
+                  est_doses_partial,
+                  assessment="partial",
+                  "save")
 
-      # Check if protracted correction was applied
-      if (exposure == "protracted" & any(grep("beta", fit_formula_tex))) {
-        est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
-      }
+              }}
+        }else{
+            gg_curve <- NULL
+            gg_curve_save <- NULL
+          }
 
-      # Additional results if using translocations
-      if (aberr_module == "translocations") {
-        est_results_list[["genome_factor"]] <- genome_factor$genome_factor()
-        est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
-        est_results_list[["trans_sex"]] <- input$trans_sex
 
-        if (!input$trans_confounders) {
-          est_results_list[["confounders"]] <- NULL
-        } else if (input$trans_confounders & input$trans_confounders_type == "sigurdson") {
-          est_results_list[["confounders"]] <- c(
-            age_value = input$trans_confounder_age,
-            sex_bool = input$trans_confounder_sex,
-            smoker_bool = input$trans_confounder_smoke,
-            ethnicity_value = input$trans_confounder_ethnicity,
-            region_value = input$trans_confounder_region
-          )
-        } else if (input$trans_confounders & input$trans_confounders_type == "manual") {
-          est_results_list[["confounders"]] <- input$trans_expected_aberr_value
+        # Return list ----
+
+        cli::cli_alert_info("Processing results...")
+        progress$set(detail = "Processing results", value = 5 / 6)
+
+
+        # Make basic list of results to return
+        est_results_list <- list(
+          aberr_module=aberr_module,
+          # Used in app
+          assessment = assessment,
+          # Whole-body
+          est_doses_whole = est_doses_whole,
+          est_yields_whole = est_yields_whole,
+          # Partial
+          est_doses_partial = NA,
+          est_yields_partial = NA,
+          est_frac_partial = NA,
+          est_metaphases_frac_partial = NA,
+          # Heterogeneous
+          est_mixing_prop_hetero = NA,
+          est_yields_hetero = NA,
+          est_doses_hetero = NA,
+          est_frac_hetero = NA,
+          # AICs
+          AIC_whole = AIC_whole,
+          AIC_partial = NA,
+          AIC_hetero = NA,
+          # Plot
+          gg_curve = gg_curve,
+          gg_curve_save = gg_curve_save,
+          # Required for report
+          fit_coeffs = fit_coeffs,
+          protraction = c(0, 0, 0),
+          fit_formula_tex = fit_formula_tex,
+          case_data = case_data,
+          case_description = input$case_description,
+          results_comments = input$results_comments,
+          IRR=NA,
+          max_dose_curve=max_curve
+        )
+
+        if (assessment == "partial-body") {
+          # Partial
+          est_results_list[["est_doses_partial"]] <- est_doses_partial
+          est_results_list[["est_yields_partial"]] <- est_yields_partial
+          est_results_list[["est_frac_partial"]] <- est_frac_partial
+          est_results_list[["est_metaphases_frac_partial"]] <- est_metaphases_frac_partial
+          # Reset Heterogeneous
+          est_results_list[["est_mixing_prop_hetero"]] <- NA
+          est_results_list[["est_yields_hetero"]] <- NA
+          est_results_list[["est_doses_hetero"]] <- NA
+          est_results_list[["est_frac_hetero"]] <- NA
+          # AICs
+          est_results_list[["AIC_partial"]] <- AIC_partial
+          est_results_list[["AIC_hetero"]] <- NA
+        } else if (assessment == "hetero") {
+          # Heterogeneous
+          est_results_list[["est_mixing_prop_hetero"]] <- est_mixing_prop_hetero
+          est_results_list[["est_yields_hetero"]] <- est_yields_hetero
+          est_results_list[["est_doses_hetero"]] <- est_doses_hetero
+          est_results_list[["est_frac_hetero"]] <- est_frac_hetero
+          # Reset Partial
+          est_results_list[["est_doses_partial"]] <- NA
+          est_results_list[["est_frac_partial"]] <- NA
+          est_results_list[["est_metaphases_frac_partial"]] <- NA
+          # AICs
+          est_results_list[["AIC_partial"]] <- NA
+          est_results_list[["AIC_hetero"]] <- AIC_hetero
         }
-      }
 
-      cli::cli_alert_success("Dose estimation performed successfully")
-      progress$set(detail = "Done", value = 1)
-      showNotification(
-        ui = "Dose estimation performed successfully"
-      )
+        # Check if protracted correction was applied
+        if (exposure == "protracted" & any(grep("beta", fit_formula_tex))) {
+          est_results_list[["protraction"]] <- c(1, protracted_time, protracted_life_time)
+        }
 
-      return(est_results_list)
-    })
+        # Additional results if using translocations
+        if (aberr_module == "translocations") {
+          est_results_list[["genome_factor"]] <- genome_factor$genome_factor()
+          est_results_list[["chromosome_table"]] <- hot_to_r(input$chromosome_table)
+          est_results_list[["trans_sex"]] <- input$trans_sex
+
+          if (!input$trans_confounders) {
+            est_results_list[["confounders"]] <- NULL
+          } else if (input$trans_confounders & input$trans_confounders_type == "sigurdson") {
+            est_results_list[["confounders"]] <- c(
+              age_value = input$trans_confounder_age,
+              sex_bool = input$trans_confounder_sex,
+              smoker_bool = input$trans_confounder_smoke,
+              ethnicity_value = input$trans_confounder_ethnicity,
+              region_value = input$trans_confounder_region
+            )
+          } else if (input$trans_confounders & input$trans_confounders_type == "manual") {
+            est_results_list[["confounders"]] <- input$trans_expected_aberr_value
+          }
+        }
+
+        if(aberr_module == "dicentrics"){
+          if(assessment == "whole-body" & exposure == "acute" & badge_check){
+            est_results_list[["IRR"]] <- calculate_aberr_IRR(case_data,  fit_coeffs, badge_dose)
+          }
+        }
+
+        return(est_results_list)
+    }
+      })
+
 
     # Results outputs ----
 
     # renderUI: Estimate results tabBox ----
     output$estimation_results_ui <- renderUI({
+     if(!is.null(data())){
       assessment <- input$assessment_select
 
       # Help modal
@@ -925,44 +1150,147 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           include_help("estimation/dose_mixed_yields.md")
         )
       )
+      if(aberr_module == "dicentrics"){
+        aberr_yield <- "dicentrics"
+      }else if(aberr_module == "micronuclei"){
+        aberr_yield <- "micronuclei"
+      }else{
+        aberr_yield <- "translocations"
+      }
 
       if (assessment == "whole-body") {
         # Whole-body
-        return_tabbox <- tabBox(
-          id = "estimation_results_tabs",
-          width = 12,
-          side = "left",
-          title = help_modal_button(
-            container = "tabbox",
-            session$ns("help_dose_mixed_yields"),
-            session$ns("help_dose_mixed_yields_modal")
-          ),
-          tabPanel(
-            title = "Whole-body",
-            h5("Whole-body exposure estimation"),
-            div(
-              class = "hot-improved",
-              rHandsontableOutput(session$ns("est_yields_whole"))
-            ),
-            br(),
-            div(
-              class = "hot-improved",
-              rHandsontableOutput(session$ns("est_doses_whole"))
+        if (input$num_cases < 2){
+         if(aberr_module == "dicentrics"){
+          if(input$badge_dose_check & !is.na(data()[["IRR"]][1])){
+            rel_chance <- ifelse(
+              data()[["IRR"]][3] >= 1,
+              paste0(format(data()[["IRR"]][3], scientific = TRUE, digits = 3), ":1"),
+              paste0("1:", format(1 / data()[["IRR"]][3], scientific = TRUE, digits = 3))
             )
+            return_tabbox <- tabBox(
+              id = "estimation_results_tabs",
+              width = 13,
+              side = "left",
+              title = help_modal_button(
+                container = "tabbox",
+                session$ns("help_dose_mixed_yields"),
+                session$ns("help_dose_mixed_yields_modal")
+              ),
+              tabPanel(
+                title = "Whole-body",
+                h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
+                div(
+                  class = "hot-improved",
+                  rHandsontableOutput(session$ns("est_yields_whole"))
+                ),
+                br(),
+                h5("Whole-body exposure estimation: Dose (Gy)"),
+                div(
+                  class = "hot-improved",
+                  rHandsontableOutput(session$ns("est_doses_whole"))
+                ),
+                br(),
+                h5("Incidence rate ratio (IRR)"),
+                div(
+                  class = "hot-improved",
+                  rHandsontableOutput(session$ns("IRR"))
+                ),
+                br(),
 
-            # br(),
-            # h5("Relative quality of the estimation"),
-            # div(
-            #   class = "hot-improved",
-            #   rHandsontableOutput(session$ns("AIC_whole"))
-            # )
+                h6(paste("The relative chance for observing",
+                         data()[["IRR"]][2] ,"dicentrics in", data()[["IRR"]][1] ,"cells is",
+                         rel_chance,
+                         "for a dose of 0 Gy vs the suspected dose of", input$badge_dose ,"Gy (see odds-ratio in IAEA2011)"),
+                   style = "line-height: 1.75;")
+
+              ))
+
+          }else{
+            return_tabbox <- tabBox(
+              id = "estimation_results_tabs",
+              width = 13,
+              side = "left",
+              title = help_modal_button(
+                container = "tabbox",
+                session$ns("help_dose_mixed_yields"),
+                session$ns("help_dose_mixed_yields_modal")
+              ),
+              tabPanel(
+                title = "Whole-body",
+                h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
+                div(
+                  class = "hot-improved",
+                  rHandsontableOutput(session$ns("est_yields_whole"))
+                ),
+                br(),
+                h5("Whole-body exposure estimation: Dose (Gy)"),
+                div(
+                  class = "hot-improved",
+                  rHandsontableOutput(session$ns("est_doses_whole"))
+                )
+              )
+            )
+          }
+         }else{
+           return_tabbox <- tabBox(
+             id = "estimation_results_tabs",
+             width = 13,
+             side = "left",
+             title = help_modal_button(
+               container = "tabbox",
+               session$ns("help_dose_mixed_yields"),
+               session$ns("help_dose_mixed_yields_modal")
+             ),
+             tabPanel(
+               title = "Whole-body",
+               h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
+               div(
+                 class = "hot-improved",
+                 rHandsontableOutput(session$ns("est_yields_whole"))
+               ),
+               br(),
+               h5("Whole-body exposure estimation: Dose (Gy)"),
+               div(
+                 class = "hot-improved",
+                 rHandsontableOutput(session$ns("est_doses_whole"))
+               )
+             )
+           )
+           }
+
+        }else if(input$num_cases >=2){
+          return_tabbox <- tabBox(
+            id = "estimation_results_tabs",
+            width = 13,
+            side = "left",
+            title = help_modal_button(
+              container = "tabbox",
+              session$ns("help_dose_mixed_yields"),
+              session$ns("help_dose_mixed_yields_modal")
+            ),
+            tabPanel(
+              title = "Whole-body",
+              h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(session$ns("est_yields_whole"))
+              ),
+              br(),
+              h5("Whole-body exposure estimation: Dose (Gy)"),
+              div(
+                class = "hot-improved",
+                rHandsontableOutput(session$ns("est_doses_whole"))
+              )
+            )
           )
-        )
+        }
+
       } else if (assessment == "partial-body") {
         # Partial-body
         return_tabbox <- tabBox(
           id = "estimation_results_tabs",
-          width = 12,
+          width = 13,
           side = "left",
           title = help_modal_button(
             container = "tabbox",
@@ -971,12 +1299,13 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           ),
           tabPanel(
             title = "Whole-body",
-            h5("Whole-body exposure estimation"),
+            h5(paste0("Whole-body exposure estimation: Yield (", aberr_yield, "/cells)")),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_yields_whole"))
             ),
             br(),
+            h5("Whole-body exposure estimation: Dose (Gy)"),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_whole"))
@@ -991,12 +1320,13 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           ),
           tabPanel(
             title = "Partial-body",
-            h5("Partial-body exposure estimation"),
+            h5(paste0("Partial-body exposure estimation: Yield (", aberr_yield, "/cells)")),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_yields_partial"))
             ),
             br(),
+            h5("Partial-body exposure estimation: Dose (Gy)"),
             div(
               class = "hot-improved",
               rHandsontableOutput(session$ns("est_doses_partial"))
@@ -1026,7 +1356,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         # Heterogeneous
         return_tabbox <- tabBox(
           id = "estimation_results_tabs",
-          width = 12,
+          width = 13,
           side = "left",
           title = help_modal_button(
             container = "tabbox",
@@ -1091,44 +1421,65 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
       }
 
       return(tagList(return_tabbox, hetero_modal))
+    }
     })
 
     # Estimated yield (whole-body)
     output$est_yields_whole <- renderRHandsontable({
-      if (input$button_estimate <= 0) {
-        return(NULL)
-      }
-      data()[["est_doses_whole"]] %>%
-        dplyr::select("yield") %>%
-        t() %>%
-        as.data.frame() %>%
-        # Convert to hot and format table
-        rhandsontable(
-          width = 320,
-          height = "100%",
-          rowHeaderWidth = 80
-        ) %>%
-        hot_cols(colWidths = 80) %>%
-        hot_cols(format = "0.000")
-    })
+  if (input$button_estimate <= 0) {
+    return(NULL)
+  }
+      if(input$load_case_data_check == TRUE || input$num_cases == nrow(data()[["case_data"]])){
+        data()[["est_yields_whole"]]%>%
+          as.data.frame() %>%
+          # Convert to hot and format table
+          rhandsontable(
+            width = 400,
+            height = "100%",
+            rowHeaderWidth = 80
+          ) %>%
+          hot_cols(colWidths = 80, halign = "htCenter") %>%
+          hot_cols(format = "0.000")
+      }else{
+        NULL
+      }})
 
     # Estimated recieved dose (whole-body)
+
     output$est_doses_whole <- renderRHandsontable({
       if (input$button_estimate <= 0) {
         return(NULL)
       }
-      data()[["est_doses_whole"]] %>%
-        dplyr::select("dose") %>%
-        t() %>%
+      if(input$load_case_data_check == TRUE || input$num_cases == nrow(data()[["case_data"]])){
+          data()[["est_doses_whole"]]%>%
+            as.data.frame() %>%
+          # Convert to hot and format table
+          rhandsontable(
+            width = 400,
+            height = "100%",
+            rowHeaderWidth = 80
+          ) %>%
+          hot_cols(colWidths = 80, halign = "htCenter") %>%
+          hot_cols(format = "0.000")
+      }else{
+        NULL}
+      })
+
+    # Incidence ratio
+    output$IRR <- renderRHandsontable({
+      if (input$button_estimate <=  0 | !input$badge_dose_check) {
+        return(NULL)
+      }
+      data()[["IRR"]] %>%
         as.data.frame() %>%
         # Convert to hot and format table
         rhandsontable(
-          width = 320,
+          width = 400,
           height = "100%",
-          rowHeaders = "dose (Gy)",
+          rowHeaders = "",
           rowHeaderWidth = 80
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1137,68 +1488,67 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
       if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
         return(NULL)
       }
-      data()[["est_doses_partial"]] %>%
-        dplyr::select("yield") %>%
-        t() %>%
-        as.data.frame() %>%
-        # Fix possible NA values
-        dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
-        # Rename columns and rows
-        `colnames<-`(c("lower", "estimate", "upper")) %>%
-        `row.names<-`("yield") %>%
-        # Convert to hot and format table
-        rhandsontable(
-          width = 320,
-          height = "100%",
-          rowHeaderWidth = 80
-        ) %>%
-        hot_cols(colWidths = 80) %>%
-        hot_cols(format = "0.000")
-    })
+      if(input$load_case_data_check == TRUE || input$num_cases == nrow(data()[["case_data"]])){
+
+          data()[["est_yields_partial"]] %>%
+            as.data.frame() %>%
+            # Fix possible NA values
+            dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+            # Convert to hot and format table
+            rhandsontable(
+              width = 400,
+              height = "100%",
+              rowHeaderWidth = 80
+            ) %>%
+            hot_cols(colWidths = 80, halign = "htCenter") %>%
+            hot_cols(format = "0.000")
+        }else{
+          NULL
+        }})
 
     # Estimated recieved dose (partial-body)
     output$est_doses_partial <- renderRHandsontable({
       if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
         return(NULL)
       }
-      data()[["est_doses_partial"]] %>%
-        dplyr::select("dose") %>%
-        t() %>%
-        as.data.frame() %>%
-        # Fix possible NA values
-        dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
-        # Rename columns and rows
-        `colnames<-`(c("lower", "estimate", "upper")) %>%
-        `row.names<-`("dose (Gy)") %>%
-        # Convert to hot and format table
-        rhandsontable(
-          width = 320,
-          height = "100%",
-          rowHeaderWidth = 80
-        ) %>%
-        hot_cols(colWidths = 80) %>%
-        hot_cols(format = "0.000")
-    })
+      if(input$load_case_data_check == TRUE || input$num_cases == nrow(data()[["case_data"]])){
+
+          data()[["est_doses_partial"]] %>%
+            as.data.frame() %>%
+            # Fix possible NA values
+            dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+            # Convert to hot and format table
+            rhandsontable(
+              width = 400,
+              height = "100%",
+              rowHeaderWidth = 80
+            ) %>%
+            hot_cols(colWidths = 80, halign = "htCenter") %>%
+            hot_cols(format = "0.000")
+        }else{
+          NULL
+        }})
+
 
     # Estimated fraction of cells scored which were irradiated (partial-body)
     output$est_metaphases_frac_partial <- renderRHandsontable({
       if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
         return(NULL)
       }
-      data()[["est_metaphases_frac_partial"]] %>%
-        # Fix possible NA values
-        dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
-        # Rename columns and rows
-        `colnames<-`(c("estimate", "std.err")) %>%
-        `row.names<-`(c("fraction")) %>%
-        # Convert to hot and format table
-        rhandsontable(
-          width = 320,
-          height = "100%",
-          rowHeaderWidth = 80
-        ) %>%
-        hot_cols(colWidths = 80) %>%
-        hot_cols(format = "0.000")
+        data()[["est_metaphases_frac_partial"]] %>%
+          # Fix possible NA values
+          dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+          # Rename columns and rows
+          `colnames<-`(c("ID","estimate", "std.err"))%>%
+          # Convert to hot and format table
+          rhandsontable(
+            width = 400,
+            height = "100%",
+            rowHeaderWidth = 80
+          ) %>%
+          hot_cols(colWidths = 80, halign = "htCenter") %>%
+          hot_cols(format = "0.000")
+
     })
 
     # Estimated fraction of irradiated blood (partial-body)
@@ -1206,22 +1556,19 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
       if (input$button_estimate <= 0 | data()[["assessment"]] != "partial-body") {
         return(NULL)
       }
-      data()[["est_frac_partial"]] %>%
-        t() %>%
-        as.data.frame() %>%
-        # Fix possible NA values
-        dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
-        # Rename columns and rows
-        `colnames<-`(c("lower", "estimate", "upper")) %>%
-        `row.names<-`("fraction") %>%
-        # Convert to hot and format table
-        rhandsontable(
-          width = 320,
-          height = "100%",
-          rowHeaderWidth = 80
-        ) %>%
-        hot_cols(colWidths = 80) %>%
-        hot_cols(format = "0.000")
+        data()[["est_frac_partial"]] %>%
+          as.data.frame() %>%
+          # Fix possible NA values
+          dplyr::mutate(dplyr::across(where(is.logical), as.double)) %>%
+          # Convert to hot and format table
+          rhandsontable(
+            width = 400,
+            height = "100%",
+            rowHeaderWidth = 80
+          ) %>%
+          hot_cols(colWidths = 80, halign = "htCenter") %>%
+          hot_cols(format = "0.000")
+
     })
 
     # Estimated fractions of irradiated cells (heterogeneous)
@@ -1241,7 +1588,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           height = "100%",
           rowHeaderWidth = 85
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1260,11 +1607,11 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         `row.names<-`(c("yield1", "yield2")) %>%
         # Convert to hot and format table
         rhandsontable(
-          width = 325,
+          width = 400,
           height = "100%",
           rowHeaderWidth = 85
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1283,11 +1630,11 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         `row.names<-`(c("dose1 (Gy)", "dose2 (Gy)")) %>%
         # Convert to hot and format table
         rhandsontable(
-          width = 325,
+          width = 400,
           height = "100%",
           rowHeaderWidth = 85
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1304,11 +1651,11 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         `row.names<-`(c("dose1", "dose2")) %>%
         # Convert to hot and format table
         rhandsontable(
-          width = 245,
+          width = 300,
           height = "100%",
           rowHeaderWidth = 85
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1324,7 +1671,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           width = 80,
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1340,7 +1687,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           width = 80,
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1356,7 +1703,7 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
           width = 80,
           height = "100%"
         ) %>%
-        hot_cols(colWidths = 80) %>%
+        hot_cols(colWidths = 80, halign = "htCenter") %>%
         hot_cols(format = "0.000")
     })
 
@@ -1367,7 +1714,9 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         if (input$button_estimate <= 0) {
           return(NULL)
         }
+
         data()[["gg_curve"]]
+
       }
     )
 
@@ -1379,10 +1728,96 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
       },
       content = function(file) {
         ggplot2::ggsave(
-          plot = data()[["gg_curve"]], filename = file,
+          plot = data()[["gg_curve_save"]], filename = file,
           width = 6, height = 4.5, dpi = 96,
           device = gsub("\\.", "", input$save_plot_format)
         )
+      }
+    )
+
+    #Save rds files
+    output$save_data <- downloadHandler(
+      filename = function() {
+        paste("NAME_Estimation_results", Sys.Date(), input$save_data_format, sep = "")
+      },
+      content = function(file) {
+        data_list <- data()
+        if(input$load_fit_data_check ||aberr_module == "translocations"){
+        data_list[["fit_formula_tex"]] <- NULL
+        data_list[["fit_coeffs"]] <- NULL
+        }
+        est_results_list <- c(data_list, reactive_data_est$fitting_rds)
+        est_results_list[["gg_curve"]] <- NULL
+        est_results_list[["gg_curve_save"]] <- NULL
+        est_results_list[["biodosetools_version"]] <- NULL
+        if (aberr_module == "translocations") {
+          data_list[["fit_formula_tex"]] <- NULL
+          est_results_list[["genome_factor"]] <- NULL
+          est_results_list[["chromosome_table"]] <- NULL
+          est_results_list[["trans_sex"]] <- NULL
+        }
+
+        if(!input$load_fit_data_check){
+          est_results_list[["irr_conds"]] <- NULL
+          est_results_list$irr_conds <- list(
+            irradiator_name = c(
+              label = "Name of the irradiator used",
+              text = input$irr_cond_irradiator_name
+            ),
+            radiation_quality = c(
+              label = "Radiation quality",
+              text = input$irr_cond_radiation_quality
+            ),
+            dose_rate = c(
+              label = "Dose rate (Gy/min)",
+              text = input$irr_cond_dose_rate
+            ),
+            dose_quantity = c(
+              label = "Dose quantity",
+              text = input$irr_cond_dose_quantity
+            ),
+            whole_blood = c(
+              label = "Whole blood or isolated lymphocytes",
+              text = input$irr_cond_whole_blood
+            ),
+            temperature = c(
+              label = "Temperature (\u00B0C) during irradiation",
+              text = input$irr_cond_temperature
+            ),
+            time = c(
+              label = "Time incubations",
+              text = input$irr_cond_time
+            ),
+            beam_characteristics = c(
+              label = "Beam characteristics",
+              text = input$irr_cond_beam_characteristics
+            ),
+            scoring_method = c(
+              label = "Scoring method",
+              text = input$scoring_method
+            ),
+            origin_curve = c(
+              label = "Origin of the curve",
+              text = input$origin_curve
+            ),
+            cal_air_water = c(
+              label = "Calibration of the source",
+              text = input$cal_air_water
+            ),
+            irrad_air_water = c(
+              label = "Irradiation medium",
+              text = input$irrad_air_water
+            )
+          )
+        }
+
+        if (input$save_data_format == ".rds") {
+          est_results_list_rds <- Filter(function(x) !all(is.na(x) | x == ""), est_results_list)
+          saveRDS(est_results_list_rds, file = file)
+        } else {
+          est_results_list_xlsx <- Filter(function(x) !all(is.na(x) | x == ""), est_results_list)
+          write.xlsx(est_results_list_xlsx, file)
+        }
       }
     )
 
@@ -1406,12 +1841,68 @@ mod_estimation_results_server <- function(id, aberr_module, genome_factor = NULL
         )
 
         file.copy(local_report, temp_report, overwrite = TRUE)
+        if(!input$load_fit_data_check){
+          curve_data <- list(
+            irradiator_name = list(
+              label = "Name of the irradiator used",
+              text = input$irr_cond_irradiator_name
+            ),
+            radiation_quality = list(
+              label = "Radiation quality",
+              text = input$irr_cond_radiation_quality
+            ),
+            dose_rate = list(
+              label = "Dose rate (Gy/min)",
+              text = input$irr_cond_dose_rate
+            ),
+            dose_quantity = list(
+              label = "Dose quantity",
+              text = input$irr_cond_dose_quantity
+            ),
+            whole_blood = list(
+              label = "Whole blood or isolated lymphocytes",
+              text = input$irr_cond_whole_blood
+            ),
+            temperature = list(
+              label = "Temperature (\u00B0C) during irradiation",
+              text = input$irr_cond_temperature
+            ),
+            time = list(
+              label = "Time of incubation (h) at 37(\u00B0C) after irradiation",
+              text = input$irr_cond_time
+            ),
+            beam_characteristics = list(
+              label = "Beam characteristics",
+              text = input$irr_cond_beam_characteristics
+            ),
+            scoring_method = list(
+              label = "Scoring method",
+              text = input$scoring_method
+            ),
+            origin_curve = list(
+              label = "Origin of the curve",
+              text = input$origin_curve
+            ),
+            cal_air_water = list(
+              label = "Calibration of the source",
+              text = input$cal_air_water
+            ),
+            irrad_air_water = list(
+              label = "Irradiation medium",
+              text = input$irrad_air_water
+            )
+          )
+        }else{
+             curve_data <- reactive_data_est$fitting_rds$irr_conds
+           }
 
         # Set up parameters to pass to Rmd document
         params <- list(
+          curve_data = curve_data,
           est_results_list = data(),
           aberr_module = aberr_module
         )
+
 
         # Knit the document, passing in the `params` list, and eval it in a
         # child of the global environment (this isolates the code in the document

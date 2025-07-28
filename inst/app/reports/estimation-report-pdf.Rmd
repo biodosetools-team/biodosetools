@@ -18,6 +18,7 @@ header-includes:
   - \posttitle{\end{center}}
 
 params:
+  curve_data: NA
   est_results_list: NA
   aberr_module: NA
 ---
@@ -35,6 +36,8 @@ parsed_title <- dplyr::case_when(
   aberr_module == "translocations" ~ "Translocation FISH dose estimation report",
   aberr_module == "micronuclei" ~ "Micronuclei dose estimation report"
 )
+
+
 ```
 
 ---
@@ -57,9 +60,12 @@ render_table <- function(x, font_size = NULL, ...) {
 assessment <- params$est_results_list[["assessment"]]
 
 est_doses_whole <- params$est_results_list[["est_doses_whole"]]
+est_yields_whole <-  params$est_results_list[["est_yields_whole"]]
 
 est_doses_partial <- params$est_results_list[["est_doses_partial"]]
 est_frac_partial <- params$est_results_list[["est_frac_partial"]]
+est_yields_partial <- params$est_results_list[["est_yields_partial"]]
+est_metaphases_frac_partial <- params$est_results_list[["est_metaphases_frac_partial"]]
 
 est_mixing_prop_hetero <- params$est_results_list[["est_mixing_prop_hetero"]]
 est_yields_hetero <- params$est_results_list[["est_yields_hetero"]]
@@ -170,6 +176,7 @@ data <- case_data %>%
   as.matrix() %>%
   formatC(format = "f", digits = 3) %>%
   as.data.frame() %>%
+  dplyr::mutate( " " = row_number(), .before = 1) %>%
   dplyr::mutate(
     dplyr::across(
       .cols = c("N", "X", dplyr::starts_with("C")),
@@ -242,6 +249,19 @@ if (aberr_module == "translocations") {
 
 `r case_description`
 
+## Irradiation Conditions
+```{r irr-cond, echo=FALSE}
+irr_conditions <- params$curve_data
+
+irr_table <- purrr::map_dfr(irr_conditions, ~data.frame(
+  Label = as.character(.x[["label"]]),
+  Value = as.character(.x[["text"]]),
+  stringsAsFactors = FALSE
+))
+
+knitr::kable(irr_table)
+
+```
 
 # Dose estimation results
 
@@ -249,63 +269,53 @@ if (aberr_module == "translocations") {
 
 `r if (TRUE) {"### Whole-body exposure estimation {-}"}`
 
+`r if (TRUE & aberr_module == "translocations") {"### Yield (translocations/cells)"}`
+`r if (TRUE & aberr_module == "micronuclei") {"### Yield (micronuclei/cells)"}`
+`r if (TRUE & aberr_module == "dicentrics") {"### Yield (dicentrics/cells)"}`
+
 ```{r whole-yield, echo=FALSE}
 if (TRUE) {
-  est_doses_whole %>%
-    dplyr::select(yield) %>%
-    t() %>%
-    formatC(format = "f", digits = 3) %>%
+    est_yields_whole %>%
     as.data.frame() %>%
-    # Convert to hot and format table
-    render_table(align = "c")
+    dplyr::mutate( " " = row_number(), .before = 1) %>%
+    knitr::kable()
 }
 ```
+`r if (TRUE) {"### Dose (Gy)"}`
 
 ```{r whole-dose, echo=FALSE}
 if (TRUE) {
-  est_doses_whole %>%
-    dplyr::select(`dose (Gy)` = dose) %>%
-    t() %>%
-    formatC(format = "f", digits = 3) %>%
+    est_doses_whole %>%
     as.data.frame() %>%
-    # Convert to hot and format table
-    render_table(align = "c")
+    dplyr::mutate( " " = row_number(), .before = 1) %>%
+    knitr::kable()
 }
 ```
 
 `r if (assessment == "partial-body") {"## Partial-body exposure results"}`
 
 `r if (assessment == "partial-body") {"### Partial-body exposure estimation {-}"}`
+`r if (assessment == "partial-body" & aberr_module == "translocations") {"### Yield (translocations/cells)"}`
+`r if (assessment == "partial-body" & aberr_module == "micronuclei") {"### Yield (micronuclei/cells)"}`
+`r if (assessment == "partial-body" & aberr_module == "dicentrics") {"### Yield (dicentrics/cells)"}`
 
 ```{r partial-yield, echo=FALSE}
 if (assessment == "partial-body") {
-  est_doses_partial %>%
-    dplyr::select(yield) %>%
-    t() %>%
-    formatC(format = "f", digits = 3) %>%
-    as.data.frame() %>%
-    # Fix possible NA values
-    dplyr::mutate_if(is.logical, as.double) %>%
-    `colnames<-`(c("lower", "estimate", "upper")) %>%
-    `row.names<-`("yield") %>%
-    # Convert to hot and format table
-    render_table(align = "c")
+  est_yields_partial %>%
+      as.data.frame() %>%
+    dplyr::mutate( " " = row_number(), .before = 1) %>%
+    knitr::kable()
+    
 }
 ```
 
+`r if (assessment == "partial-body"){"### Dose (Gy)"}`
 ```{r partial-dose, echo=FALSE}
 if (assessment == "partial-body") {
   est_doses_partial %>%
-    dplyr::select(dose) %>%
-    t() %>%
-    formatC(format = "f", digits = 3) %>%
     as.data.frame() %>%
-    # Fix possible NA values
-    dplyr::mutate_if(is.logical, as.double) %>%
-    `colnames<-`(c("lower", "estimate", "upper")) %>%
-    `row.names<-`("dose (Gy)") %>%
-    # Convert to hot and format table
-    render_table(align = "c")
+    dplyr::mutate( " " = row_number(), .before = 1) %>%
+    knitr::kable()
 }
 ```
 
@@ -313,16 +323,10 @@ if (assessment == "partial-body") {
 
 ```{r partial-fraction, echo=FALSE}
 if (assessment == "partial-body") {
-  est_frac_partial %>%
-    t() %>%
-    formatC(format = "f", digits = 3) %>%
+  est_frac_partial  %>%
     as.data.frame() %>%
-    # Fix possible NA values
-    dplyr::mutate_if(is.logical, as.double) %>%
-    `colnames<-`(c("lower", "estimate", "upper")) %>%
-    `row.names<-`("fraction") %>%
-    # Convert to hot and format table
-    render_table(align = "c")
+    dplyr::mutate( " " = row_number(), .before = 1) %>%
+    knitr::kable()
 }
 ```
 
