@@ -9,8 +9,8 @@ jobs:
   deploy-shiny:
     runs-on: ubuntu-latest
     env:
-      SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
-      SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+      SHINYAPPS_TOKEN: ${{ secrets.TOKEN_FRANCIS }}
+      SHINYAPPS_SECRET: ${{ secrets.SECRET_FRANCIS }}
 
     steps:
       - uses: actions/checkout@v4
