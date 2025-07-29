@@ -6,17 +6,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Dicentrics dose estimation • biodosetools</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Fira_Code-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Nunito-0.4.9/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Nunito-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -30,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,10 +46,19 @@
     <li><h6 class="dropdown-header" data-toc-skip>Dicentrics</h6></li>
     <li><a class="dropdown-item" href="../articles/dicent-fitting.html">Dicentrics dose-effect fitting</a></li>
     <li><a class="dropdown-item" href="../articles/dicent-estimation.html">Dicentrics dose estimation</a></li>
+    <li><a class="dropdown-item" href="../articles/dicent-limits.html">Dicentrics characteristic limits</a></li>
+    <li><a class="dropdown-item" href="../articles/dicent-mixed.html">Dicentrics dose estimation criticality accidents</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Translocations</h6></li>
     <li><a class="dropdown-item" href="../articles/trans-fitting.html">Translocations dose-effect fitting</a></li>
     <li><a class="dropdown-item" href="../articles/trans-estimation.html">Translocations dose estimation</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Micronuclei</h6></li>
+    <li><a class="dropdown-item" href="../articles/micro-fitting.html">Micronuclei dose-effect fitting</a></li>
+    <li><a class="dropdown-item" href="../articles/micro-estimation.html">Micronuclei dose estimation</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Interlaboratory comparisons</h6></li>
+    <li><a class="dropdown-item" href="../articles/interlab.html">Interlaboratory comparison</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -89,15 +97,17 @@
 input the curve coefficients manually in case the user wants to use a
 pre-existing curve calculated outside of Biodose Tools. Clicking on
 “Preview data” will load the curve into the app and display it on the
-“Results” tabbed box.</p>
+“Results” tabbed box. If coefficients are entered manually, a
+irradiation conditions tab will appear to fill with corresponding
+information.</p>
 <div class="figure" style="text-align: center">
-<img src="figures%2Fscreenshot-dicentrics-estimate-01.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when loading curve from an `.rds` file." width="100%"><p class="caption">
+<img src="figures/screenshot-dicentrics-estimate-01.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when loading curve from an `.rds` file." width="100%"><p class="caption">
 ‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
 estimation module when loading curve from an <code>.rds</code> file.
 </p>
 </div>
 <div class="figure">
-<img src="figures%2Fscreenshot-dicentrics-estimate-01b.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients' standard errors will be used in calculations." width="100%"><p class="caption">
+<img src="figures/screenshot-dicentrics-estimate-01b.png" alt="'Curve fitting data options' box and 'Results' tabbed box in the dose estimation module when inputting curve coefficients manually. Note that if no variance-covariance matrix is provided, only the variances calculated from the coefficients' standard errors will be used in calculations." width="100%"><p class="caption">
 ‘Curve fitting data options’ box and ‘Results’ tabbed box in the dose
 estimation module when inputting curve coefficients manually. Note that
 if no variance-covariance matrix is provided, only the variances
@@ -136,9 +146,11 @@ standard error
 dispersion index
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mi>/</mi><mover><mi>y</mi><mo accent="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">\sigma^{2}/\bar{y}</annotation></semantics></math>),
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>-value.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>-value.
+An ID column will also appear to identify each case. Multiple cases are
+supported.</p>
 <div class="figure" style="text-align: center">
-<img src="figures%2Fscreenshot-dicentrics-estimate-02.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module." width="100%"><p class="caption">
+<img src="figures/screenshot-dicentrics-estimate-02.png" alt="'Data input options' and 'Data input' boxes in the dose estimation module." width="100%"><p class="caption">
 ‘Data input options’ and ‘Data input’ boxes in the dose estimation
 module.
 </p>
@@ -155,10 +167,11 @@ module.
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_data</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
-<span><span class="co">#&gt;       N     X    C0    C1    C2    C3    C4    C5     y  y_err    DI     u</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   361   100   302    28    22     8     1     0 0.277 0.036<span style="text-decoration: underline;">8</span>  1.77  10.4</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 13</span></span></span>
+<span><span class="co">#&gt;   ID        N     X    C0    C1    C2    C3    C4    C5     y  y_err    DI     u</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> exam…   361   100   302    28    22     8     1     0 0.277 0.036<span style="text-decoration: underline;">8</span>  1.77  10.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> exam…   264   200   160    55    19    17     9     4 0.758 0.073<span style="text-decoration: underline;">6</span>  1.89  10.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="perform-dose-estimation">Perform dose estimation<a class="anchor" aria-label="anchor" href="#perform-dose-estimation"></a>
@@ -169,12 +182,12 @@ protracted, and highly protracted), type of assessment (whole-body,
 partial-body, or heterogeneous), and error methods for each type of
 assessment.</p>
 <div class="figure" style="text-align: center">
-<img src="figures%2Fscreenshot-dicentrics-estimate-03.png" alt="'Dose estimation options' box in the dose estimation module." width="60%"><p class="caption">
+<img src="figures/screenshot-dicentrics-estimate-03.png" alt="'Dose estimation options' box in the dose estimation module." width="60%"><p class="caption">
 ‘Dose estimation options’ box in the dose estimation module.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figures%2Fscreenshot-dicentrics-estimate-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Save results' boxes in the dose estimation module." width="100%"><p class="caption">
+<img src="figures/screenshot-dicentrics-estimate-04.png" alt="'Results' tabbed box, 'Curve plot' and 'Save results' boxes in the dose estimation module." width="100%"><p class="caption">
 ‘Results’ tabbed box, ‘Curve plot’ and ‘Save results’ boxes in the dose
 estimation module.
 </p>
@@ -193,39 +206,55 @@ matrix:</p>
 <code><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_whole_merkle</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_whole_body_merkle.html">estimate_whole_body_merkle</a></span><span class="op">(</span></span>
+<span>  num_cases <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  <span class="va">case_data</span>,</span>
 <span>  <span class="va">fit_coeffs</span>,</span>
 <span>  <span class="va">fit_var_cov_mat</span>,</span>
-<span>  conf_int_yield <span class="op">=</span> <span class="fl">0.83</span>,</span>
-<span>  conf_int_curve <span class="op">=</span> <span class="fl">0.83</span>,</span>
+<span>  conf_int_yield <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  conf_int_curve <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  protracted_g_value <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#Parse results for multiple cases</span></span>
+<span><span class="va">est_doses_whole</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">results_whole_merkle</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">est_doses_whole</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">results_whole_merkle</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"est_doses"</span><span class="op">]</span><span class="op">]</span></span>
+<span>          <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">est_doses_whole</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">est_doses_whole</span><span class="op">)</span></span>
+<span>    <span class="va">est_doses_whole</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="va">case_data</span><span class="op">$</span><span class="va">ID</span>, <span class="va">est_doses_whole</span><span class="op">)</span></span>
+<span>    </span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">results_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_partial_body_dolphin.html">estimate_partial_body_dolphin</a></span><span class="op">(</span></span>
+<span>  num_cases <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  <span class="va">case_data</span>,</span>
 <span>  <span class="va">fit_coeffs</span>,</span>
 <span>  <span class="va">fit_var_cov_mat</span>,</span>
 <span>  conf_int <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">2.7</span>,</span>
 <span>  aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#Parse results for multiple cases</span></span>
+<span><span class="va">est_doses_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">results_partial</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">est_doses_partial</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">results_partial</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"est_doses"</span><span class="op">]</span><span class="op">]</span></span>
+<span> <span class="op">}</span></span>
+<span>    <span class="va">est_doses_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">est_doses_partial</span><span class="op">)</span></span>
+<span>    <span class="va">est_doses_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="va">case_data</span><span class="op">$</span><span class="va">ID</span>, <span class="va">est_doses_partial</span><span class="op">)</span></span></code></pre></div>
 <p>To visualise the estimated doses, we call the
 <code><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_estimated_dose_curve.html">plot_estimated_dose_curve</a></span><span class="op">(</span></span>
-<span>  est_doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    whole <span class="op">=</span> <span class="va">results_whole_merkle</span>,</span>
-<span>    partial <span class="op">=</span> <span class="va">results_partial</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  <span class="va">fit_coeffs</span>,</span>
-<span>  <span class="va">fit_var_cov_mat</span>,</span>
-<span>  protracted_g_value <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  conf_int_curve <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  aberr_name <span class="op">=</span> <span class="st">"Dicentrics"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/plot_triage.html">plot_triage</a></span><span class="op">(</span></span>
+<span>  num_cases <span class="op">=</span> <span class="fl">2</span>, </span>
+<span>  <span class="va">est_doses_whole</span>, </span>
+<span>  <span class="va">est_doses_partial</span>, </span>
+<span>  assessment <span class="op">=</span> <span class="st">"partial"</span>,</span>
+<span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
+<span>  <span class="op">)</span> </span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="dicent-estimation_files/figure-html/dic-estimated-dose-curve-1.png" alt="Plot of estimated doses generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
+<img src="dicent-estimation_files/figure-html/dic-estimated-dose-curve-multiple-1.png" alt="Plot of estimated doses generated by \{biodosetools\}. The grey shading indicates the uncertainties associated with the calibration curve." width="576"><p class="caption">
 Plot of estimated doses generated by {biodosetools}. The grey shading
 indicates the uncertainties associated with the calibration curve.
 </p>
@@ -238,11 +267,11 @@ indicates the uncertainties associated with the calibration curve.
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://aldomann.com" class="external-link">Alfredo Hernández</a>, David Endesfelder, Pere Puig.</p>
+  <p>Developed by <a href="https://aldomann.com" class="external-link">Alfredo Hernández</a>, <a href="https://portalrecerca.uab.cat/es/persons/anna-frances-abellan" class="external-link">Anna Frances-Abellan</a>, David Endesfelder, Pere Puig.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
