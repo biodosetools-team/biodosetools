@@ -9,6 +9,8 @@ home:
 authors:
   Alfredo Hernández:
     href: https://aldomann.com
+  Anna Frances-Abellan:
+    href: https://portalrecerca.uab.cat/es/persons/anna-frances-abellan
 
 template:
   bootstrap: 5
@@ -49,6 +51,35 @@ reference:
   - calculate_trans_rate_sigurdson
   - calculate_trans_rate_manual
 
+- title: Intercomparison
+  desc: Graphics and functions for the interlaboratory comparison module.
+  contents:
+  - calc.zValue.new
+  - bar_plots
+  - curves_plot
+  - DI_plot
+  - dose_boxplot
+  - M_estimate
+  - plot_deviation_all
+  - plot_interlab_deviation
+  - plot_interlab_v2
+  - plot_triage
+  - plot_triage_interlab
+  - plot_zscore_all
+  - QHampel
+  - u_test_plot
+  - yield_boxplot
+
+- title: criticality accidents
+  contents:
+  - dose_estimation_mx
+  - fun.estimate.criticality
+  - plot_estimated_dose_curve_mx
+
+- title: characteristic limits
+  contents:
+  - calculate_table
+
 - title: internal
   contents:
   - AIC_from_data
@@ -74,6 +105,13 @@ reference:
   - project_yield
   - yield_error_fun
   - yield_fun
+  - calculate_aberr_IRR
+  - fun.curve
+  - load_manual_data
+  - generate_plot_and_download
+  - load_rds_data
+  - summary_curve_tables
+  - update_outputs
 
 articles:
 - title: Articles
@@ -81,9 +119,22 @@ articles:
   contents:
   - dicent-fitting
   - dicent-estimation
+  - dicent-limits
+  - dicent-mixed
 
 - title: Articles
   navbar: Translocations
   contents:
   - trans-fitting
   - trans-estimation
+
+- title: Articles
+  navbar: Micronuclei
+  contents:
+  - micro-fitting
+  - micro-estimation
+
+- title: Articles
+  navbar: Interlaboratory comparisons
+  contents:
+  - interlab

@@ -8,6 +8,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+Sys.setenv(R_USER_LIBS = tempdir())  #Just in case for CRAN
 library(biodosetools)
 knitr::opts_chunk$set(
   fig.dpi = 96,
