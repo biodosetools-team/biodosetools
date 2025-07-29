@@ -22,11 +22,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alfredo Hernández \email{aldomann.designs@gmail.com} (\href{https://orcid.org/0000-0002-2660-4545}{ORCID})
+\strong{Maintainer}: Anna Frances-Abellan \email{anna.frances@uab.cat} (\href{https://orcid.org/0000-0003-4738-1712}{ORCID})
 
 Authors:
 \itemize{
-  \item Anna Frances-Abellan \email{anna.frances@uab.cat} (\href{https://orcid.org/0000-0003-4738-1712}{ORCID})
+  \item Alfredo Hernández \email{aldomann.designs@gmail.com} (\href{https://orcid.org/0000-0002-2660-4545}{ORCID})
   \item David Endesfelder \email{dendesfelder@bfs.de}
   \item Pere Puig \email{ppuig@mat.uab.cat} (\href{https://orcid.org/0000-0002-6607-9642}{ORCID})
 }
