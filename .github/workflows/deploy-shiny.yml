@@ -31,7 +31,7 @@ jobs:
 
       - name: Push to shinyapps.io
         run: |
-          Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = Sys.getenv("SHINYAPPS_TOKEN"), secret = Sys.getenv("SHINYAPPS_SECRET"))"
+          Rscript -e "rsconnect::setAccountInfo(name = 'aldomann', token = Sys.getenv('SHINYAPPS_TOKEN'), secret = Sys.getenv('SHINYAPPS_SECRET'))"
           Rscript -e "rsconnect::deployApp(appName = 'biodosetools', appDir = here::here(), appPrimaryDoc = 'app.R', appFileManifest = 'dev/shiny-dev/app_file_manifest.txt', forceUpdate = TRUE)"
 
 
