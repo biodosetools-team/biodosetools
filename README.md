@@ -20,7 +20,7 @@ al. 2023](https://doi.org/10.1080/09553002.2023.2176564)) is an open
 source project that aims to be a tool to perform all different tests and
 calculations needed by biological dosimetry laboratories. The app is
 developed using the [R](https://www.r-project.org/about.html)
-programming language and [Shiny](https://shiny.rstudio.com/) as a
+programming language and [Shiny](https://shiny.posit.co/) as a
 framework to offer an online, easy-to-use solution. Although the
 intention is to provide the application as a website, all R routines are
 available as an R package, which can be downloaded for improvement or

@@ -1,5 +1,5 @@
 Package: biodosetools
-Title: An R Shiny Application for Biological Dosimetry
+Title: An R Shiny Application for Biological dosimetry
 Version: 3.6.2
 Authors@R:
     c(person(given = "Alfredo",
@@ -22,9 +22,8 @@ Authors@R:
            email = "ppuig@mat.uab.cat",
            comment = c(ORCID = "0000-0002-6607-9642")))
 Description: A tool to perform all different statistical tests and calculations
-    needed by Biological Dosimetry Laboratories. Detailed documentation is
-    available in <https://biodosetools-team.github.io/documentation/> and the
-    paper by Hernández et al. (2023) <doi:10.1080/09553002.2023.2176564>.
+    needed by Biological dosimetry Laboratories. Detailed documentation is
+    available in <https://biodosetools-team.github.io/documentation/>.
 License: GPL-3
 URL: https://biodosetools-team.github.io/biodosetools/, https://github.com/biodosetools-team/biodosetools/
 BugReports: https://github.com/biodosetools-team/biodosetools/issues/

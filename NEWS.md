@@ -12,7 +12,7 @@
 * Separated micronucleus assay.
 
 
-# biodosetools (development version)
+# biodosetools 3.6.1.1
 
 * Updated citation details for {biodosetools} after publication in Int J Radiat Biol (doi:10.1080/09553002.2023.2176564).
 * Improvements in `deploy-shiny.yml` CI workflow.
