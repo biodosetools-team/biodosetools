@@ -308,6 +308,12 @@ test_that("processing case data works", {
   )
 
   # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("colour", "shape", "x", "y", "ymin", "ymax"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"))
+  if ("get_labs" %in% getNamespaceExports("ggplot2")) {
+    labs <- ggplot2::get_labs(gg_curve)
+  } else {
+    labs <- gg_curve$labels
+  }
+
+  expect_in(c("colour", "shape", "x", "y", "ymin", "ymax"), names(labs))
+  expect_in(c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"), unname(unlist(labs)))
 })
