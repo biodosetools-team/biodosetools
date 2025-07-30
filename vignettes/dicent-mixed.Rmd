@@ -48,7 +48,7 @@ fit_results_neutrons$fit_coeffs
 
 ## Input case data
 
-Next we can write a case description in the corresponding box. Then, some parameters must be reported in order to perform the calculations: "Ratio (gamma/neutron)", "Maximum number of dics per cell", "Number of cases" and the dicentric distribution. The dicentric distribution table will automatically provide with total number of cells ($N$), total number of aberrations ($X$), as well as mean ($\bar{y}$), standard error ($\sigma$), dispersion index ($\sigma^{2}/\bar{y}$), and $u$-value. An ID column will also appear to identify each case. Multiple cases are supported. Finally, the "Calculate and plot" button will give the results.
+Next we can write a case description in the corresponding box. Then, some parameters must be reported in order to perform the calculations: "Ratio (gamma/neutron)", "Maximum number of dics per cell", "Number of cases" and the dicentric distribution (3.Data input). The dicentric distribution table will automatically provide with total number of cells ($N$), total number of aberrations ($X$), as well as mean ($\bar{y}$), standard error ($\sigma$), dispersion index ($\sigma^{2}/\bar{y}$), and $u$-value. An ID column will also appear to identify each case. Multiple cases are supported. Finally, the "Estimate dose" button will give the results.
 
 ```{r sc-dic-mixed-02, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Data input' box in the dose estimation module for criticality accidents."}
 knitr::include_graphics("figures/screenshot-dicentrics-mixed-02.png")

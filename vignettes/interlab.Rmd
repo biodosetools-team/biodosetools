@@ -53,10 +53,6 @@ tables_list <- summary_curve_tables(
 
 Clicking on "Plot summary" will display four different plots in the "Plots summary" Results tabbox.
 
-```{r sc-dic-estimate-02, echo=FALSE, out.width='100%', fig.align='center', fig.cap="Plots from the summary in the interlaboratory comparison module."}
-knitr::include_graphics("figures/screenshot-interlab-02.png")
-```
-
 This step is accomplished in R by calling: `yield_boxplot()`, `dose_boxplot()`, `u_test_plot()` and `DI_plot()` functions:
 
 ```{r summary_plots}
@@ -82,9 +78,6 @@ DI_plot(
 ```
 Clicking on "Plot curves" on the Curve section on the Results tabbox will display four different plots in the "Plots curves" Results tabbox.In this example all curves were manually scored, therefore there are only two plots.
 
-```{r sc-interlab-03, echo=FALSE, out.width='100%', fig.align='center', fig.cap=" Curve plots in the interlaboratory comparison module."}
-knitr::include_graphics("figures/screenshot-interlab-03.png")
-```
 This step is accomplished in R by calling: `curves_plot()`and `bar_plots()` functions:
 
 ```{r curve-plots}
@@ -114,13 +107,6 @@ Clicking "Calculate and plot" will display the results table:
 ```{r sc-interlab-05, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Z-score Results table' in the interlaboratory comparison module."}
 knitr::include_graphics("figures/screenshot-interlab-05.png")
 ```
-
-And all the Plots:
-```{r sc-interlab-06, echo=FALSE, out.width='100%', fig.align='center', fig.cap="'Interlabpratory comparison Plots' in the interlaboratory comparison module."}
-knitr::include_graphics("figures/screenshot-interlab-06a.png")
-knitr::include_graphics("figures/screenshot-interlab-06b.png")
-```
-
 
 To calculate the Z-Score in R we can call `calc.zValue.new()`: 
 
