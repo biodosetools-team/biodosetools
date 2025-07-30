@@ -100,7 +100,7 @@ test_that("fit with aggregated count data works", {
   # Fitting (glm)
   model_formula <- list_fitting_formulas()[[1]]
   model_family <- "automatic"
-  aberr_module <- "dicentrics"
+  aberr_module <- "micronuclei"
 
   fit_results_list <- fit(
     count_data = MN_count_data,
@@ -155,7 +155,7 @@ test_that("processing case data works", {
     data = case_data,
     type = "case",
     assessment_u = 1,
-    aberr_module = "dicentrics"
+    aberr_module = "micronuclei"
   )
 
   # Colnames validation
@@ -169,7 +169,7 @@ test_that("processing case data works", {
   expect_equal(case_data_cols[seq(case_data_cols_len - 3, case_data_cols_len, 1)], c("y", "y_err", "DI", "u"))
 
   # Dose estimation
-  aberr_module <- "dicentrics"
+  aberr_module <- "micronuclei"
 
   fit_results_list <- app_sys("extdata", "dicentrics-fitting-results.rds") %>%
     readRDS()
@@ -310,6 +310,13 @@ test_that("processing case data works", {
   )
 
   # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("colour", "shape", "x", "y", "ymin", "ymax"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Assessment", "Estimation", "Dose (Gy)", "Dicentrics/cells", "yield_low", "yield_upp"))
+
+  if ("get_labs" %in% getNamespaceExports("ggplot2")) {
+    labs <- ggplot2::get_labs(gg_curve)
+  } else {
+    labs <- gg_curve$labels
+  }
+
+  expect_in(c("colour", "shape", "x", "y", "ymin", "ymax"), names(labs))
+  expect_in(c("Assessment", "Estimation", "Dose (Gy)", "Micronuclei/cells", "yield_low", "yield_upp"), unname(unlist(labs)))
 })
