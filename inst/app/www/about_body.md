@@ -1,7 +1,7 @@
 <br>
 
 <p align="center">
-  <img src="home.svg" alt="drawing" style="max-width: 500px; width: 60%;"/>
+  <img src="app/www/home.svg" alt="drawing" style="max-width: 500px; width: 60%;"/>
 </p>
 
 <br>
