@@ -2,6 +2,7 @@ R
 data
 inst
 man
+inst/app/www/home.svg
 dev/shiny-dev/app.R
 CONTRIBUTORS.md
 LICENSE.md
