@@ -315,7 +315,7 @@ mod_limits_results_server <- function(id, aberr_module, genome_factor = NULL) {
       filename = function() {
         paste("Charac_limits_", Sys.Date(), input$save_limits_format, sep = "")
       },
-      content = function(file) {
+      content = function(file, verbose = TRUE) {
 
         data_to_save <- reactive_tmp()
 
@@ -329,7 +329,9 @@ mod_limits_results_server <- function(id, aberr_module, genome_factor = NULL) {
         if (input$save_limits_format == ".csv") {
           write.csv(data_to_save, file, row.names = FALSE)
         } else if (input$save_limits_format == ".tex") {
-          print(xtable::xtable(data_to_save), type = "latex", file)
+          if(verbose){
+            print(xtable::xtable(data_to_save), type = "latex", file)
+          }
         }
       }
     )

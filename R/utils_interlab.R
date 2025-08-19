@@ -559,7 +559,7 @@ bar_plots <- function(dat, curve, place) {
       NULL
 
     }else{
-      par(las = 1, mfrow = c(2, 3))
+      old <- par(las = 1, mfrow = c(2, 3))
       valid_cols <- c("curve origin", "radiation quality", "calibration", "irradiation", "temperature")
       valid_cols <- valid_cols[valid_cols %in% colnames(tmp)]
 
@@ -583,6 +583,8 @@ bar_plots <- function(dat, curve, place) {
           las = 0
         )
       }
+      # Restore
+      on.exit(par(old))
       }}
 }
 
@@ -613,7 +615,7 @@ yield_boxplot <- function(dat, place) {
 
     lab_colors <- setNames(rainbow(length(unique(yield$Lab))), unique(yield$Lab))
     yield$Color <- lab_colors[yield$Lab]
-    par(las = 2)
+    old <- par(las = 2)
     boxplot(X ~ Sample, data = yield, ylab = ylab, xlab = NA, boxwex=.4, main = "Frequencies plot")
 
     for (lab in unique(yield$Lab)) {
@@ -644,6 +646,8 @@ yield_boxplot <- function(dat, place) {
         las = 0
       )
     }
+    # Restore
+    on.exit(par(old))
   }}
 
 #' Boxplot dose estimates
@@ -662,7 +666,7 @@ dose_boxplot <- function(dat, place) {
 
     lab_colors <- setNames(rainbow(length(unique(dose.est$Lab))), unique(dose.est$Lab))
     dose.est$Color <- lab_colors[dose.est$Lab]
-    par(las = 2)
+    old <- par(las = 2)
     boxplot(dose.est$estimate ~ Sample, data = dose.est, ylab = "Dose estimates [Gy]", xlab = NA, boxwex=.4, main = "Doses plot")
 
     for (lab in unique(dose.est$Lab)) {
@@ -688,6 +692,8 @@ dose_boxplot <- function(dat, place) {
         las = 0
       )
     }
+    # Restore
+    on.exit(par(old))
   }}
 
 #' U-test
@@ -706,7 +712,7 @@ u_test_plot <- function(dat, place) {
 
   lab_colors <- setNames(rainbow(length(unique(U.data$Lab))), unique(U.data$Lab))
   U.data$Color <- lab_colors[U.data$Lab]
-  par(las = 2)
+  old <- par(las = 2)
   boxplot(U.data$u ~ Sample, data = U.data, ylab = "U-test", xlab = NA, boxwex=.4, main = "U-test plot")
 
   for (lab in unique(U.data$Lab)) {
@@ -733,6 +739,8 @@ u_test_plot <- function(dat, place) {
       las = 0
     )
   }
+  # Restore
+  on.exit(par(old))
 }}
 
 #' Dispersion index
@@ -751,7 +759,7 @@ DI_plot <- function(dat, place) {
 
     lab_colors <- setNames(rainbow(length(unique(DI.data$Lab))), unique(DI.data$Lab))
     DI.data$Color <- lab_colors[DI.data$Lab]
-    par(las = 2)
+    old <- par(las = 2)
     boxplot(DI.data$DI ~ Sample, data = DI.data, ylab = "Dispersion Index", xlab = NA, boxwex=.4, main = "Dispersion index plot")
 
     for (lab in unique(DI.data$Lab)) {
@@ -777,6 +785,8 @@ DI_plot <- function(dat, place) {
         las = 0
       )
     }
+    # Restore
+    on.exit(par(old))
 }}
 
 # #' Deviation from reference

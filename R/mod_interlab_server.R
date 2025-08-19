@@ -220,7 +220,6 @@ mod_interlab_server <- function(id, label) {
         ))
       }
 
-    print("No NA values found, proceeding...")
 
     #Get the correct data
       if(input$dose_or_freq == "Dose"){
@@ -499,13 +498,15 @@ mod_interlab_server <- function(id, label) {
       filename = function() {
         paste("Interlab_summary_", Sys.Date(), input$save_summary_format_ilc, sep = "")
       },
-      content = function(file) {
+      content = function(file, verbose = TRUE) {
         data_to_save <- reactive_data_interlab$sum_up
 
         if (input$save_summary_format_ilc == ".csv") {
           write.csv(data_to_save, file)
         } else if (input$save_summary_format_ilc == ".tex") {
-          xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          if(verbose){
+            xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          }
         } else if(input$save_summary_format_ilc == ".xlsx"){
           write.xlsx(data_to_save, file, rowNames = FALSE)
         }else{
@@ -517,13 +518,15 @@ mod_interlab_server <- function(id, label) {
       filename = function() {
         paste("Interlab_curves_", Sys.Date(), input$save_summary_format_curve, sep = "")
       },
-      content = function(file) {
+      content = function(file, verbose=TRUE) {
         data_to_save <- reactive_data_interlab$curve_up
 
         if (input$save_summary_format_curve == ".csv") {
           write.csv(data_to_save, file)
         } else if (input$save_summary_format_curve == ".tex") {
-          xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          if(verbose){
+            xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          }
         } else if(input$save_summary_format_curve == ".xlsx"){
           write.xlsx(data_to_save, file, rowNames = FALSE)
         }else{
@@ -535,13 +538,15 @@ mod_interlab_server <- function(id, label) {
       filename = function() {
         paste("Interlab_zscores_", Sys.Date(), input$save_summary_format_zscore, sep = "")
       },
-      content = function(file) {
+      content = function(file, verbose=TRUE) {
         data_to_save <- reactive_data_interlab$zscore_table
 
         if (input$save_summary_format_zscore == ".csv") {
           write.csv(data_to_save, file)
         } else if (input$save_summary_format_zscore == ".tex") {
-          xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          if(verbose){
+           xtable::print.xtable(xtable::xtable(data_to_save), type = "latex", file = file)
+          }
         } else if(input$save_summary_format_zscore == ".xlsx"){
           write.xlsx(data_to_save, file, rowNames = FALSE)
         }else{
@@ -851,7 +856,7 @@ mod_interlab_server <- function(id, label) {
       filename = function() {
         paste0("interlab-report-", Sys.Date(), ".pdf")  # Ensure PDF output
       },
-      content = function(file) {
+      content = function(file, verbose =TRUE) {
         temp_dir <- tempdir()  # Temporary directory
 
         # Render RMarkdown to PDF
@@ -884,7 +889,9 @@ mod_interlab_server <- function(id, label) {
             if (is.function(plot_func)) {
               plot_obj <- plot_func()
               if (inherits(plot_obj, "ggplot")) {
-                print(plot_obj)  #Print ggplot objects
+                if(verbose){
+                 print(plot_obj)  #Print ggplot objects
+                }
               }
             }
             dev.off()  #Close PDF file
@@ -903,7 +910,9 @@ mod_interlab_server <- function(id, label) {
             if (is.function(plot_func)) {
               plot_obj <- plot_func()
               if (inherits(plot_obj, "ggplot")) {
-                print(plot_obj)  #Print ggplot objects
+                if(verbose){
+                 print(plot_obj)  #Print ggplot objects
+                }
               }
             }
             dev.off()  #Close PDF file
@@ -921,11 +930,16 @@ mod_interlab_server <- function(id, label) {
               plot_obj <- plot_func()
 
               if (inherits(plot_obj, "ggplot")) {
-                print(plot_obj)
+                if(verbose){
+                  print(plot_obj)
+                }
               } else if (is.list(plot_obj)) {
                 for (p in plot_obj) {
                   if (inherits(p, "ggplot")) {
-                    print(p)  #Each plot in the list
+                    if(verbose){
+                      print(p)  #Each plot in the list
+                    }
+
                   }
                 }
               }
