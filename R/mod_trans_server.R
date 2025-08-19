@@ -91,6 +91,20 @@ mod_trans_fraction_to_full_genome_server <- function(id) {
         chromosomes <- as.character(chromosome_table[["Chromosome"]])
         colors <- paste("M-Fish", chromosomes)
       } else {
+        if (is.null(chromosome_table)) {
+          showModal(modalDialog(
+            title = "Error",
+            HTML(
+              'Please enter the missing information (Steps 1-3) and press
+       <span style="padding:5px 10px; background-color:#800080; color:white; border-radius:4px; font-weight:bold;">
+       Calculate parameters
+       </span> to continue.'
+            ),
+            footer = modalButton("Close")
+          ))
+        }
+
+        req(chromosome_table)
         chromosome_table_melt <- chromosome_table %>%
           tidyr::pivot_longer(
             cols = -"Chromosome",

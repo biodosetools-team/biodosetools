@@ -171,13 +171,17 @@ mod_fitting_counts_hot_server <- function(id, aberr_module) {
 
       hot <- changed_data() %>%
         rhandsontable(
-          width = (70 + num_cols * 50),
+          width = (80 + num_cols * 60),
           height = "100%",
           colHeaders = col_headers
         ) %>%
         hot_cols(colWidths = 50, halign = "htCenter") %>%
-        hot_col(c(1), format = "0.000", colWidths = 60) %>%
+        hot_col(c(num_cols), format = "0.000", colWidths = 60) %>%
+        hot_col(c(num_cols-1), format = "0.000", colWidths = 60) %>%
+        hot_col(c(num_cols-2), format = "0.000", colWidths = 60) %>%
+        hot_col(c(num_cols-3), format = "0.000", colWidths = 60) %>%
         hot_col(c(2), colWidths = 60) %>%
+        hot_col(c(3), format = "0") %>%
         hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
       if (num_cols > 3) {
@@ -229,6 +233,7 @@ mod_fitting_results_server <- function(id, aberr_module, genome_factor = NULL) {
       })
 
       if (aberr_module == "translocations") {
+        req(input$frequency_select, hot_to_r(input$chromosome_table), genome_factor$genome_factor())
         frequency_select <- input$frequency_select
         chromosome_table <- hot_to_r(input$chromosome_table)
         genome_factor <- genome_factor$genome_factor()

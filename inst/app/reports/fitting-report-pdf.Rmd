@@ -112,13 +112,17 @@ if (aberr_module == "translocations") {
 data <- count_data %>%
   biodosetools:::fix_count_data_names(type = "count", output = "kable")
 
-if("$u$" %in% colnames(data)){
+if ("$u$" %in% colnames(data)) {
+  
   data$`$u$` <- kableExtra::cell_spec(
-  x = data$`$u$`,
-  background = ifelse(data$`$u$` > 1.96, "#ffc0cb", "white")
-)
+    x = data$`$u$`,
+    background = ifelse(
+      !is.na(data$`$u$`) & data$`$u$` > 1.96, 
+      "#ffc0cb", 
+      "white"
+    )
+  )
 }
-
 
 data %>%
   render_table(align = "c", escape = FALSE)
