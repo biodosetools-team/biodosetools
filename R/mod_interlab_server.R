@@ -190,9 +190,11 @@ mod_interlab_server <- function(id, label) {
     observeEvent(input$zscore_info, {
       showModal(modalDialog(
         title = "Help",
-        "When a new algorithm is selected, please click again
-        'Calculate and plot' to refresh the graphic. Information about the algorithms
-        is available in the Data input box help icon.",
+        HTML('When a new algorithm is selected, please click again
+       <span style="padding:5px 10px; background-color:#3399FF; color:white; border-radius:4px; font-weight:bold;">
+         Calculate and plot
+       </span> to refresh the graphic. Information about the algorithms
+       is available in the Data input box help icon.'),
         easyClose = TRUE,
         footer = modalButton("Close")
       ))
@@ -379,7 +381,7 @@ mod_interlab_server <- function(id, label) {
         showModal(modalDialog(
           title = "Error",
           "Laboratory names are missing. Please provide them in the designated
-          section in Data Input (IMPORTANT: not in Data Summary).",
+          section in Data Input.",
           footer = modalButton("Close")
         ))
         return()
@@ -429,7 +431,7 @@ mod_interlab_server <- function(id, label) {
         showModal(modalDialog(
           title = "Error",
           "Laboratory names are missing. Please provide them in the designated
-          section in Data Input (IMPORTANT: not in Data Summary).",
+          section in Data Input.",
           footer = modalButton("Close")
         ))
         return()

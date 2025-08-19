@@ -83,11 +83,11 @@ kable(params$table_yield_t, format = "markdown", align = "c", caption = "Yield e
 
 <h2>4. Curve plot</h2>
 <h3>Gamma</h3>
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='asis', out.width="\\linewidth"}
 knitr::include_graphics(params$plot_gamma)
 ```
 <h3>Neutron</h3>
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='asis', out.width="\\linewidth"}
 knitr::include_graphics(params$plot_neutron)
 ```
 

@@ -77,11 +77,11 @@ mod_mixed_case_table_hot_server <- function(id, aberr_module) {
 
         df$N <- rowSums(C_columns, na.rm = TRUE)
         df$X <- rowSums(C_columns_factor, na.rm = TRUE)
-        df$y <- ifelse(df$N == 0, 0, df$X / df$N)
-        Var <- ifelse(df$N > 1, rowSums((0:i - df$y)^2 * C_columns) / (df$N - 1), 0)
-        df$y_err <- sqrt(ifelse(df$N == 0, 0, Var / df$N))
-        df$DI <- ifelse(df$y == 0, 0, Var / df$y)
-        df$u <- ifelse(df$X == 0, 0, (df$DI - 1) * sqrt((df$N - 1) / (2 * (1 - 1 / df$X))))
+        df$y <- df$X / df$N
+        Var <- rowSums((0:i - df$y)^2 * C_columns) / (df$N - 1)
+        df$y_err <- sqrt(Var / df$N)
+        df$DI <-  Var / df$y
+        df$u <- (df$DI - 1) * sqrt((df$N - 1) / (2 * (1 - 1 / df$X)))
 
         df_list[[j]] <- df
       }
