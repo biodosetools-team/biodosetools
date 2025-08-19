@@ -470,11 +470,14 @@ mod_fitting_results_server <- function(id, aberr_module, genome_factor = NULL) {
       filename = function() {
         paste("count-data-", Sys.Date(), input$save_count_data_format, sep = "")
       },
-      content = function(file) {
+      content = function(file, verbose = TRUE) {
         if (input$save_count_data_format == ".csv") {
           utils::write.csv(hot_to_r(input$count_data_hot), file, row.names = FALSE)
         } else if (input$save_count_data_format == ".tex") {
-          print(xtable::xtable(hot_to_r(input$count_data_hot)), type = "latex", file)
+          if(verbose){
+            print(xtable::xtable(hot_to_r(input$count_data_hot)), type = "latex", file)
+          }
+
         }
       }
     )
