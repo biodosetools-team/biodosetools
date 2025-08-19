@@ -83,7 +83,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Translocations dose-effect fitting</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/vignettes/trans-fitting.Rmd" class="external-link"><code>vignettes/trans-fitting.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/vignettes/trans-fitting.Rmd" class="external-link"><code>vignettes/trans-fitting.Rmd</code></a></small>
       <div class="d-none name"><code>trans-fitting.Rmd</code></div>
     </div>
 
@@ -123,11 +123,12 @@ factor’ boxes in the dose-effect fitting module.
 <h2 id="input-count-data">Input count data<a class="anchor" aria-label="anchor" href="#input-count-data"></a>
 </h2>
 <p>Once the genomic conversion factor has been calculated, we can input
-the count data. On the {shiny} app, we can select to either load the
-count data from a file (supported formats are <code>.csv</code>,
-<code>.dat</code>, and <code>.txt</code>) or to input the data manually.
-Once the table is generated and filled, the “Calculate parameters”
-button will calculate the total number of cells
+the count data. On the {shiny} app, as in the Dicentrics or Micronuclei
+dose-effect fitting modules, we can select to either load the count data
+from a file (supported formats are <code>.csv</code>, <code>.dat</code>,
+and <code>.txt</code>) or to input the data manually. Once the table is
+generated and filled, the “Calculate parameters” button will calculate
+the total number of cells
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>),
 total number of aberrations
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>),
@@ -139,17 +140,6 @@ dispersion index
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mi>/</mi><mover><mi>y</mi><mo accent="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">\sigma^{2}/\bar{y}</annotation></semantics></math>),
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>-value.</p>
-<div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-02.png" alt="'Data input options' and 'Fitting options' boxes in the dose-effect fitting module." width="100%"><p class="caption">
-‘Data input options’ and ‘Fitting options’ boxes in the dose-effect
-fitting module.
-</p>
-</div>
-<div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-03.png" alt="'Data input' box in the dose-effect fitting module." width="75%"><p class="caption">
-‘Data input’ box in the dose-effect fitting module.
-</p>
-</div>
 <p>This step is accomplished in R by calling the
 <code><a href="../reference/calculate_aberr_table.html">calculate_aberr_table()</a></code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -182,12 +172,8 @@ fitting module.
 future dose estimates, and for a better traceability, the user can input
 the conditions under which the samples used to construct the curve were
 irradiated. This option is only available in the Shiny app, so that
-these can be saved into the generated reports.</p>
-<div class="figure" style="text-align: center">
-<img src="figures/screenshot-translocations-fit-05.png" alt="'Irradiation conditions' box in the dose-effect fitting module" width="100%"><p class="caption">
-‘Irradiation conditions’ box in the dose-effect fitting module
-</p>
-</div>
+these can be saved into the generated reports (For more information see
+Dicentrics or Micronuclei dose-effect fitting modules).</p>
 </div>
 <div class="section level2">
 <h2 id="perform-fitting">Perform fitting<a class="anchor" aria-label="anchor" href="#perform-fitting"></a>
