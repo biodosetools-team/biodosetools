@@ -94,8 +94,8 @@ test_that("processing case data works", {
 
 
   # # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("x", "y", "title", "ymin",  "ymax",  "shape"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example1", "yield_low", "yield_upp", "type"))
+  expect_equal(names(gg_curve$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example1"))
 
 
   gg_curve <- plot_estimated_dose_curve_mx(
@@ -109,8 +109,8 @@ test_that("processing case data works", {
     place = "UI")
 
   # # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("x", "y", "title", "ymin",  "ymax",  "shape"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example1", "yield_low", "yield_upp", "type"))
+  expect_equal(names(gg_curve$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example1"))
 
 
   # Plot
@@ -126,8 +126,8 @@ test_that("processing case data works", {
 
 
   # # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("x", "y", "title", "ymin",  "ymax",  "shape"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example2", "yield_low", "yield_upp", "type"))
+  expect_equal(names(gg_curve$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example2"))
 
 
   gg_curve <- plot_estimated_dose_curve_mx(
@@ -141,7 +141,7 @@ test_that("processing case data works", {
     place = "UI")
 
   # # Expected outcomes
-  expect_equal(names(gg_curve$labels), c("x", "y", "title", "ymin",  "ymax",  "shape"))
-  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example2", "yield_low", "yield_upp", "type"))
+  expect_equal(names(gg_curve$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(gg_curve$labels)), c("Dose (Gy)", "dics/cells", "Curve plot Case number:  Example2"))
 
 })

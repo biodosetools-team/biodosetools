@@ -82,8 +82,8 @@ test_that("ILC module works", {
     place = "UI"
   )
 
-  expect_equal(names(c_plot$labels), c("x", "y", "title", "colour", "group"))
-  expect_equal(unname(unlist(c_plot$labels)), c("Dose (Gy)", "aberr/cell", "Manual curves plot", "Lab", "Lab"))
+  expect_equal(names(c_plot$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(c_plot$labels)), c("Dose (Gy)", "aberr/cell", "Manual curves plot"))
 
   bar_plots(
     dat = tables_list[[2]],
@@ -186,9 +186,8 @@ test_that("ILC module works", {
     place = "UI"
   )
 
- expect_equal(names(plot_1$labels), c("x", "y", "title", "xmin", "xmax", "ymin", "ymax", "fill", "colour", "shape"))
- expect_equal(unname(unlist(plot_1$labels)), c("Laboratory",  "Z-Score", "Z-Score plot. Method: algA", "-Inf", "xmax",
-                                               "ymin",  "ymax", "fill", "Sample", "Sample"))
+ expect_equal(names(plot_1$labels), c("x", "y", "title"))
+ expect_equal(unname(unlist(plot_1$labels)), c("Laboratory",  "Z-Score", "Z-Score plot. Method: algA"))
 
 
   plot_2 <- plot_deviation_all(
@@ -197,9 +196,8 @@ test_that("ILC module works", {
     place = "UI"
   )
 
-  expect_equal(names(plot_2$labels), c("x", "y", "title", "xmin", "xmax", "ymin", "ymax", "fill", "colour", "shape"))
-  expect_equal(unname(unlist(plot_2$labels)), c("Laboratory",  "Deviation from reference dose [Gy]",  "Deviation from reference dose", "-Inf", "xmax",
-                                                "ymin",  "ymax", "fill", "Sample", "Sample"))
+  expect_equal(names(plot_2$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(plot_2$labels)), c("Laboratory",  "Deviation from reference dose [Gy]",  "Deviation from reference dose"))
 
   plot_3 <- plot_interlab_v2(
     zscore = data_frame_zscore,
@@ -210,9 +208,8 @@ test_that("ILC module works", {
 
 
   for(i in 1:3){
-    expect_equal(names(plot_3[[i]]$labels), c( "x", "y", "title", "xmin",  "xmax",  "ymin",  "ymax",  "fill" ))
-    expect_equal(unname(unlist(plot_3[[i]]$labels)), c("Laboratory", "Z-Score", paste("Z-Score plot. Method: algA. Sample:", i),
-                                                       "-Inf","xmax","ymin", "ymax","fill"))
+    expect_equal(names(plot_3[[i]]$labels), c( "x", "y", "title"))
+    expect_equal(unname(unlist(plot_3[[i]]$labels)), c("Laboratory", "Z-Score", paste("Z-Score plot. Method: algA. Sample:", i)))
   }
 
   plot_4 <- plot_interlab_deviation(
@@ -223,9 +220,9 @@ test_that("ILC module works", {
 
 
   for(i in 1:3){
-    expect_equal(names(plot_4[[i]]$labels), c( "x", "y", "title", "xmin",  "xmax",  "ymin",  "ymax",  "fill" ))
-    expect_equal(unname(unlist(plot_4[[i]]$labels)), c("Laboratory", "Deviaition from reference [Gy]", paste("Deviation from reference dose Sample:", i),
-                                                       "-Inf","xmax","ymin", "ymax","fill"))
+    expect_equal(names(plot_4[[i]]$labels), c( "x", "y", "title"))
+    expect_equal(unname(unlist(plot_4[[i]]$labels)), c("Laboratory", "Deviaition from reference [Gy]", paste("Deviation from reference dose Sample:", i)
+                                                       ))
   }
 
 
@@ -238,9 +235,9 @@ test_that("ILC module works", {
   )
 
   for(i in 1:3){
-    expect_equal(names(plot_5[[i]]$labels), c( "x", "y", "title", "xmin", "xmax", "ymin", "ymax", "fill", "yintercept", "linetype" ))
-    expect_equal(unname(unlist(plot_5[[i]]$labels)), c("Laboratories",  "Dose (Gy)", paste("Dose estimation plot. Sample: ", i),
-                                                       "-Inf","xmax","ymin", "ymax","fill", "yintercept", "label"))
+    expect_equal(names(plot_5[[i]]$labels), c( "x", "y", "title" ))
+    expect_equal(unname(unlist(plot_5[[i]]$labels)), c("Laboratories",  "Dose (Gy)", paste("Dose estimation plot. Sample: ", i)
+                                                       ))
   }
 
   # Test Z-score calculation for frequencies
