@@ -176,17 +176,21 @@ mod_fitting_counts_hot_server <- function(id, aberr_module) {
           colHeaders = col_headers
         ) %>%
         hot_cols(colWidths = 50, halign = "htCenter") %>%
-        hot_col(c(num_cols), format = "0.000", colWidths = 60) %>%
-        hot_col(c(num_cols-1), format = "0.000", colWidths = 60) %>%
-        hot_col(c(num_cols-2), format = "0.000", colWidths = 60) %>%
-        hot_col(c(num_cols-3), format = "0.000", colWidths = 60) %>%
-        hot_col(c(2), colWidths = 60) %>%
-        hot_col(c(3), format = "0") %>%
+        hot_col(c(num_cols), format = "0", colWidths = 60) %>%
+        hot_col(c(num_cols-1), format = "0", colWidths = 60) %>%
+        hot_col(c(num_cols-2), format = "0.0", colWidths = 60) %>%
+
         hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
       if (num_cols > 3) {
         hot <- hot %>%
           hot_col(c(2, 3, seq(num_cols - 3, num_cols, 1)), readOnly = TRUE) %>%
+          hot_col(c(num_cols), format = "0.000", colWidths = 60) %>%
+          hot_col(c(num_cols-1), format = "0.000", colWidths = 60) %>%
+          hot_col(c(num_cols-2), format = "0.000", colWidths = 60) %>%
+          hot_col(c(num_cols-3), format = "0.000", colWidths = 60) %>%
+          hot_col(c(2), colWidths = 60) %>%
+          hot_col(c(3), format = "0") %>%
           hot_col(num_cols, renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.NumericRenderer.apply(this, arguments);
