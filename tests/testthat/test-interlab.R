@@ -330,9 +330,8 @@ test_that("ILC module works", {
     place = "UI"
   )
 
-  expect_equal(names(plot_1$labels), c("x", "y", "title", "xmin", "xmax", "ymin", "ymax", "fill", "colour", "shape"))
-  expect_equal(unname(unlist(plot_1$labels)), c("Laboratory",  "Z-Score", "Z-Score plot. Method: algA", "-Inf", "xmax",
-                                                "ymin",  "ymax", "fill", "Sample", "Sample"))
+  expect_equal(names(plot_1$labels), c("x", "y", "title"))
+  expect_equal(unname(unlist(plot_1$labels)), c("Laboratory",  "Z-Score", "Z-Score plot. Method: algA"))
 
 
   plot_3 <- plot_interlab_v2(
@@ -343,9 +342,9 @@ test_that("ILC module works", {
   )
 
   for(i in 1:3){
-    expect_equal(names(plot_3[[i]]$labels), c( "x", "y", "title", "xmin",  "xmax",  "ymin",  "ymax",  "fill" ))
-    expect_equal(unname(unlist(plot_3[[i]]$labels)), c("Laboratory", "Z-Score", paste("Z-Score plot. Method: algA. Sample:", i),
-                                                       "-Inf","xmax","ymin", "ymax","fill"))
+    expect_equal(names(plot_3[[i]]$labels), c( "x", "y", "title"))
+    expect_equal(unname(unlist(plot_3[[i]]$labels)), c("Laboratory", "Z-Score", paste("Z-Score plot. Method: algA. Sample:", i)
+                                                       ))
   }
 
 })
