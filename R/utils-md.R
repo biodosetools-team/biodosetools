@@ -3,6 +3,8 @@
 #' @param ... Character vector specifying directory and or file to
 #'     point to inside the current package.
 #'
+#'
+#tmp_path
 include_help <- function(file) {
   help_path <- system.file("app/help", file, package = "biodosetools")
   tmp_path <- file.path(tempdir(), basename(help_path))
