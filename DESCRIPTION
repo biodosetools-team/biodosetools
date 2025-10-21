@@ -1,6 +1,6 @@
 Package: biodosetools
 Title: 'shiny' Application for Biological Dosimetry
-Version: 3.7
+Version: 3.7.0
 Authors@R:
     c(person(given = "Alfredo",
            family = "Hernández",
