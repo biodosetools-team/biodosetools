@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Boxplot dose estimates</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/utils_interlab.R" class="external-link"><code>R/utils_interlab.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/utils_interlab.R" class="external-link"><code>R/utils_interlab.R</code></a></small>
       <div class="d-none name"><code>dose_boxplot.Rd</code></div>
     </div>
 
@@ -78,6 +78,32 @@
     <p>plot</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Lab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A1"</span>, <span class="st">"A2"</span>, <span class="st">"A1"</span>, <span class="st">"A2"</span>, <span class="st">"A1"</span>, <span class="st">"A2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Module <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"manual"</span>, <span class="st">"manual"</span>, <span class="st">"manual"</span>, <span class="st">"manual"</span>, <span class="st">"manual"</span>, <span class="st">"manual"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">200</span>, <span class="fl">200</span>, <span class="fl">200</span>, <span class="fl">200</span>, <span class="fl">200</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">140</span>, <span class="fl">111</span>, <span class="fl">204</span>, <span class="fl">147</span>, <span class="fl">368</span>, <span class="fl">253</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.589230</span>, <span class="fl">2.610970</span>, <span class="fl">3.146055</span>, <span class="fl">3.018682</span>, <span class="fl">4.259400</span>, <span class="fl">3.989222</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.083403</span>, <span class="fl">2.231150</span>, <span class="fl">2.614931</span>, <span class="fl">2.622748</span>, <span class="fl">3.882349</span>, <span class="fl">3.552963</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.208857</span>, <span class="fl">3.045616</span>, <span class="fl">3.785879</span>, <span class="fl">3.471269</span>, <span class="fl">4.688910</span>, <span class="fl">4.487336</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.700</span>, <span class="fl">0.555</span>, <span class="fl">1.020</span>, <span class="fl">0.735</span>, <span class="fl">1.840</span>, <span class="fl">1.265</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  y.err <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0610</span>, <span class="fl">0.0495</span>, <span class="fl">0.0733</span>, <span class="fl">0.0556</span>, <span class="fl">0.0923</span>, <span class="fl">0.0785</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  DI <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0625</span>, <span class="fl">0.8818</span>, <span class="fl">1.0539</span>, <span class="fl">0.8406</span>, <span class="fl">0.9255</span>, <span class="fl">0.9731</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  u <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6252</span>, <span class="op">-</span><span class="fl">1.1840</span>, <span class="fl">0.5389</span>, <span class="op">-</span><span class="fl">1.5951</span>, <span class="op">-</span><span class="fl">0.7442</span>, <span class="op">-</span><span class="fl">0.2692</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dose_boxplot</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">dat</span>,</span></span>
+<span class="r-in"><span>  place <span class="op">=</span> <span class="st">"UI"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="dose_boxplot-1.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

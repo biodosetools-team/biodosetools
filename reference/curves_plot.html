@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot curves</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/utils_interlab.R" class="external-link"><code>R/utils_interlab.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/utils_interlab.R" class="external-link"><code>R/utils_interlab.R</code></a></small>
       <div class="d-none name"><code>curves_plot.Rd</code></div>
     </div>
 
@@ -86,6 +86,39 @@
     <p><code>ggplot2</code> object.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"Lab"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A1"</span>, <span class="st">"A2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Module"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dicentrics"</span>, <span class="st">"dicentrics"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Type"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"manual"</span>, <span class="st">"manual"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"radiation quality"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cs-137"</span>, <span class="st">"Co-60"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"air kerma"</span>, <span class="st">"air kerma"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"irradiation"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"air"</span>, <span class="st">"air"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"temperature"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">37</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"dose rate"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.446</span>, <span class="fl">0.27</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"curve origin"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"own"</span>, <span class="st">"own"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"C"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.001189589</span>, <span class="fl">0.0005</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"alpha"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01903783</span>, <span class="fl">0.0142</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"beta"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0968831</span>, <span class="fl">0.0759</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"C std.error"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001040828</span>, <span class="fl">0.0005</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"alpha std.error"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.004119324</span>, <span class="fl">0.0044</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"beta std.error"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.003505209</span>, <span class="fl">0.0027</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"max curve dose"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6.00</span>, <span class="fl">5.05</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  check.names <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">curves_plot</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">dat</span>,</span></span>
+<span class="r-in"><span>  curve <span class="op">=</span> <span class="st">"manual"</span>,</span></span>
+<span class="r-in"><span>  curve_type <span class="op">=</span> <span class="st">"lin_quad"</span>,</span></span>
+<span class="r-in"><span>  place <span class="op">=</span> <span class="st">"UI"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="curves_plot-1.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

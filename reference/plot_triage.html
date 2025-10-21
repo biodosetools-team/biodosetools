@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot triage</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/utils_estimation.R" class="external-link"><code>R/utils_estimation.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/utils_estimation.R" class="external-link"><code>R/utils_estimation.R</code></a></small>
       <div class="d-none name"><code>plot_triage.Rd</code></div>
     </div>
 
@@ -90,6 +90,27 @@
     <p><code>ggplot2</code> object.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">est_doses_whole</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"example1"</span>, <span class="st">"example2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.407921</span>, <span class="fl">2.604542</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.931245</span>, <span class="fl">3.301014</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.632199</span>, <span class="fl">4.221749</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plot_triage</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  num_cases <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  <span class="va">est_doses_whole</span> ,</span></span>
+<span class="r-in"><span>  est_doses_partial <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  assessment <span class="op">=</span> <span class="st">"whole"</span>,</span></span>
+<span class="r-in"><span>  place <span class="op">=</span> <span class="st">"UI"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot_triage-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

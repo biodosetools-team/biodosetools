@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate ZScore</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/calcs_interlab.R" class="external-link"><code>R/calcs_interlab.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/calcs_interlab.R" class="external-link"><code>R/calcs_interlab.R</code></a></small>
       <div class="d-none name"><code>calc.zValue.new.Rd</code></div>
     </div>
 
@@ -86,6 +86,16 @@
     <p>Numeric value of zscore.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">calc.zValue.new</span><span class="op">(</span>X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.65</span>, <span class="fl">2.5</span>, <span class="fl">4.85</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                type <span class="op">=</span> <span class="st">"dose"</span>,</span></span>
+<span class="r-in"><span>                alg <span class="op">=</span> <span class="st">"algA"</span> ,</span></span>
+<span class="r-in"><span>                c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.5</span>, <span class="fl">3</span>, <span class="fl">4.25</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0.1126264 -0.3754214  0.4505056</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

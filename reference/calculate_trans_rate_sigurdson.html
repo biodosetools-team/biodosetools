@@ -13,7 +13,7 @@ Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@ Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Sigurdson's translocation rate</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/calcs_translocations.R" class="external-link"><code>R/calcs_translocations.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/calcs_translocations.R" class="external-link"><code>R/calcs_translocations.R</code></a></small>
       <div class="d-none name"><code>calculate_trans_rate_sigurdson.Rd</code></div>
     </div>
 
@@ -120,6 +120,21 @@ Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
     <p>Numeric value of translocation rate.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">calculate_trans_rate_sigurdson</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  cells <span class="op">=</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>  genome_factor <span class="op">=</span> <span class="fl">0.58</span>,</span></span>
+<span class="r-in"><span>  age_value <span class="op">=</span> <span class="fl">30</span>,</span></span>
+<span class="r-in"><span>  sex_bool <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  sex_value <span class="op">=</span> <span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>  smoker_bool <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  ethnicity_value <span class="op">=</span> <span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>  region_value <span class="op">=</span> <span class="st">"none"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.432651</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

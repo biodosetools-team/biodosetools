@@ -9,7 +9,7 @@ default, with a maximum likelihood estimation (MLE) as a fallback method."><meta
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ default, with a maximum likelihood estimation (MLE) as a fallback method."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Perform dose-effect fitting algorithm</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/calcs_fitting.R" class="external-link"><code>R/calcs_fitting.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/calcs_fitting.R" class="external-link"><code>R/calcs_fitting.R</code></a></small>
       <div class="d-none name"><code>fit.Rd</code></div>
     </div>
 
@@ -115,6 +115,85 @@ data: A comparative study. Biometrical Journal, 58(2), 259-279.
 &lt;doi:10.1002/bimj.201400233&gt;.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  D <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1</span>, <span class="fl">1.5</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">5002</span>, <span class="fl">2008</span>, <span class="fl">2002</span>, <span class="fl">1832</span>, <span class="fl">1168</span>, <span class="fl">562</span>, <span class="fl">333</span>, <span class="fl">193</span>, <span class="fl">103</span>, <span class="fl">59</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">22</span>, <span class="fl">55</span>, <span class="fl">100</span>, <span class="fl">109</span>, <span class="fl">100</span>, <span class="fl">103</span>, <span class="fl">108</span>, <span class="fl">103</span>, <span class="fl">107</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4992</span>, <span class="fl">4988</span>, <span class="fl">1987</span>, <span class="fl">1947</span>, <span class="fl">1736</span>, <span class="fl">1064</span>, <span class="fl">474</span>, <span class="fl">251</span>, <span class="fl">104</span>, <span class="fl">35</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">20</span>, <span class="fl">55</span>, <span class="fl">92</span>, <span class="fl">99</span>, <span class="fl">76</span>, <span class="fl">63</span>, <span class="fl">72</span>, <span class="fl">41</span>, <span class="fl">19</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">12</span>, <span class="fl">17</span>, <span class="fl">15</span>, <span class="fl">21</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C5 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0016</span>, <span class="fl">0.0028</span>, <span class="fl">0.0110</span>, <span class="fl">0.0275</span>, <span class="fl">0.0546</span>, <span class="fl">0.0933</span>, <span class="fl">0.178</span>, <span class="fl">0.309</span>, <span class="fl">0.560</span>, <span class="fl">1</span>, <span class="fl">1.81</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.00160</span>, <span class="fl">0.00279</span>, <span class="fl">0.0118</span>, <span class="fl">0.0267</span>, <span class="fl">0.0560</span>, <span class="fl">0.0933</span>, <span class="fl">0.189</span>, <span class="fl">0.353</span>, <span class="fl">0.466</span>, <span class="fl">0.882</span>, <span class="fl">2.09</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  DI <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.999</span>, <span class="fl">0.997</span>, <span class="fl">1.08</span>, <span class="fl">0.973</span>, <span class="fl">1.03</span>, <span class="fl">0.999</span>, <span class="fl">1.06</span>, <span class="fl">1.14</span>, <span class="fl">0.834</span>, <span class="fl">0.882</span>, <span class="fl">1.15</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  u <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.0748</span>, <span class="op">-</span><span class="fl">0.135</span>, <span class="fl">2.61</span>, <span class="op">-</span><span class="fl">0.861</span>, <span class="fl">0.790</span>, <span class="op">-</span><span class="fl">0.0176</span>, <span class="fl">1.08</span>, <span class="fl">1.82</span>, <span class="op">-</span><span class="fl">1.64</span>, <span class="op">-</span><span class="fl">0.844</span>, <span class="fl">0.811</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">fit</span><span class="op">(</span>count_data <span class="op">=</span> <span class="va">count_data</span>,</span></span>
+<span class="r-in"><span>    model_formula <span class="op">=</span> <span class="st">"lin-quad"</span>,</span></span>
+<span class="r-in"><span>    model_family <span class="op">=</span> <span class="st">"automatic"</span>,</span></span>
+<span class="r-in"><span>    fit_link <span class="op">=</span> <span class="st">"identity"</span>,</span></span>
+<span class="r-in"><span>    aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span>,</span></span>
+<span class="r-in"><span>    algorithm <span class="op">=</span> <span class="st">"maxlik"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_raw_data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          D    N   X   C0 C1 C2 C3 C4 C5   mean     var    DI       u</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 0.00 5000   8 4992  8  0  0  0  0 0.0016 0.00160 0.999 -0.0748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.10 5002  14 4988 14  0  0  0  0 0.0028 0.00279 0.997 -0.1350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 0.25 2008  22 1987 20  1  0  0  0 0.0110 0.01180 1.080  2.6100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.50 2002  55 1947 55  0  0  0  0 0.0275 0.02670 0.973 -0.8610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 0.75 1832 100 1736 92  4  0  0  0 0.0546 0.05600 1.030  0.7900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 1.00 1168 109 1064 99  5  0  0  0 0.0933 0.09330 0.999 -0.0176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 1.50  562 100  474 76 12  0  0  0 0.1780 0.18900 1.060  1.0800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 2.00  333 103  251 63 17  2  0  0 0.3090 0.35300 1.140  1.8200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 3.00  193 108  104 72 15  2  0  0 0.5600 0.46600 0.834 -1.6400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 4.00  103 103   35 41 21  4  2  0 1.0000 0.88200 0.882 -0.8440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 5.00   59 107   11 19 11  9  6  3 1.8100 2.09000 1.150  0.8110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_formula_raw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aberr ~ -1 + coeff_C + coeff_alpha + coeff_beta"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_formula_tex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\\lambda = C + \\alpha D + \\beta D^{2}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_coeffs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                estimate    std.error statistic      p.value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_C     0.001281389 0.0004354802  2.942473 3.727799e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_alpha 0.021040447 0.0051768738  4.064315 7.223528e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_beta  0.063026217 0.0040877861 15.418179 6.226154e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_cor_mat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                coeff_C coeff_alpha coeff_beta</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_C      1.0000000  -0.3342101  0.1829917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_alpha -0.3342101   1.0000000 -0.7396223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_beta   0.1829917  -0.7396223  1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_var_cov_mat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   coeff_C   coeff_alpha    coeff_beta</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_C      1.896430e-07 -7.534521e-07  3.257526e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_alpha -7.534521e-07  2.680002e-05 -1.565185e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coeff_beta   3.257526e-07 -1.565185e-05  1.670999e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_dispersion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.010601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_model_statistics</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         logLik deviance df      AIC      BIC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -35.71196 6.809766  8 77.42392 78.61761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_algorithm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "constraint-maxlik-optimization"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $fit_model_summary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A quasi-Poisson model accounting for overdispersion was used as the model dispersion (=1.01) &gt; 1."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

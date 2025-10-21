@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Dicentrics dose estimation criticality accidents</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/vignettes/dicent-mixed.Rmd" class="external-link"><code>vignettes/dicent-mixed.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/vignettes/dicent-mixed.Rmd" class="external-link"><code>vignettes/dicent-mixed.Rmd</code></a></small>
       <div class="d-none name"><code>dicent-mixed.Rmd</code></div>
     </div>
 
@@ -113,8 +113,9 @@ calculated from the coefficients’ standard errors will be used in
 calculations.
 </p>
 </div>
-<p>This step is accomplished in R by either using
-<code><a href="../reference/load_rds_data.html">load_rds_data()</a></code> or via <code><a href="../reference/load_manual_data.html">load_manual_data()</a></code>:</p>
+<p>The RDS file from the fitting module is needed to obtain the data
+when using R (or, alternatively, manual data frames that match the
+structure of the RDS):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">fit_results_gamma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"gamma_dicentrics-fitting-results.rds"</span>, package <span class="op">=</span> <span class="st">"biodosetools"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>

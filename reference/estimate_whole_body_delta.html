@@ -11,7 +11,7 @@ Cytogenetic Analysis for Radiation Dose Assessment, Technical Reports Series
 
     <a class="navbar-brand me-2" href="../index.html">biodosetools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.6.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ Cytogenetic Analysis for Radiation Dose Assessment, Technical Reports Series
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Whole-body dose estimation (delta method)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.6.2/R/calcs_estimation.R" class="external-link"><code>R/calcs_estimation.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/R/calcs_estimation.R" class="external-link"><code>R/calcs_estimation.R</code></a></small>
       <div class="d-none name"><code>estimate_whole_body_delta.Rd</code></div>
     </div>
 
@@ -112,6 +112,71 @@ Cytogenetic Analysis for Radiation Dose Assessment, Technical Reports Series
     <p>List containing estimated doses data frame, AIC, and <code>conf_int</code> used.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#The fitting RDS result from the fitting module is needed. Alternatively, manual data</span></span></span>
+<span class="r-in"><span><span class="co">#frames that match the structure of the RDS can be used:</span></span></span>
+<span class="r-in"><span><span class="va">fit_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  estimate   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.001280319</span>, <span class="fl">0.021038724</span>, <span class="fl">0.063032534</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  std.error  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0004714055</span>, <span class="fl">0.0051576170</span>, <span class="fl">0.0040073856</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  statistic  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.715961</span>, <span class="fl">4.079156</span>, <span class="fl">15.729091</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  p.value    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6.608367e-03</span>, <span class="fl">4.519949e-05</span>, <span class="fl">9.557291e-56</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  row.names <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coeff_C"</span>, <span class="st">"coeff_alpha"</span>, <span class="st">"coeff_beta"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">fit_var_cov_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  coeff_C      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.222231e-07</span>, <span class="op">-</span><span class="fl">9.949044e-07</span>,  <span class="fl">4.379944e-07</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  coeff_alpha  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">9.949044e-07</span>, <span class="fl">2.660101e-05</span>, <span class="op">-</span><span class="fl">1.510494e-05</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  coeff_beta   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.379944e-07</span>, <span class="op">-</span><span class="fl">1.510494e-05</span>, <span class="fl">1.605914e-05</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  row.names <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coeff_C"</span>, <span class="st">"coeff_alpha"</span>, <span class="st">"coeff_beta"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  ID<span class="op">=</span> <span class="st">"example1"</span>,</span></span>
+<span class="r-in"><span>  N <span class="op">=</span> <span class="fl">361</span>,</span></span>
+<span class="r-in"><span>  X <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  C0 <span class="op">=</span> <span class="fl">302</span>,</span></span>
+<span class="r-in"><span>  C1 <span class="op">=</span> <span class="fl">28</span>,</span></span>
+<span class="r-in"><span>  C2 <span class="op">=</span> <span class="fl">22</span>,</span></span>
+<span class="r-in"><span>  C3 <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>  C4 <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  C5 <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  y <span class="op">=</span> <span class="fl">0.277</span>,</span></span>
+<span class="r-in"><span>  y_err <span class="op">=</span> <span class="fl">0.0368</span>,</span></span>
+<span class="r-in"><span>  DI <span class="op">=</span> <span class="fl">1.77</span>,</span></span>
+<span class="r-in"><span>  u <span class="op">=</span> <span class="fl">10.4</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#FUNCTION ESTIMATE_WHOLE_BODY_DELTA</span></span></span>
+<span class="r-in"><span><span class="fu">estimate_whole_body_delta</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  num_cases <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  case_data <span class="op">=</span> <span class="va">case_data</span>,</span></span>
+<span class="r-in"><span>  fit_coeffs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">fit_coeffs</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  fit_var_cov_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">fit_var_cov_mat</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  conf_int <span class="op">=</span> <span class="fl">0.95</span>,</span></span>
+<span class="r-in"><span>  protracted_g_value <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  aberr_module <span class="op">=</span> <span class="st">"dicentrics"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$est_doses</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      lower estimate    upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1.648182 1.931213 2.214245</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$est_yield</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       lower estimate     upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.2048733    0.277 0.3491267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$AIC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7.057229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$conf_int</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
