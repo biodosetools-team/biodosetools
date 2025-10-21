@@ -29,7 +29,7 @@ knitr::include_graphics("figures/screenshot-dicentrics-mixed-01.png")
 knitr::include_graphics("figures/screenshot-dicentrics-mixed-01c.png")
 ```
 
-This step is accomplished in R by either using `load_rds_data()` or via `load_manual_data()`:
+The RDS file from the fitting module is needed to obtain the data when using R (or, alternatively, manual data frames that match the structure of the RDS):
 
 ```{r load-fitting-results-mixed, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 

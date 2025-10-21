@@ -24,3 +24,13 @@ Frequency Analysis in Humans Decades after Exposure to Ionizing Radiation.
 International Journal of Radiation Biology, 62(1), 53-63.
 <doi:10.1080/09553009214551821>.
 }
+\examples{
+#dna_table can be: dna_content_fractions_morton OR dna_content_fractions_ihgsc
+
+calculate_genome_factor(
+  dna_table = dna_content_fractions_morton,
+  chromosome = c(1, 2, 3, 4, 5, 6),
+  color = c("Red", "Red", "Green", "Red", "Green", "Green"),
+  sex = "male"
+)
+}

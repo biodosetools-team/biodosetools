@@ -12,6 +12,7 @@
 #'
 #' @return Numeric value of genomic conversion factor.
 #' @export
+#' @example man/examples/calculate_genome_factor_example.R
 #' @importFrom rlang .data
 calculate_genome_factor <- function(dna_table, chromosomes, colors, sex) {
   # Construct color/chromosome table
@@ -69,6 +70,7 @@ calculate_genome_factor <- function(dna_table, chromosomes, colors, sex) {
 #' @param region_value Region of the individual.
 #'
 #' @return Numeric value of translocation rate.
+#' @example man/examples/calculate_trans_rate_sigurdson_example.R
 #' @export
 calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
                                            sex_bool = FALSE, sex_value = "none",
@@ -109,6 +111,7 @@ calculate_trans_rate_sigurdson <- function(cells, genome_factor, age_value,
 #' @param expected_aberr_value Expected aberrations.
 #'
 #' @return Numeric value of translocation rate.
+#' @example man/examples/calculate_trans_rate_manual_example.R
 #' @export
 calculate_trans_rate_manual <- function(cells, genome_factor, expected_aberr_value) {
   # Expected aberrations

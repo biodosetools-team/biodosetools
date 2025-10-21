@@ -75,6 +75,7 @@ AIC_from_data <- function(general_fit_coeffs, data, dose_var = "dose", yield_var
 #' @param aberr_module Aberration module.
 #'
 #' @return List containing estimated doses data frame, AIC, and \code{conf_int_*} used.
+#' @example man/examples/estimate_whole_body_merkle_example.R
 #' @export
 #'
 estimate_whole_body_merkle <- function(num_cases, case_data, fit_coeffs, fit_var_cov_mat,
@@ -222,6 +223,7 @@ estimate_whole_body_merkle <- function(num_cases, case_data, fit_coeffs, fit_var
 #' @param aberr_module Aberration module.
 #'
 #' @return List containing estimated doses data frame, AIC, and \code{conf_int} used.
+#' @example man/examples/estimate_whole_body_delta_example.R
 #' @export
 estimate_whole_body_delta <- function(num_cases,case_data, fit_coeffs, fit_var_cov_mat,
                                       conf_int = 0.95, protracted_g_value = 1,
@@ -371,6 +373,7 @@ estimate_whole_body_delta <- function(num_cases,case_data, fit_coeffs, fit_var_c
 #' @return List containing estimated doses data frame, observed fraction of cells scored
 #' which were irradiated, estimated fraction of irradiated blood data frame, AIC, and
 #' \code{conf_int_*} used.
+#' @example man/examples/estimate_partial_body_dolphin_example.R
 #' @export
 estimate_partial_body_dolphin <- function(num_cases, case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,
@@ -598,6 +601,7 @@ estimate_partial_body_dolphin <- function(num_cases, case_data, fit_coeffs, fit_
 #' @return List containing estimated mixing proportions data frame, estimated yields data
 #' frame, estimated doses data frame, estimated fraction of irradiated blood data frame,
 #' AIC, and \code{conf_int_*} used.
+#' @example man/examples/estimate_hetero_mixed_poisson_example.R
 #' @export
 estimate_hetero_mixed_poisson <- function(case_data, fit_coeffs, fit_var_cov_mat,
                                           conf_int = 0.95, protracted_g_value = 1,

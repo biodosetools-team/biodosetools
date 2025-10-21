@@ -165,14 +165,14 @@ plot_2 <- plot_deviation_all(
 plot_3 <- plot_interlab_v2(
   zscore = data_frame_zscore, 
   select_method = "algA", 
-  sum_table = data_frame_zscore,
+  sum_table = tables_list[[1]],
   place = "UI"
 )
 
 
 plot_4 <- plot_interlab_deviation(
   zscore = data_frame_zscore, 
-  sum_table = data_frame_zscore,
+  sum_table = tables_list[[1]],
   place = "UI"
 )
 

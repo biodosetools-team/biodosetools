@@ -168,9 +168,12 @@ dashboard_home <- function() {
     div(
       style = "padding-bottom: 20px;",
       h2("About this project", style = "margin-left: 10%;"),
-      includeMarkdown(
-        system.file("app/www/about_body.md", package = "biodosetools")
-      ),
+      {
+        md_path <- system.file("app/www/about_body.md", package = "biodosetools")
+        tmp_md <- file.path(tempdir(), "about_body.md")
+        file.copy(md_path, tmp_md, overwrite = TRUE)
+        includeMarkdown(tmp_md)
+      },
 
       # Buttons
       div(

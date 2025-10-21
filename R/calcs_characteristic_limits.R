@@ -8,6 +8,7 @@
 #' @param ymax Max dicentrics to evaluate.
 #' @param type Type.
 #'
+#' @example man/examples/calculate_characteristic_limits_example.R
 #' @return List of characteristic limits (\code{decision_threshold}, \code{detection_limit}).
 #' @export
 

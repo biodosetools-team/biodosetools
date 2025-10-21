@@ -41,3 +41,15 @@ study of factors affecting human chromosome translocations. Mutation
 Research/Genetic Toxicology and Environmental Mutagenesis, 652(2), 112-121.
 <doi:10.1016/j.mrgentox.2008.01.005>.
 }
+\examples{
+calculate_trans_rate_sigurdson(
+  cells = 1000,
+  genome_factor = 0.58,
+  age_value = 30,
+  sex_bool = FALSE,
+  sex_value = "none",
+  smoker_bool = FALSE,
+  ethnicity_value = "none",
+  region_value = "none"
+)
+}

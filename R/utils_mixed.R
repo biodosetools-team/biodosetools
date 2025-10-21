@@ -7,7 +7,6 @@
 #' @param session let interaction with the shiny UI.
 #'
 #' @return uploaded rds file's curve information-tables.
-#' @export
 #'
 load_rds_data <- function(input_data, data_type, reactive_data, output, session) {
   req(input_data)
@@ -69,7 +68,6 @@ load_rds_data <- function(input_data, data_type, reactive_data, output, session)
 #' @param session let interaction with the shiny UI
 #'
 #' @return manual curve information tables.
-#' @export
 #'
 load_manual_data <- function(data_type, input, reactive_data, output, session) {
 
@@ -161,7 +159,6 @@ load_manual_data <- function(data_type, input, reactive_data, output, session) {
 #' @param data_type gamma or neutron
 #'
 #' @return data for dose estimation using manual input.
-#' @export
 #'
 dose_estimation_mx <- function(input, reactive_data, data_type) {
   coeff_input <- input[[paste0("fit_coeffs_hot_mixed_", data_type)]]
@@ -217,7 +214,6 @@ dose_estimation_mx <- function(input, reactive_data, data_type) {
 #' @param table the data input table.
 #'
 #' @return yield per dose. Numeric
-#' @export
 #'
 update_outputs <- function(num_cases, reactive_data, output, yield_fun, manual, table) {
 
@@ -361,6 +357,7 @@ update_outputs <- function(num_cases, reactive_data, output, yield_fun, manual, 
 #' @param place UI, report or save. Where the plot will be displayed.
 #'
 #' @return ggcurve
+#' @example man/examples/plot_estimated_dose_curve_mx_example.R
 #' @export
 #'
 plot_estimated_dose_curve_mx <- function(name, est_doses, fit_coeffs, fit_var_cov_mat,
@@ -465,7 +462,6 @@ plot_estimated_dose_curve_mx <- function(name, est_doses, fit_coeffs, fit_var_co
 #' @param name_num associates a number to the name.
 #'
 #' @return plot at UI and saving plot server logic
-#' @export
 #'
 generate_plot_and_download <- function(data_type, reactive_data, output, input, manual, dose_plot, name_num) {
   if (data_type == "gamma") {
