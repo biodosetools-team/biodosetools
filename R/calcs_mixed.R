@@ -15,6 +15,7 @@
 #' @import msm openxlsx
 #'
 #' @return dose estimation
+#' @example man/examples/fun.estimate.criticality_example.R
 #' @export
 
 fun.estimate.criticality <- function(num_cases, dics, cells, coef_gamma, cov_gamma, coef_neutron, cov_neutron, ratio, p){

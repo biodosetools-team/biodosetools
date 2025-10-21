@@ -11,6 +11,7 @@
 #' @param time_0 The mean lifetime of the breaks, which has been shown to be on the order of ~ 2 hours (default value).
 #'
 #' @return Numeric value of \eqn{G(x)}.
+#' @example man/examples/protracted_g_function_example.R
 #' @export
 protracted_g_function <- function(time, time_0 = 2) {
   x <- time / time_0
@@ -166,6 +167,7 @@ correct_conf_int <- function(conf_int, general_fit_var_cov_mat, protracted_g_val
 #' @param conf_int Curve confidence interval, 95\% by default.
 #'
 #' @export
+#' @example man/examples/project_yield_example.R
 #' @return Numeric value of projected dose.
 project_yield <- function(yield, type = "estimate", general_fit_coeffs, general_fit_var_cov_mat = NULL, protracted_g_value = 1, conf_int = 0.95) {
   yield_inf <- calculate_yield_infimum(type, general_fit_coeffs, general_fit_var_cov_mat, conf_int)
@@ -331,6 +333,7 @@ correct_boundary <- function(x) {
 #' @param place UI or save.
 #'
 #' @return \code{ggplot2} object.
+#' @example man/examples/plot_estimated_dose_curve_example.R
 #' @export
 plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
                                       protracted_g_value = 1, conf_int_curve,
@@ -485,6 +488,7 @@ plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
 #'
 #' @import ggplot2
 #' @return \code{ggplot2} object.
+#' @example man/examples/plot_triage_example.R
 #' @export
 
 

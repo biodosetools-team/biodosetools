@@ -6,6 +6,7 @@
 #'
 #' @importFrom stats median qnorm
 #' @export
+#' @example man/examples/QHampel_example.R
 #' @return Numeric value of zscore using QHampel algorithm.
 
 QHampel<- function(y, lab, tol.G1=0.000001){
@@ -202,6 +203,7 @@ QHampel<- function(y, lab, tol.G1=0.000001){
 #'
 #' @importFrom stats median mad
 #' @export
+#' @example man/examples/M_estimate_example.R
 #' @return Numeric value of zscore using algB.
 
 
@@ -281,6 +283,7 @@ M_estimate <-function(x, iter_loc=50, iter_scale=1000){# Logistic M-estimate , a
 #'
 #' @importFrom MASS hubers
 #' @export
+#' @example man/examples/calc.zValue.new_example.R
 #' @return Numeric value of zscore.
 
 calc.zValue.new <- function(X, type, alg , c){
@@ -315,7 +318,6 @@ calc.zValue.new <- function(X, type, alg , c){
 #' @param coef curve coefficients
 #' @param curve_type type of curve: lin_quad, lin
 #'
-#' @export
 #' @return Numeric value.
 
 fun.curve <- function(d, coef, curve_type){

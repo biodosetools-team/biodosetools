@@ -639,6 +639,7 @@ fit_maxlik_method <- function(data, model_formula,
 #' @param algorithm Optional selection of algorithm to be used, either "glm" (for GLM) or "maxlik" (for MLE). By default, "glm" is used, with "maxlik" as a fallback method.
 #'
 #' @return List object containing fit results either using GLM or maxLik optimization.
+#' @example man/examples/fit_example.R
 #' @export
 fit <- function(count_data, model_formula,
                 model_family, fit_link = "identity",

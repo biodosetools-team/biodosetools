@@ -5,7 +5,6 @@
 #' @param fit_coeffs curve coefficients
 #'
 #' @return list with all the table columns.
-#' @export
 calculate_table <- function(input, project_yield, fit_coeffs) {
 
 #Number of dics and cells-------------------------------------------------------

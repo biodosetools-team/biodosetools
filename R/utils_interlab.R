@@ -5,6 +5,7 @@
 #' @param all_rds list with the rds files.
 #'
 #' @export
+#' @example man/examples/summary_curve_tables_example.R
 #' @return list(sorted_table_ilc, sorted_table_curve)
 
 summary_curve_tables <- function(num_labs, list_lab_names, all_rds) {
@@ -91,7 +92,8 @@ summary_curve_tables <- function(num_labs, list_lab_names, all_rds) {
 
 #' Plot zscore v2
 #'
-#' @param zscore zscore vector to plot for each lab.
+#' @param zscore data frame with Lab, Sample, Type, Reference, Dose,
+#' Deviation and Zscore.
 #' @param select_method Zscore algorithm.
 #' @param sum_table summary table.
 #' @param place UI or save.
@@ -99,6 +101,7 @@ summary_curve_tables <- function(num_labs, list_lab_names, all_rds) {
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @export
+#' @example man/examples/plot_interlab_v2_example.R
 #' @return \code{ggplot2} object.
 
 plot_interlab_v2 <- function(zscore, select_method, sum_table, place) {
@@ -168,6 +171,7 @@ plot_interlab_v2 <- function(zscore, select_method, sum_table, place) {
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @export
+#' @example man/examples/plot_zscore_all_example.R
 #' @return \code{ggplot2} object.
 
 plot_zscore_all <- function(zscore, select_method, place) {
@@ -232,6 +236,7 @@ plot_zscore_all <- function(zscore, select_method, place) {
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @export
+#' @example man/examples/plot_deviation_all_example.R
 #' @return \code{ggplot2} object.
 
 plot_deviation_all <- function(zscore, select_method, place) {
@@ -292,13 +297,15 @@ plot_deviation_all <- function(zscore, select_method, place) {
 
 #' Plot deviation
 #'
-#' @param zscore zscore vector to plot for each lab.
+#' @param zscore data frame with Lab, Sample, Type, Reference, Dose,
+#' Deviation and Zscore.
 #' @param sum_table summary table.
 #' @param place UI or save.
 #'
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @export
+#' @example man/examples/plot_interlab_deviation_example.R
 #' @return \code{ggplot2} object.
 
 plot_interlab_deviation <- function(zscore, sum_table, place) {
@@ -363,6 +370,7 @@ plot_interlab_deviation <- function(zscore, sum_table, place) {
 #'
 #' @import ggplot2
 #' @return \code{ggplot2} object.
+#' @example man/examples/plot_triage_interlab_example.R
 #' @export
 
 plot_triage_interlab <- function(line_triage, sum_table, place) {
@@ -458,6 +466,7 @@ plot_triage_interlab <- function(line_triage, sum_table, place) {
 #'
 #' @import ggplot2 dplyr
 #' @return \code{ggplot2} object.
+#' @example man/examples/curves_plot_example.R
 #' @export
 
 curves_plot <- function(dat, curve, curve_type = "lin_quad", place) {
@@ -529,6 +538,7 @@ curves_plot <- function(dat, curve, curve_type = "lin_quad", place) {
 #' @import dplyr
 #' @importFrom graphics barplot par
 #' @return plot
+#' @example man/examples/bar_plots_example.R
 #' @export
 
 bar_plots <- function(dat, curve, place) {
@@ -597,6 +607,7 @@ bar_plots <- function(dat, curve, place) {
 #' @importFrom stats setNames
 #'
 #' @return plot
+#' @example man/examples/yield_boxplot_example.R
 #' @export
 
 yield_boxplot <- function(dat, place) {
@@ -656,6 +667,7 @@ yield_boxplot <- function(dat, place) {
 #' @param place UI or save.
 #'
 #' @return plot
+#' @example man/examples/dose_boxplot_example.R
 #' @export
 
 dose_boxplot <- function(dat, place) {
@@ -702,6 +714,7 @@ dose_boxplot <- function(dat, place) {
 #' @param place UI or save.
 #'
 #' @return plot
+#' @example man/examples/u_test_plot_example.R
 #' @export
 
 u_test_plot <- function(dat, place) {
@@ -749,6 +762,7 @@ u_test_plot <- function(dat, place) {
 #' @param place UI or save.
 #'
 #' @return plot
+#' @example man/examples/DI_plot_example.R
 #' @export
 
 DI_plot <- function(dat, place) {

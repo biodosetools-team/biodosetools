@@ -20,3 +20,7 @@ mechanism of the induction by radiation of chromosome aberrations
 in\emph{Tradescantia}. Journal of Genetics, 44(2-3), 216-245.
 <doi:10.1007/BF02982830>.
 }
+\examples{
+protracted_g_function(time = 3,
+                      time_0 = 2)
+}

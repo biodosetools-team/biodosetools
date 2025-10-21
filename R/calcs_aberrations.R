@@ -149,6 +149,7 @@ init_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("
 #' and other coefficients (dispersion index, \eqn{u}-value, ...), as well as
 #' raw count or case \code{data}.
 #' @export
+#' @example man/examples/calculate_aberr_table_example.R
 #' @importFrom rlang .data
 calculate_aberr_table <- function(data, type = c("count", "case"), aberr_module = c("dicentrics", "translocations", "micronuclei"), assessment_u = 1) {
   # Validate parameters

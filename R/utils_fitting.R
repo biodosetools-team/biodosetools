@@ -5,6 +5,7 @@
 #' @param place Where the plot will be displayed.
 #'
 #' @return \code{ggplot2} object.
+#' @example man/examples/plot_fit_dose_curve_example.R
 #' @export
 plot_fit_dose_curve <- function(fit_results_list, aberr_name, place) {
   # Read objects from fit results list
