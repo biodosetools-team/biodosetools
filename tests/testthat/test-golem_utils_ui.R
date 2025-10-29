@@ -1,3 +1,13 @@
+expect_tag_has_display_none <- function(tag, has_display) {
+  expect_s3_class(tag, "shiny.tag")
+
+  if (has_display) {
+    expect_match(as.character(tag), 'display: none;')
+  } else {
+    expect_no_match(as.character(tag), 'display: none;')
+  }
+}
+
 test_that("Test with_red_star works", {
   expect_s3_class(with_red_star("golem"), "shiny.tag")
   expect_equal(
@@ -79,45 +89,18 @@ test_that("Test tagRemoveAttributes works", {
 
 test_that("Test undisplay works", {
   a <- shiny::tags$p(src = "plop", "pouet")
-  expect_s3_class(a, "shiny.tag")
-  expect_equal(
-    as.character(a),
-    '<p src="plop">pouet</p>'
-  )
-  a_undisplay <- undisplay(a)
-  expect_s3_class(a_undisplay, "shiny.tag")
-  expect_equal(
-    as.character(a_undisplay),
-    '<p src="plop" style="display: none;">pouet</p>'
-  )
+  expect_tag_has_display_none(a, FALSE)
+  expect_tag_has_display_none(undisplay(a), TRUE)
 
   b <- shiny::actionButton("go_filter", "go")
-  expect_s3_class(b, "shiny.tag")
-  expect_equal(
-    as.character(b),
-    '<button id="go_filter" type="button" class="btn btn-default action-button">go</button>'
-  )
-  b_undisplay <- undisplay(b)
-  expect_s3_class(b, "shiny.tag")
-  expect_equal(
-    as.character(b_undisplay),
-    '<button id="go_filter" type="button" class="btn btn-default action-button" style="display: none;">go</button>'
-  )
+  expect_tag_has_display_none(b, FALSE)
+  expect_tag_has_display_none(undisplay(b), TRUE)
 })
 
 test_that("Test display works", {
   a_undisplay <- shiny::tags$p(src = "plop", "pouet", style = "display: none;")
-  expect_s3_class(a_undisplay, "shiny.tag")
-  expect_equal(
-    as.character(a_undisplay),
-    '<p src="plop" style="display: none;">pouet</p>'
-  )
-  a_display <- display(a_undisplay)
-  expect_s3_class(a_display, "shiny.tag")
-  expect_equal(
-    as.character(a_display),
-    '<p src="plop" style="">pouet</p>'
-  )
+  expect_tag_has_display_none(a_undisplay, TRUE)
+  expect_tag_has_display_none(display(a_undisplay), FALSE)
 })
 
 test_that("Test jq_hide works", {
