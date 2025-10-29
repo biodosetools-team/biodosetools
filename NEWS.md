@@ -1,4 +1,4 @@
-# biodosetools 3.6.2
+# biodosetools 3.7.1
 
 * New module for criticality accidents dose estimation.
 * New module for calculating chacaracteristic limits.
