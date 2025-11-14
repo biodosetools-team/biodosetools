@@ -137,9 +137,11 @@ estimate_whole_body_merkle <- function(num_cases, case_data, fit_coeffs, fit_var
     if (yield_est_corr < yield_est) {
       yield_est <- 0
       yield_low <- 0
+    }
+    yield_upp_corr <- correct_yield(yield_upp, "upper", general_fit_coeffs, general_fit_var_cov_mat, conf_int_curve)
+    if (yield_upp_corr < yield_upp){
       yield_upp <- 0
     }
-
     # Calculate projections
     dose_est <- project_yield(
       yield = yield_est,
