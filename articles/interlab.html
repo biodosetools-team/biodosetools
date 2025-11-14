@@ -83,7 +83,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Interlaboratory comparison</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/v3.7.1/vignettes/interlab.Rmd" class="external-link"><code>vignettes/interlab.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/biodosetools-team/biodosetools/blob/main/vignettes/interlab.Rmd" class="external-link"><code>vignettes/interlab.Rmd</code></a></small>
       <div class="d-none name"><code>interlab.Rmd</code></div>
     </div>
 
@@ -131,7 +131,7 @@ and several irradiation conditions. Tables (3) and (4) will display for
 each Lab ans Sample the dose estimation for “Dose” and the Frequencies
 for “Frequencies”.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-interlab-01.png" alt="'Data Input' box and 'Results' tabbed box in the interlaboratory comparison module when loading curves from an `.rds` file for two laboratories." width="100%"><p class="caption">
+<img src="figures/screenshot-interlab-01.png" class="r-plt" alt="'Data Input' box and 'Results' tabbed box in the interlaboratory comparison module when loading curves from an `.rds` file for two laboratories." width="100%"><p class="caption">
 ‘Data Input’ box and ‘Results’ tabbed box in the interlaboratory
 comparison module when loading curves from an <code>.rds</code> file for
 two laboratories.
@@ -169,28 +169,28 @@ two laboratories.
 <span>  dat <span class="op">=</span>  <span class="va">tables_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/summary_plots-1.png" width="700"></p>
+<p><img src="interlab_files/figure-html/summary_plots-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/dose_boxplot.html">dose_boxplot</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">tables_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/summary_plots-2.png" width="700"></p>
+<p><img src="interlab_files/figure-html/summary_plots-2.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/u_test_plot.html">u_test_plot</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">tables_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/summary_plots-3.png" width="700"></p>
+<p><img src="interlab_files/figure-html/summary_plots-3.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/DI_plot.html">DI_plot</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">tables_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/summary_plots-4.png" width="700">
+<p><img src="interlab_files/figure-html/summary_plots-4.png" class="r-plt" width="700">
 Clicking on “Plot curves” on the Curve section on the Results tabbox
 will display four different plots in the “Plots curves” Results
 tabbox.In this example all curves were manually scored, therefore there
@@ -204,7 +204,7 @@ are only two plots.</p>
 <span>  curve_type <span class="op">=</span> <span class="st">"lin_quad"</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/curve-plots-1.png" width="700"></p>
+<p><img src="interlab_files/figure-html/curve-plots-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/bar_plots.html">bar_plots</a></span><span class="op">(</span></span>
@@ -212,20 +212,20 @@ are only two plots.</p>
 <span>  curve <span class="op">=</span> <span class="st">"manual"</span>,</span>
 <span>  place <span class="op">=</span> <span class="st">"UI"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="interlab_files/figure-html/curve-plots-2.png" width="700">
+<p><img src="interlab_files/figure-html/curve-plots-2.png" class="r-plt" width="700">
 ## Performe Z-score</p>
 <p>The final step is to select the Input type between “Dose” or
 “Frequency”, the algorithm among “AlgA”, “AlgB and”QHampel” and provide
 the reference value for each sample (only when Dose input is
 selected).</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-interlab-04.png" alt="'Z-score Data input options' in the interlaboratory comparison module." width="100%"><p class="caption">
+<img src="figures/screenshot-interlab-04.png" class="r-plt" alt="'Z-score Data input options' in the interlaboratory comparison module." width="100%"><p class="caption">
 ‘Z-score Data input options’ in the interlaboratory comparison module.
 </p>
 </div>
 <p>Clicking “Calculate and plot” will display the results table:</p>
 <div class="figure" style="text-align: center">
-<img src="figures/screenshot-interlab-05.png" alt="'Z-score Results table' in the interlaboratory comparison module." width="100%"><p class="caption">
+<img src="figures/screenshot-interlab-05.png" class="r-plt" alt="'Z-score Results table' in the interlaboratory comparison module." width="100%"><p class="caption">
 ‘Z-score Results table’ in the interlaboratory comparison module.
 </p>
 </div>
@@ -312,65 +312,65 @@ and <code><a href="../reference/plot_triage_interlab.html">plot_triage_interlab(
 <code class="sourceCode R"><span></span>
 <span><span class="va">plot_1</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-1.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-1.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_2</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-2.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-2.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">p</span> <span class="kw">in</span> <span class="va">plot_3</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-3.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-3.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-4.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-4.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-5.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-5.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">p</span> <span class="kw">in</span> <span class="va">plot_4</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-6.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-6.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-7.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-7.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-8.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-8.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">p</span> <span class="kw">in</span> <span class="va">plot_5</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-9.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-9.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-10.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-10.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="interlab_files/figure-html/all-plots-11.png" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
+<img src="interlab_files/figure-html/all-plots-11.png" class="r-plt" alt="Plots generated by \{biodosetools\}." width="576"><p class="caption">
 Plots generated by {biodosetools}.
 </p>
 </div>
@@ -386,7 +386,7 @@ Plots generated by {biodosetools}.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
