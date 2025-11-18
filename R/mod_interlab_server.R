@@ -244,14 +244,17 @@ mod_interlab_server <- function(id, label) {
           sub <- data_frame_zscore[data_frame_zscore$Sample == tt, ]
           sample_ref <- paste0("ref_", tt)
           reference_value <- as.numeric(input[[sample_ref]])
+          zscores <- rep(NA, nrow(sub))
           # Use the correct algorithm depending on the chosen method
           if (input$select_method_zscore == "algA") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Dose, type = "dose", alg = "algA", reference_value)
+            zscores <- calc.zValue.new(sub$Dose, type = "dose", alg = "algA", reference_value)
           } else if (input$select_method_zscore == "algB") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Dose, type = "dose", alg = "algB", reference_value)
+            zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "algB", reference_value)
           } else if (input$select_method_zscore == "QHampel") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Dose, type = "dose", alg = "QHampel", reference_value)
+            zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "QHampel", reference_value)
           }
+
+          data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- zscores
         }
         #Ensure zscore column is numeric
         data_frame_zscore$Deviation <- as.numeric(data_frame_zscore$Dose) - data_frame_zscore$Reference
@@ -307,15 +310,19 @@ mod_interlab_server <- function(id, label) {
         #Compute z-score by grouping doses by Sample
         for(tt in unique(data_frame_zscore$Sample)){
           sub <- data_frame_zscore[data_frame_zscore$Sample == tt, ]
+          zscores <- rep(NA, nrow(sub))
           # Use the correct algorithm depending on the chosen method
           if (input$select_method_zscore == "algA") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "algA", NA)
+            zscores <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "algA", NA)
           } else if (input$select_method_zscore == "algB") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "algB", NA)
+            zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "algB", NA)
           } else if (input$select_method_zscore == "QHampel") {
-            data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "QHampel", NA)
+            zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "QHampel", NA)
           }
+
+          data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- zscores
         }
+
         #Ensure zscore column is numeric
         data_frame_zscore$Deviation <- NULL
         data_frame_zscore$Zscore <- as.numeric(data_frame_zscore$Zscore)
@@ -364,7 +371,9 @@ mod_interlab_server <- function(id, label) {
               if(value == 'Unsatisfactory'){
                 td.style.background = 'rgba(255, 0, 0, 0.2)';
               }else{
-                td.style.background = 'rgba(255, 255, 0, 0.2)';
+                if(value == 'Questionable'){
+                  td.style.background = 'rgba(255, 255, 0, 0.2)';
+                }
               }
             }
           }")
