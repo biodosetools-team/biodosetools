@@ -439,7 +439,7 @@ plot_estimated_dose_curve_mx <- function(name, est_doses, fit_coeffs, fit_var_co
     ggplot2::theme(legend.position = "right") +
     if (place == "save") {
       list(
-        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::labs(caption = "Created with Biodosetools"),
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
       )
     } else {

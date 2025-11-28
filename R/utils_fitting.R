@@ -81,7 +81,7 @@ plot_fit_dose_curve <- function(fit_results_list, aberr_name, place) {
     ggplot2::theme_bw() +
     if (place == "save") {
       list(
-        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::labs(caption = "Created with Biodosetools"),
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
       )
     } else {
