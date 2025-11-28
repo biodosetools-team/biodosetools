@@ -467,7 +467,7 @@ plot_estimated_dose_curve <- function(est_doses, fit_coeffs, fit_var_cov_mat,
     )+
     if (place == "save") {
       list(
-        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::labs(caption = "Created with Biodosetools"),
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
       )
     } else {
@@ -565,7 +565,7 @@ plot_triage <- function(num_cases, est_doses_whole, est_doses_partial, assessmen
 
   if (place == "save") {
     gg_curve <- gg_curve +
-      labs(caption = "Created with Biodosetools version 3.6.2") +
+      labs(caption = "Created with Biodosetools") +
       theme(plot.caption = element_text(size = 8, colour = "black", hjust = 1))
   }
 

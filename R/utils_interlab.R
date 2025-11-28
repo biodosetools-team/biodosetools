@@ -149,7 +149,7 @@ plot_interlab_v2 <- function(zscore, select_method, sum_table, place) {
         ) +
       if (place == "save") {
         list(
-          ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+          ggplot2::labs(caption = "Created with Biodosetools"),
           ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
         )
       } else {
@@ -215,7 +215,7 @@ plot_zscore_all <- function(zscore, select_method, place) {
     )+
     if (place == "save") {
       list(
-        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::labs(caption = "Created with Biodosetools"),
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
       )
     } else {
@@ -281,7 +281,7 @@ plot_deviation_all <- function(zscore, select_method, place) {
     )+
     if (place == "save") {
       list(
-        ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+        ggplot2::labs(caption = "Created with Biodosetools"),
         ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
       )
     } else {
@@ -352,7 +352,7 @@ plot_interlab_deviation <- function(zscore, sum_table, place) {
       )+
       if (place == "save") {
         list(
-          ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+          ggplot2::labs(caption = "Created with Biodosetools"),
           ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
         )
       } else {
@@ -444,7 +444,7 @@ plot_triage_interlab <- function(line_triage, sum_table, place) {
      )+
      if (place == "save") {
        list(
-         ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+         ggplot2::labs(caption = "Created with Biodosetools"),
          ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
        )
      } else {
@@ -519,7 +519,7 @@ curves_plot <- function(dat, curve, curve_type = "lin_quad", place) {
           theme( plot.title = element_text(size = 15, face = "bold", color = "black", hjust = 0.5))+
           if (place == "save") {
             list(
-              ggplot2::labs(caption = "Created with Biodosetools version 3.6.2"),
+              ggplot2::labs(caption = "Created with Biodosetools"),
               ggplot2::theme(plot.caption = ggplot2::element_text(size = 8, colour = "black", hjust = 1))
             )
           } else {
@@ -585,7 +585,7 @@ bar_plots <- function(dat, curve, place) {
       }
       if (place == "save") {
         mtext(
-          "Created with Biodosetools version 3.6.2",
+          "Created with Biodosetools",
           side = 1,
           line = 7, #dist from x
           adj = 1,
@@ -649,7 +649,7 @@ yield_boxplot <- function(dat, place) {
     legend("topright", legend = names(lab_colors), col = lab_colors, pch = 19, title = "Lab")
     if (place == "save") {
       mtext(
-        "Created with Biodosetools version 3.6.2",
+        "Created with Biodosetools",
         side = 1,
         line = 2,
         adj = 1,
@@ -697,7 +697,7 @@ dose_boxplot <- function(dat, place) {
     legend("topright", legend = names(lab_colors), col = lab_colors, pch = 19, title = "Lab")
     if (place == "save") {
       mtext(
-        "Created with Biodosetools version 3.6.2",
+        "Created with Biodosetools",
         side = 1,
         line = 2,
         adj = 1,
@@ -746,7 +746,7 @@ u_test_plot <- function(dat, place) {
   abline(h = c(-1.96, 1.96), col = "red")
   if (place == "save") {
     mtext(
-      "Created with Biodosetools version 3.6.2",
+      "Created with Biodosetools",
       side = 1,
       line = 2,
       adj = 1,
@@ -794,7 +794,7 @@ DI_plot <- function(dat, place) {
     abline(h = c(1), col = "red")
     if (place == "save") {
       mtext(
-        "Created with Biodosetools version 3.6.2",
+        "Created with Biodosetools",
         side = 1,
         line = 2,
         adj = 1,
