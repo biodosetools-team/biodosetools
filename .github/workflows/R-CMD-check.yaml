@@ -27,7 +27,6 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      CACHE_VERSION: v2
 
     steps:
       - uses: actions/checkout@v3
@@ -40,10 +39,13 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::rcmdcheck
-          needs: check
+      - name: Install dependencies (no pak lockfile)
+        run: |
+          install.packages(c("rcmdcheck"), repos = "https://cloud.r-project.org")
+          install.packages(
+            remotes::package_deps(".", dependencies = TRUE)$package,
+            repos = "https://cloud.r-project.org"
+          )
 
       - uses: r-lib/actions/check-r-package@v2
         with:
