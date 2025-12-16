@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/biodosetools-team/biodosetools/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/biodosetools-team/biodosetools/blob/v3.7.2/inst/CITATION)
 
 Hernández, A., Endesfelder, D., Einbeck, J., Puig, P., Benadjaoud, M.
 A., Higueras, M., Ainsbury, E., Gruel, G., Oestreicher, U., Barrios, L.,
