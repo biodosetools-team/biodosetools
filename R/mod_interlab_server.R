@@ -239,19 +239,27 @@ mod_interlab_server <- function(id, label) {
           input[[ref]]
         })
         #Compute z-score by grouping doses by Sample
-
         for(tt in unique(data_frame_zscore$Sample)){
           sub <- data_frame_zscore[data_frame_zscore$Sample == tt, ]
           sample_ref <- paste0("ref_", tt)
           reference_value <- as.numeric(input[[sample_ref]])
-          zscores <- rep(NA, nrow(sub))
-          # Use the correct algorithm depending on the chosen method
-          if (input$select_method_zscore == "algA") {
-            zscores <- calc.zValue.new(sub$Dose, type = "dose", alg = "algA", reference_value)
-          } else if (input$select_method_zscore == "algB") {
-            zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "algB", reference_value)
-          } else if (input$select_method_zscore == "QHampel") {
-            zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "QHampel", reference_value)
+          if (all(is.na(sub$Dose))) {
+            zscores <- rep(NA, nrow(sub))
+            showModal(modalDialog(
+              title = "Error",
+              "This algorithm cannot be applied in one or more samples due to insufficient data.",
+              footer = modalButton("Close")
+            ))
+          }else{
+            zscores <- rep(NA, nrow(sub))
+            # Use the correct algorithm depending on the chosen method
+            if (input$select_method_zscore == "algA") {
+              zscores <- calc.zValue.new(sub$Dose, type = "dose", alg = "algA", reference_value)
+            } else if (input$select_method_zscore == "algB") {
+              zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "algB", reference_value)
+            } else if (input$select_method_zscore == "QHampel") {
+              zscores[!is.na(sub$Dose)] <- calc.zValue.new(sub$Dose[!is.na(sub$Dose)], type = "dose", alg = "QHampel", reference_value)
+            }
           }
 
           data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- zscores
@@ -308,17 +316,26 @@ mod_interlab_server <- function(id, label) {
           stringsAsFactors = FALSE
         )
         #Compute z-score by grouping doses by Sample
-        for(tt in unique(data_frame_zscore$Sample)){
-          sub <- data_frame_zscore[data_frame_zscore$Sample == tt, ]
-          zscores <- rep(NA, nrow(sub))
-          # Use the correct algorithm depending on the chosen method
-          if (input$select_method_zscore == "algA") {
-            zscores <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "algA", NA)
-          } else if (input$select_method_zscore == "algB") {
-            zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "algB", NA)
-          } else if (input$select_method_zscore == "QHampel") {
-            zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "QHampel", NA)
-          }
+          for(tt in unique(data_frame_zscore$Sample)){
+            sub <- data_frame_zscore[data_frame_zscore$Sample == tt, ]
+            if (all(is.na(sub$Frequency))) {
+              zscores <- rep(NA, nrow(sub))
+              showModal(modalDialog(
+                title = "Error",
+                "This algorithm cannot be applied in one or more samples due to insufficient data.",
+                footer = modalButton("Close")
+              ))
+            }else{
+              zscores <- rep(NA, nrow(sub))
+              # Use the correct algorithm depending on the chosen method
+              if (input$select_method_zscore == "algA") {
+                zscores <- calc.zValue.new(sub$Frequency, type = "frequency", alg = "algA", NA)
+              } else if (input$select_method_zscore == "algB") {
+                zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "algB", NA)
+              } else if (input$select_method_zscore == "QHampel") {
+                zscores[!is.na(sub$Frequency)] <- calc.zValue.new(sub$Frequency[!is.na(sub$Frequency)], type = "frequency", alg = "QHampel", NA)
+              }
+            }
 
           data_frame_zscore$Zscore[data_frame_zscore$Sample == tt] <- zscores
         }
@@ -350,10 +367,13 @@ mod_interlab_server <- function(id, label) {
 
 
       #Assign status based on Z-score
-      data_frame_zscore$Status <- ifelse(
-        abs(data_frame_zscore$Zscore) <= 2, "Satisfactory",
-        ifelse(abs(data_frame_zscore$Zscore) > 3, "Unsatisfactory", "Questionable")
+      data_frame_zscore$Status <- case_when(
+        is.na(data_frame_zscore$Zscore) | is.infinite(data_frame_zscore$Zscore) ~ NA_character_,
+        abs(data_frame_zscore$Zscore) <= 2 ~ "Satisfactory",
+        abs(data_frame_zscore$Zscore) > 3 ~ "Unsatisfactory",
+        TRUE ~ "Questionable"
       )
+
       reactive_data_interlab$zscore_table <- data_frame_zscore
 
     #Z-score table output

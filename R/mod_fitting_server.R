@@ -142,7 +142,8 @@ mod_fitting_counts_hot_server <- function(id, aberr_module) {
             assessment_u <- 1
 
             if (aberr_module == "micronuclei") {
-              assessment_u <- 1.17
+              #assessment_u <- 1.17
+              assessment_u <- 1
             }
 
             # Calculated columns
