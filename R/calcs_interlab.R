@@ -302,10 +302,10 @@ M_estimate <-function(x, iter_loc=50, iter_scale=1000){# Logistic M-estimate , a
 calc.zValue.new <- function(X, type, alg , c){
   req(X)
   if(alg == "algA"){
-    if(length(X)< 2){
+    if(sum(!is.na(X))< 2){
       showModal(modalDialog(
         title = "Error",
-        "The algA method cannot be applied in certain cases due to insufficient data.",
+        "This algorithm cannot be applied in one or more samples due to insufficient data.",
         footer = modalButton("Close")
       ))
       return(NULL)
@@ -316,13 +316,33 @@ calc.zValue.new <- function(X, type, alg , c){
     }
 
   }else if (alg == "algB"){
-    aus = M_estimate(X)
-    s = aus$scale
-    mu = aus$location
+    if(sum(!is.na(X))< 2){
+      showModal(modalDialog(
+        title = "Error",
+        "This algorithm cannot be applied in one or more samples due to insufficient data.",
+        footer = modalButton("Close")
+      ))
+      result <- rep(NA, length(X))
+      return(result)
+    }else{
+      aus = M_estimate(X)
+      s = aus$scale
+      mu = aus$location
+    }
   }else if (alg == "QHampel"){
-    aus = QHampel(y=as.numeric(X),lab=1:length(X))
-    s = aus$s.star
-    mu = aus$x.star
+    if(sum(!is.na(X))< 2){
+      showModal(modalDialog(
+        title = "Error",
+        "This algorithm cannot be applied in one or more samples due to insufficient data.",
+        footer = modalButton("Close")
+      ))
+      result <- rep(NA, length(X))
+      return(result)
+    }else{
+      aus = QHampel(y=as.numeric(X),lab=1:length(X))
+      s = aus$s.star
+      mu = aus$x.star
+    }
   }
   uref=1.25*s/sqrt(length(X))
   if(type=='dose'){

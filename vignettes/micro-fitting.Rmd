@@ -34,7 +34,7 @@ This step is accomplished in R by calling the `calculate_aberr_table()` function
 ```{r micro-count-data, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 count_data <- system.file("extdata", "count-data-mayakannan-2018.csv", package = "biodosetools") %>%
   utils::read.csv() %>%
-  calculate_aberr_table(type = "count", assessment_u = 1.17)
+  calculate_aberr_table(type = "count", assessment_u = 1)
 ```
 
 ```{r}
