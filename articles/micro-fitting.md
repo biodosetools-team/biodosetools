@@ -28,7 +28,7 @@ function:
 ``` r
 count_data <- system.file("extdata", "count-data-mayakannan-2018.csv", package = "biodosetools") %>%
   utils::read.csv() %>%
-  calculate_aberr_table(type = "count", assessment_u = 1.17)
+  calculate_aberr_table(type = "count", assessment_u = 1)
 ```
 
 ``` r
