@@ -44,6 +44,9 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Ensure xfun is installed
+        run: Rscript -e 'if (!requireNamespace("xfun", quietly=TRUE)) install.packages("xfun", repos="https://cloud.r-project.org")'
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
