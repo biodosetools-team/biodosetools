@@ -37,13 +37,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install dependencies (no pak lockfile)
-        run: |
-          install.packages(c("rcmdcheck"), repos = "https://cloud.r-project.org")
-          install.packages(
-            remotes::package_deps(".", dependencies = TRUE)$package,
-            repos = "https://cloud.r-project.org"
-          )
 
       - uses: r-lib/actions/check-r-package@v2
         with:
