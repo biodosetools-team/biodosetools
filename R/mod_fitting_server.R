@@ -20,7 +20,6 @@ mod_fitting_counts_hot_server <- function(id, aberr_module) {
        }
       })
 
-
     # Reset table ----
     table_reset <- reactiveValues(value = 0)
 
