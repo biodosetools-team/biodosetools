@@ -39,8 +39,20 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Ensure xfun is installed
-        run: Rscript -e 'if (!requireNamespace("xfun", quietly=TRUE)) install.packages("xfun", repos="https://cloud.r-project.org")'
+      - name: Install lockfile packages with retry/fallback
+        run: |
+          Rscript -e '
+            options(repos = c(CRAN="https://cloud.r-project.org"))
+            tryCatch(
+              pak::lockfile_install(".github/pkg.lock"),
+              error = function(e) {
+                message("pak subprocess failed, retrying with fallback...")
+                # fallback: install xfun manually first
+                if (!requireNamespace("xfun", quietly=TRUE)) install.packages("xfun")
+                # retry lockfile install
+                pak::lockfile_install(".github/pkg.lock")
+              }
+            )'
 
 
       - uses: r-lib/actions/setup-r-dependencies@v2
